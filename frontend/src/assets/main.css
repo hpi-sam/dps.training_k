@@ -7,6 +7,15 @@
   font-weight: normal;
 }
 
+main{
+  height:800px;
+  width: 1280px;
+  margin: 0 auto;
+  font-weight: normal;
+  border: 1px solid;
+  background-color: white;
+}
+
 a,
 .green {
   text-decoration: none;
