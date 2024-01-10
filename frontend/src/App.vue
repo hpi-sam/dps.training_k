@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import ModuleLogin from './modules/ModuleLogin.vue'
-import ModuleTrainer from './modules/ModuleTrainer.vue'
-import ModulePatient from './modules/ModulePatient.vue'
+import ModuleLogin from '@/components/ModuleLogin.vue'
+import ModuleTrainer from '@/components/ModuleTrainer.vue'
+import ModulePatient from '@/components/ModulePatient.vue'
 
 const modules = {
   ModuleLogin,
