@@ -14,13 +14,12 @@ const currentModule = ref('ModulePatient')
 </script>
 
 <template>
+  <main>
+    <component :is="modules[currentModule]"></component>
+  </main>
   <div id="dev-bar">
     <button @click="currentModule='ModuleLogin'">Login</button>
     <button @click="currentModule='ModuleTrainer'">Trainer</button>
     <button @click="currentModule='ModulePatient'">Patient</button>
   </div>
-  <br/>
-  <main>
-    <component :is="modules[currentModule]"></component>
-  </main>
 </template>
