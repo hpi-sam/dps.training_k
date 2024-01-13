@@ -19,5 +19,14 @@ module.exports = {
             'template': 150,
             'tabWidth': 4,
         }],
+
+        "vue/max-attributes-per-line": ["error", {
+            "singleline": {
+                "max": 4
+            },
+            "multiline": {
+                "max": 1
+            }
+        }]
     }
 }
