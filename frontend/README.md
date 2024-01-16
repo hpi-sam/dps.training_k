@@ -45,19 +45,19 @@ components/
 ├── ModuleLogin.vue
 ├── ModulePatient.vue
 ├── ModuleTrainer.vue
-├── loginScreens/
+├── screensLogin/
 │   ├── Screen1.vue
 │   ├── Screen2.vue
-│   ├── 1Pages
+│   ├── pages1
 │   │   ├── PageA.vue
 │   │   ├── PageB.vue
 │   │   └── ...
-│   └── 2Pages
+│   └── pages2
 │   │   └── ...
 │   └── ...
-├── patientScreens/
+├── screensPatient/
 │   └── ...
-├── trainerScreens/
+├── screensTrainer/
 │   └── ...
 └── widgets/
     └── ...
