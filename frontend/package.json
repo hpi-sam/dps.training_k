@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "socket.io-client": "^4.7.4",
     "vue": "^3.3.11"
   },
   "devDependencies": {
