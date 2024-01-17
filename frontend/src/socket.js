@@ -18,7 +18,9 @@ socket.on("disconnect", () => {
 });
 
 socket.on("test", (arg) => {
-    console.log(arg);
+    /** @type {String} */
+    const s = JSON.parse(arg);
+    console.log(s);
 });
 
 socket.on("trainer.login.response", (arg) => {

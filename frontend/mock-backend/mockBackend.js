@@ -1,7 +1,7 @@
 import {createServer} from "http";
 import {Server} from "socket.io";
 import {backendSocket} from "./backendSocket.js";
-
+import {configureFrontendSocket} from "./frontendSocket.js";
 
 const mockBackend = new Server(createServer(), {
     cors: {
@@ -9,29 +9,18 @@ const mockBackend = new Server(createServer(), {
     }
 });
 
-mockBackend.on('connection', (frontendSocket) => {
+mockBackend.on('connection', (s) => {
     console.log('Client connected');
-
     backendSocket.connect();
 
-    frontendSocket.on('disconnect', () => {
+    s.on('disconnect', () => {
         console.log('Client disconnected');
         backendSocket.disconnect();
     });
 
-    passThrough(frontendSocket, backendSocket, "test");
+    configureFrontendSocket(s);
 
-    frontendSocket.on("trainer.login", (args) => {
-        const {username, password} = JSON.parse(args);
-        const message = username === "test" && password === "test" ? "true" : "false";
-        frontendSocket.emit("trainer.login.response", message);
-    });
-
-    frontendSocket.on("patient.login", (args) => {
-        const {exerciseCode, patientCode} = JSON.parse(args);
-        const message = exerciseCode === "123" && patientCode === "123" ? "true" : "false";
-        frontendSocket.emit("patient.login.response", message);
-    });
+    passThrough(s, backendSocket, "test");
 });
 
 mockBackend.listen(8080);
