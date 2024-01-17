@@ -13,6 +13,10 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
+
+    socket.on("test", () => {
+        socket.emit("test", "received test event");
+    });
 });
 
 io.listen(8081);

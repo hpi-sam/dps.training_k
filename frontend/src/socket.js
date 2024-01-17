@@ -16,3 +16,7 @@ socket.on("disconnect", () => {
     state.connected = false;
     console.log("Server disconnected");
 });
+
+socket.on("test", (arg) => {
+    console.log(arg);
+});

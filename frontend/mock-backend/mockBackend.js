@@ -9,17 +9,37 @@ const mockBackend = new Server(createServer(), {
     }
 });
 
-mockBackend.on('connection', (mockBackendSocket) => {
+mockBackend.on('connection', (frontendSocket) => {
     console.log('Client connected');
 
     backendSocket.connect();
 
-    mockBackendSocket.on('disconnect', () => {
+    frontendSocket.on('disconnect', () => {
         console.log('Client disconnected');
         backendSocket.disconnect();
     });
+
+    // pass through if event is already implemented in backend
+    passThrough(frontendSocket, backendSocket, "test");
 });
 
 mockBackend.listen(8080);
 
 console.log('WebSocket mockBackend started on port 8080');
+
+
+/**
+ * Pass through events from frontend to backend and vice versa.
+ * Should be used for every event that is already implemented in backend.
+ * @param {Socket} frontendSocket
+ * @param {Socket} backendSocket
+ * @param {string} event
+ */
+function passThrough(frontendSocket, backendSocket, event) {
+    frontendSocket.on(event, (args) => {
+        backendSocket.emit(event, args);
+    });
+    backendSocket.on(event, (args) => {
+        frontendSocket.emit(event, args);
+    });
+}
