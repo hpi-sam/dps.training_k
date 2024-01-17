@@ -20,19 +20,51 @@ socket.on("disconnect", () => {
 socket.on("test.pass-through", (arg) => {
     /** @type {String} */
     const s = JSON.parse(arg);
-    console.log(s);
+    console.log("test.pass-through", s);
 });
 
 socket.on("trainer.login.response", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
-    console.log(bool);
+    console.log("trainer.login.response", bool);
 });
 
 socket.on("patient.login.response", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
-    console.log(bool);
+    console.log("patient.login.response", bool);
+});
+
+socket.on("trainer.exercise.create", (arg) => {
+    /** @type {Exercise} */
+    const exercise = JSON.parse(arg);
+    console.log("trainer.exercise.create", exercise);
+});
+
+socket.on("trainer.exercise.start", () => {
+    console.log("trainer.exercise.start");
+});
+
+socket.on("trainer.exercise.stop", () => {
+    console.log("trainer.exercise.stop");
+});
+
+socket.on("patient.load.notRunning", (arg) => {
+    /** @type {PatientLoadNotRunning} */
+    const patientLoad = JSON.parse(arg);
+    console.log("patient.load.notRunning", patientLoad);
+});
+
+socket.on("patient.load.running", (arg) => {
+    /** @type {PatientLoadRunning} */
+    const patientLoad = JSON.parse(arg);
+    console.log("patient.load.running", patientLoad);
+});
+
+socket.on("patient.phaseChange", (arg) => {
+    /** @type {PatientPhaseChange} */
+    const patientUpdate = JSON.parse(arg);
+    console.log("patient.phaseChange", patientUpdate);
 });
 
 /**
@@ -66,4 +98,13 @@ export function patientLogin(login) {
  */
 export function addAction(name) {
     socket.emit("patient.action.add", JSON.stringify({exerciseCode: name}));
+}
+
+export const serverEvents = {
+    trainerExerciseCreate: "trainer.exercise.create",
+    trainerExerciseStart: "trainer.exercise.start",
+    trainerExerciseStop: "trainer.exercise.stop",
+    patientLoadNotRunning: "patient.load.notRunning",
+    patientLoadRunning: "patient.load.running",
+    patientPhaseChange: "patient.phaseChange",
 }

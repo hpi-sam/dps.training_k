@@ -3,7 +3,7 @@ import {computed, ref} from 'vue'
 import ModuleLogin from '@/components/ModuleLogin.vue'
 import ModuleTrainer from '@/components/ModuleTrainer.vue'
 import ModulePatient from '@/components/ModulePatient.vue'
-import {socket, state} from "@/socket.js";
+import {serverEvents, socket, state} from "@/socket.js";
 
 const modules = {
   ModuleLogin,
@@ -21,20 +21,32 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
   <main>
     <component :is="modules[currentModule]" />
   </main>
+
   <div id="dev-bar">
     <button @click="currentModule='ModuleLogin'">
       Login
     </button>
+
     <button @click="currentModule='ModuleTrainer'">
       Trainer
     </button>
+
     <button @click="currentModule='ModulePatient'">
       Patient
     </button>
-    <button id="test-button" @click="socket.emit('test.pass-through')">
-      send test event
+
+    <button id="ws-test" @click="socket.emit('test.pass-through')">
+      send pass-through test
     </button>
-    <p>Mock-Backend: {{ connectionState }}</p>
+
+    <!-- change the stringified event to test different server-side events -->
+    <button id="ws-test" @click="socket.emit('test.event', JSON.stringify(serverEvents.patientPhaseChange))">
+      send event test
+    </button>
+
+    <p id="ws-test">
+      Mock-Backend: {{ connectionState }}
+    </p>
   </div>
 </template>
 
@@ -45,8 +57,7 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
   align-items: center;
 }
 
-#test-button {
+#ws-test {
   margin-left: 20px;
-  margin-right: 10px;
 }
 </style>
