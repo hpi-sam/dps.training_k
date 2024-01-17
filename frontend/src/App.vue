@@ -31,7 +31,7 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
     <button @click="currentModule='ModulePatient'">
       Patient
     </button>
-    <button id="test-button" @click="socket.emit('test')">
+    <button id="test-button" @click="socket.emit('test.pass-through')">
       send test event
     </button>
     <p>Mock-Backend: {{ connectionState }}</p>

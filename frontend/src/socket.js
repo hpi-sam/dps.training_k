@@ -17,7 +17,7 @@ socket.on("disconnect", () => {
     console.log("Server disconnected");
 });
 
-socket.on("test", (arg) => {
+socket.on("test.pass-through", (arg) => {
     /** @type {String} */
     const s = JSON.parse(arg);
     console.log(s);

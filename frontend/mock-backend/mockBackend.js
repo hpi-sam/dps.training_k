@@ -9,18 +9,18 @@ const mockBackend = new Server(createServer(), {
     }
 });
 
-mockBackend.on('connection', (s) => {
+mockBackend.on('connection', (frontendSocket) => {
     console.log('Client connected');
     backendSocket.connect();
 
-    s.on('disconnect', () => {
+    frontendSocket.on('disconnect', () => {
         console.log('Client disconnected');
         backendSocket.disconnect();
     });
 
-    configureFrontendSocket(s);
+    configureFrontendSocket(frontendSocket);
 
-    passThrough(s, backendSocket, "test");
+    passThrough(frontendSocket, backendSocket, "test.pass-through");
 });
 
 mockBackend.listen(8080);
