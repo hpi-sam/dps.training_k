@@ -19,8 +19,19 @@ mockBackend.on('connection', (frontendSocket) => {
         backendSocket.disconnect();
     });
 
-    // pass through if event is already implemented in backend
     passThrough(frontendSocket, backendSocket, "test");
+
+    frontendSocket.on("trainer.login", (args) => {
+        const {username, password} = JSON.parse(args);
+        const message = username === "test" && password === "test" ? "true" : "false";
+        frontendSocket.emit("trainer.login.response", message);
+    });
+
+    frontendSocket.on("patient.login", (args) => {
+        const {exerciseCode, patientCode} = JSON.parse(args);
+        const message = exerciseCode === "123" && patientCode === "123" ? "true" : "false";
+        frontendSocket.emit("patient.login.response", message);
+    });
 });
 
 mockBackend.listen(8080);
