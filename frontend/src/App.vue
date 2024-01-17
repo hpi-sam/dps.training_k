@@ -3,7 +3,6 @@ import {computed, ref} from 'vue'
 import ModuleLogin from '@/components/ModuleLogin.vue'
 import ModuleTrainer from '@/components/ModuleTrainer.vue'
 import ModulePatient from '@/components/ModulePatient.vue'
-import ConnectionManager from "@/components/ConncectionManager.vue";
 import {state} from "@/socket.js";
 
 const modules = {
@@ -32,6 +31,5 @@ const connectionState = computed(() => state.connected)
       Patient
     </button>
   </div>
-  <connection-manager />
   <p>State: {{ connectionState }}</p>
 </template>

@@ -3,13 +3,9 @@ import {io} from "socket.io-client";
 
 export const state = reactive({
     connected: false,
-    fooEvents: [],
-    barEvents: []
 });
 
-export const socket = io("http://localhost:8080", {
-    autoConnect: false,
-});
+export const socket = io("http://localhost:8080");
 
 socket.on("connect", () => {
     state.connected = true;
