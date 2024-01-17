@@ -34,11 +34,10 @@ socket.on("patient.login.response", (arg) => {
 });
 
 /**
- * @param {String} username
- * @param {String} password
+ * @param {TrainerLogin} login
  */
-export function trainerLogin(username, password) {
-    socket.emit("trainer.login", JSON.stringify({username: username, password: password}));
+export function trainerLogin(login) {
+    socket.emit("trainer.login", JSON.stringify(login));
 }
 
 export function trainerCreateExercise() {
@@ -54,11 +53,10 @@ export function trainerExerciseStop() {
 }
 
 /**
- * @param {String} exerciseCode
- * @param {String} patientCode
+ * @param {PatientLogin} login
  */
-export function patientLogin(exerciseCode, patientCode) {
-    socket.emit("patient.login", JSON.stringify({exerciseCode: exerciseCode, patientCode: patientCode}));
+export function patientLogin(login) {
+    socket.emit("patient.login", JSON.stringify(login));
 }
 
 /**
