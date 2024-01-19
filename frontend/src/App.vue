@@ -11,7 +11,7 @@ const modules = {
   ModulePatient
 }
 
-const currentModule = ref('ModulePatient')
+const currentModule = ref('ModuleLogin')
 
 const connectionState = computed(() => state.connected ? "connected" : "disconnected")
 </script>
@@ -19,18 +19,16 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
 
 <template>
   <main>
-    <component :is="modules[currentModule]" />
+    <component :is="modules[currentModule]" @switch="(to) => currentModule = to" />
   </main>
 
   <div id="dev-bar">
     <button @click="currentModule='ModuleLogin'">
       Login
     </button>
-
     <button @click="currentModule='ModuleTrainer'">
       Trainer
     </button>
-
     <button @click="currentModule='ModulePatient'">
       Patient
     </button>
