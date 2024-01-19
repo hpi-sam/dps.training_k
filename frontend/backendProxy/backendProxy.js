@@ -3,13 +3,13 @@ import {Server} from "socket.io";
 import {backendSocket} from "./backendSocket.js";
 import {configureFrontendSocket} from "./frontendSocket.js";
 
-const mockBackend = new Server(createServer(), {
+const backendProxy = new Server(createServer(), {
     cors: {
         origin: "http://localhost:5173",
     }
 });
 
-mockBackend.on('connection', (frontendSocket) => {
+backendProxy.on('connection', (frontendSocket) => {
     console.log('Client connected');
     backendSocket.connect();
 
@@ -23,9 +23,9 @@ mockBackend.on('connection', (frontendSocket) => {
     passThrough(frontendSocket, backendSocket, "test.pass-through");
 });
 
-mockBackend.listen(8080);
+backendProxy.listen(8080);
 
-console.log('WebSocket mockBackend started on port 8080');
+console.log('WebSocket backendProxy started on port 8080');
 
 
 /**

@@ -40,12 +40,12 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
     </button>
 
     <!-- change the stringified event to test different server-side events -->
-    <button id="ws-test" @click="socket.emit('test.event', JSON.stringify(serverEvents.patientPhaseChange))">
+    <button id="ws-test" @click="socket.emit('test.event', JSON.stringify(serverEvents.patientLoadRunning))">
       send event test
     </button>
 
     <p id="ws-test">
-      Mock-Backend: {{ connectionState }}
+      Backend-Proxy: {{ connectionState }}
     </p>
   </div>
 </template>

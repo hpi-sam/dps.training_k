@@ -21,4 +21,4 @@ io.on('connection', (socket) => {
 
 io.listen(8081);
 
-console.log('WebSocket dummyBackend started on port 8081');
+console.log('WebSocket backendDummy started on port 8081');

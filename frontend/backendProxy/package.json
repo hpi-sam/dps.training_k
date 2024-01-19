@@ -2,9 +2,9 @@
   "name": "mock-server",
   "version": "1.0.0",
   "description": "",
-  "main": "",
+  "main": "backendProxy.js",
   "scripts": {
-    "start": "node dummyBackend.js",
+    "start": "node backendProxy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
