@@ -1,5 +1,5 @@
 """
-ASGI config for dps_traing_k project.
+ASGI config for dps_training_k project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dps_traing_k.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dps_training_k.settings")
 
 application = get_asgi_application()

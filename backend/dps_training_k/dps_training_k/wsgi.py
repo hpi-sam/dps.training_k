@@ -1,5 +1,5 @@
 """
-WSGI config for dps_traing_k project.
+WSGI config for dps_training_k project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dps_traing_k.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dps_training_k.settings")
 
 application = get_wsgi_application()
