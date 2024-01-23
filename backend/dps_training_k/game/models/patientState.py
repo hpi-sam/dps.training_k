@@ -11,4 +11,7 @@ class PatientState(models.Model):
     phase = models.IntegerField(help_text="current phase, e.g. 3")
 
     class Meta:
-        unique_together = ("stateID", "patientID",)
+        unique_together = (
+            "stateID",
+            "patientID",
+        )

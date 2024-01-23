@@ -13,5 +13,6 @@ class PatientInstance(models.Model):
     patientCode = models.IntegerField(
         help_text="patientCode used to log into patient - therefore part of authentication"
     )
+
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with code {self.patientCode}"
