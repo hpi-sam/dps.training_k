@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "frontend": "npm-run-all --parallel start-dummy start-proxy dev",
     "dev": "vite",
+    "start-dummy": "cd ./backendDummy && npm run start",
+    "start-proxy": "cd ./backendProxy && npm run start",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -16,6 +19,7 @@
     "@vitejs/plugin-vue": "^4.5.2",
     "eslint": "^8.56.0",
     "eslint-plugin-vue": "^9.20.0",
+    "npm-run-all": "^4.1.5",
     "vite": "^5.0.10"
   }
 }
