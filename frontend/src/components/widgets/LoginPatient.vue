@@ -1,44 +1,40 @@
 <script setup>
-  import { ref } from 'vue'
+  import {ref} from 'vue'
+  import {socket} from "@/socket.js";
 
-  const props = defineProps({
-    validUsername: {
-      type: String,
-      default: 'abc'
-    },
-    validPassword: {
-      type: String,
-      default: '123'
-    }
-  })
   const emit = defineEmits(['login'])
 
-  const username = ref('')
-  const password = ref('')
+  const exerciseCodeInput = ref("")
+  const patientCodeInput = ref("")
   const errorOccured = ref(false)
   const errorMassage = ref('')
   
 
   function submit(){
-    if (username.value == props.validUsername && password.value == props.validPassword){
+    socket.emit('patient.login', JSON.stringify({exerciseCode: exerciseCodeInput.value, patientCode: patientCodeInput.value}))
+  }
+
+  socket.on("patient.login.response", (arg) => {
+    /** @type {boolean} */
+    const bool = JSON.parse(arg);
+    if(bool){
+
       emit('login')
       errorOccured.value = false
-    } else if(username.value == props.validUsername) {
-      errorOccured.value = true
-      errorMassage.value = "Fehler: falsches Passwort"
     } else {
       errorOccured.value = true
-      errorMassage.value = "Fehler: dieser Nutzername existiert nicht"
+      errorMassage.value = "Fehler: Übung oder Patient existiert nicht"
     }
-  }
+  });
+
 </script>
 
 <template>
   <div id="main">
     <div id="form">
-      <h1>Trainer-Login</h1>
-      <input v-model="username" type="text" placeholder="Nutzername">
-      <input v-model="password" type="password" placeholder="Passwort">
+      <h1>Patient-Login</h1>
+      <input v-model="exerciseCodeInput" placeholder="Übungscode">
+      <input v-model="patientCodeInput" placeholder="Patientencode">
       <input type="submit" value="Login" @click="submit()">
       <p v-if="errorOccured" id="errorMassage">
         {{ errorMassage }}

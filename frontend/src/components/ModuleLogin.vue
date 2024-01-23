@@ -7,10 +7,10 @@
 
 <template>
   <div id="leftSide">
-    <ScreenTrainer @login="emit('switch', 'ModuleTrainer')" />
+    <ScreenTrainer @login-trainer="emit('switch', 'ModuleTrainer')" />
   </div>
   <div id="rightSide">
-    <ScreenPatient />
+    <ScreenPatient @login-patient="emit('switch', 'ModulePatient')" />
   </div>
 </template>
 
@@ -19,8 +19,5 @@
     float: left;
     width: 50%;
     height: 100%;
-  }
-  #rightSide{
-    background-color: red;
   }
 </style>
