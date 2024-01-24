@@ -1,5 +1,6 @@
 import {createServer} from "http";
 import {Server} from "socket.io";
+import {EventError} from "../src/model/Error.js";
 
 /** @type {string} */
 const logTag = "backendDummy:";
@@ -17,8 +18,14 @@ io.on('connection', (socket) => {
         console.log(logTag, 'Client disconnected');
     });
 
-    socket.on("test-passthrough", () => {
-        socket.emit("test-passthrough", JSON.stringify("received test event"));
+    socket.onAny((event, args) => {
+        switch (event) {
+            case "test-passthrough":
+                socket.emit("test-passthrough", JSON.stringify("received test event"));
+                break;
+            default:
+                socket.emit("error", JSON.stringify(new EventError(event, args)));
+        }
     });
 });
 

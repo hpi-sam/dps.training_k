@@ -26,6 +26,18 @@ socket.on("test-passthrough", (arg) => {
     console.log(logTag, "test-passthrough", s);
 });
 
+socket.on("mock", (arg) => {
+    /** @type {String} */
+    const event = JSON.parse(arg);
+    console.log(logTag, "mocked event:", event);
+});
+
+socket.on("error", (arg) => {
+    /** @type {EventError} */
+    const error = JSON.parse(arg);
+    console.log(logTag, "error event:", error);
+});
+
 socket.on("trainer-login", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
