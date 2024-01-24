@@ -17,8 +17,8 @@ io.on('connection', (socket) => {
         console.log(logTag, 'Client disconnected');
     });
 
-    socket.on("test.pass-through", () => {
-        socket.emit("test.pass-through", JSON.stringify("received test event"));
+    socket.on("test-passthrough", () => {
+        socket.emit("test-passthrough", JSON.stringify("received test event"));
     });
 });
 

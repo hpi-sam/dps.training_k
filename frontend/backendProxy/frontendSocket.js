@@ -6,17 +6,17 @@ import {Personnel} from "../src/model/Personnel.js";
 
 /**
  * All frontend listeners for responses or server-side mock events.
- * For server-side mock events, add a case in the switch statement in the listener for the "test.event" event.
+ * For server-side mock events, add a case in the switch statement in the listener for the "test-event" event.
  * These events can be triggered from frontend with send event test button.
  * @param {Socket} frontendSocket
  */
 export function configureFrontendSocket(frontendSocket) {
-    frontendSocket.on("test.event", (args) => {
+    frontendSocket.on("test-event", (args) => {
         /** @type {String} */
         const event = JSON.parse(args);
 
         switch (event) {
-            case "trainer.exercise.create":
+            case "trainer-exercise-create":
                 args = JSON.stringify(new Exercise(
                     "123",
                     [
@@ -43,13 +43,13 @@ export function configureFrontendSocket(frontendSocket) {
                     ]
                 ));
                 break;
-            case "patient.load.notRunning":
+            case "patient-load-stopped":
                 args = JSON.stringify(new PatientLoadNotRunning(
                     "123",
                     "Area 1",
                 ));
                 break;
-            case "patient.load.running":
+            case "patient-load-running":
                 args = JSON.stringify(new PatientLoadRunning(
                     "123",
                     "Area 1",
@@ -64,7 +64,7 @@ export function configureFrontendSocket(frontendSocket) {
                     ),
                 ));
                 break;
-            case "patient.phaseChange":
+            case "patient-phase":
                 args = JSON.stringify(new PatientPhaseChange(
                     "1",
                     new PatientState(
@@ -86,15 +86,15 @@ export function configureFrontendSocket(frontendSocket) {
         frontendSocket.emit(event, args);
     });
 
-    frontendSocket.on("trainer.login", (args) => {
+    frontendSocket.on("trainer-login", (args) => {
         const {username, password} = JSON.parse(args);
         const message = username === "test" && password === "test" ? "true" : "false";
-        frontendSocket.emit("trainer.login.response", message);
+        frontendSocket.emit("trainer-login", message);
     });
 
-    frontendSocket.on("patient.login", (args) => {
+    frontendSocket.on("patient-login", (args) => {
         const {exerciseCode, patientCode} = JSON.parse(args);
         const message = exerciseCode === "123" && patientCode === "123" ? "true" : "false";
-        frontendSocket.emit("patient.login.response", message);
+        frontendSocket.emit("patient-login", message);
     });
 }

@@ -33,12 +33,12 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
       Patient
     </button>
 
-    <button id="ws-test" @click="socket.emit('test.pass-through')">
+    <button id="ws-test" @click="socket.emit('test-passthrough')">
       send pass-through test
     </button>
 
     <!-- change the stringified event to test different server-side events -->
-    <button id="ws-test" @click="socket.emit('test.event', JSON.stringify(serverEvents.patientLoadRunning))">
+    <button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.patientLoadRunning))">
       send event test
     </button>
 

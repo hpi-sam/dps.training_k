@@ -23,7 +23,7 @@ backendProxy.on('connection', (frontendSocket) => {
 
     configureFrontendSocket(frontendSocket);
 
-    passThrough(frontendSocket, backendSocket, "test.pass-through");
+    passThrough(frontendSocket, backendSocket, "test-passthrough");
 });
 
 backendProxy.listen(8080);

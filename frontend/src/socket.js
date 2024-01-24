@@ -20,94 +20,94 @@ socket.on("disconnect", () => {
     console.log(logTag, "Server disconnected");
 });
 
-socket.on("test.pass-through", (arg) => {
+socket.on("test-passthrough", (arg) => {
     /** @type {String} */
     const s = JSON.parse(arg);
-    console.log(logTag, "test.pass-through", s);
+    console.log(logTag, "test-passthrough", s);
 });
 
-socket.on("trainer.login.response", (arg) => {
+socket.on("trainer-login", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
-    console.log(logTag, "trainer.login.response", bool);
+    console.log(logTag, "trainer-login", bool);
 });
 
-socket.on("patient.login.response", (arg) => {
+socket.on("patient-login", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
-    console.log(logTag, "patient.login.response", bool);
+    console.log(logTag, "patient-login", bool);
 });
 
-socket.on("trainer.exercise.create", (arg) => {
+socket.on("trainer-exercise-create", (arg) => {
     /** @type {Exercise} */
     const exercise = JSON.parse(arg);
-    console.log(logTag, "trainer.exercise.create", exercise);
+    console.log(logTag, "trainer-exercise-create", exercise);
 });
 
-socket.on("trainer.exercise.start", () => {
-    console.log(logTag, "trainer.exercise.start");
+socket.on("trainer-exercise-start", () => {
+    console.log(logTag, "trainer-exercise-start");
 });
 
-socket.on("trainer.exercise.stop", () => {
-    console.log(logTag, "trainer.exercise.stop");
+socket.on("trainer-exercise-stop", () => {
+    console.log(logTag, "trainer-exercise-stop");
 });
 
-socket.on("patient.load.notRunning", (arg) => {
+socket.on("patient-load-stopped", (arg) => {
     /** @type {PatientLoadNotRunning} */
     const patientLoad = JSON.parse(arg);
-    console.log(logTag, "patient.load.notRunning", patientLoad);
+    console.log(logTag, "patient-load-stopped", patientLoad);
 });
 
-socket.on("patient.load.running", (arg) => {
+socket.on("patient-load-running", (arg) => {
     /** @type {PatientLoadRunning} */
     const patientLoad = JSON.parse(arg);
-    console.log(logTag, "patient.load.running", patientLoad);
+    console.log(logTag, "patient-load-running", patientLoad);
 });
 
-socket.on("patient.phaseChange", (arg) => {
+socket.on("patient-phase", (arg) => {
     /** @type {PatientPhaseChange} */
     const patientUpdate = JSON.parse(arg);
-    console.log(logTag, "patient.phaseChange", patientUpdate);
+    console.log(logTag, "patient-phase", patientUpdate);
 });
 
 /**
  * @param {TrainerLogin} login
  */
 export function trainerLogin(login) {
-    socket.emit("trainer.login", JSON.stringify(login));
+    socket.emit("trainer-login", JSON.stringify(login));
 }
 
 export function trainerCreateExercise() {
-    socket.emit("trainer.exercise.create");
+    socket.emit("trainer-exercise-create");
 }
 
 export function trainerStartExercise() {
-    socket.emit("trainer.exercise.start");
+    socket.emit("trainer-exercise-start");
 }
 
 export function trainerExerciseStop() {
-    socket.emit("trainer.exercise.stop");
+    socket.emit("trainer-exercise-stop");
 }
 
 /**
  * @param {PatientLogin} login
  */
 export function patientLogin(login) {
-    socket.emit("patient.login", JSON.stringify(login));
+    socket.emit("patient-login", JSON.stringify(login));
 }
 
 /**
  * @param {String} name
  */
 export function addAction(name) {
-    socket.emit("patient.action.add", JSON.stringify({exerciseCode: name}));
+    socket.emit("patient-action-add", JSON.stringify({exerciseCode: name}));
 }
 
 export const serverEvents = {
-    trainerExerciseCreate: "trainer.exercise.create",
-    trainerExerciseStart: "trainer.exercise.start",
-    trainerExerciseStop: "trainer.exercise.stop",
-    patientLoadNotRunning: "patient.load.notRunning",
-    patientLoadRunning: "patient.load.running",
-    patientPhaseChange: "patient.phaseChange",
+    trainerExerciseCreate: "trainer-exercise-create",
+    trainerExerciseStart: "trainer-exercise-start",
+    trainerExerciseStop: "trainer-exercise-stop",
+    patientLoadNotRunning: "patient-load-stopped",
+    patientLoadRunning: "patient-load-running",
+    patientPhaseChange: "patient-phase",
 }
