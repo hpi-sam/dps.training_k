@@ -1,6 +1,9 @@
 import {createServer} from "http";
 import {Server} from "socket.io";
 
+/** @type {string} */
+const logTag = "backendDummy:";
+
 const io = new Server(createServer(), {
     cors: {
         origin: "http://localhost:8080",
@@ -8,10 +11,10 @@ const io = new Server(createServer(), {
 });
 
 io.on('connection', (socket) => {
-    console.log('Client connected');
+    console.log(logTag, 'Client connected');
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log(logTag, 'Client disconnected');
     });
 
     socket.on("test.pass-through", () => {
@@ -21,4 +24,4 @@ io.on('connection', (socket) => {
 
 io.listen(8081);
 
-console.log('WebSocket backendDummy started on port 8081');
+console.log(logTag, 'WebSocket started on port 8081');

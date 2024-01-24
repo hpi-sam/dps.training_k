@@ -1,6 +1,9 @@
 import {reactive} from "vue";
 import {io} from "socket.io-client";
 
+/** @type {String} */
+const logTag = "frontendSocket:";
+
 export const state = reactive({
     connected: false,
 });
@@ -9,62 +12,62 @@ export const socket = io("http://localhost:8080");
 
 socket.on("connect", () => {
     state.connected = true;
-    console.log("Server connected");
+    console.log(logTag, "Server connected");
 });
 
 socket.on("disconnect", () => {
     state.connected = false;
-    console.log("Server disconnected");
+    console.log(logTag, "Server disconnected");
 });
 
 socket.on("test.pass-through", (arg) => {
     /** @type {String} */
     const s = JSON.parse(arg);
-    console.log("test.pass-through", s);
+    console.log(logTag, "test.pass-through", s);
 });
 
 socket.on("trainer.login.response", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
-    console.log("trainer.login.response", bool);
+    console.log(logTag, "trainer.login.response", bool);
 });
 
 socket.on("patient.login.response", (arg) => {
     /** @type {boolean} */
     const bool = JSON.parse(arg);
-    console.log("patient.login.response", bool);
+    console.log(logTag, "patient.login.response", bool);
 });
 
 socket.on("trainer.exercise.create", (arg) => {
     /** @type {Exercise} */
     const exercise = JSON.parse(arg);
-    console.log("trainer.exercise.create", exercise);
+    console.log(logTag, "trainer.exercise.create", exercise);
 });
 
 socket.on("trainer.exercise.start", () => {
-    console.log("trainer.exercise.start");
+    console.log(logTag, "trainer.exercise.start");
 });
 
 socket.on("trainer.exercise.stop", () => {
-    console.log("trainer.exercise.stop");
+    console.log(logTag, "trainer.exercise.stop");
 });
 
 socket.on("patient.load.notRunning", (arg) => {
     /** @type {PatientLoadNotRunning} */
     const patientLoad = JSON.parse(arg);
-    console.log("patient.load.notRunning", patientLoad);
+    console.log(logTag, "patient.load.notRunning", patientLoad);
 });
 
 socket.on("patient.load.running", (arg) => {
     /** @type {PatientLoadRunning} */
     const patientLoad = JSON.parse(arg);
-    console.log("patient.load.running", patientLoad);
+    console.log(logTag, "patient.load.running", patientLoad);
 });
 
 socket.on("patient.phaseChange", (arg) => {
     /** @type {PatientPhaseChange} */
     const patientUpdate = JSON.parse(arg);
-    console.log("patient.phaseChange", patientUpdate);
+    console.log(logTag, "patient.phaseChange", patientUpdate);
 });
 
 /**

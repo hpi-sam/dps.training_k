@@ -3,6 +3,9 @@ import {Server} from "socket.io";
 import {backendSocket} from "./backendSocket.js";
 import {configureFrontendSocket} from "./frontendSocket.js";
 
+/** @type {string} */
+export const logTag = "backendProxy:";
+
 const backendProxy = new Server(createServer(), {
     cors: {
         origin: "http://localhost:5173",
@@ -10,11 +13,11 @@ const backendProxy = new Server(createServer(), {
 });
 
 backendProxy.on('connection', (frontendSocket) => {
-    console.log('Client connected');
+    console.log(logTag, 'Client connected');
     backendSocket.connect();
 
     frontendSocket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log(logTag, 'Client disconnected');
         backendSocket.disconnect();
     });
 
@@ -25,7 +28,7 @@ backendProxy.on('connection', (frontendSocket) => {
 
 backendProxy.listen(8080);
 
-console.log('WebSocket backendProxy started on port 8080');
+console.log(logTag, 'WebSockets started on port 8080');
 
 
 /**
