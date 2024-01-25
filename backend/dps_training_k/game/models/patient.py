@@ -1,10 +1,10 @@
 from django.db import models
 
 
-class PatientInstance(models.Model):
+class Patient(models.Model):
     name = models.CharField(
         max_length=100
-    )  # technically default patient but kept here for simplicity for now
+    )  # technically patientData but kept here for simplicity for now
     # patientID = models.ForeignKey()  # currently called "SensenID"
     # exerciseID = models.ForeignKey()
     # stateID = models.ForeignKey()

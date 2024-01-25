@@ -1,2 +1,2 @@
-from .patientInstance import PatientInstance
-from .patientState import PatientState
+from .patient import Patient
+from .patient_state import PatientState
