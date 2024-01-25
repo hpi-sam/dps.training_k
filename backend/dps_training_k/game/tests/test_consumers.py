@@ -15,7 +15,7 @@ class TrainerConsumerTestCase(TestCase):
 
         # Receive and test the response from the server
         response = await communicator.receive_json_from()
-        self.assertEqual(response, {"type": "response", "content": "Example processed"})
+        self.assertEqual(response, {"type": "response", "content": "exercise_code 123"})
 
         # Close the connection
         await communicator.disconnect()
