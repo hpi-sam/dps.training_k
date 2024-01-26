@@ -1,6 +1,16 @@
 # dps.training_k
+The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personal on how to act during medical surges / during mass casualty incidents.
+The Frontend website and backend server are two different projects. For setup instructions see the Readmes in the respective folders.
 
-## Non-functional Requirements 
+For a common understanding we use this [Code Glossary Notion page](https://k-dps.notion.site/9e82c16b6d9248679b87e0403bbf81a9?v=06e889f90e834b7baf2f879f9ad9551b&pvs=4) (note that this is an internal document and therefore neither formulated for others to understand nor written in English)
+
+
+## MoSCoW and future plans
+We follow this [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4) (note that this is an internal document and therefore neither formulated for others to understand nor written in English)
+
+In addition to that we aim to always incorporate following non-functional requirements into our development:
+
+### Non-functional Requirements 
 - A00: Customizability
   - Our software allows for high customizability before and during the exercise. This recognizes the educational key role of exercise instructors.
 - A01: Intuitive Interface
@@ -17,3 +27,6 @@
   - The web app should work on the latest versions of Chrome, Firefox, and Safari.
 - A07: Backend Performance
   - A backend should be able to handle a single exercise with 30 clients.
+ 
+## Interface Definition
+The communication between the frontend and backend uses an Interface as defined in our [interface definition Notion page](https://k-dps.notion.site/Interface-Definition-6852697ae02f41b29544550f84e1049a) (note that this is an internal document and therefore not necessarily formulated for others to understand)

@@ -2,6 +2,7 @@
 
 import django.db.models.deletion
 import helpers.invitation_logic
+
 from django.db import migrations, models
 
 
@@ -12,6 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+          16-m00-create-excercise-table
             name="SavedExercise",
             fields=[
                 (
