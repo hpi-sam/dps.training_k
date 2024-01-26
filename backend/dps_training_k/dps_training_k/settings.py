@@ -10,10 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os, sys
 from pathlib import Path
+from .config import *
+from environ import Env
+from helpers import DateTimeNameGenerator
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# import env file
+env = Env()
+Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-i#@t22r$*j@7-t=00kfye@mnd+!zzd-%*2rt4s^k5e8o%v3-+n"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "game.apps.GameConfig",
 ]
 
 MIDDLEWARE = [
@@ -72,7 +81,7 @@ WSGI_APPLICATION = "dps_training_k.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+# ToDo: replace with env.db() : https://django-environ.readthedocs.io/en/latest/api.html
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -125,3 +134,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
