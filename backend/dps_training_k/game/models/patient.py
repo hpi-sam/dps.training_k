@@ -9,7 +9,6 @@ class Patient(models.Model):
     # exerciseID = models.ForeignKey()
     # stateID = models.ForeignKey()
     # measureID = models.ManyToManyField()
-    isLoggedIn = models.BooleanField()
     patientCode = models.IntegerField(
         help_text="patientCode used to log into patient - therefore part of authentication"
     )
