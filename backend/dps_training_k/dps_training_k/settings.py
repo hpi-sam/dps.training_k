@@ -135,4 +135,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # should be replaced by redis for production
+    },
+}
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()

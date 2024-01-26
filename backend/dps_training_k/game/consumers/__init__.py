@@ -1,0 +1,2 @@
+from .patient_consumer import PatientConsumer
+from .trainer_consumer import TrainerConsumer
