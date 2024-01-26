@@ -36,9 +36,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def connect(self):
         pass
 
-    def disconnect(self, close_code):
-        pass  # Add any cleanup here
-
     def send_event(self, event_type, content=None, **kwargs):
         """
         Wrapper to send_json() in order to have always the same structure: at least a type and often a content.
