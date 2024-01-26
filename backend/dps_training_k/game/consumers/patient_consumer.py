@@ -12,15 +12,19 @@ class PatientConsumer(AbstractConsumer):
         super().__init__(*args, **kwargs)
         self.patient_code = ""
         self.REQUESTS_MAP = {
-            self.PatientIncomingMessageTypes.EXAMPLE: (self.handle_example,)
+            self.PatientIncomingMessageTypes.EXAMPLE: (
+                self.handle_example,
+                "exercise_code",
+                "patient_code",
+            )
         }
 
     def connect(self):
-        self.exercise_code = self.scope["url_route"]["kwargs"]["exercise_code"]
-        self.patient_code = self.scope["url_route"]["kwargs"]["patient_code"]
         self.accept()
 
-    def handle_example(self):
+    def handle_example(self, exercise_code, patient_code):
+        self.exercise_code = exercise_code
+        self.patient_code = patient_code
         self.send_event(
             self.PatientOutgoingMessageTypes.RESPONSE,
             f"exercise_code {self.exercise_code} & patient_code {self.patient_code}",

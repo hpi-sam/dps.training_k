@@ -3,8 +3,8 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from game.consumers import TrainerConsumer, PatientConsumer
 
 websocket_urlpatterns = [
-    path("rooms/<str:exercise_code>/trainer/", TrainerConsumer.as_asgi()),
-    path("rooms/<str:exercise_code>/patient/<str:patient_code>", PatientConsumer.as_asgi()),
+    path("ws/trainer/", TrainerConsumer.as_asgi()),
+    path("ws/patient/", PatientConsumer.as_asgi()),
 ]
 
 application = ProtocolTypeRouter(
