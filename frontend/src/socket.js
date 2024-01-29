@@ -1,5 +1,6 @@
 import {reactive} from "vue";
 import {io} from "socket.io-client";
+import {showErrorToast, showWarningToast} from "@/App.vue";
 
 /** @type {String} */
 const logTag = "frontendSocket:";
@@ -29,13 +30,13 @@ socket.on("test-passthrough", (arg) => {
 socket.on("mock", (arg) => {
     /** @type {String} */
     const event = JSON.parse(arg);
-    console.log(logTag, "mocked event:", event);
+    showWarningToast("Mocked event: " + event);
 });
 
 socket.on("error", (arg) => {
     /** @type {EventError} */
     const error = JSON.parse(arg);
-    console.log(logTag, "error event:", error);
+    showErrorToast("Error on event: " + error.event);
 });
 
 socket.on("trainer-login", (arg) => {
