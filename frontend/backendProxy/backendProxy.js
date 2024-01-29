@@ -25,7 +25,9 @@ backendProxy.on('connection', (frontendSocket) => {
 
     frontendSocket.onAny((event, args) => {
         if (event === "test-event") return; // ignore requested test events
-        backendSocket.emit(event, args);
+
+        if (backendSocket.connected) backendSocket.emit(event, args);
+        else mockResponse(frontendSocket, event, args);
     });
     backendSocket.onAny((event, args) => {
         if (event === "error") {
