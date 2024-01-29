@@ -27,5 +27,5 @@ class PatientConsumer(AbstractConsumer):
         self.patient_code = patient_code
         self.send_event(
             self.PatientOutgoingMessageTypes.RESPONSE,
-            f"exercise_code {self.exercise_code} & patient_code {self.patient_code}",
+            content=f"exercise_code {self.exercise_code} & patient_code {self.patient_code}",
         )
