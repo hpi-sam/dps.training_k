@@ -14,6 +14,7 @@ const modules = {
 const currentModule = ref('ModuleLogin')
 
 const connectionState = computed(() => state.connected ? "connected" : "disconnected")
+
 </script>
 
 
