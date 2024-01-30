@@ -1,7 +1,10 @@
 import {createServer} from "http";
 import {Server} from "socket.io";
 import {backendSocket} from "./backendSocket.js";
-import {configureFrontendSocket} from "./frontendSocket.js";
+import {configureTestEventListener, mockResponse} from "./frontendSocket.js";
+
+/** @type {string} */
+export const logTag = "backendProxy:";
 
 const backendProxy = new Server(createServer(), {
     cors: {
@@ -10,36 +13,34 @@ const backendProxy = new Server(createServer(), {
 });
 
 backendProxy.on('connection', (frontendSocket) => {
-    console.log('Client connected');
+    console.log(logTag, 'Client connected');
     backendSocket.connect();
 
     frontendSocket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log(logTag, 'Client disconnected');
         backendSocket.disconnect();
     });
 
-    configureFrontendSocket(frontendSocket);
+    configureTestEventListener(frontendSocket);
 
-    passThrough(frontendSocket, backendSocket, "test.pass-through");
+    frontendSocket.onAny((event, args) => {
+        if (event === "test-event") return; // ignore requested test events
+
+        if (backendSocket.connected) backendSocket.emit(event, args);
+        else mockResponse(frontendSocket, event, args);
+    });
+    backendSocket.onAny((event, args) => {
+        if (event === "error") {
+            /** @type {EventError} */
+            const error = JSON.parse(args);
+            mockResponse(frontendSocket, error.event, error.args);
+        } else {
+            frontendSocket.emit(event, args);
+        }
+    });
+
 });
 
 backendProxy.listen(8080);
 
-console.log('WebSocket backendProxy started on port 8080');
-
-
-/**
- * Pass through events from frontend to backend and vice versa.
- * Should be used for every event that is already implemented in backend.
- * @param {Socket} frontendSocket
- * @param {Socket} backendSocket
- * @param {string} event
- */
-function passThrough(frontendSocket, backendSocket, event) {
-    frontendSocket.on(event, (args) => {
-        backendSocket.emit(event, args);
-    });
-    backendSocket.on(event, (args) => {
-        frontendSocket.emit(event, args);
-    });
-}
+console.log(logTag, 'WebSockets started on port 8080');

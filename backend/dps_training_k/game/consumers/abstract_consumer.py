@@ -36,14 +36,12 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def connect(self):
         pass
 
-    def send_event(self, event_type, content=None, **kwargs):
+    def send_event(self, event_type, **kwargs):
         """
         Wrapper to send_json() in order to have always the same structure: at least a type and often a content.
         Allows some other high level information in the kwargs.
         """
         d = {"type": event_type}
-        if content:
-            d["content"] = content
         for key, value in kwargs.items():
             d[key] = value
         self.send_json(d)
