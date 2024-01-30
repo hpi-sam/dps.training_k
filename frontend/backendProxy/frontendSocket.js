@@ -3,20 +3,19 @@ import {Area} from "../src/model/Area.js";
 import {Device} from "../src/model/Device.js";
 import {Patient, PatientLoadNotRunning, PatientLoadRunning, PatientPhaseChange, PatientState} from "../src/model/Patient.js";
 import {Personnel} from "../src/model/Personnel.js";
+import {EventError} from "../src/model/Error.js";
 
 /**
- * All frontend listeners for responses or server-side mock events.
- * For server-side mock events, add a case in the switch statement in the listener for the "test.event" event.
- * These events can be triggered from frontend with send event test button.
+ * Listener to respond to server-side mock events requested by frontend.
  * @param {Socket} frontendSocket
  */
-export function configureFrontendSocket(frontendSocket) {
-    frontendSocket.on("test.event", (args) => {
+export function configureTestEventListener(frontendSocket) {
+    frontendSocket.on("test-event", (args) => {
         /** @type {String} */
         const event = JSON.parse(args);
 
         switch (event) {
-            case "trainer.exercise.create":
+            case "trainer-exercise-create":
                 args = JSON.stringify(new Exercise(
                     "123",
                     [
@@ -43,13 +42,13 @@ export function configureFrontendSocket(frontendSocket) {
                     ]
                 ));
                 break;
-            case "patient.load.notRunning":
+            case "patient-load-stopped":
                 args = JSON.stringify(new PatientLoadNotRunning(
                     "123",
                     "Area 1",
                 ));
                 break;
-            case "patient.load.running":
+            case "patient-load-running":
                 args = JSON.stringify(new PatientLoadRunning(
                     "123",
                     "Area 1",
@@ -64,7 +63,7 @@ export function configureFrontendSocket(frontendSocket) {
                     ),
                 ));
                 break;
-            case "patient.phaseChange":
+            case "patient-phase":
                 args = JSON.stringify(new PatientPhaseChange(
                     "1",
                     new PatientState(
@@ -84,19 +83,36 @@ export function configureFrontendSocket(frontendSocket) {
         }
 
         frontendSocket.emit(event, args);
+        frontendSocket.emit("mock", JSON.stringify(event));
     });
+}
 
-    frontendSocket.on("trainer.login", (args) => {
-        console.log(args);
-        const {username, password} = JSON.parse(args);
-        const message = username === "test" && password === "test" ? "true" : "false";
-        frontendSocket.emit("trainer.login.response", message);
-    });
+/**
+ * Mocks the backend answer if the backend does not implement the emitted event.
+ * If it can successfully mock the event, it will emit a "mock" event afterward to inform the frontend that the answer was just mocked.
+ * If it cannot mock the event, it will emit an "error" event to the frontend with the error message.
+ * @param {Socket} frontendSocket
+ * @param {String} event
+ * @param {any} args
+ */
+export function mockResponse(frontendSocket, event, args) {
+    switch (event) {
+        case "trainer-login": {
+            const {username, password} = JSON.parse(args);
+            const message = username === "test" && password === "test" ? "true" : "false";
+            frontendSocket.emit("trainer-login", message);
+            break;
+        }
+        case "patient-login": {
+            const {exerciseCode, patientCode} = JSON.parse(args);
+            const message = exerciseCode === "123" && patientCode === "123" ? "true" : "false";
+            frontendSocket.emit("patient-login", message);
+            break;
+        }
+        default:
+            frontendSocket.emit("error", JSON.stringify(new EventError(event, args)));
+            return; // to not emit mock event
+    }
 
-    frontendSocket.on("patient.login", (args) => {
-        console.log(args);
-        const {exerciseCode, patientCode} = JSON.parse(args);
-        const message = exerciseCode === "123" && patientCode === "123" ? "true" : "false";
-        frontendSocket.emit("patient.login.response", message);
-    });
+    frontendSocket.emit("mock", JSON.stringify(event));
 }

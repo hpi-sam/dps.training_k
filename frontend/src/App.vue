@@ -10,10 +10,47 @@ const modules = {
   ModuleTrainer,
   ModulePatient
 }
-
 const currentModule = ref('ModuleLogin')
 
 const connectionState = computed(() => state.connected ? "connected" : "disconnected")
+</script>
+
+<script>
+import {useToast} from "vue-toastification";
+
+/**
+ * @param {string} message
+ */
+export function showErrorToast(message) {
+  useToast().error(message, getToastOptions());
+}
+
+/**
+ * @param {string} message
+ */
+export function showWarningToast(message) {
+  useToast().warning(message, getToastOptions());
+}
+
+/**
+ * @return {ToastOptions}
+ */
+function getToastOptions() {
+  return {
+    position: "top-right",
+    timeout: 5000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: false,
+    hideProgressBar: true,
+    closeButton: "button",
+    icon: true,
+    rtl: false
+  }
+}
 </script>
 
 
@@ -33,12 +70,12 @@ const connectionState = computed(() => state.connected ? "connected" : "disconne
       Patient
     </button>
 
-    <button id="ws-test" @click="socket.emit('test.pass-through')">
+    <button id="ws-test" @click="socket.emit('test-passthrough')">
       send pass-through test
     </button>
 
     <!-- change the stringified event to test different server-side events -->
-    <button id="ws-test" @click="socket.emit('test.event', JSON.stringify(serverEvents.patientLoadRunning))">
+    <button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.patientLoadRunning))">
       send event test
     </button>
 
