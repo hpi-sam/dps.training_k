@@ -1,5 +1,6 @@
 import {reactive} from "vue";
 import {io} from "socket.io-client";
+import { useExerciseStore } from "./stores/Exercise.js";
 
 export const state = reactive({
     connected: false,
@@ -17,55 +18,59 @@ socket.on("disconnect", () => {
     console.log("Server disconnected");
 });
 
-socket.on("test.pass-through", (arg) => {
-    /** @type {String} */
-    const s = JSON.parse(arg);
-    console.log("test.pass-through", s);
-});
+export function configureSocket() {
 
-socket.on("trainer.login.response", (arg) => {
-    /** @type {boolean} */
-    const bool = JSON.parse(arg);
-    console.log("trainer.login.response", bool);
-});
-
-socket.on("patient.login.response", (arg) => {
-    /** @type {boolean} */
-    const bool = JSON.parse(arg);
-    console.log("patient.login.response", bool);
-});
-
-socket.on("trainer.exercise.create", (arg) => {
-    /** @type {Exercise} */
-    const exercise = JSON.parse(arg);
-    console.log("trainer.exercise.create", exercise);
-});
-
-socket.on("trainer.exercise.start", () => {
-    console.log("trainer.exercise.start");
-});
-
-socket.on("trainer.exercise.stop", () => {
-    console.log("trainer.exercise.stop");
-});
-
-socket.on("patient.load.notRunning", (arg) => {
-    /** @type {PatientLoadNotRunning} */
-    const patientLoad = JSON.parse(arg);
-    console.log("patient.load.notRunning", patientLoad);
-});
-
-socket.on("patient.load.running", (arg) => {
-    /** @type {PatientLoadRunning} */
-    const patientLoad = JSON.parse(arg);
-    console.log("patient.load.running", patientLoad);
-});
-
-socket.on("patient.phaseChange", (arg) => {
-    /** @type {PatientPhaseChange} */
-    const patientUpdate = JSON.parse(arg);
-    console.log("patient.phaseChange", patientUpdate);
-});
+    const exerciseStore = useExerciseStore()
+    
+    socket.on("test.pass-through", (arg) => {
+        /** @type {String} */
+        const s = JSON.parse(arg);
+        console.log("test.pass-through", s);
+    });
+    
+    socket.on("trainer.login.response", (arg) => {
+        /** @type {boolean} */
+        const bool = JSON.parse(arg);
+        console.log("trainer.login.response", bool);
+    });
+    
+    socket.on("patient.login.response", (arg) => {
+        /** @type {boolean} */
+        const bool = JSON.parse(arg);
+        console.log("patient.login.response", bool);
+    });
+    
+    socket.on("trainer.exercise.create", (arg) => {
+        const json = JSON.parse(arg)
+        exerciseStore.createFromJSON(json)
+    });
+    
+    socket.on("trainer.exercise.start", () => {
+        console.log("trainer.exercise.start");
+    });
+    
+    socket.on("trainer.exercise.stop", () => {
+        console.log("trainer.exercise.stop");
+    });
+    
+    socket.on("patient.load.notRunning", (arg) => {
+        /** @type {PatientLoadNotRunning} */
+        const patientLoad = JSON.parse(arg);
+        console.log("patient.load.notRunning", patientLoad);
+    });
+    
+    socket.on("patient.load.running", (arg) => {
+        /** @type {PatientLoadRunning} */
+        const patientLoad = JSON.parse(arg);
+        console.log("patient.load.running", patientLoad);
+    });
+    
+    socket.on("patient.phaseChange", (arg) => {
+        /** @type {PatientPhaseChange} */
+        const patientUpdate = JSON.parse(arg);
+        console.log("patient.phaseChange", patientUpdate);
+    });
+}
 
 /**
  * @param {TrainerLogin} login

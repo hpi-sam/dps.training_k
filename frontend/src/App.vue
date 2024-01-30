@@ -3,7 +3,9 @@ import {computed, ref} from 'vue'
 import ModuleLogin from '@/components/ModuleLogin.vue'
 import ModuleTrainer from '@/components/ModuleTrainer.vue'
 import ModulePatient from '@/components/ModulePatient.vue'
-import {serverEvents, socket, state} from "@/socket.js";
+import {serverEvents, configureSocket, socket, state} from '@/socket'
+
+configureSocket()
 
 const modules = {
   ModuleLogin,
@@ -14,7 +16,6 @@ const modules = {
 const currentModule = ref('ModuleLogin')
 
 const connectionState = computed(() => state.connected ? "connected" : "disconnected")
-
 </script>
 
 
