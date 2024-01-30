@@ -1,9 +1,9 @@
 from channels.testing import WebsocketCommunicator
-from django.test import TestCase
+from django.test import TransactionTestCase
 from dps_training_k.asgi import application
 
 
-class TrainerConsumerTestCase(TestCase):
+class TrainerConsumerTestCase(TransactionTestCase):
     maxDiff = None
     async def test_trainer_consumer_example_request(self):
         path = "/ws/trainer/"
@@ -33,7 +33,7 @@ class TrainerConsumerTestCase(TestCase):
         # Receive and test the response from the server
         response = await communicator.receive_json_from()
         content = {
-            "exerciseCode": 123456,
+            "exerciseCode": "123456",
             "areas": [
                 {
                     "name": "ZNA",
@@ -62,7 +62,7 @@ class TrainerConsumerTestCase(TestCase):
         await communicator.disconnect()
 
 
-class PatientConsumerTestCase(TestCase):
+class PatientConsumerTestCase(TransactionTestCase):
     async def test_trainer_consumer_example_request(self):
         path = "/ws/patient/"
         communicator = WebsocketCommunicator(application, path)
