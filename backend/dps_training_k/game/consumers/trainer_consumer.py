@@ -6,10 +6,12 @@ class TrainerConsumer(AbstractConsumer):
     class TrainerIncomingMessageTypes:
         EXAMPLE = "example"
         CREATE_EXERCISE = "trainer-exercise-create"
+        TEST_PASSTHROUGH = "test-passthrough"
 
     class TrainerOutgoingMessageTypes:
         RESPONSE = "response"
         EXERCISE_CREATED = "trainer-exercise-create"
+        TEST_PASSTHROUGH = "test-passthrough"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,6 +23,9 @@ class TrainerConsumer(AbstractConsumer):
             ),
             self.TrainerIncomingMessageTypes.CREATE_EXERCISE: (
                 self.handle_create_exercise,
+            ),
+            self.TrainerIncomingMessageTypes.TEST_PASSTHROUGH: (
+                self.handle_test_passthrough,
             ),
         }
 
@@ -66,4 +71,10 @@ class TrainerConsumer(AbstractConsumer):
         }
         self.send_event(
             self.TrainerOutgoingMessageTypes.EXERCISE_CREATED, exercise=exercise_object
+        )
+
+    def handle_test_passthrough(self):
+        self.send_event(
+            self.TrainerOutgoingMessageTypes.TEST_PASSTHROUGH,
+            message="received test event",
         )
