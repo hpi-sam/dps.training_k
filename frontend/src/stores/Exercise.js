@@ -1,5 +1,4 @@
 import {defineStore} from 'pinia'
-import { useAreaStore } from './Area'
 
 export const useExerciseStore = defineStore('exercise', {
     state: () => ({
@@ -7,28 +6,39 @@ export const useExerciseStore = defineStore('exercise', {
         areas: []
     }),
     getters: {
-        getArea(patientCode){
-            this.areas.array.forEach(area => {
-                if(area.patients.find((p) => p.patients.patientCode == patientCode)){
-                    return area
-                }
-            })
-            return null
+        getExerciseCode: (state) => state.exerciseCode,
+        getArea(state){
+            return (patientCode) => {
+                let foundArea = null
+                state.areas.forEach(area => {
+                    area.patients.forEach(patient => {
+                        if(patient.patientCode == patientCode){
+                            foundArea = area
+                        }
+                    })
+                })
+                return foundArea
+            }
         },
-        getPatient(patientCode){
-            const area = this.getArea(patientCode)
-            if(!area) return null
-            return area.patients.find((p) => p.patients.patientCode == patientCode)
-        }
+        getPatient(state){
+            return (patientCode) => {
+                const area = state.getArea(patientCode)
+                if(!area) return null
+                let foundPatient = null
+                area.patients.forEach(patient => {
+                    if(patient.patientCode == patientCode){
+                        foundPatient = patient
+                    }
+                })
+                return foundPatient
+            }
+        },
     },
     actions: {
-        createAreaStore(){
-            const newAreaStore = useAreaStore()
-            this.areas.push(newAreaStore)
-        },
         createFromJSON(json){
             this.exerciseCode = json.exerciseCode
             this.areas = json.areas
+            console.log(json)
         }
     }
 })
