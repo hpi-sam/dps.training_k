@@ -30,10 +30,7 @@ class Exercise(models.Model):
     )
 
     @classmethod
-    def createExercise(
-        cls,
-        trainer,
-    ):
+    def createExercise(cls):
         new_Exercise = cls.objects.create(
             # config=settings.DEFAULT_EXCERCISE_CONFIG,
             # trainer=trainer

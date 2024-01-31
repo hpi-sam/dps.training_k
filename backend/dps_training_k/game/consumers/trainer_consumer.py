@@ -1,5 +1,5 @@
 from .abstract_consumer import AbstractConsumer
-from game.models import Exercise
+from game.models import Exercise, Patient
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -40,22 +40,21 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_create_exercise(self):
-        try:
-            exercise = Exercise()
-        except Exception as e:
-            print("an error has occured: ", str(e))
-
+        exercise = Exercise.createExercise()
+        patient = Patient.objects.create(
+            name="Max Mustermann", exercise=exercise, patientCode=123456
+        )
         exercise_object = {
-            "exerciseCode": 123456,
+            "exerciseCode": "123456", # exercise.invitation_code
             "areas": [
                 {
                     "name": "ZNA",
                     "patients": [
                         {
-                            "name": "Max Mustermann",
-                            "patientCode": 123456,
+                            "name": patient.name,
+                            "patientCode": patient.patientCode,
                             "patientId": 5,
-                            "patientDatabaseId": 3,
+                            "patientDatabaseId": 3, # patient.pk
                         }
                     ],
                     "personnel": [
