@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "frontend": "npm-run-all --parallel start-dummy start-proxy dev",
     "dev": "vite",
+    "start-dummy": "cd ./backendDummy && npm run start",
+    "start-proxy": "cd ./backendProxy && npm run start",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "pinia": "^2.1.7",
     "socket.io-client": "^4.7.4",
     "vue": "^3.3.11",
     "vue-toastification": "^2.0.0-rc.5"
@@ -17,6 +21,7 @@
     "@vitejs/plugin-vue": "^4.5.2",
     "eslint": "^8.56.0",
     "eslint-plugin-vue": "^9.20.0",
+    "npm-run-all": "^4.1.5",
     "vite": "^5.0.10"
   }
 }

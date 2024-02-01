@@ -3,7 +3,9 @@ import {computed, ref} from 'vue'
 import ModuleLogin from '@/components/ModuleLogin.vue'
 import ModuleTrainer from '@/components/ModuleTrainer.vue'
 import ModulePatient from '@/components/ModulePatient.vue'
-import {serverEvents, socket, state} from "@/socket.js";
+import {serverEvents, configureSocket, socket, state} from '@/socket'
+
+configureSocket()
 
 const modules = {
   ModuleLogin,
@@ -75,7 +77,7 @@ function getToastOptions() {
     </button>
 
     <!-- change the stringified event to test different server-side events -->
-    <button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.patientLoadRunning))">
+    <button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.trainerExerciseCreate))">
       send event test
     </button>
 

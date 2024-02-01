@@ -1,5 +1,6 @@
 import {reactive} from "vue";
 import {io} from "socket.io-client";
+import { useExerciseStore } from "./stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
 
 /** @type {String} */
@@ -21,67 +22,70 @@ socket.on("disconnect", () => {
     console.log(logTag, "Server disconnected");
 });
 
-socket.on("test-passthrough", (arg) => {
-    /** @type {String} */
-    const s = JSON.parse(arg);
-    console.log(logTag, "test-passthrough", s);
-});
+export function configureSocket() {
+    const exerciseStore = useExerciseStore()
+    
+    socket.on("test-passthrough", (arg) => {
+		/** @type {String} */
+		const s = JSON.parse(arg);
+		console.log(logTag, "test-passthrough", s);
+	});
 
-socket.on("mock", (arg) => {
-    /** @type {String} */
-    const event = JSON.parse(arg);
-    showWarningToast("Mocked event: " + event);
-});
+	socket.on("mock", (arg) => {
+		/** @type {String} */
+		const event = JSON.parse(arg);
+		showWarningToast("Mocked event: " + event);
+	});
 
-socket.on("error", (arg) => {
-    /** @type {EventError} */
-    const error = JSON.parse(arg);
-    showErrorToast("Error on event: " + error.event);
-});
+	socket.on("error", (arg) => {
+		/** @type {EventError} */
+		const error = JSON.parse(arg);
+		showErrorToast("Error on event: " + error.event);
+	});
 
-socket.on("trainer-login", (arg) => {
-    /** @type {boolean} */
-    const bool = JSON.parse(arg);
-    console.log(logTag, "trainer-login", bool);
-});
+	socket.on("trainer-login", (arg) => {
+		/** @type {boolean} */
+		const bool = JSON.parse(arg);
+		console.log(logTag, "trainer-login", bool);
+	});
 
-socket.on("patient-login", (arg) => {
-    /** @type {boolean} */
-    const bool = JSON.parse(arg);
-    console.log(logTag, "patient-login", bool);
-});
+	socket.on("patient-login", (arg) => {
+		/** @type {boolean} */
+		const bool = JSON.parse(arg);
+		console.log(logTag, "patient-login", bool);
+	});
 
-socket.on("trainer-exercise-create", (arg) => {
-    /** @type {Exercise} */
-    const exercise = JSON.parse(arg);
-    console.log(logTag, "trainer-exercise-create", exercise);
-});
+	socket.on("trainer.exercise.create", (arg) => {
+		const json = JSON.parse(arg)
+		exerciseStore.createFromJSON(json)
+    });
 
-socket.on("trainer-exercise-start", () => {
-    console.log(logTag, "trainer-exercise-start");
-});
+	socket.on("trainer-exercise-start", () => {
+		console.log(logTag, "trainer-exercise-start");
+	});
 
-socket.on("trainer-exercise-stop", () => {
-    console.log(logTag, "trainer-exercise-stop");
-});
+	socket.on("trainer-exercise-stop", () => {
+		console.log(logTag, "trainer-exercise-stop");
+	});
 
-socket.on("patient-load-stopped", (arg) => {
-    /** @type {PatientLoadNotRunning} */
-    const patientLoad = JSON.parse(arg);
-    console.log(logTag, "patient-load-stopped", patientLoad);
-});
+	socket.on("patient-load-stopped", (arg) => {
+		/** @type {PatientLoadNotRunning} */
+		const patientLoad = JSON.parse(arg);
+		console.log(logTag, "patient-load-stopped", patientLoad);
+	});
 
-socket.on("patient-load-running", (arg) => {
-    /** @type {PatientLoadRunning} */
-    const patientLoad = JSON.parse(arg);
-    console.log(logTag, "patient-load-running", patientLoad);
-});
+	socket.on("patient-load-running", (arg) => {
+		/** @type {PatientLoadRunning} */
+		const patientLoad = JSON.parse(arg);
+		console.log(logTag, "patient-load-running", patientLoad);
+	});
 
-socket.on("patient-phase", (arg) => {
-    /** @type {PatientPhaseChange} */
-    const patientUpdate = JSON.parse(arg);
-    console.log(logTag, "patient-phase", patientUpdate);
-});
+	socket.on("patient-phase", (arg) => {
+		/** @type {PatientPhaseChange} */
+		const patientUpdate = JSON.parse(arg);
+		console.log(logTag, "patient-phase", patientUpdate);
+	});
+}
 
 /**
  * @param {TrainerLogin} login
