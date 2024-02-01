@@ -77,7 +77,7 @@ function getToastOptions() {
     </button>
 
     <!-- change the stringified event to test different server-side events -->
-    <button id="ws-test" @click="socket.emit('test.event', JSON.stringify(serverEvents.trainerExerciseCreate))">
+    <button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.trainerExerciseCreate))">
       send event test
     </button>
 

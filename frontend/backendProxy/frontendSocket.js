@@ -20,7 +20,7 @@ export function configureTestEventListener(frontendSocket) {
                     "123",
                     [
                         new Area("Area 1", [
-                            new Patient("Patient 1", "800", "123", "123"),
+                            new Patient("Patient 1", "123", "123", "123"),
                             new Patient("Patient 2", "123", "123", "123"),
                         ], [
                             new Personnel("Personnel 1", "Doctor", "123"),
