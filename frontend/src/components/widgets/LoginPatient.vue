@@ -1,32 +1,13 @@
 <script setup>
   import {ref} from 'vue'
-  import {socket} from "@/socket.js";
-
-  const emit = defineEmits(['login'])
+  import {patientLogin} from "@/socket.js";
 
   const exerciseCodeInput = ref("")
   const patientCodeInput = ref("")
-  const errorOccured = ref(false)
-  const errorMassage = ref('')
   
-
   function submit(){
-    socket.emit('patient.login', JSON.stringify({exerciseCode: exerciseCodeInput.value, patientCode: patientCodeInput.value}))
+    patientLogin(exerciseCodeInput.value, patientCodeInput.value)
   }
-
-  socket.on("patient.login.response", (arg) => {
-    /** @type {boolean} */
-    const bool = JSON.parse(arg);
-    if(bool){
-
-      emit('login')
-      errorOccured.value = false
-    } else {
-      errorOccured.value = true
-      errorMassage.value = "Fehler: Übung oder Patient existiert nicht"
-    }
-  });
-
 </script>
 
 <template>

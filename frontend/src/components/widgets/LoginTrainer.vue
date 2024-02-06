@@ -1,31 +1,13 @@
 <script setup>
   import {ref} from 'vue'
-  import {socket} from "@/socket.js";
-
-  const emit = defineEmits(['login'])
+  import {trainerLogin} from "@/socket.js";
 
   const usernameInput = ref("")
   const passwordInput = ref("")
-  const errorOccured = ref(false)
-  const errorMassage = ref('')
-  
 
   function submit(){
-    socket.emit('trainer.login', JSON.stringify({username: usernameInput.value, password: passwordInput.value}))
+    trainerLogin(usernameInput.value, passwordInput.value)
   }
-
-  socket.on("trainer.login.response", (arg) => {
-    /** @type {boolean} */
-    const bool = JSON.parse(arg);
-    if(bool){
-      emit('login')
-      errorOccured.value = false
-    } else {
-      errorOccured.value = true
-      errorMassage.value = "Fehler: falscher Nutzername oder falsches Passwort"
-    }
-  });
-
 </script>
 
 <template>

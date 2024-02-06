@@ -1,13 +1,10 @@
 <script setup>
   import LoginTrainer from '../widgets/LoginTrainer.vue'
-
-  const emit = defineEmits(['loginTrainer'])
-
 </script>
 
 <template>
   <div id="main">
-    <LoginTrainer @login="emit('loginTrainer')" />
+    <LoginTrainer />
   </div>
 </template>
   

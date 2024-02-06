@@ -1,24 +1,11 @@
-<script setup>
-import {computed, ref} from 'vue'
-import ModuleLogin from '@/components/ModuleLogin.vue'
-import ModuleTrainer from '@/components/ModuleTrainer.vue'
-import ModulePatient from '@/components/ModulePatient.vue'
-import {serverEvents, configureSocket, socket, state} from '@/socket'
-
-configureSocket()
-
-const modules = {
-  ModuleLogin,
-  ModuleTrainer,
-  ModulePatient
-}
-const currentModule = ref('ModuleLogin')
-
-const connectionState = computed(() => state.connected ? "connected" : "disconnected")
-</script>
-
 <script>
 import {useToast} from "vue-toastification";
+
+const currentModule = ref('ModuleLogin')
+
+export function setModule(newModule){
+  currentModule.value = newModule
+}
 
 /**
  * @param {string} message
@@ -55,10 +42,28 @@ function getToastOptions() {
 }
 </script>
 
+<script setup>
+import {computed, ref} from 'vue'
+import {serverEvents, configureSocket, socket, state} from '@/socket'
+import ModuleLogin from '@/components/ModuleLogin.vue'
+import ModuleTrainer from '@/components/ModuleTrainer.vue'
+import ModulePatient from '@/components/ModulePatient.vue'
+
+configureSocket()
+
+const modules = {
+  ModuleLogin,
+  ModuleTrainer,
+  ModulePatient
+}
+
+const connectionState = computed(() => state.connected ? "connected" : "disconnected")
+</script>
+
 
 <template>
   <main>
-    <component :is="modules[currentModule]" @switch="(to) => currentModule = to" />
+    <component :is="modules[currentModule]" />
   </main>
 
   <div id="dev-bar">

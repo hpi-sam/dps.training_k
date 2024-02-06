@@ -1,16 +1,14 @@
 <script setup>
   import ScreenTrainer from './screensLogin/ScreenTrainer.vue'
   import ScreenPatient from './screensLogin/ScreenPatient.vue'
-
-  const emit = defineEmits(['switch'])
 </script>
 
 <template>
   <div id="leftSide">
-    <ScreenTrainer @login-trainer="emit('switch', 'ModuleTrainer')" />
+    <ScreenTrainer />
   </div>
   <div id="rightSide">
-    <ScreenPatient @login-patient="emit('switch', 'ModulePatient')" />
+    <ScreenPatient />
   </div>
 </template>
 

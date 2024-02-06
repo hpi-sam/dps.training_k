@@ -1,13 +1,10 @@
 <script setup>
   import LoginPatient from '../widgets/LoginPatient.vue'
-
-  const emit = defineEmits(['loginPatient'])
-
 </script>
 
 <template>
   <div id="main">
-    <LoginPatient @login="emit('loginPatient')" />
+    <LoginPatient />
   </div>
 </template>
   
