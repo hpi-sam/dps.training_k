@@ -1,9 +1,10 @@
 <script>
 import {useToast} from "vue-toastification";
+import {ref} from "vue";
 
 const currentModule = ref('ModuleLogin')
 
-export function setModule(newModule){
+export function setModule(newModule) {
   currentModule.value = newModule
 }
 
@@ -43,7 +44,7 @@ function getToastOptions() {
 </script>
 
 <script setup>
-import {computed, ref} from 'vue'
+import {computed} from 'vue'
 import {serverEvents, configureSocket, socket, state} from '@/socket'
 import ModuleLogin from '@/components/ModuleLogin.vue'
 import ModuleTrainer from '@/components/ModuleTrainer.vue'
