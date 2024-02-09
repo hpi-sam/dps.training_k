@@ -13,38 +13,18 @@
 <template>
   <div id="main">
     <div id="form">
-      <h1>Patient-Login</h1>
+      <h1>Patienten-Zugang</h1>
       <input v-model="exerciseCodeInput" placeholder="Übungscode">
       <input v-model="patientCodeInput" placeholder="Patientencode">
-      <input type="submit" value="Login" @click="submit()">
-      <p v-if="errorOccured" id="errorMassage">
-        {{ errorMassage }}
-      </p>
+      <button @click="submit()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+          <path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
+        </svg>
+      </button>
     </div>
   </div>
 </template>
-  
+
 <style scoped>
-  #main {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  #form{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  input{
-    border: 2px solid black;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 5px;
-    font-size: 1.5em;
-  }
-  #errorMassage{
-    color: red;
-  }
+  @import url(../../assets/login.css);
 </style>
