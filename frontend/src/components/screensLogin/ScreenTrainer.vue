@@ -1,13 +1,10 @@
 <script setup>
-  import dummyLogin from '../widgets/DummyLogin.vue'
-
-  const emit = defineEmits(['login'])
-
+  import LoginTrainer from '../widgets/LoginTrainer.vue'
 </script>
 
 <template>
   <div id="main">
-    <dummyLogin valid-username="test" valid-password="test" @login="emit('login')" />
+    <LoginTrainer />
   </div>
 </template>
   
