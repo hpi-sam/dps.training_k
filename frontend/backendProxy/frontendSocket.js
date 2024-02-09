@@ -15,33 +15,6 @@ export function configureTestEventListener(frontendSocket) {
         const event = JSON.parse(args);
 
         switch (event) {
-            case "trainer-exercise-create":
-                args = JSON.stringify(new Exercise(
-                    "123",
-                    [
-                        new Area("Area 1", [
-                            new Patient("Patient 1", "123", "123", "123"),
-                            new Patient("Patient 2", "123", "123", "123"),
-                        ], [
-                            new Personnel("Personnel 1", "Doctor", "123"),
-                            new Personnel("Personnel 2", "Nurse", "123"),
-                        ], [
-                            new Device("Device 1", "123"),
-                            new Device("Device 2", "123"),
-                        ]),
-                        new Area("Area 2", [
-                            new Patient("Patient 3", "123", "123", "123"),
-                            new Patient("Patient 4", "123", "123", "123"),
-                        ], [
-                            new Personnel("Personnel 3", "Doctor", "123"),
-                            new Personnel("Personnel 4", "Nurse", "123"),
-                        ], [
-                            new Device("Device 3", "123"),
-                            new Device("Device 4", "123"),
-                        ]),
-                    ]
-                ));
-                break;
             case "patient-load-stopped":
                 args = JSON.stringify(new PatientLoadNotRunning(
                     "123",
@@ -104,10 +77,39 @@ export function mockResponse(frontendSocket, event, args) {
             break;
         }
         case "patient-login": {
-            const {exerciseCode, patientCode} = JSON.parse(args);
+            const {exerciseCode, patientCode} = JSON.parse(args)
             const message = exerciseCode === "123" && patientCode === "123" ? "true" : "false";
             frontendSocket.emit("patient-login", message);
             break;
+        }
+        case "trainer-exercise-create": {
+            const message = JSON.stringify(new Exercise(
+                "123",
+                [
+                    new Area("Area 1", [
+                        new Patient("Patient 1", "123", "123", "123"),
+                        new Patient("Patient 2", "123", "123", "123"),
+                    ], [
+                        new Personnel("Personnel 1", "Doctor", "123"),
+                        new Personnel("Personnel 2", "Nurse", "123"),
+                    ], [
+                        new Device("Device 1", "123"),
+                        new Device("Device 2", "123"),
+                    ]),
+                    new Area("Area 2", [
+                        new Patient("Patient 3", "123", "123", "123"),
+                        new Patient("Patient 4", "123", "123", "123"),
+                    ], [
+                        new Personnel("Personnel 3", "Doctor", "123"),
+                        new Personnel("Personnel 4", "Nurse", "123"),
+                    ], [
+                        new Device("Device 3", "123"),
+                        new Device("Device 4", "123"),
+                    ]),
+                ]
+            ))
+            frontendSocket.emit(event, message);
+            break
         }
         default:
             frontendSocket.emit("error", JSON.stringify(new EventError(event, args)));

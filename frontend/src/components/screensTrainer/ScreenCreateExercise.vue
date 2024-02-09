@@ -1,36 +1,15 @@
 <script setup>
-  import {ref} from 'vue'
-  import {socket} from "@/socket.js";
-  const emit = defineEmits(['switchLeftSide', 'switchRightSide'])
-  const errorOccured = ref(false)
-  const errorMassage = ref('')
-  
-  function submit(){
-    socket.emit('test-event', JSON.stringify('trainer-exercise-create'))
-  }
-
-  socket.on("trainer-exercise-create", (arg) => {
-    /** @type {Exercise} */
-    const exercise = JSON.parse(arg);
-    if(exercise){
-        emit('switchRightSide', 'ScreenAreaCreation')
-        emit('switchLeftSide', 'ScreenExerciseCreation')
-      errorOccured.value = false
-    } else {
-      errorOccured.value = true
-      errorMassage.value = "Fehler: Übung konnte nicht erstellt werden"
-    }
-    });
+  import {trainerExerciseCreate} from "@/socket.js";
 
 </script>
 <template>
   <div id="main">
-    <button @click="submit()">
-      Übung erstellen
+    <h1>Übung erstellen</h1>
+    <button @click="trainerExerciseCreate()">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+      </svg>
     </button>
-    <p v-if="errorOccured" id="errorMassage">
-      {{ errorMassage }}
-    </p>
   </div>
 </template>
   
@@ -44,13 +23,9 @@
     flex-direction: column;
   }
   button{
-    border: 2px solid black;
+    margin-top: 5px;
+    height: 40px;
+    width: 40px;
     border-radius: 10px;
-    padding: 5px;
-    margin: 5px;
-    font-size: 1.5em;
-  }
-  #errorMassage{
-    color: red;
   }
 </style>

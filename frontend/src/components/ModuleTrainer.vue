@@ -1,3 +1,15 @@
+<script>
+  const currentLeftScreen = ref('ScreenCreateExercise')
+  const currentRightScreen = ref('ScreenJoinExercise')
+
+  export function setLeftScreen(newScreen) {
+    currentLeftScreen.value = newScreen
+  }
+  export function setRightScreen(newScreen) {
+    currentRightScreen.value = newScreen
+  }
+</script>
+
 <script setup>
   import {ref} from 'vue'
   import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue'
@@ -11,31 +23,28 @@
     ScreenExerciseCreation,
     ScreenAreaCreation
   }
-
-  const currentLeftSide = ref('ScreenCreateExercise')
-  const currentRightSide = ref('ScreenJoinExercise')
 </script>
 
 <template>
-  <div id="leftSide">
-    <component :is="screens[currentLeftSide]" @switch-left-side="(to) => currentLeftSide = to" @switch-right-side="(to) => currentRightSide = to" />
+  <div id="leftScreen">
+    <component :is="screens[currentLeftScreen]" />
   </div>
-  <div id="rightSide">
-    <component :is="screens[currentRightSide]" @switch-left-side="(to) => currentLeftSide = to" @switch-right-side="(to) => currentRightSide = to" />
+  <div id="rightScreen">
+    <component :is="screens[currentRightScreen]" />
   </div>
 </template>
 
 <style scoped>
-  #leftSide, #rightSide{
+  #leftScreen, #rightScreen{
     float: left;
     width: 50%;
     height: 100%;
     border: 8px solid black;
   }
-  #leftSide{
+  #leftScreen{
     border-right: 4px solid black;
   }
-  #rightSide{
+  #rightScreen{
     border-left: 4px solid black;
   }
 </style>
