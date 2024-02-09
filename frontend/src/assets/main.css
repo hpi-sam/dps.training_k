@@ -3,25 +3,11 @@
 #app {
   height: 100vh;
   font-weight: normal;
+  font-family: 'Montserrat-Black', Verdana, sans-serif
 }
 
 main{
   height:100vh;
   margin: 0 auto;
   font-weight: normal;
-  border: 5px solid black;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
 }

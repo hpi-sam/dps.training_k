@@ -2,6 +2,8 @@ import {reactive} from "vue";
 import {io} from "socket.io-client";
 import { useExerciseStore } from "./stores/Exercise.js";
 import {setModule, showErrorToast, showWarningToast} from "@/App.vue";
+import {setLeftScreen as moduleTrainerSetLeftScreen} from "@/components/ModuleTrainer.vue"
+import {setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 
 /** @type {String} */
 const logTag = "frontendSocket:";
@@ -64,8 +66,13 @@ export function configureSocket() {
 	});
 
 	socket.on("trainer-exercise-create", (arg) => {
+		if(!arg){
+			showErrorToast("Fehler: Übung konnte nicht erstellt werden")
+		}
 		const json = JSON.parse(arg)
 		exerciseStore.createFromJSON(json)
+		moduleTrainerSetLeftScreen('ScreenExerciseCreation')
+		moduleTrainerSetRightScreen('ScreenResourceCreation')
     });
 
 	socket.on("trainer-exercise-start", () => {
@@ -102,11 +109,11 @@ export function trainerLogin(username, password) {
     socket.emit("trainer-login", JSON.stringify({username: username, password: password}));
 }
 
-export function trainerCreateExercise() {
+export function trainerExerciseCreate() {
     socket.emit("trainer-exercise-create");
 }
 
-export function trainerStartExercise() {
+export function trainerExerciseStart() {
     socket.emit("trainer-exercise-start");
 }
 

@@ -17,5 +17,12 @@
     float: left;
     width: 50%;
     height: 100%;
+    border: 8px solid black;
+  }
+  #leftSide{
+    border-right: 4px solid black;
+  }
+  #rightSide{
+    border-left: 4px solid black;
   }
 </style>
