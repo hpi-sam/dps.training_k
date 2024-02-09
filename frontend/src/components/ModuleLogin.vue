@@ -1,13 +1,11 @@
 <script setup>
   import ScreenTrainer from './screensLogin/ScreenTrainer.vue'
   import ScreenPatient from './screensLogin/ScreenPatient.vue'
-
-  const emit = defineEmits(['switch'])
 </script>
 
 <template>
   <div id="leftSide">
-    <ScreenTrainer @login="emit('switch', 'ModuleTrainer')" />
+    <ScreenTrainer />
   </div>
   <div id="rightSide">
     <ScreenPatient />
@@ -19,8 +17,5 @@
     float: left;
     width: 50%;
     height: 100%;
-  }
-  #rightSide{
-    background-color: red;
   }
 </style>

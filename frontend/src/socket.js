@@ -1,7 +1,7 @@
 import {reactive} from "vue";
 import {io} from "socket.io-client";
 import { useExerciseStore } from "./stores/Exercise.js";
-import {showErrorToast, showWarningToast} from "@/App.vue";
+import {setModule, showErrorToast, showWarningToast} from "@/App.vue";
 
 /** @type {String} */
 const logTag = "frontendSocket:";
@@ -46,16 +46,24 @@ export function configureSocket() {
 	socket.on("trainer-login", (arg) => {
 		/** @type {boolean} */
 		const bool = JSON.parse(arg);
-		console.log(logTag, "trainer-login", bool);
+		if(bool){
+			setModule('ModuleTrainer')
+		} else {
+			showErrorToast("Fehler: falscher Nutzername oder falsches Passwort")
+		}
 	});
 
 	socket.on("patient-login", (arg) => {
 		/** @type {boolean} */
 		const bool = JSON.parse(arg);
-		console.log(logTag, "patient-login", bool);
+		if(bool){
+			setModule('ModulePatient')
+		} else {
+			showErrorToast("Fehler: Übung oder Patient existiert nicht")
+		}
 	});
 
-	socket.on("trainer.exercise.create", (arg) => {
+	socket.on("trainer-exercise-create", (arg) => {
 		const json = JSON.parse(arg)
 		exerciseStore.createFromJSON(json)
     });
@@ -90,8 +98,8 @@ export function configureSocket() {
 /**
  * @param {TrainerLogin} login
  */
-export function trainerLogin(login) {
-    socket.emit("trainer-login", JSON.stringify(login));
+export function trainerLogin(username, password) {
+    socket.emit("trainer-login", JSON.stringify({username: username, password: password}));
 }
 
 export function trainerCreateExercise() {
@@ -109,8 +117,8 @@ export function trainerExerciseStop() {
 /**
  * @param {PatientLogin} login
  */
-export function patientLogin(login) {
-    socket.emit("patient-login", JSON.stringify(login));
+export function patientLogin(exerciseCode, patientCode) {
+    socket.emit("patient-login", JSON.stringify({exerciseCode: exerciseCode, patientCode: patientCode}));
 }
 
 /**

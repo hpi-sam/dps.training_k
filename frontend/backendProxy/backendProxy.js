@@ -38,7 +38,6 @@ backendProxy.on('connection', (frontendSocket) => {
             frontendSocket.emit(event, args);
         }
     });
-
 });
 
 backendProxy.listen(8080);
