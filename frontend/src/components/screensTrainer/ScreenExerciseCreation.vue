@@ -1,15 +1,14 @@
 <script setup>
-  import {ref} from 'vue'
-  //TODO: load from store
-  const trainer = ref('Trainer XY')
-  const exerciseCode = ref('Übungscode')
+  import { useExerciseStore } from '@/stores/Exercise';
+  const exerciseStore = useExerciseStore()
 </script>
 
 <template>
   <nav>
-    <div id="nav-trainer">{{ trainer }}</div>
-    <div id="nav-exercise-code">{{ exerciseCode }}</div>
+    <div id="nav-trainer">{{ exerciseStore.getPatient('123').patientCode }}</div>
+    <div id="nav-exercise-code">{{ exerciseStore.getExerciseCode }}</div>
   </nav>
+  <div>{{ exerciseStore }}</div>
 </template>
     
 <style scoped>
@@ -27,6 +26,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 1.5em;
   }
 
   #nav-trainer{
@@ -35,20 +35,5 @@
 
   #nav-exercise-code{
     border-left: 4px solid black;
-  }
-
-  table, td, th {
-    border: 1px solid;
-  }
-
-  table{
-    width: 100%;
-    height: 70px;
-    border-collapse: collapse;
-  }
-
-  th {
-    width: 50%;
-    font-size: 20px;
   }
 </style>

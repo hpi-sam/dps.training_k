@@ -2,6 +2,7 @@ import {reactive} from "vue";
 import {io} from "socket.io-client";
 import { useExerciseStore } from "./stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
+import { useTrainerStore } from "./stores/Trainer.js";
 
 /** @type {String} */
 const logTag = "frontendSocket:";
@@ -55,7 +56,7 @@ export function configureSocket() {
 		console.log(logTag, "patient-login", bool);
 	});
 
-	socket.on("trainer.exercise.create", (arg) => {
+	socket.on("trainer-exercise-create", (arg) => {
 		const json = JSON.parse(arg)
 		exerciseStore.createFromJSON(json)
     });
