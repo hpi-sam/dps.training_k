@@ -1,4 +1,5 @@
 <script>
+  import {ref} from 'vue'
   const currentLeftScreen = ref('ScreenCreateExercise')
   const currentRightScreen = ref('ScreenJoinExercise')
 
@@ -11,17 +12,16 @@
 </script>
 
 <script setup>
-  import {ref} from 'vue'
   import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue'
   import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue'
   import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue'
-  import ScreenAreaCreation from './screensTrainer/ScreenAreaCreation.vue'
+  import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue'
 
   const screens = {
     ScreenCreateExercise,
     ScreenJoinExercise,
     ScreenExerciseCreation,
-    ScreenAreaCreation
+    ScreenResourceCreation
   }
 </script>
 

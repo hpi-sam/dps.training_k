@@ -1,5 +1,5 @@
 <template>
-  <h1>AreaCreation</h1>
+  <h1>ResourceCreation</h1>
 </template>
     
 <style scoped>

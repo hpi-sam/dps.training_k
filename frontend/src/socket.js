@@ -72,7 +72,7 @@ export function configureSocket() {
 		const json = JSON.parse(arg)
 		exerciseStore.createFromJSON(json)
 		moduleTrainerSetLeftScreen('ScreenExerciseCreation')
-		moduleTrainerSetRightScreen('ScreenAreaCreation')
+		moduleTrainerSetRightScreen('ScreenResourceCreation')
     });
 
 	socket.on("trainer-exercise-start", () => {
