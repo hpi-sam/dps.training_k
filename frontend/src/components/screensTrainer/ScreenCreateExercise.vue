@@ -6,10 +6,10 @@
   const errorMassage = ref('')
   
   function submit(){
-    socket.emit('test.event', JSON.stringify('trainer.exercise.create'))
+    socket.emit('test-event', JSON.stringify('trainer-exercise-create'))
   }
 
-  socket.on("trainer.exercise.create", (arg) => {
+  socket.on("trainer-exercise-create", (arg) => {
     /** @type {Exercise} */
     const exercise = JSON.parse(arg);
     if(exercise){

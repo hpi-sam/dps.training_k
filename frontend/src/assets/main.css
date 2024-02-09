@@ -3,11 +3,11 @@
 #app {
   height: 100vh;
   font-weight: normal;
+  font-family: 'Montserrat-Black', Verdana, sans-serif
 }
 
 main{
   height:100vh;
   margin: 0 auto;
   font-weight: normal;
-  border: 5px solid black;
 }
