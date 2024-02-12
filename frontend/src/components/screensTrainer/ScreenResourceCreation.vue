@@ -1,6 +1,3 @@
 <template>
-  <h1>ResourceCreation</h1>
+	<h1>ResourceCreation</h1>
 </template>
-    
-<style scoped>
-</style>
