@@ -88,7 +88,7 @@ DATABASES = {
         "NAME": "yourdbname",
         "USER": "youruser",
         "PASSWORD": "yourpassword",
-        "HOST": "localhost",  # Since PostgreSQL is running in Docker
+        "HOST": "db",  # Since PostgreSQL is running in Docker
         "PORT": "5432",
     }
 }

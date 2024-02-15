@@ -9,8 +9,18 @@ services:
       POSTGRES_DB: yourdbname
       POSTGRES_USER: youruser
       POSTGRES_PASSWORD: yourpassword
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./dps_training_k:/code
     ports:
-      - "5432:5432"
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://youruser:yourpassword@db:5432/yourdbname
 
 volumes:
   postgres_data:
