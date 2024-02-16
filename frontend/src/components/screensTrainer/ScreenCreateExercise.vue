@@ -1,7 +1,8 @@
 <template>
 	<div id="main">
 		<h1>Übung erstellen</h1>
-		<button @click="trainerExerciseCreate()">
+		<!--ToDo: change to actual method-->
+		<button @click="socketTrainer.testPassthrough()">
 			<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 				<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
 			</svg>
@@ -10,7 +11,7 @@
 </template>
 
 <script setup>
-	import {trainerExerciseCreate} from "@/socket.js";
+	import socketTrainer from "@/sockets/SocketTrainer.js";
 </script>
 
 <style scoped>

@@ -14,29 +14,29 @@
 			Patient
 		</button>
 
-		<button id="ws-test" @click="socket.emit('test-passthrough')">
+		<button id="ws-test" @click="sendPasstroughTest()">
 			send pass-through test
 		</button>
 
 		<!-- change the stringified event to test different server-side events -->
-		<button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.trainerExerciseCreate))">
+		<!--<button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.trainerExerciseCreate))">
 			send event test
-		</button>
+		</button>-->
 
 		<p id="ws-test">
-			Backend-Proxy: {{ connectionState }}
+			Backend state: {{ connectionState }}
 		</p>
 	</div>
 </template>
 
 <script setup>
 	import {computed} from 'vue'
-	import {serverEvents, configureSocket, socket, state} from '@/socket'
 	import ModuleLogin from '@/components/ModuleLogin.vue'
 	import ModuleTrainer from '@/components/ModuleTrainer.vue'
 	import ModulePatient from '@/components/ModulePatient.vue'
-
-	configureSocket()
+	import socketPatient from "@/sockets/SocketPatient.js";
+	import socketTrainer from "@/sockets/SocketTrainer.js";
+	import {connectionStore} from "@/sockets/ConnectionStore.js";
 
 	const modules = {
 		ModuleLogin,
@@ -44,7 +44,21 @@
 		ModulePatient
 	}
 
-	const connectionState = computed(() => state.connected ? "connected" : "disconnected")
+	const connectionState = computed(() => {
+		if (currentModule.value === 'ModuleTrainer')
+			return connectionStore.trainerConnected ? "connected" : "disconnected"
+		else if (currentModule.value === 'ModulePatient')
+			return connectionStore.patientConnected ? "connected" : "disconnected"
+		else
+			return "n/a"
+	})
+
+	const sendPasstroughTest = () => {
+		if (currentModule.value === 'ModuleTrainer')
+			socketTrainer.testPassthrough();
+		else if (currentModule.value === 'ModulePatient')
+			socketPatient.testPassthrough();
+	};
 </script>
 
 <script>

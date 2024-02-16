@@ -22,10 +22,21 @@
 </script>
 
 <script>
-	import {ref} from 'vue'
+	import {onBeforeUnmount, onMounted, ref} from 'vue'
+	import socketTrainer from "@/sockets/SocketTrainer.js";
+	import {connectionStore} from "@/sockets/ConnectionStore.js";
 
 	const currentLeftScreen = ref('ScreenCreateExercise')
 	const currentRightScreen = ref('ScreenJoinExercise')
+
+	export default {
+		setup() {
+			onMounted(() => socketTrainer.connect());
+			onBeforeUnmount(() => {
+				if (connectionStore.trainerConnected) socketTrainer.close();
+			});
+		}
+	}
 
 	export function setLeftScreen(newScreen) {
 		currentLeftScreen.value = newScreen
