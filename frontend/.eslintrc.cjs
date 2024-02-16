@@ -1,5 +1,9 @@
 // eslint-disable-next-line no-undef
 module.exports = {
+	parserOptions: {
+		ecmaVersion: 2022,
+		sourceType: 'module',
+	},
 	extends: [
 		// add more generic rulesets here, such as:
 		'eslint:recommended',
