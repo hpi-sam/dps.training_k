@@ -52,6 +52,13 @@ class SocketPatient {
 	testPassthrough() {
 		this.#sendMessage(JSON.stringify({'message-type': 'test-passthrough'}));
 	}
+
+	actionAdd(name) {
+		this.#sendMessage(JSON.stringify({
+			'message-type': 'action-add',
+			'name': `${name}`
+		}));
+	}
 }
 
 // Export an instance of SocketClient
