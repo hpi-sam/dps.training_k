@@ -8,7 +8,7 @@
 
 	function submit() {
 		const requestBody = {
-			"message-type": "patient-login",
+			"messageType": "patient-login",
 			"exerciseCode": exerciseCodeInput.value,
 			"patientCode": patientCodeInput.value,
 		}

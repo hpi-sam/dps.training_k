@@ -44,18 +44,18 @@ class SocketPatient {
 
 	authentication(token) {
 		this.#sendMessage(JSON.stringify({
-			'message-type': 'authentication',
+			'messageType': 'authentication',
 			'token': `${token}`
 		}));
 	}
 
 	testPassthrough() {
-		this.#sendMessage(JSON.stringify({'message-type': 'test-passthrough'}));
+		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
 	}
 
 	actionAdd(name) {
 		this.#sendMessage(JSON.stringify({
-			'message-type': 'action-add',
+			'messageType': 'action-add',
 			'name': `${name}`
 		}));
 	}

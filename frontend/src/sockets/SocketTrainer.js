@@ -44,25 +44,25 @@ class SocketTrainer {
 
 	authentication(token) {
 		this.#sendMessage(JSON.stringify({
-			'message-type': 'authentication',
+			'messageType': 'authentication',
 			'token': `${token}`
 		}));
 	}
 
 	testPassthrough() {
-		this.#sendMessage(JSON.stringify({'message-type': 'test-passthrough'}));
+		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
 	}
 
 	exerciseCreate() {
-		this.#sendMessage(JSON.stringify({'message-type': 'exercise-create'}))
+		this.#sendMessage(JSON.stringify({'messageType': 'exercise-create'}))
 	}
 
 	exerciseStart() {
-		this.#sendMessage(JSON.stringify({'message-type': 'exercise-start'}))
+		this.#sendMessage(JSON.stringify({'messageType': 'exercise-start'}))
 	}
 
 	exerciseStop() {
-		this.#sendMessage(JSON.stringify({'message-type': 'exercise-stop'}))
+		this.#sendMessage(JSON.stringify({'messageType': 'exercise-stop'}))
 	}
 }
 
