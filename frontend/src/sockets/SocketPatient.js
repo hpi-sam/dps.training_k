@@ -1,4 +1,5 @@
 import {connectionStore} from "@/sockets/ConnectionStore.js";
+import {usePatientStore} from "@/stores/Patient.js";
 
 class SocketPatient {
 	constructor(url) {
@@ -12,6 +13,7 @@ class SocketPatient {
 		this.socket.onopen = () => {
 			console.log('Patient WebSocket connection established');
 			connectionStore.patientConnected = true;
+			this.authentication(usePatientStore().token)
 		};
 
 		this.socket.onclose = () => {
@@ -40,8 +42,14 @@ class SocketPatient {
 		}
 	}
 
+	authentication(token) {
+		this.#sendMessage(JSON.stringify({
+			'message-type': 'authentication',
+			'token': `${token}`
+		}));
+	}
+
 	testPassthrough() {
-		console.log('Patient sending test passthrough message')
 		this.#sendMessage(JSON.stringify({'message-type': 'test-passthrough'}));
 	}
 }

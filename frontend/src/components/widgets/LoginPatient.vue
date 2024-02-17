@@ -1,11 +1,44 @@
 <script setup>
 	import {ref} from 'vue'
+	import {usePatientStore} from '@/stores/Patient.js';
+	import {setModule, showErrorToast} from "@/App.vue";
 
 	const exerciseCodeInput = ref("")
 	const patientCodeInput = ref("")
 
 	function submit() {
-		//login(exerciseCodeInput.value, patientCodeInput.value)
+		const requestBody = {
+			"message-type": "patient-login",
+			"exerciseCode": exerciseCodeInput.value,
+			"patientCode": patientCodeInput.value,
+		}
+
+		fetch('https://b8ef4433-e891-4dd8-acee-7618425b3cbb.mock.pstmn.io', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(requestBody),
+		})
+			.then(response => {
+				if (!response.ok) {
+					console.log('Login failed:', response);
+					switch (response.status) {
+						case 401:
+							showErrorToast("Fehler: falscher Nutzername oder falsches Passwort")
+							break;
+						default:
+							showErrorToast("Fehler: Server nicht erreichbar")
+							break;
+					}
+					return Promise.reject('Patient login failed with status ' + response.status);
+				}
+				return response.json();
+			})
+			.then(data => {
+				usePatientStore().token = data.token
+				setModule('ModulePatient')
+			})
 	}
 </script>
 

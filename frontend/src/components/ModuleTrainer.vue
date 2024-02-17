@@ -8,10 +8,14 @@
 </template>
 
 <script setup>
-	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue'
-	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue'
-	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue'
-	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue'
+	import {onBeforeUnmount, onMounted, ref} from 'vue';
+	import socketTrainer from "@/sockets/SocketTrainer.js";
+	import {connectionStore} from "@/sockets/ConnectionStore.js";
+
+	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue';
+	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue';
+	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue';
+	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue';
 
 	const screens = {
 		ScreenCreateExercise,
@@ -19,32 +23,27 @@
 		ScreenExerciseCreation,
 		ScreenResourceCreation
 	}
-</script>
 
-<script>
-	import {onBeforeUnmount, onMounted, ref} from 'vue'
-	import socketTrainer from "@/sockets/SocketTrainer.js";
-	import {connectionStore} from "@/sockets/ConnectionStore.js";
+	const currentLeftScreen = ref('ScreenCreateExercise');
+	const currentRightScreen = ref('ScreenJoinExercise');
 
-	const currentLeftScreen = ref('ScreenCreateExercise')
-	const currentRightScreen = ref('ScreenJoinExercise')
+	onMounted(() => socketTrainer.connect());
+	onBeforeUnmount(() => {
+		if (connectionStore.trainerConnected) socketTrainer.close();
+	});
 
-	export default {
-		setup() {
-			onMounted(() => socketTrainer.connect());
-			onBeforeUnmount(() => {
-				if (connectionStore.trainerConnected) socketTrainer.close();
-			});
-		}
+	const setLeftScreen = (newScreen) => {
+		currentLeftScreen.value = newScreen;
 	}
 
-	export function setLeftScreen(newScreen) {
-		currentLeftScreen.value = newScreen
+	const setRightScreen = (newScreen) => {
+		currentRightScreen.value = newScreen;
 	}
 
-	export function setRightScreen(newScreen) {
-		currentRightScreen.value = newScreen
-	}
+	defineExpose({
+		setLeftScreen,
+		setRightScreen
+	});
 </script>
 
 <style scoped>

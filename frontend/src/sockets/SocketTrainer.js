@@ -1,4 +1,5 @@
 import {connectionStore} from "@/sockets/ConnectionStore.js";
+import {useTrainerStore} from "@/stores/Trainer.js";
 
 class SocketTrainer {
 	constructor(url) {
@@ -12,6 +13,7 @@ class SocketTrainer {
 		this.socket.onopen = () => {
 			console.log('Trainer WebSocket connection established');
 			connectionStore.trainerConnected = true;
+			this.authentication(useTrainerStore().token)
 		};
 
 		this.socket.onclose = () => {
@@ -40,8 +42,14 @@ class SocketTrainer {
 		}
 	}
 
+	authentication(token) {
+		this.#sendMessage(JSON.stringify({
+			'message-type': 'authentication',
+			'token': `${token}`
+		}));
+	}
+
 	testPassthrough() {
-		console.log('Trainer sending test passthrough message')
 		this.#sendMessage(JSON.stringify({'message-type': 'test-passthrough'}));
 	}
 }
