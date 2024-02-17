@@ -52,6 +52,18 @@ class SocketTrainer {
 	testPassthrough() {
 		this.#sendMessage(JSON.stringify({'message-type': 'test-passthrough'}));
 	}
+
+	exerciseCreate() {
+		this.#sendMessage(JSON.stringify({'message-type': 'exercise-create'}))
+	}
+
+	exerciseStart() {
+		this.#sendMessage(JSON.stringify({'message-type': 'exercise-start'}))
+	}
+
+	exerciseStop() {
+		this.#sendMessage(JSON.stringify({'message-type': 'exercise-stop'}))
+	}
 }
 
 // Export an instance of SocketClient
