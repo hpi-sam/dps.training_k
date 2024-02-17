@@ -43,7 +43,7 @@ class SocketTrainer {
 					showWarningToast(data.message)
 					break;
 				case 'exercise':
-					useExerciseStore().createFromJSON(data)
+					useExerciseStore().createFromJSON(data.exercise)
 					moduleTrainerSetLeftScreen('ScreenExerciseCreation')
 					moduleTrainerSetRightScreen('ScreenResourceCreation')
 					break;
@@ -96,6 +96,21 @@ class SocketTrainer {
 	}
 }
 
-// Export an instance of SocketClient
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/');
 export default socketTrainer;
+
+export const serverMockEvents = [
+	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
+	{
+		id: 'exercise',
+		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{"name":"Area1",' +
+			'"patients":[{"name":"John Doe","patientCode":"JD123","patientId":"39","patientDatabaseId":101}],' +
+			'"personnel":[{"name":"Dr. Smith","role":"Therapist","personnelDatabaseId":201}],' +
+			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},{"name":"Area2",' +
+			'"patients":[{"name":"Jane Doe","patientCode":"JD456","patientId":"33","patientDatabaseId":102}],' +
+			'"personnel":[{"name":"Nurse Riley","role":"Nurse","personnelDatabaseId":202}],' +
+			'"devices":[{"name":"DeviceB","deviceDatabaseId":302}]}]}}'
+	},
+	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
+	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
+];

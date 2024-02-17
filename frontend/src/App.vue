@@ -14,18 +14,18 @@
 			Patient
 		</button>
 
-		<button id="ws-test" @click="sendPasstroughTest()">
+		<button v-if="connectionState" id="ws-test" @click="sendPasstroughTest()">
 			send pass-through test
 		</button>
 
-		<!-- change the stringified event to test different server-side events -->
-		<!--<button id="ws-test" @click="socket.emit('test-event', JSON.stringify(serverEvents.trainerExerciseCreate))">
-			send event test
-		</button>-->
-
-		<p id="ws-test">
-			Backend state: {{ connectionState }}
-		</p>
+		<button v-if="currentModule!=='ModuleLogin'" id="ws-test" @click="mockEvent()">
+			Mock Server Event:
+		</button>
+		<select v-if="currentModule!=='ModuleLogin'" v-model="selectedMockEvent">
+			<option v-for="event in serverMockEvents" :key="event.id" :value="event.id">
+				{{ event.id }}
+			</option>
+		</select>
 	</div>
 </template>
 
@@ -34,8 +34,8 @@
 	import ModuleLogin from '@/components/ModuleLogin.vue'
 	import ModuleTrainer from '@/components/ModuleTrainer.vue'
 	import ModulePatient from '@/components/ModulePatient.vue'
-	import socketPatient from "@/sockets/SocketPatient.js";
-	import socketTrainer from "@/sockets/SocketTrainer.js";
+	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient.js";
+	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer.js";
 	import {connectionStore} from "@/sockets/ConnectionStore.js";
 
 	const modules = {
@@ -45,13 +45,32 @@
 	}
 
 	const connectionState = computed(() => {
-		if (currentModule.value === 'ModuleTrainer')
-			return connectionStore.trainerConnected ? "connected" : "disconnected"
-		else if (currentModule.value === 'ModulePatient')
-			return connectionStore.patientConnected ? "connected" : "disconnected"
-		else
-			return "n/a"
+		if (currentModule.value === 'ModuleTrainer') return connectionStore.trainerConnected
+		else if (currentModule.value === 'ModulePatient') return connectionStore.patientConnected
+		else return false
 	})
+
+	const serverMockEvents = computed(() => {
+		if (currentModule.value === 'ModuleTrainer') return serverMockEventsTrainer
+		else if (currentModule.value === 'ModulePatient') return serverMockEventsPatient
+		else return serverMockEventsPatient
+	})
+
+	const selectedMockEvent = ref(serverMockEvents.value[0].id);
+
+	const mockEvent = () => {
+		const event = serverMockEvents.value.find(e => e.id === selectedMockEvent.value)
+		if (!event) return
+		const messageEvent = {data: event.data}
+
+		if (currentModule.value === 'ModuleTrainer')
+			socketTrainer.socket.onmessage(messageEvent)
+		else if (currentModule.value === 'ModulePatient')
+			socketPatient.socket.onmessage(messageEvent)
+		else return
+
+		showWarningToast(`Mocked Server Event: ${event.id}`)
+	}
 
 	const sendPasstroughTest = () => {
 		if (currentModule.value === 'ModuleTrainer')
