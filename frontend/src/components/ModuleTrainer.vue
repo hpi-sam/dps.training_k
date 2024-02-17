@@ -16,19 +16,32 @@
 	onBeforeUnmount(() => {
 		if (connectionStore.trainerConnected) socketTrainer.close();
 	});
+</script>
 
-	const setLeftScreen = (newScreen) => {
+<script>
+	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue';
+	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue';
+	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue';
+	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue';
+	import {ref} from "vue";
+
+	const screens = {
+		ScreenCreateExercise,
+		ScreenJoinExercise,
+		ScreenExerciseCreation,
+		ScreenResourceCreation
+	}
+
+	const currentLeftScreen = ref('ScreenCreateExercise');
+	const currentRightScreen = ref('ScreenJoinExercise');
+
+	export const setLeftScreen = (newScreen) => {
 		currentLeftScreen.value = newScreen;
 	}
 
-	const setRightScreen = (newScreen) => {
+	export const setRightScreen = (newScreen) => {
 		currentRightScreen.value = newScreen;
 	}
-
-	defineExpose({
-		setLeftScreen,
-		setRightScreen
-	});
 </script>
 
 <style scoped>
