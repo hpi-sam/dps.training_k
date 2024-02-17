@@ -1,5 +1,7 @@
 import {connectionStore} from "@/sockets/ConnectionStore.js";
 import {usePatientStore} from "@/stores/Patient.js";
+import {showErrorToast, showWarningToast} from "@/App.vue";
+
 
 class SocketPatient {
 	constructor(url) {
@@ -26,8 +28,39 @@ class SocketPatient {
 		};
 
 		this.socket.onmessage = (message) => {
-			console.log('Patient received message:', message.data);
-		};
+			let data
+			try {
+				data = JSON.parse(message.data)
+			} catch (e) {
+				console.error('Error parsing message data:', e);
+				console.error('Problematic message data:', message.data);
+				return
+			}
+
+			switch (data.messageType) {
+				case 'test-passthrough':
+					showWarningToast(data.message)
+					break;
+				case 'load-stopped':
+					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
+					break;
+				case 'state':
+					console.log('Patient Websocket ToDo: handle state event ', data)
+					break;
+				case 'exercise':
+					console.log('Patient Websocket ToDo: handle exercise event ', data)
+					break;
+				case 'exercise-start':
+					console.log('Patient Websocket ToDo: handle exercise-start event ', data)
+					break;
+				case 'exercise-stop':
+					console.log('Patient Websocket ToDo: handle exercise-stop event ', data)
+					break;
+				default:
+					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
+					console.error('Patient received unknown message type:', data.messageType, 'with data:', data)
+			}
+		}
 	}
 
 	close() {

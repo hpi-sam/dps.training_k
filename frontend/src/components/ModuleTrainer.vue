@@ -8,24 +8,9 @@
 </template>
 
 <script setup>
-	import {onBeforeUnmount, onMounted, ref} from 'vue';
+	import {onBeforeUnmount, onMounted} from 'vue';
 	import socketTrainer from "@/sockets/SocketTrainer.js";
 	import {connectionStore} from "@/sockets/ConnectionStore.js";
-
-	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue';
-	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue';
-	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue';
-	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue';
-
-	const screens = {
-		ScreenCreateExercise,
-		ScreenJoinExercise,
-		ScreenExerciseCreation,
-		ScreenResourceCreation
-	}
-
-	const currentLeftScreen = ref('ScreenCreateExercise');
-	const currentRightScreen = ref('ScreenJoinExercise');
 
 	onMounted(() => socketTrainer.connect());
 	onBeforeUnmount(() => {
