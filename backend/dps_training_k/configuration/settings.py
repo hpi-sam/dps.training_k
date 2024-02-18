@@ -39,6 +39,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "game.apps.GameConfig",
+    "django_celery_beat",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -58,7 +61,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "dps_training_k.urls"
+ROOT_URLCONF = "configuration.urls"
 
 TEMPLATES = [
     {
@@ -76,22 +79,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "dps_training_k.wsgi.application"
+ASGI_APPLICATION = "configuration.asgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 # ToDo: replace with env.db() : https://django-environ.readthedocs.io/en/latest/api.html
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "yourdbname",
-        "USER": "youruser",
-        "PASSWORD": "yourpassword",
-        "HOST": "db",  # Since PostgreSQL is running in Docker
-        "PORT": "5432",
-    }
-}
+DATABASES = {"default": env.db()}
 
 
 # Password validation
@@ -137,7 +131,34 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",  # should be replaced by redis for production
-    },
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env.str("REDIS_URL", default="redis://localhost:6379")]  # for production
+        },
+    }
+    if env.bool("CHANNEL_REDIS", False)
+    else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 }
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Celery
+# ------------------------------------------------------------------------------
+# See: http://docs.celeryproject.org/en/latest/userguide/configuration.html
+if USE_TZ:
+    CELERY_TIMEZONE = TIME_ZONE
+CELERY_BROKER_URL = env.str("REDIS_URL", default="redis://localhost:6379")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_TIME_LIMIT = 5 * 60  # TODO: Change if necessary
+CELERY_TASK_SOFT_TIME_LIMIT = 60  # TODO: Change if necessary
+
+# CELERY_BEAT_SCHEDULE = {
+#     "update_patients": {
+#         "task": "game.tasks.check_for_updates",
+#         "schedule": 1.0,
+#     },
+# }
