@@ -45,7 +45,7 @@
 	export function showErrorToast(message) {
 		useToast().error(message, {
 			position: "top-right",
-			timeout: 5000,
+			timeout: 4000,
 			closeOnClick: true,
 			pauseOnFocusLoss: true,
 			pauseOnHover: true,
@@ -65,7 +65,7 @@
 	export function showWarningToast(message) {
 		useToast().warning(message, {
 			position: "top-right",
-			timeout: 5000,
+			timeout: 4000,
 			closeOnClick: true,
 			pauseOnFocusLoss: true,
 			pauseOnHover: true,
