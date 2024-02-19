@@ -4,10 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "frontend": "npm-run-all --parallel start-dummy start-proxy dev",
     "dev": "vite",
-    "start-dummy": "cd ./backendDummy && npm run start",
-    "start-proxy": "cd ./backendProxy && npm run start",
     "build": "vite build",
     "preview": "vite preview"
   },
