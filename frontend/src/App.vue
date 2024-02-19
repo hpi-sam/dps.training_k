@@ -43,21 +43,7 @@
 	 * @param {string} message
 	 */
 	export function showErrorToast(message) {
-		useToast().error(message, getToastOptions());
-	}
-
-	/**
-	 * @param {string} message
-	 */
-	export function showWarningToast(message) {
-		useToast().warning(message, getToastOptions());
-	}
-
-	/**
-	 * @return {ToastOptions}
-	 */
-	function getToastOptions() {
-		return {
+		useToast().error(message, {
 			position: "top-right",
 			timeout: 5000,
 			closeOnClick: true,
@@ -70,7 +56,27 @@
 			closeButton: "button",
 			icon: true,
 			rtl: false
-		}
+		});
+	}
+
+	/**
+	 * @param {string} message
+	 */
+	export function showWarningToast(message) {
+		useToast().warning(message, {
+			position: "top-right",
+			timeout: 5000,
+			closeOnClick: true,
+			pauseOnFocusLoss: true,
+			pauseOnHover: true,
+			draggable: true,
+			draggablePercent: 0.6,
+			showCloseButtonOnHover: false,
+			hideProgressBar: true,
+			closeButton: "button",
+			icon: true,
+			rtl: false
+		});
 	}
 </script>
 
