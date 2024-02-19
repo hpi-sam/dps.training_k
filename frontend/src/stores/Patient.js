@@ -4,6 +4,7 @@ export const usePatientStore = defineStore('patient', {
 	state: () => ({
 		token: '',
 		patientCode: '',
+		triage: '-',
 		areaName: '',
         airway: '',
         breathing: '',

@@ -1,7 +1,29 @@
 <script setup>
+	import {ref, computed} from 'vue'
 	import {usePatientStore} from '@/stores/Patient';
+	import TriagePopup from '@/components/widgets/TriagePopup.vue';
+	import PatientStatus from '@/components/widgets/PatientStatus.vue';
 
 	const patientStore = usePatientStore()
+
+	const triageColor = ref(computed(() => {
+		switch (patientStore.triage) {
+			case 'G':
+				return 'green';
+			case 'Y':
+				return 'yellow';
+			case 'A':
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'E':
+				return 'red';
+			default:
+				return 'gray';
+		}
+	}));
+
+	const showPopup = ref(false)
 </script>
 
 <template>
@@ -9,48 +31,15 @@
 		<div id="nav-trainer">
 			{{ patientStore.patientCode }}
 		</div>
+		<div id="nav-triage" :class="triageColor" @click="showPopup = true">
+			{{ patientStore.triage }}
+		</div>
 		<div id="nav-exercise-code">
 			{{ patientStore.areaName }}
 		</div>
 	</nav>
-	<table>
-		<tr>
-			<td>
-				<p class="key">
-					Airway
-				</p>{{ patientStore.airway }}
-			</td>
-			<td>
-				<p class="key">
-					Breathing
-				</p>{{ patientStore.breathing }}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<p class="key">
-					Circulation
-				</p>{{ patientStore.circulation }}
-			</td>
-			<td>
-				<p class="key">
-					Consciousness
-				</p>{{ patientStore.consciousness }}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<p class="key">
-					Psyche
-				</p>{{ patientStore.psyche }}
-			</td>
-			<td>
-				<p class="key">
-					Skin
-				</p>{{ patientStore.skin }}
-			</td>
-		</tr>
-	</table>
+	<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
+	<PatientStatus />
 </template>
 
 <style scoped>
@@ -61,8 +50,7 @@
 		float: left;
 	}
 
-	#nav-trainer, #nav-exercise-code {
-		width: 50%;
+	#nav-trainer, #nav-triage, #nav-exercise-code {
 		height: 100%;
 		border-bottom: 8px solid black;
 		display: flex;
@@ -72,24 +60,34 @@
 	}
 
 	#nav-trainer {
+		width: 40%;
+		border-right: 4px solid black;
+	}
+
+	#nav-triage{
+		width: 20%;
+		border-left: 4px solid black;
 		border-right: 4px solid black;
 	}
 
 	#nav-exercise-code {
+		width: 40%;
 		border-left: 4px solid black;
 	}
-
-	table{
-		border-collapse: collapse;
-		width: 100%;
+	
+	.gray{
+		background-color: lightgray;
 	}
 
-	td{
-		width: 50%;
-		padding: 10px;
+	.green{
+		background-color: green;
 	}
 
-	.key{
-		font-weight: bold;
+	.yellow{
+		background-color: yellow;
+	}
+
+	.red{
+		background-color: red;
 	}
 </style>
