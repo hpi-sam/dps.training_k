@@ -1,0 +1,78 @@
+version: '3.8'
+
+volumes:
+  local_postgres_data: { }
+  local_postgres_data_backups: { }
+  static_volume: { }
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./deployment/django/Dockerfile
+    container_name: K-dPS-django
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
+    volumes:
+      - static_volume:/app/staticfiles
+      - .:/app:z
+    expose:
+      - 8000
+    command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
+
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./deployment/postgres/Dockerfile
+    container_name: K-dPS-postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  redis:
+    image: redis:6
+    container_name: K-dPS-redis
+
+  celeryworker:
+    build:
+      context: .
+      dockerfile: ./deployment/django/Dockerfile
+    env_file:
+      - .env
+    container_name: K-dPS-celeryworker
+    command: /start-celeryworker
+    depends_on:
+      - django
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./deployment/django/Dockerfile
+    env_file:
+      - .env
+    container_name: K-dPS-celerybeat
+    command: /start-celerybeat
+    depends_on:
+      - django
+
+  nginx:
+    build: deployment/nginx
+    container_name: K-dPS-nginx
+    volumes:
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:80"
+    depends_on:
+      - django
