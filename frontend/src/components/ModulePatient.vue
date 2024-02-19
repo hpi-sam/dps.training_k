@@ -1,7 +1,3 @@
-<template>
-	<h1>Patient</h1>
-</template>
-
 <script setup>
 	import {onBeforeUnmount, onMounted} from 'vue'
 	import socketPatient from "@/sockets/SocketPatient.js";
@@ -12,3 +8,7 @@
 		if (connectionStore.patientConnected) socketPatient.close();
 	});
 </script>
+
+<template>
+	<h1>Patient</h1>
+</template>

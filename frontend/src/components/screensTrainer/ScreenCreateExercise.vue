@@ -1,3 +1,7 @@
+<script setup>
+	import socketTrainer from "@/sockets/SocketTrainer.js";
+</script>
+
 <template>
 	<div id="main">
 		<h1>Übung erstellen</h1>
@@ -8,10 +12,6 @@
 		</button>
 	</div>
 </template>
-
-<script setup>
-	import socketTrainer from "@/sockets/SocketTrainer.js";
-</script>
 
 <style scoped>
 	#main {

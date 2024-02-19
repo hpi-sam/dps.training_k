@@ -1,3 +1,11 @@
+<script setup>
+	import {useTrainerStore} from '@/stores/Trainer';
+	import {useExerciseStore} from '@/stores/Exercise';
+
+	const trainerStore = useTrainerStore()
+	const exerciseStore = useExerciseStore()
+</script>
+
 <template>
 	<nav>
 		<div id="nav-trainer">
@@ -9,14 +17,6 @@
 	</nav>
 	<div>Geladenes Übungsobjekt: <br>{{ exerciseStore }}</div>
 </template>
-
-<script setup>
-	import {useTrainerStore} from '@/stores/Trainer';
-	import {useExerciseStore} from '@/stores/Exercise';
-
-	const trainerStore = useTrainerStore()
-	const exerciseStore = useExerciseStore()
-</script>
 
 <style scoped>
 	nav {

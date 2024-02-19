@@ -1,34 +1,3 @@
-<template>
-	<main>
-		<component :is="modules[currentModule]" />
-	</main>
-
-	<div id="dev-bar">
-		<button @click="currentModule='ModuleLogin'">
-			Login
-		</button>
-		<button @click="currentModule='ModuleTrainer'">
-			Trainer
-		</button>
-		<button @click="currentModule='ModulePatient'">
-			Patient
-		</button>
-
-		<button v-if="connectionState" id="ws-test" @click="sendPasstroughTest()">
-			send pass-through test
-		</button>
-
-		<button v-if="currentModule!=='ModuleLogin'" id="ws-test" @click="mockEvent()">
-			Mock Server Event:
-		</button>
-		<select v-if="currentModule!=='ModuleLogin'" v-model="selectedMockEvent">
-			<option v-for="event in serverMockEvents" :key="event.id" :value="event.id">
-				{{ event.id }}
-			</option>
-		</select>
-	</div>
-</template>
-
 <script setup>
 	import {computed} from 'vue'
 	import ModuleLogin from '@/components/ModuleLogin.vue'
@@ -65,9 +34,7 @@
 
 		if (currentModule.value === 'ModuleTrainer')
 			socketTrainer.socket.onmessage(messageEvent)
-		else if (currentModule.value === 'ModulePatient')
-			socketPatient.socket.onmessage(messageEvent)
-		else return
+		else socketPatient.socket.onmessage(messageEvent)
 
 		showWarningToast(`Mocked Server Event: ${event.id}`)
 	}
@@ -124,6 +91,37 @@
 		}
 	}
 </script>
+
+<template>
+	<main>
+		<component :is="modules[currentModule]" />
+	</main>
+
+	<div id="dev-bar">
+		<button @click="currentModule='ModuleLogin'">
+			Login
+		</button>
+		<button @click="currentModule='ModuleTrainer'">
+			Trainer
+		</button>
+		<button @click="currentModule='ModulePatient'">
+			Patient
+		</button>
+
+		<button v-if="connectionState" id="ws-test" @click="sendPasstroughTest()">
+			send pass-through test
+		</button>
+
+		<button v-if="currentModule!=='ModuleLogin'" id="ws-test" @click="mockEvent()">
+			Mock Server Event:
+		</button>
+		<select v-if="currentModule!=='ModuleLogin'" v-model="selectedMockEvent">
+			<option v-for="event in serverMockEvents" :key="event.id" :value="event.id">
+				{{ event.id }}
+			</option>
+		</select>
+	</div>
+</template>
 
 <style scoped>
 	#dev-bar {

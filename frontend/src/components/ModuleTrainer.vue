@@ -1,12 +1,3 @@
-<template>
-	<div id="leftScreen">
-		<component :is="screens[currentLeftScreen]" />
-	</div>
-	<div id="rightScreen">
-		<component :is="screens[currentRightScreen]" />
-	</div>
-</template>
-
 <script setup>
 	import {onBeforeUnmount, onMounted} from 'vue';
 	import socketTrainer from "@/sockets/SocketTrainer.js";
@@ -43,6 +34,15 @@
 		currentRightScreen.value = newScreen;
 	}
 </script>
+
+<template>
+	<div id="leftScreen">
+		<component :is="screens[currentLeftScreen]" />
+	</div>
+	<div id="rightScreen">
+		<component :is="screens[currentRightScreen]" />
+	</div>
+</template>
 
 <style scoped>
 	#leftScreen, #rightScreen {

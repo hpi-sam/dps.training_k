@@ -1,12 +1,12 @@
+<script setup>
+	import LoginTrainer from '../widgets/LoginTrainer.vue'
+</script>
+
 <template>
 	<div id="main">
 		<LoginTrainer />
 	</div>
 </template>
-
-<script setup>
-	import LoginTrainer from '../widgets/LoginTrainer.vue'
-</script>
 
 <style scoped>
 	#main {

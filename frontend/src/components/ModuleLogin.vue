@@ -1,3 +1,8 @@
+<script setup>
+	import ScreenTrainer from './screensLogin/ScreenTrainer.vue'
+	import ScreenPatient from './screensLogin/ScreenPatient.vue'
+</script>
+
 <template>
 	<div id="leftSide">
 		<ScreenTrainer />
@@ -6,11 +11,6 @@
 		<ScreenPatient />
 	</div>
 </template>
-
-<script setup>
-	import ScreenTrainer from './screensLogin/ScreenTrainer.vue'
-	import ScreenPatient from './screensLogin/ScreenPatient.vue'
-</script>
 
 <style scoped>
 	#leftSide, #rightSide {
