@@ -10,18 +10,16 @@
 </script>
 
 <script>
-	import ScreenLoading from './screensPatient/ScreenLoading.vue'
 	import ScreenStatus from './screensPatient/ScreenStatus.vue'
 	import ScreenActions from './screensPatient/ScreenActions.vue'
 	import {ref} from "vue";
 
 	const screens = {
-		ScreenLoading,
 		ScreenStatus,
 		ScreenActions
 	}
 
-	const currentLeftScreen = ref('ScreenLoading');
+	const currentLeftScreen = ref('ScreenStatus');
 	const currentRightScreen = ref('ScreenActions');
 
 	export const setLeftScreen = (newScreen) => {

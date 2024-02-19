@@ -1,9 +1,7 @@
 <script setup>
 	import {usePatientStore} from '@/stores/Patient';
-	import {useExerciseStore} from '@/stores/Exercise';
 
 	const patientStore = usePatientStore()
-	const exerciseStore = useExerciseStore()
 </script>
 
 <template>
@@ -12,10 +10,47 @@
 			{{ patientStore.patientCode }}
 		</div>
 		<div id="nav-exercise-code">
-			{{ exerciseStore.getArea(patientStore.patientCode).name }}
+			{{ patientStore.areaName }}
 		</div>
 	</nav>
-	<div>Geladener Patient: <br>{{ exerciseStore.getPatient(patientStore.patientCode) }}</div>
+	<table>
+		<tr>
+			<td>
+				<p class="key">
+					Airway
+				</p>{{ patientStore.airway }}
+			</td>
+			<td>
+				<p class="key">
+					Breathing
+				</p>{{ patientStore.breathing }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="key">
+					Circulation
+				</p>{{ patientStore.circulation }}
+			</td>
+			<td>
+				<p class="key">
+					Consciousness
+				</p>{{ patientStore.consciousness }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="key">
+					Psyche
+				</p>{{ patientStore.psyche }}
+			</td>
+			<td>
+				<p class="key">
+					Skin
+				</p>{{ patientStore.skin }}
+			</td>
+		</tr>
+	</table>
 </template>
 
 <style scoped>
@@ -42,5 +77,19 @@
 
 	#nav-exercise-code {
 		border-left: 4px solid black;
+	}
+
+	table{
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	td{
+		width: 50%;
+		padding: 10px;
+	}
+
+	.key{
+		font-weight: bold;
 	}
 </style>

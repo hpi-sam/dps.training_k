@@ -2,7 +2,6 @@ import {connectionStore} from "@/sockets/ConnectionStore.js";
 import {usePatientStore} from "@/stores/Patient.js";
 import {useExerciseStore} from "@/stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
-import {setLeftScreen as modulePatientSetLeftScreen} from "@/components/ModulePatient.vue"
 
 
 class SocketPatient {
@@ -47,11 +46,11 @@ class SocketPatient {
 					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
 					break;
 				case 'state':
-					console.log('Patient Websocket ToDo: handle state event ', data)
+					usePatientStore().loadStatusFromJSON(data)
 					break;
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise)
-					modulePatientSetLeftScreen('ScreenStatus')
+					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode).name
 					break;
 				case 'exercise-start':
 					console.log('Patient Websocket ToDo: handle exercise-start event ', data)
