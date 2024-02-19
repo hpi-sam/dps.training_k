@@ -16,7 +16,7 @@
 			"password": passwordInput.value,
 		}
 
-		fetch('https://b8ef4433-e891-4dd8-acee-7618425b3cbb.mock.pstmn.io', {
+		fetch('https://localhost:8000/login/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
