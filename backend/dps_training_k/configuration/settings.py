@@ -27,14 +27,15 @@ Env.read_env(os.path.join(BASE_DIR, ".env"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-i#@t22r$*j@7-t=00kfye@mnd+!zzd-%*2rt4s^k5e8o%v3-+n"
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 
+SECRET_KEY = env.str("SECRET_KEY")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+INTERNAL_IPS = env.list("INTERNAL_IPS", None)
 
 # Application definition
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "game.apps.GameConfig",
     "django_celery_beat",
     "django_celery_results",
