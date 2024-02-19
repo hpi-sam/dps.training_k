@@ -19,7 +19,7 @@
 		ScreenActions
 	}
 
-	const currentLeftScreen = ref('ScreenStatus');
+	const currentLeftScreen = ref('ScreenLoading');
 	const currentRightScreen = ref('ScreenActions');
 
 	export const setLeftScreen = (newScreen) => {
