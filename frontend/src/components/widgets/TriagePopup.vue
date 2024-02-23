@@ -1,10 +1,14 @@
 <script setup>
 	import {usePatientStore} from '@/stores/Patient';
+	import socketPatient from "@/sockets/SocketPatient.js";
 
 	const emit = defineEmits(['close-popup'])
-	const patientStore = usePatientStore()
-
 	
+	const setTriage = (triage) => {
+		usePatientStore().triage = triage
+		socketPatient.triage(triage)
+	};
+
 </script>
 
 <template>
@@ -12,28 +16,28 @@
 		<div class="popup">
 			<h2>Sichtungsfarbe auswählen</h2>
 			<div class="button-container">
-				<button class="gray" @click="patientStore.triage = '-'">
+				<button class="gray" @click="setTriage('-')">
 					-
 				</button>
-				<button class="green" @click="patientStore.triage = 'G'">
+				<button class="green" @click="setTriage('G')">
 					G
 				</button>
-				<button class="yellow" @click="patientStore.triage = 'Y'">
+				<button class="yellow" @click="setTriage('Y')">
 					Y
 				</button>
-				<button class="red" @click="patientStore.triage = 'A'">
+				<button class="red" @click="setTriage('A')">
 					A
 				</button>
-				<button class="red" @click="patientStore.triage = 'B'">
+				<button class="red" @click="setTriage('B')">
 					B
 				</button>
-				<button class="red" @click="patientStore.triage = 'C'">
+				<button class="red" @click="setTriage('C')">
 					C
 				</button>
-				<button class="red" @click="patientStore.triage = 'D'">
+				<button class="red" @click="setTriage('D')">
 					D
 				</button>
-				<button class="red" @click="patientStore.triage = 'E'">
+				<button class="red" @click="setTriage('E')">
 					E
 				</button>
 			</div>
@@ -42,19 +46,19 @@
 </template>
 
 <style scoped>
-	.gray{
+	.gray {
 		background-color: lightgray;
 	}
 
-	.green{
+	.green {
 		background-color: green;
 	}
 
-	.yellow{
+	.yellow {
 		background-color: yellow;
 	}
 
-	.red{
+	.red {
 		background-color: red;
 	}
 
@@ -83,7 +87,7 @@
 		justify-content: center;
 	}
 
-	.button-container > button{
+	.button-container > button {
 		width: 50px;
 		height: 50px;
 		margin: 10px;

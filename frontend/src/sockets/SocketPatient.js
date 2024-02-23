@@ -88,6 +88,13 @@ class SocketPatient {
 		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
 	}
 
+	triage(triage) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'triage',
+			'triage': `${triage}`
+		}));
+	}
+
 	actionAdd(name) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'action-add',
