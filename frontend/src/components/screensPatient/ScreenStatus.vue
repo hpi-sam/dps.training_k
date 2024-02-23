@@ -64,7 +64,7 @@
 		border-right: 4px solid black;
 	}
 
-	#nav-triage{
+	#nav-triage {
 		width: 20%;
 		border-left: 4px solid black;
 		border-right: 4px solid black;
@@ -74,20 +74,24 @@
 		width: 40%;
 		border-left: 4px solid black;
 	}
-	
-	.gray{
+
+	/*noinspection CssUnusedSymbol*/
+	.gray {
 		background-color: lightgray;
 	}
 
-	.green{
+	/*noinspection CssUnusedSymbol*/
+	.green {
 		background-color: green;
 	}
 
-	.yellow{
+	/*noinspection CssUnusedSymbol*/
+	.yellow {
 		background-color: yellow;
 	}
 
-	.red{
+	/*noinspection CssUnusedSymbol*/
+	.red {
 		background-color: red;
 	}
 </style>
