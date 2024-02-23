@@ -1,13 +1,17 @@
+require('@rushstack/eslint-patch/modern-module-resolution')
+
 // eslint-disable-next-line no-undef
 module.exports = {
+	root: true,
 	parserOptions: {
-		ecmaVersion: 2022,
+		ecmaVersion: 'latest',
 		sourceType: 'module',
 	},
 	extends: [
 		// add more generic rulesets here, such as:
 		'eslint:recommended',
 		'plugin:vue/vue3-recommended',
+		'@vue/eslint-config-typescript'
 	],
 	rules: {
 		// override/add rules settings here, such as:
