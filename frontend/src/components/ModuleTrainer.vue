@@ -1,6 +1,6 @@
 <script setup>
 	import {onBeforeUnmount, onMounted} from 'vue';
-	import socketTrainer from "@/sockets/SocketTrainer.js";
+	import socketTrainer from "@/sockets/SocketTrainer";
 	import {connection} from "@/stores/Connection.js";
 
 	onMounted(() => socketTrainer.connect());

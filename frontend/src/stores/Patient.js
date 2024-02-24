@@ -6,18 +6,17 @@ export const usePatientStore = defineStore('patient', {
 		patientCode: '',
 		triage: '-',
 		areaName: '',
-        airway: '',
-        breathing: '',
-        circulation: '',
-        consciousness: '',
+		airway: '',
+		breathing: '',
+		circulation: '',
+		consciousness: '',
 		phaseNumer: 0,
-        psyche: '',
-        pupils: '',
-        skin: ''
+		psyche: '',
+		pupils: '',
+		skin: ''
 	}),
-    actions: {
-        loadStatusFromJSON(json){
-            const state = json.state
+	actions: {
+		loadStatusFromJSON(state) {
 			this.airway = state.airway
 			this.breathing = state.breathing
 			this.circulation = state.circulation
@@ -26,6 +25,6 @@ export const usePatientStore = defineStore('patient', {
 			this.psyche = state.psyche
 			this.pupils = state.pupils
 			this.skin = state.skin
-        }
-    }
+		}
+	}
 })

@@ -5,9 +5,11 @@ import {showErrorToast, showWarningToast} from "@/App.vue";
 import {setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 
 class SocketTrainer {
-	constructor(url) {
+	private readonly url: string;
+	private socket: WebSocket | null = null;
+
+	constructor(url: string) {
 		this.url = url;
-		this.socket = null;
 	}
 
 	connect() {
@@ -29,7 +31,7 @@ class SocketTrainer {
 		};
 
 		this.socket.onmessage = (message) => {
-			let data
+			let data: MessageData
 			try {
 				data = JSON.parse(message.data)
 			} catch (e) {
@@ -64,7 +66,7 @@ class SocketTrainer {
 		if (this.socket) this.socket.close();
 	}
 
-	#sendMessage(message) {
+	#sendMessage(message: string) {
 		if (connection.trainerConnected && this.socket) {
 			this.socket.send(message);
 		} else {
@@ -72,10 +74,10 @@ class SocketTrainer {
 		}
 	}
 
-	authentication(token) {
+	authentication(token: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'authentication',
-			'token': `${token}`
+			'token': token
 		}));
 	}
 
