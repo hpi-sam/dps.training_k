@@ -1,4 +1,4 @@
-import {connectionStore} from "@/sockets/ConnectionStore.js";
+import {connection} from "@/stores/Connection.js";
 import {useTrainerStore} from "@/stores/Trainer.js";
 import {useExerciseStore} from "@/stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
@@ -15,13 +15,13 @@ class SocketTrainer {
 
 		this.socket.onopen = () => {
 			console.log('Trainer WebSocket connection established');
-			connectionStore.trainerConnected = true;
+			connection.trainerConnected = true;
 			this.authentication(useTrainerStore().token)
 		};
 
 		this.socket.onclose = () => {
 			console.log('Trainer WebSocket connection closed');
-			connectionStore.trainerConnected = false;
+			connection.trainerConnected = false;
 		};
 
 		this.socket.onerror = (error) => {
@@ -65,7 +65,7 @@ class SocketTrainer {
 	}
 
 	#sendMessage(message) {
-		if (connectionStore.trainerConnected && this.socket) {
+		if (connection.trainerConnected && this.socket) {
 			this.socket.send(message);
 		} else {
 			console.log('Trainer WebSocket is not connected.');

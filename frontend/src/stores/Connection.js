@@ -1,6 +1,6 @@
 import {reactive} from 'vue';
 
-export const connectionStore = reactive({
+export const connection = reactive({
 	patientConnected: false,
 	trainerConnected: false
 });
