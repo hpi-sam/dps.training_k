@@ -1,7 +1,7 @@
 <script setup>
 	import {onBeforeUnmount, onMounted} from 'vue'
 	import socketPatient from "@/sockets/SocketPatient";
-	import {connection} from "@/stores/Connection.js";
+	import {connection} from "@/stores/Connection";
 
 	onMounted(() => socketPatient.connect());
 	onBeforeUnmount(() => {
