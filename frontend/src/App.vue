@@ -1,27 +1,18 @@
-<script setup>
+<script setup lang="ts">
 	import {computed} from 'vue'
-	import ModuleLogin from '@/components/ModuleLogin.vue'
-	import ModuleTrainer from '@/components/ModuleTrainer.vue'
-	import ModulePatient from '@/components/ModulePatient.vue'
 	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient";
 	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer";
 	import {connection} from "@/stores/Connection";
 
-	const modules = {
-		ModuleLogin,
-		ModuleTrainer,
-		ModulePatient
-	}
-
 	const connectionState = computed(() => {
-		if (currentModule.value === 'ModuleTrainer') return connection.trainerConnected
-		else if (currentModule.value === 'ModulePatient') return connection.patientConnected
+		if (currentModule.value === Modules.TRAINER) return connection.trainerConnected
+		else if (currentModule.value === Modules.PATIENT) return connection.patientConnected
 		else return false
 	})
 
 	const serverMockEvents = computed(() => {
-		if (currentModule.value === 'ModuleTrainer') return serverMockEventsTrainer
-		else if (currentModule.value === 'ModulePatient') return serverMockEventsPatient
+		if (currentModule.value === Modules.TRAINER) return serverMockEventsTrainer
+		else if (currentModule.value === Modules.PATIENT) return serverMockEventsPatient
 		else return serverMockEventsPatient
 	})
 
@@ -30,53 +21,59 @@
 	const mockEvent = () => {
 		const event = serverMockEvents.value.find(e => e.id === selectedMockEvent.value)
 		if (!event) return
-		const messageEvent = {data: event.data}
+		const messageEvent = {data: event.data} as MessageEvent;
 
-		if (currentModule.value === 'ModuleTrainer')
+		if (currentModule.value === Modules.TRAINER && socketTrainer.socket?.onmessage)
 			socketTrainer.socket.onmessage(messageEvent)
-		else socketPatient.socket.onmessage(messageEvent)
+		else if (socketPatient.socket?.onmessage)
+			socketPatient.socket.onmessage(messageEvent)
+		else {
+			showErrorToast('Event mocking failed: no socket available')
+			return
+		}
 
 		showWarningToast(`Mocked Server Event: ${event.id}`)
 	}
 
 	const sendPasstroughTest = () => {
-		if (currentModule.value === 'ModuleTrainer')
+		if (currentModule.value === Modules.TRAINER)
 			socketTrainer.testPassthrough();
-		else if (currentModule.value === 'ModulePatient')
+		else if (currentModule.value === Modules.PATIENT)
 			socketPatient.testPassthrough();
 	};
 </script>
 
-<script>
-	import {useToast} from "vue-toastification";
+<script lang="ts">
+	import {POSITION, TYPE, useToast} from "vue-toastification";
 	import {ref} from "vue";
+	import type {ToastOptions} from "vue-toastification/dist/types/types";
+	import ModuleLogin from "@/components/ModuleLogin.vue";
+	import ModuleTrainer from "@/components/ModuleTrainer.vue";
+	import ModulePatient from "@/components/ModulePatient.vue";
 
-	const currentModule = ref('ModuleLogin')
+	enum Modules {
+		LOGIN = ModuleLogin,
+		TRAINER = ModuleTrainer,
+		PATIENT = ModulePatient
+	}
 
-	export function setModule(newModule) {
+	const currentModule = ref(Modules.LOGIN);
+
+	export function setModule(newModule: Modules) {
 		currentModule.value = newModule
 	}
 
-	/**
-	 * @param {string} message
-	 */
-	export function showErrorToast(message) {
+	export function showErrorToast(message: string) {
 		useToast().error(message, getToastOptions());
 	}
 
-	/**
-	 * @param {string} message
-	 */
-	export function showWarningToast(message) {
+	export function showWarningToast(message: string) {
 		useToast().warning(message, getToastOptions());
 	}
 
-	/**
-	 * @return {ToastOptions}
-	 */
-	function getToastOptions() {
+	function getToastOptions(): ToastOptions & { type?: TYPE.ERROR & TYPE.WARNING } {
 		return {
-			position: "top-right",
+			position: POSITION.TOP_RIGHT,
 			timeout: 5000,
 			closeOnClick: true,
 			pauseOnFocusLoss: true,
@@ -94,17 +91,17 @@
 
 <template>
 	<main>
-		<component :is="modules[currentModule]" />
+		<component :is="currentModule" />
 	</main>
 
 	<div id="dev-bar">
-		<button @click="currentModule='ModuleLogin'">
+		<button @click="currentModule=Modules.LOGIN">
 			Login
 		</button>
-		<button @click="currentModule='ModuleTrainer'">
+		<button @click="currentModule=Modules.TRAINER">
 			Trainer
 		</button>
-		<button @click="currentModule='ModulePatient'">
+		<button @click="currentModule=Modules.PATIENT">
 			Patient
 		</button>
 
@@ -112,10 +109,10 @@
 			send pass-through test
 		</button>
 
-		<button v-if="currentModule!=='ModuleLogin'" id="ws-test" @click="mockEvent()">
+		<button v-if="currentModule!==Modules.LOGIN" id="ws-test" @click="mockEvent()">
 			Mock Server Event:
 		</button>
-		<select v-if="currentModule!=='ModuleLogin'" v-model="selectedMockEvent">
+		<select v-if="currentModule!==Modules.LOGIN" v-model="selectedMockEvent">
 			<option v-for="event in serverMockEvents" :key="event.id" :value="event.id">
 				{{ event.id }}
 			</option>

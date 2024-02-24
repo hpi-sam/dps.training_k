@@ -6,7 +6,7 @@ import {setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTra
 
 class SocketTrainer {
 	private readonly url: string;
-	private socket: WebSocket | null = null;
+	socket: WebSocket | null = null;
 
 	constructor(url: string) {
 		this.url = url;
@@ -42,7 +42,7 @@ class SocketTrainer {
 
 			switch (data.messageType) {
 				case 'test-passthrough':
-					showWarningToast(data.message)
+					showWarningToast(data.message || '')
 					break;
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
