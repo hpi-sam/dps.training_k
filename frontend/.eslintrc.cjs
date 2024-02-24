@@ -1,6 +1,5 @@
 require('@rushstack/eslint-patch/modern-module-resolution')
 
-// eslint-disable-next-line no-undef
 module.exports = {
 	root: true,
 	parserOptions: {
@@ -8,14 +7,11 @@ module.exports = {
 		sourceType: 'module',
 	},
 	extends: [
-		// add more generic rulesets here, such as:
 		'eslint:recommended',
 		'plugin:vue/vue3-recommended',
 		'@vue/eslint-config-typescript'
 	],
 	rules: {
-		// override/add rules settings here, such as:
-		// 'vue/no-unused-vars': 'error'
 		'camelcase': 'warn',
 		'max-len': ['error', {
 			'code': 150,
@@ -39,5 +35,12 @@ module.exports = {
 		}],
 
 		'vue/html-indent': ['error', "tab"],
+
+		"vue/block-lang": ["error", {
+			"script": {
+				"lang": "ts"
+			}
+		}]
+
 	}
 }
