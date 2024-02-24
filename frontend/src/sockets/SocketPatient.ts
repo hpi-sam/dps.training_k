@@ -1,6 +1,6 @@
-import {connection} from "@/stores/Connection.js";
-import {usePatientStore} from "@/stores/Patient.js";
-import {useExerciseStore} from "@/stores/Exercise.js";
+import {connection} from "@/stores/Connection";
+import {usePatientStore} from "@/stores/Patient";
+import {useExerciseStore} from "@/stores/Exercise";
 import {showErrorToast, showWarningToast} from "@/App.vue";
 
 class SocketPatient {
@@ -47,11 +47,11 @@ class SocketPatient {
 					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
 					break;
 				case 'state':
-					usePatientStore().loadStatusFromJSON(data)
+					usePatientStore().loadStatusFromJSON(data.state as State)
 					break;
 				case 'exercise':
-					useExerciseStore().createFromJSON(data.exercise)
-					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode).name
+					useExerciseStore().createFromJSON(data.exercise as Exercise)
+					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode)?.name || ''
 					break;
 				case 'exercise-start':
 					console.log('Patient Websocket ToDo: handle exercise-start event ', data)

@@ -1,6 +1,6 @@
-import {connection} from "@/stores/Connection.js";
-import {useTrainerStore} from "@/stores/Trainer.js";
-import {useExerciseStore} from "@/stores/Exercise.js";
+import {connection} from "@/stores/Connection";
+import {useTrainerStore} from "@/stores/Trainer";
+import {useExerciseStore} from "@/stores/Exercise";
 import {showErrorToast, showWarningToast} from "@/App.vue";
 import {setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 
@@ -45,7 +45,7 @@ class SocketTrainer {
 					showWarningToast(data.message)
 					break;
 				case 'exercise':
-					useExerciseStore().createFromJSON(data.exercise)
+					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					moduleTrainerSetLeftScreen('ScreenExerciseCreation')
 					moduleTrainerSetRightScreen('ScreenResourceCreation')
 					break;

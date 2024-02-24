@@ -5,7 +5,7 @@
 	import ModulePatient from '@/components/ModulePatient.vue'
 	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient";
 	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer";
-	import {connection} from "@/stores/Connection.js";
+	import {connection} from "@/stores/Connection";
 
 	const modules = {
 		ModuleLogin,
