@@ -5,7 +5,7 @@ import {showErrorToast, showWarningToast} from "@/App.vue";
 
 class SocketPatient {
 	private readonly url: string;
-	private socket: WebSocket | null = null;
+	socket: WebSocket | null = null;
 
 	constructor(url: string) {
 		this.url = url;
@@ -41,7 +41,7 @@ class SocketPatient {
 
 			switch (data.messageType) {
 				case 'test-passthrough':
-					showWarningToast(data.message)
+					showWarningToast(data.message || '')
 					break;
 				case 'load-stopped':
 					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
