@@ -1,11 +1,11 @@
 <script setup>
 	import {onBeforeUnmount, onMounted} from 'vue'
 	import socketPatient from "@/sockets/SocketPatient.js";
-	import {connectionStore} from "@/sockets/ConnectionStore.js";
+	import {connection} from "@/stores/Connection.js";
 
 	onMounted(() => socketPatient.connect());
 	onBeforeUnmount(() => {
-		if (connectionStore.patientConnected) socketPatient.close();
+		if (connection.patientConnected) socketPatient.close();
 	});
 </script>
 

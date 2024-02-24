@@ -1,4 +1,4 @@
-import {connectionStore} from "@/sockets/ConnectionStore.js";
+import {connection} from "@/stores/Connection.js";
 import {usePatientStore} from "@/stores/Patient.js";
 import {useExerciseStore} from "@/stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
@@ -15,13 +15,13 @@ class SocketPatient {
 
 		this.socket.onopen = () => {
 			console.log('Patient WebSocket connection established');
-			connectionStore.patientConnected = true;
+			connection.patientConnected = true;
 			this.authentication(usePatientStore().token)
 		};
 
 		this.socket.onclose = () => {
 			console.log('Patient WebSocket connection closed');
-			connectionStore.patientConnected = false;
+			connection.patientConnected = false;
 		};
 
 		this.socket.onerror = (error) => {
@@ -70,7 +70,7 @@ class SocketPatient {
 	}
 
 	#sendMessage(message) {
-		if (connectionStore.patientConnected && this.socket) {
+		if (connection.patientConnected && this.socket) {
 			this.socket.send(message);
 		} else {
 			console.log('Patient WebSocket is not connected.');
