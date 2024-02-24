@@ -3,14 +3,15 @@ import {usePatientStore} from "@/stores/Patient.js";
 import {useExerciseStore} from "@/stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
 
-
 class SocketPatient {
-	constructor(url) {
+	private readonly url: string;
+	private socket: WebSocket | null = null;
+
+	constructor(url: string) {
 		this.url = url;
-		this.socket = null;
 	}
 
-	connect() {
+	connect(): void {
 		this.socket = new WebSocket(this.url);
 
 		this.socket.onopen = () => {
@@ -29,7 +30,7 @@ class SocketPatient {
 		};
 
 		this.socket.onmessage = (message) => {
-			let data
+			let data: MessageData
 			try {
 				data = JSON.parse(message.data)
 			} catch (e) {
@@ -69,7 +70,7 @@ class SocketPatient {
 		if (this.socket) this.socket.close();
 	}
 
-	#sendMessage(message) {
+	private sendMessage(message: string) {
 		if (connection.patientConnected && this.socket) {
 			this.socket.send(message);
 		} else {
@@ -77,28 +78,28 @@ class SocketPatient {
 		}
 	}
 
-	authentication(token) {
-		this.#sendMessage(JSON.stringify({
+	authentication(token: string) {
+		this.sendMessage(JSON.stringify({
 			'messageType': 'authentication',
-			'token': `${token}`
+			'token': token,
 		}));
 	}
 
 	testPassthrough() {
-		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
+		this.sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
 	}
 
-	triage(triage) {
-		this.#sendMessage(JSON.stringify({
+	triage(triage: string) {
+		this.sendMessage(JSON.stringify({
 			'messageType': 'triage',
-			'triage': `${triage}`
+			'triage': triage,
 		}));
 	}
 
-	actionAdd(name) {
-		this.#sendMessage(JSON.stringify({
+	actionAdd(name: string) {
+		this.sendMessage(JSON.stringify({
 			'messageType': 'action-add',
-			'name': `${name}`
+			'name': name,
 		}));
 	}
 }
@@ -116,12 +117,10 @@ export const serverMockEvents = [
 	},
 	{
 		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{' +
-			'"name":"Area1",' +
+		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{"name":"Area1",' +
 			'"patients":[{"name":"John Doe","patientCode":"JD123","patientId":"39","patientDatabaseId":101}],' +
 			'"personnel":[{"name":"Dr. Smith","role":"Therapist","personnelDatabaseId":201}],' +
-			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},' +
-			'{"name":"Area2",' +
+			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},{"name":"Area2",' +
 			'"patients":[{"name":"Jane Doe","patientCode":"JD456","patientId":"33","patientDatabaseId":102}],' +
 			'"personnel":[{"name":"Nurse Riley","role":"Nurse","personnelDatabaseId":202}],' +
 			'"devices":[{"name":"DeviceB","deviceDatabaseId":302}]}]}}'

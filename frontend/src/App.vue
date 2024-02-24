@@ -1,12 +1,10 @@
-// https://stackoverflow.com/questions/63056921/how-to-migrate-vue-js-project-to-typescript
-
-<script setup lang="ts">
+<script setup>
 	import {computed} from 'vue'
 	import ModuleLogin from '@/components/ModuleLogin.vue'
 	import ModuleTrainer from '@/components/ModuleTrainer.vue'
 	import ModulePatient from '@/components/ModulePatient.vue'
-	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient.js";
-	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer.js";
+	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient";
+	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer";
 	import {connection} from "@/stores/Connection.js";
 
 	const modules = {
