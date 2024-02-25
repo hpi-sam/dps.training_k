@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 	import {usePatientStore} from '@/stores/Patient';
 	import socketPatient from "@/sockets/SocketPatient";
 	import { ref } from 'vue';
 
 	const emit = defineEmits(['close-popup'])
 
-	const setTriage = (triage) => {
+	const setTriage = (triage: string) => {
 		usePatientStore().triage = triage
 		socketPatient.triage(triage)
 	};

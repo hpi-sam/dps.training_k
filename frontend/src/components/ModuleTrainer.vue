@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import {onBeforeUnmount, onMounted} from 'vue';
 	import socketTrainer from "@/sockets/SocketTrainer";
 	import {connection} from "@/stores/Connection";
@@ -9,38 +9,40 @@
 	});
 </script>
 
-<script>
+<script lang="ts">
 	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue';
 	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue';
 	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue';
 	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue';
 	import {ref} from "vue";
 
-	const screens = {
-		ScreenCreateExercise,
-		ScreenJoinExercise,
-		ScreenExerciseCreation,
-		ScreenResourceCreation
-	}
+	export const Screens = {
+		CREATE_EXERCISE: ScreenCreateExercise,
+		JOIN_EXERCISE: ScreenJoinExercise,
+		EXERCISE_CREATION: ScreenExerciseCreation,
+		RESOURCE_CREATION: ScreenResourceCreation
+	} as const
+	// eslint-disable-next-line no-redeclare
+	type Screens = typeof Screens[keyof typeof Screens]
 
-	const currentLeftScreen = ref('ScreenCreateExercise');
-	const currentRightScreen = ref('ScreenJoinExercise');
+	const currentLeftScreen = ref(Screens.CREATE_EXERCISE);
+	const currentRightScreen = ref(Screens.JOIN_EXERCISE);
 
-	export const setLeftScreen = (newScreen) => {
+	export const setLeftScreen = (newScreen: Screens) => {
 		currentLeftScreen.value = newScreen;
 	}
 
-	export const setRightScreen = (newScreen) => {
+	export const setRightScreen = (newScreen: Screens) => {
 		currentRightScreen.value = newScreen;
 	}
 </script>
 
 <template>
 	<div id="leftScreen">
-		<component :is="screens[currentLeftScreen]" />
+		<component :is="currentLeftScreen" />
 	</div>
 	<div id="rightScreen">
-		<component :is="screens[currentRightScreen]" />
+		<component :is="currentRightScreen" />
 	</div>
 </template>
 

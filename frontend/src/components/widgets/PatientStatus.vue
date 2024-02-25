@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import {usePatientStore} from '@/stores/Patient';
 
 	const patientStore = usePatientStore()
@@ -46,20 +46,20 @@
 </template>
 
 <style scoped>
-	table{
+	table {
 		border-collapse: collapse;
 		width: 100%;
 		table-layout: fixed;
 	}
 
-	td{
+	td {
 		width: 50%;
 		padding: 10px;
 		vertical-align: top;
 		overflow: hidden;
 	}
 
-	.key{
+	.key {
 		font-weight: bold;
 	}
 </style>

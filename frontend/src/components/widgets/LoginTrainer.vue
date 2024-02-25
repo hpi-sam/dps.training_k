@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 	import {ref} from 'vue'
 	import {useTrainerStore} from '@/stores/Trainer';
-	import {setModule, showErrorToast} from "@/App.vue";
+	import {Modules, setModule, showErrorToast} from "@/App.vue";
 
 	const usernameInput = ref("")
 	const passwordInput = ref("")
@@ -40,7 +40,7 @@
 			})
 			.then(data => {
 				trainerStore.token = data.token
-				setModule('ModuleTrainer')
+				setModule(Modules.TRAINER)
 			})
 	}
 </script>

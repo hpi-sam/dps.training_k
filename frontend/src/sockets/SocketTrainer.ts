@@ -2,7 +2,7 @@ import {connection} from "@/stores/Connection";
 import {useTrainerStore} from "@/stores/Trainer";
 import {useExerciseStore} from "@/stores/Exercise";
 import {showErrorToast, showWarningToast} from "@/App.vue";
-import {setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
+import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 
 class SocketTrainer {
 	private readonly url: string;
@@ -46,8 +46,8 @@ class SocketTrainer {
 					break;
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					moduleTrainerSetLeftScreen('ScreenExerciseCreation')
-					moduleTrainerSetRightScreen('ScreenResourceCreation')
+					moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
+					moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
 					break;
 				case 'exercise-start':
 					console.log('Trainer Websocket ToDo: handle exercise-start event ', data)

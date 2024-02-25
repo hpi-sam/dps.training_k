@@ -23,11 +23,11 @@
 		if (!event) return
 		const messageEvent = {data: event.data} as MessageEvent;
 
-		if (currentModule.value === Modules.TRAINER && socketTrainer.socket?.onmessage)
+		if (currentModule.value === Modules.TRAINER && socketTrainer.socket?.onmessage) {
 			socketTrainer.socket.onmessage(messageEvent)
-		else if (socketPatient.socket?.onmessage)
+		} else if (socketPatient.socket?.onmessage) {
 			socketPatient.socket.onmessage(messageEvent)
-		else {
+		} else {
 			showErrorToast('Event mocking failed: no socket available')
 			return
 		}
@@ -51,13 +51,25 @@
 	import ModuleTrainer from "@/components/ModuleTrainer.vue";
 	import ModulePatient from "@/components/ModulePatient.vue";
 
-	enum Modules {
-		LOGIN = ModuleLogin,
-		TRAINER = ModuleTrainer,
-		PATIENT = ModulePatient
+	export enum Modules {
+		LOGIN = "ModuleLogin",
+		TRAINER = "ModuleTrainer",
+		PATIENT = "ModulePatient",
 	}
 
 	const currentModule = ref(Modules.LOGIN);
+
+	const currentModuleComponent = computed(() => {
+		switch (currentModule.value) {
+			case Modules.TRAINER:
+				return ModuleTrainer;
+			case Modules.PATIENT:
+				return ModulePatient;
+			case Modules.LOGIN:
+			default:
+				return ModuleLogin;
+		}
+	});
 
 	export function setModule(newModule: Modules) {
 		currentModule.value = newModule
@@ -91,7 +103,7 @@
 
 <template>
 	<main>
-		<component :is="currentModule" />
+		<component :is="currentModuleComponent" />
 	</main>
 
 	<div id="dev-bar">
