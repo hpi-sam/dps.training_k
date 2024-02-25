@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import ScreenTrainer from './screensLogin/ScreenTrainer.vue'
 	import ScreenPatient from './screensLogin/ScreenPatient.vue'
 </script>

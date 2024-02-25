@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient';
-	import {setModule, showErrorToast} from "@/App.vue";
+	import {Modules, setModule, showErrorToast} from "@/App.vue";
 
 	const exerciseCodeInput = ref("")
 	const patientCodeInput = ref("")
@@ -40,7 +40,7 @@
 			})
 			.then(data => {
 				usePatientStore().token = data.token
-				setModule('ModulePatient')
+				setModule(Modules.PATIENT)
 			})
 	}
 </script>

@@ -1,5 +1,5 @@
-<script setup>
-	import {ref, computed} from 'vue'
+<script setup lang="ts">
+	import {computed, ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient';
 	import TriagePopup from '@/components/widgets/TriagePopup.vue';
 	import PatientStatus from '@/components/widgets/PatientStatus.vue';
