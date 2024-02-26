@@ -1,8 +1,8 @@
 <script setup lang="ts">
 	import {ref} from 'vue'
-	import {useTrainerStore} from '@/stores/Trainer';
-	import {Modules, setModule, showErrorToast} from "@/App.vue";
-	import {svg} from "@/assets/Svg";
+	import {useTrainerStore} from '@/stores/Trainer'
+	import {Modules, setModule, showErrorToast} from "@/App.vue"
+	import {svg} from "@/assets/Svg"
 
 	const usernameInput = ref("")
 	const passwordInput = ref("")
@@ -26,18 +26,18 @@
 		})
 			.then(response => {
 				if (!response.ok) {
-					console.log('Login failed:', response);
+					console.log('Login failed:', response)
 					switch (response.status) {
 						case 401:
 							showErrorToast("Fehler: falscher Nutzername oder falsches Passwort")
-							break;
+							break
 						default:
 							showErrorToast("Fehler: Server nicht erreichbar")
-							break;
+							break
 					}
-					return Promise.reject('Trainer login failed with status ' + response.status);
+					return Promise.reject('Trainer login failed with status ' + response.status)
 				}
-				return response.json();
+				return response.json()
 			})
 			.then(data => {
 				trainerStore.token = data.token

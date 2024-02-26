@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia';
+import {defineStore} from 'pinia'
 
 export const useExerciseStore = defineStore('exercise', {
 	state: (): Exercise => ({
@@ -9,7 +9,7 @@ export const useExerciseStore = defineStore('exercise', {
 		getExerciseCode: (state) => state.exerciseCode,
 		getArea: (state) => {
 			return (patientCode: string): Area | null => {
-				let foundArea: Area | null = null;
+				let foundArea: Area | null = null
 				state.areas.forEach((area) => {
 					area.patients.forEach((patient) => {
 						if (patient.patientCode == patientCode) foundArea = area

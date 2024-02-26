@@ -1,20 +1,20 @@
 <script setup lang="ts">
-	import {onBeforeUnmount, onMounted} from 'vue';
-	import socketTrainer from "@/sockets/SocketTrainer";
-	import {connection} from "@/stores/Connection";
+	import {onBeforeUnmount, onMounted} from 'vue'
+	import socketTrainer from "@/sockets/SocketTrainer"
+	import {connection} from "@/stores/Connection"
 
-	onMounted(() => socketTrainer.connect());
+	onMounted(() => socketTrainer.connect())
 	onBeforeUnmount(() => {
-		if (connection.trainerConnected) socketTrainer.close();
-	});
+		if (connection.trainerConnected) socketTrainer.close()
+	})
 </script>
 
 <script lang="ts">
-	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue';
-	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue';
-	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue';
-	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue';
-	import {ref} from "vue";
+	import ScreenCreateExercise from './screensTrainer/ScreenCreateExercise.vue'
+	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue'
+	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue'
+	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue'
+	import {ref} from "vue"
 
 	export const Screens = {
 		CREATE_EXERCISE: ScreenCreateExercise,
@@ -25,15 +25,15 @@
 	// eslint-disable-next-line no-redeclare
 	type Screens = typeof Screens[keyof typeof Screens]
 
-	const currentLeftScreen = ref(Screens.CREATE_EXERCISE);
-	const currentRightScreen = ref(Screens.JOIN_EXERCISE);
+	const currentLeftScreen = ref(Screens.CREATE_EXERCISE)
+	const currentRightScreen = ref(Screens.JOIN_EXERCISE)
 
 	export const setLeftScreen = (newScreen: Screens) => {
-		currentLeftScreen.value = newScreen;
+		currentLeftScreen.value = newScreen
 	}
 
 	export const setRightScreen = (newScreen: Screens) => {
-		currentRightScreen.value = newScreen;
+		currentRightScreen.value = newScreen
 	}
 </script>
 

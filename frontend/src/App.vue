@@ -1,8 +1,8 @@
 <script setup lang="ts">
 	import {computed} from 'vue'
-	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient";
-	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer";
-	import {connection} from "@/stores/Connection";
+	import socketPatient, {serverMockEvents as serverMockEventsPatient} from "@/sockets/SocketPatient"
+	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer"
+	import {connection} from "@/stores/Connection"
 
 	const connectionState = computed(() => {
 		if (currentModule.value === Modules.TRAINER) return connection.trainerConnected
@@ -16,12 +16,12 @@
 		else return serverMockEventsPatient
 	})
 
-	const selectedMockEvent = ref(serverMockEvents.value[0].id);
+	const selectedMockEvent = ref(serverMockEvents.value[0].id)
 
 	const mockEvent = () => {
 		const event = serverMockEvents.value.find(e => e.id === selectedMockEvent.value)
 		if (!event) return
-		const messageEvent = {data: event.data} as MessageEvent;
+		const messageEvent = {data: event.data} as MessageEvent
 
 		if (currentModule.value === Modules.TRAINER && socketTrainer.socket?.onmessage) {
 			socketTrainer.socket.onmessage(messageEvent)
@@ -37,19 +37,19 @@
 
 	const sendPasstroughTest = () => {
 		if (currentModule.value === Modules.TRAINER)
-			socketTrainer.testPassthrough();
+			socketTrainer.testPassthrough()
 		else if (currentModule.value === Modules.PATIENT)
-			socketPatient.testPassthrough();
-	};
+			socketPatient.testPassthrough()
+	}
 </script>
 
 <script lang="ts">
-	import {POSITION, TYPE, useToast} from "vue-toastification";
-	import {ref} from "vue";
-	import type {ToastOptions} from "vue-toastification/dist/types/types";
-	import ModuleLogin from "@/components/ModuleLogin.vue";
-	import ModuleTrainer from "@/components/ModuleTrainer.vue";
-	import ModulePatient from "@/components/ModulePatient.vue";
+	import {POSITION, TYPE, useToast} from "vue-toastification"
+	import {ref} from "vue"
+	import type {ToastOptions} from "vue-toastification/dist/types/types"
+	import ModuleLogin from "@/components/ModuleLogin.vue"
+	import ModuleTrainer from "@/components/ModuleTrainer.vue"
+	import ModulePatient from "@/components/ModulePatient.vue"
 
 	export enum Modules {
 		LOGIN = "ModuleLogin",
@@ -57,30 +57,30 @@
 		PATIENT = "ModulePatient",
 	}
 
-	const currentModule = ref(Modules.LOGIN);
+	const currentModule = ref(Modules.LOGIN)
 
 	const currentModuleComponent = computed(() => {
 		switch (currentModule.value) {
 			case Modules.TRAINER:
-				return ModuleTrainer;
+				return ModuleTrainer
 			case Modules.PATIENT:
-				return ModulePatient;
+				return ModulePatient
 			case Modules.LOGIN:
 			default:
-				return ModuleLogin;
+				return ModuleLogin
 		}
-	});
+	})
 
 	export function setModule(newModule: Modules) {
 		currentModule.value = newModule
 	}
 
 	export function showErrorToast(message: string) {
-		useToast().error(message, getToastOptions());
+		useToast().error(message, getToastOptions())
 	}
 
 	export function showWarningToast(message: string) {
-		useToast().warning(message, getToastOptions());
+		useToast().warning(message, getToastOptions())
 	}
 
 	function getToastOptions(): ToastOptions & { type?: TYPE.ERROR & TYPE.WARNING } {
