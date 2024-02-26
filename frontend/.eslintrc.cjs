@@ -25,6 +25,8 @@ module.exports = {
 			'tabWidth': 4,
 		}],
 
+		'semi': ["error", "never"],
+
 		"vue/max-attributes-per-line": ["error", {
 			"singleline": {
 				"max": 4
