@@ -1,5 +1,5 @@
 from .abstract_consumer import AbstractConsumer
-
+from urllib.parse import parse_qs
 
 class PatientConsumer(AbstractConsumer):
     class PatientIncomingMessageTypes:
@@ -20,7 +20,10 @@ class PatientConsumer(AbstractConsumer):
         }
 
     def connect(self):
-        self.accept()
+        query_string = parse_qs(self.scope['query_string'].decode())
+        token = query_string.get('token', [None])[0]
+        if self.authenticate(token):
+            self.accept()
 
     def handle_example(self, exercise_code, patient_code):
         self.exercise_code = exercise_code
