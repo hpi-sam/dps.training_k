@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
-from game.models import User
 from rest_framework import status
 from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
 
 class PatientAccessView(APIView):
@@ -11,14 +12,13 @@ class PatientAccessView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data="Some required fields are missing",
             )
-
-        new_patient = User.objects.create(
-            username=request.data.get("exerciseCode"),
-            user_type=User.UserType.PATIENT,
-        )
-        new_patient.set_password(request.data.get("patientCode"))
-
-        return Response(
-            status=status.HTTP_201_CREATED,
-            data={"token": str(new_patient.auth_token.key)},
-        )
+        exercise_code = request.data.get("exerciseCode")
+        patient_code = request.data.get("patientCode")
+        user = authenticate(username=exercise_code, password=patient_code)
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"token": token.key}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST
+            )
