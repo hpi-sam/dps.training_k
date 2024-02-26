@@ -61,3 +61,7 @@
 - head to VS Code settings
 - search for "format on save"
 - enable "Editor: Format on Save"
+
+## Development
+
+- to run tests: `docker exec -it K-dPS-django python manage.py test`
