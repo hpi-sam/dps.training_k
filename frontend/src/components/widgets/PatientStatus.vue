@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import {usePatientStore} from '@/stores/Patient';
+	import {usePatientStore} from '@/stores/Patient'
 
 	const patientStore = usePatientStore()
 </script>

@@ -1,64 +1,64 @@
-import {connection} from "@/stores/Connection";
-import {usePatientStore} from "@/stores/Patient";
-import {useExerciseStore} from "@/stores/Exercise";
-import {showErrorToast, showWarningToast} from "@/App.vue";
+import {connection} from "@/stores/Connection"
+import {usePatientStore} from "@/stores/Patient"
+import {useExerciseStore} from "@/stores/Exercise"
+import {showErrorToast, showWarningToast} from "@/App.vue"
 
 class SocketPatient {
-	private readonly url: string;
-	socket: WebSocket | null = null;
+	private readonly url: string
+	socket: WebSocket | null = null
 
 	constructor(url: string) {
-		this.url = url;
+		this.url = url
 	}
 
 	connect(): void {
-		this.socket = new WebSocket(this.url);
+		this.socket = new WebSocket(this.url)
 
 		this.socket.onopen = () => {
-			console.log('Patient WebSocket connection established');
-			connection.patientConnected = true;
+			console.log('Patient WebSocket connection established')
+			connection.patientConnected = true
 			this.authentication(usePatientStore().token)
-		};
+		}
 
 		this.socket.onclose = () => {
-			console.log('Patient WebSocket connection closed');
-			connection.patientConnected = false;
-		};
+			console.log('Patient WebSocket connection closed')
+			connection.patientConnected = false
+		}
 
 		this.socket.onerror = (error) => {
-			console.error('Patient WebSocket error:', error);
-		};
+			console.error('Patient WebSocket error:', error)
+		}
 
 		this.socket.onmessage = (message) => {
 			let data: MessageData
 			try {
 				data = JSON.parse(message.data)
 			} catch (e) {
-				console.error('Error parsing message data:', e);
-				console.error('Problematic message data:', message.data);
+				console.error('Error parsing message data:', e)
+				console.error('Problematic message data:', message.data)
 				return
 			}
 
 			switch (data.messageType) {
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
-					break;
+					break
 				case 'load-stopped':
 					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
-					break;
+					break
 				case 'state':
 					usePatientStore().loadStatusFromJSON(data.state as State)
-					break;
+					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode)?.name || ''
-					break;
+					break
 				case 'exercise-start':
 					console.log('Patient Websocket ToDo: handle exercise-start event ', data)
-					break;
+					break
 				case 'exercise-stop':
 					console.log('Patient Websocket ToDo: handle exercise-stop event ', data)
-					break;
+					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
 					console.error('Patient received unknown message type:', data.messageType, 'with data:', data)
@@ -67,14 +67,14 @@ class SocketPatient {
 	}
 
 	close() {
-		if (this.socket) this.socket.close();
+		if (this.socket) this.socket.close()
 	}
 
 	private sendMessage(message: string) {
 		if (connection.patientConnected && this.socket) {
-			this.socket.send(message);
+			this.socket.send(message)
 		} else {
-			console.log('Patient WebSocket is not connected.');
+			console.log('Patient WebSocket is not connected.')
 		}
 	}
 
@@ -82,30 +82,30 @@ class SocketPatient {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'authentication',
 			'token': token,
-		}));
+		}))
 	}
 
 	testPassthrough() {
-		this.sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
+		this.sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
 
 	triage(triage: string) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'triage',
 			'triage': triage,
-		}));
+		}))
 	}
 
 	actionAdd(name: string) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'action-add',
 			'name': name,
-		}));
+		}))
 	}
 }
 
-const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/');
-export default socketPatient;
+const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/')
+export default socketPatient
 
 export const serverMockEvents = [
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
@@ -127,4 +127,4 @@ export const serverMockEvents = [
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
-];
+]
