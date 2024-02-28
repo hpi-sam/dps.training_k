@@ -29,7 +29,7 @@
 <template>
 	<nav>
 		<div id="nav-trainer">
-			{{ patientStore.patientCode }}
+			{{ patientStore.patientID }}
 		</div>
 		<div id="nav-triage" :class="triageColor" @click="showPopup = true">
 			{{ patientStore.triage }}

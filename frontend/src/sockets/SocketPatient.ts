@@ -53,7 +53,7 @@ class SocketPatient {
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode)?.areaName || ''
+					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientID)?.areaName || ''
 					break
 				case 'exercise-start':
 					console.log('Patient Websocket ToDo: handle exercise-start event ', data)

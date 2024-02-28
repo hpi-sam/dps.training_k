@@ -3,7 +3,7 @@ import {defineStore} from "pinia"
 export const usePatientStore = defineStore('patient', {
 	state: () => ({
 		token: '',
-		patientCode: '',
+		patientID: Number.NEGATIVE_INFINITY,
 		triage: '-',
 		areaName: '',
 		airway: '',

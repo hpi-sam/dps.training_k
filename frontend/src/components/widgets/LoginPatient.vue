@@ -4,16 +4,25 @@
 	import {Modules, setModule, showErrorToast} from "@/App.vue"
 	import {svg} from "@/assets/Svg"
 
-	const exerciseCodeInput = ref("")
-	const patientCodeInput = ref("")
+	const exerciseIdInput = ref("")
+	const patientIdInput = ref("")
 
 	function submit() {
 		const patientStore = usePatientStore()
-		patientStore.patientCode = patientCodeInput.value
+
+		const exerciseIdNumber = parseInt(exerciseIdInput.value)
+		const patientIdNumber = parseInt(patientIdInput.value)
+
+		if (isNaN(exerciseIdNumber) || isNaN(patientIdNumber)) {
+			showErrorToast("Fehler: Übungs- oder Patienten-ID nicht numerisch")
+			return
+		}
+
+		patientStore.patientID = patientIdNumber
 
 		const requestBody = {
-			"exerciseCode": exerciseCodeInput.value,
-			"patientCode": patientCodeInput.value,
+			"exerciseId": exerciseIdNumber,
+			"patientId": patientIdNumber,
 		}
 
 		fetch('https://localhost:8000/login/', {
@@ -28,7 +37,7 @@
 					console.log('Login failed:', response)
 					switch (response.status) {
 						case 401:
-							showErrorToast("Fehler: falscher Nutzername oder falsches Passwort")
+							showErrorToast("Fehler: falsche Übungs- oder Patienten-ID")
 							break
 						default:
 							showErrorToast("Fehler: Server nicht erreichbar")
@@ -49,8 +58,8 @@
 	<div id="main">
 		<div id="form">
 			<h1>Patienten-Zugang</h1>
-			<input v-model="exerciseCodeInput" placeholder="Übungscode">
-			<input v-model="patientCodeInput" placeholder="Patientencode">
+			<input v-model="exerciseIdInput" placeholder="Übungs-ID">
+			<input v-model="patientIdInput" placeholder="Patienten-ID">
 			<button @click="submit()">
 				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 					<path :d="svg.loginIcon" />
