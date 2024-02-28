@@ -1,5 +1,6 @@
 import {connectionStore} from "@/sockets/ConnectionStore.js";
 import {usePatientStore} from "@/stores/Patient.js";
+import {useExerciseStore} from "@/stores/Exercise.js";
 import {showErrorToast, showWarningToast} from "@/App.vue";
 
 
@@ -45,10 +46,11 @@ class SocketPatient {
 					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
 					break;
 				case 'state':
-					console.log('Patient Websocket ToDo: handle state event ', data)
+					usePatientStore().loadStatusFromJSON(data)
 					break;
 				case 'exercise':
-					console.log('Patient Websocket ToDo: handle exercise event ', data)
+					useExerciseStore().createFromJSON(data.exercise)
+					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode).name
 					break;
 				case 'exercise-start':
 					console.log('Patient Websocket ToDo: handle exercise-start event ', data)
@@ -86,6 +88,13 @@ class SocketPatient {
 		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
 	}
 
+	triage(triage) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'triage',
+			'triage': `${triage}`
+		}));
+	}
+
 	actionAdd(name) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'action-add',
@@ -107,10 +116,12 @@ export const serverMockEvents = [
 	},
 	{
 		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{"name":"Area1",' +
+		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{' +
+			'"name":"Area1",' +
 			'"patients":[{"name":"John Doe","patientCode":"JD123","patientId":"39","patientDatabaseId":101}],' +
 			'"personnel":[{"name":"Dr. Smith","role":"Therapist","personnelDatabaseId":201}],' +
-			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},{"name":"Area2",' +
+			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},' +
+			'{"name":"Area2",' +
 			'"patients":[{"name":"Jane Doe","patientCode":"JD456","patientId":"33","patientDatabaseId":102}],' +
 			'"personnel":[{"name":"Nurse Riley","role":"Nurse","personnelDatabaseId":202}],' +
 			'"devices":[{"name":"DeviceB","deviceDatabaseId":302}]}]}}'
