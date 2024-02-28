@@ -49,11 +49,14 @@
 	table{
 		border-collapse: collapse;
 		width: 100%;
+		table-layout: fixed;
 	}
 
 	td{
 		width: 50%;
 		padding: 10px;
+		vertical-align: top;
+		overflow: hidden;
 	}
 
 	.key{
