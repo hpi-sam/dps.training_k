@@ -12,7 +12,7 @@
 			{{ trainerStore.username }}
 		</div>
 		<div id="nav-exercise-code">
-			{{ exerciseStore.exerciseCode }}
+			{{ exerciseStore.exerciseId }}
 		</div>
 	</nav>
 	<div>Geladenes Übungsobjekt: <br>{{ exerciseStore }}</div>

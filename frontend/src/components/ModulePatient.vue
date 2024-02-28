@@ -55,6 +55,7 @@
 
 <style scoped>
 	#leftScreen, #rightScreen {
+		position: relative;
 		float: left;
 		width: 50%;
 		height: 100%;
