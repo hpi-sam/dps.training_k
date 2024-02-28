@@ -113,13 +113,13 @@ export const serverMockEvents = [
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":101},{"patientId":2,"patientName":"Jane Doe",' +
-			'"patientCode":102}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
+			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":20},{"patientId":2,"patientName":"Jane Doe",' +
+			'"patientCode":21}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
 			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"Strength Training","patients":' +
-			'[{"patientId":3,"patientName":"Jim Beam","patientCode":201},{"patientId":4,"patientName":"Jill Wine","patientCode":202}],' +
+			'[{"patientId":3,"patientName":"Jim Beam","patientCode":12},{"patientId":4,"patientName":"Jill Wine","patientCode":24}],' +
 			'"personnel":[{"personnelId":2,"personnelName":"Coach Taylor"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
-			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":301},' +
-			'{"patientId":6,"patientName":"Flexi Rods","patientCode":302}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
+			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":32},' +
+			'{"patientId":6,"patientName":"Flexi Rods","patientCode":8}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
 			'"devices":[{"deviceId":3,"deviceName":"Yoga Mats"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
