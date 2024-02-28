@@ -12,12 +12,11 @@ class SocketPatient {
 	}
 
 	connect(): void {
-		this.socket = new WebSocket(this.url)
+		this.socket = new WebSocket(this.url + usePatientStore().token)
 
 		this.socket.onopen = () => {
 			console.log('Patient WebSocket connection established')
 			connection.patientConnected = true
-			this.authentication(usePatientStore().token)
 		}
 
 		this.socket.onclose = () => {
@@ -78,13 +77,6 @@ class SocketPatient {
 		}
 	}
 
-	authentication(token: string) {
-		this.sendMessage(JSON.stringify({
-			'messageType': 'authentication',
-			'token': token,
-		}))
-	}
-
 	testPassthrough() {
 		this.sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
@@ -104,7 +96,7 @@ class SocketPatient {
 	}
 }
 
-const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/')
+const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
 export default socketPatient
 
 export const serverMockEvents = [

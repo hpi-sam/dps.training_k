@@ -13,12 +13,11 @@ class SocketTrainer {
 	}
 
 	connect() {
-		this.socket = new WebSocket(this.url)
+		this.socket = new WebSocket(this.url + useTrainerStore().token)
 
 		this.socket.onopen = () => {
 			console.log('Trainer WebSocket connection established')
 			connection.trainerConnected = true
-			this.authentication(useTrainerStore().token)
 		}
 
 		this.socket.onclose = () => {
@@ -74,13 +73,6 @@ class SocketTrainer {
 		}
 	}
 
-	authentication(token: string) {
-		this.#sendMessage(JSON.stringify({
-			'messageType': 'authentication',
-			'token': token
-		}))
-	}
-
 	testPassthrough() {
 		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
@@ -98,7 +90,7 @@ class SocketTrainer {
 	}
 }
 
-const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/')
+const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
 export default socketTrainer
 
 export const serverMockEvents = [

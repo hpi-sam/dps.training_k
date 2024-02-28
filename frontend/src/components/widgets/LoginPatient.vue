@@ -12,7 +12,6 @@
 		patientStore.patientCode = patientCodeInput.value
 
 		const requestBody = {
-			"messageType": "patient-login",
 			"exerciseCode": exerciseCodeInput.value,
 			"patientCode": patientCodeInput.value,
 		}
