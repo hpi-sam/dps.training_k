@@ -12,7 +12,6 @@
 		trainerStore.username = usernameInput.value
 
 		const requestBody = {
-			"messageType": "trainer-login",
 			"username": usernameInput.value,
 			"password": passwordInput.value,
 		}

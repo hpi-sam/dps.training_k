@@ -12,12 +12,11 @@ class SocketPatient {
 	}
 
 	connect(): void {
-		this.socket = new WebSocket(this.url)
+		this.socket = new WebSocket(this.url + usePatientStore().token)
 
 		this.socket.onopen = () => {
 			console.log('Patient WebSocket connection established')
 			connection.patientConnected = true
-			this.authentication(usePatientStore().token)
 		}
 
 		this.socket.onclose = () => {
@@ -40,24 +39,33 @@ class SocketPatient {
 			}
 
 			switch (data.messageType) {
+				case 'failure':
+					showErrorToast(data.message || '')
+					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
-				case 'load-stopped':
-					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
+				case 'triage':
+					usePatientStore().triage = data.triage || '-'
 					break
 				case 'state':
 					usePatientStore().loadStatusFromJSON(data.state as State)
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientCode)?.name || ''
+					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientID)?.areaName || ''
 					break
 				case 'exercise-start':
 					console.log('Patient Websocket ToDo: handle exercise-start event ', data)
 					break
 				case 'exercise-stop':
 					console.log('Patient Websocket ToDo: handle exercise-stop event ', data)
+					break
+				case 'delete':
+					console.log('Patient Websocket ToDo: handle delete event ', data)
+					break
+				case 'information':
+					console.log('Patient Websocket ToDo: handle information event ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -78,13 +86,6 @@ class SocketPatient {
 		}
 	}
 
-	authentication(token: string) {
-		this.sendMessage(JSON.stringify({
-			'messageType': 'authentication',
-			'token': token,
-		}))
-	}
-
 	testPassthrough() {
 		this.sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
@@ -95,21 +96,15 @@ class SocketPatient {
 			'triage': triage,
 		}))
 	}
-
-	actionAdd(name: string) {
-		this.sendMessage(JSON.stringify({
-			'messageType': 'action-add',
-			'name': name,
-		}))
-	}
 }
 
-const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/')
+const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
 export default socketPatient
 
 export const serverMockEvents = [
+	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
-	{id: 'load-stopped', data: '{"messageType":"load-stopped","patientName":"John Doe","areaName":"Rehabilitation"}'},
+	{id: 'triage', data: '{"messageType":"triage","triage":"A"}'},
 	{
 		id: 'state',
 		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regular","circulation":"Stable",' +
@@ -117,14 +112,22 @@ export const serverMockEvents = [
 	},
 	{
 		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{"name":"Area1",' +
-			'"patients":[{"name":"John Doe","patientCode":"JD123","patientId":"39","patientDatabaseId":101}],' +
-			'"personnel":[{"name":"Dr. Smith","role":"Therapist","personnelDatabaseId":201}],' +
-			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},{"name":"Area2",' +
-			'"patients":[{"name":"Jane Doe","patientCode":"JD456","patientId":"33","patientDatabaseId":102}],' +
-			'"personnel":[{"name":"Nurse Riley","role":"Nurse","personnelDatabaseId":202}],' +
-			'"devices":[{"name":"DeviceB","deviceDatabaseId":302}]}]}}'
+		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
+			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":20},{"patientId":2,"patientName":"Jane Doe",' +
+			'"patientCode":21}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
+			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"Strength Training","patients":' +
+			'[{"patientId":3,"patientName":"Jim Beam","patientCode":12},{"patientId":4,"patientName":"Jill Wine","patientCode":24}],' +
+			'"personnel":[{"personnelId":2,"personnelName":"Coach Taylor"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
+			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":32},' +
+			'{"patientId":6,"patientName":"Flexi Rods","patientCode":8}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
+			'"devices":[{"deviceId":3,"deviceName":"Yoga Mats"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
+	{id: 'delete', data: '{"messageType":"delete"}'},
+	{
+		id: 'information',
+		data: '{"messageType":"information","patientInjury":"Fractured limb","patientHistory":"No known allergies",' +
+			'"patientPersonalDetails":"John Doe, Male, 30 years old","patientBiometrics":"Height: 180cm, Weight: 75kg"}'
+	},
 ]

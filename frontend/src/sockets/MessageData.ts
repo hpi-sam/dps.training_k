@@ -2,43 +2,51 @@
 interface MessageData {
 	messageType: string
 	message?: string
-	patientName?: string
-	areaName?: string
-	token?: string
 	triage?: string
-	name?: string
+	actionName?: string
+	patientInjury?: string
+	patientHistory?: string
+	patientPersonalDetails?: string
+	patientBiometrics?: string
+	areaName?: string
+	patientName?: string
+	patientCode?: number
+	patientId?: number
+	personnelName?: string
+	personnelId?: number
+	deviceName?: string
+	deviceId?: number
 	exercise?: Exercise
 	state?: State
+	logEntry?: LogEntry
 }
 
 interface Exercise {
-	exerciseCode: number
+	exerciseId: number
 	areas: Area[]
 }
 
 interface Area {
-	name: string
+	areaName: string
 	patients: Patient[]
 	personnel: Personnel[]
 	devices: Device[]
 }
 
 interface Patient {
-	name: string
-	patientCode: string
 	patientId: number
-	patientDatabaseId: number
+	patientName: string
+	patientCode: number
 }
 
 interface Personnel {
-	name: string
-	role: string
-	personnelDatabaseId: number
+	personnelId: number
+	personnelName: string
 }
 
 interface Device {
-	name: string
-	deviceDatabaseId: number
+	deviceId: number
+	deviceName: string
 }
 
 interface State {
@@ -50,4 +58,13 @@ interface State {
 	pupils: string
 	psyche: string
 	skin: string
+}
+
+interface LogEntry {
+	logMessage: string
+	logTime: Date
+	areaName: string
+	patientId: number
+	personnelId: number
+	deviceId: number
 }

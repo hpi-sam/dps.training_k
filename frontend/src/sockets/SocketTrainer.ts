@@ -13,12 +13,11 @@ class SocketTrainer {
 	}
 
 	connect() {
-		this.socket = new WebSocket(this.url)
+		this.socket = new WebSocket(this.url + useTrainerStore().token)
 
 		this.socket.onopen = () => {
 			console.log('Trainer WebSocket connection established')
 			connection.trainerConnected = true
-			this.authentication(useTrainerStore().token)
 		}
 
 		this.socket.onclose = () => {
@@ -41,6 +40,9 @@ class SocketTrainer {
 			}
 
 			switch (data.messageType) {
+				case 'failure':
+					showErrorToast(data.message || '')
+					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
@@ -54,6 +56,9 @@ class SocketTrainer {
 					break
 				case 'exercise-stop':
 					console.log('Trainer Websocket ToDo: handle exercise-stop event ', data)
+					break
+				case 'log-update':
+					console.log('Trainer Websocket ToDo: handle log-update event ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten: ' + data.messageType)
@@ -74,13 +79,6 @@ class SocketTrainer {
 		}
 	}
 
-	authentication(token: string) {
-		this.#sendMessage(JSON.stringify({
-			'messageType': 'authentication',
-			'token': token
-		}))
-	}
-
 	testPassthrough() {
 		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
@@ -88,31 +86,36 @@ class SocketTrainer {
 	exerciseCreate() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-create'}))
 	}
-
-	exerciseStart() {
-		this.#sendMessage(JSON.stringify({'messageType': 'exercise-start'}))
-	}
-
-	exerciseStop() {
-		this.#sendMessage(JSON.stringify({'messageType': 'exercise-stop'}))
-	}
 }
 
-const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/')
+const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
 export default socketTrainer
 
 export const serverMockEvents = [
+	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseCode":"123456","areas":[{"name":"Area1",' +
-			'"patients":[{"name":"John Doe","patientCode":"JD123","patientId":"39","patientDatabaseId":101}],' +
-			'"personnel":[{"name":"Dr. Smith","role":"Therapist","personnelDatabaseId":201}],' +
-			'"devices":[{"name":"DeviceA","deviceDatabaseId":301}]},{"name":"Area2",' +
-			'"patients":[{"name":"Jane Doe","patientCode":"JD456","patientId":"33","patientDatabaseId":102}],' +
-			'"personnel":[{"name":"Nurse Riley","role":"Nurse","personnelDatabaseId":202}],' +
-			'"devices":[{"name":"DeviceB","deviceDatabaseId":302}]}]}}'
+		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
+			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":101},{"patientId":2,"patientName":"Jane Doe",' +
+			'"patientCode":102}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
+			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"Strength Training","patients":' +
+			'[{"patientId":3,"patientName":"Jim Beam","patientCode":201},{"patientId":4,"patientName":"Jill Wine","patientCode":202}],' +
+			'"personnel":[{"personnelId":2,"personnelName":"Coach Taylor"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
+			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":301},' +
+			'{"patientId":6,"patientName":"Flexi Rods","patientCode":302}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
+			'"devices":[{"deviceId":3,"deviceName":"Yoga Mats"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
+	{
+		id: 'log-update',
+		data: '{"messageType":"log-update","logEntry":[' +
+			'{"logMessage":"Patient admitted","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
+			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456,"deviceId":789},' +
+			'{"logMessage":"Treatment started","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 46, 0) +
+			',"areaName":"Operating Theater","patientId":123,"personnelId":456,"deviceId":789},' +
+			'{"logMessage":"Patient stabilized","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
+			',"areaName":"ICU","patientId":123,"personnelId":456,"deviceId":789}]}'
+	}
 ]
