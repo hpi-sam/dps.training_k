@@ -1,42 +1,55 @@
-<script setup>
+<script setup lang="ts">
 	import {onBeforeUnmount, onMounted} from 'vue'
-	import socketPatient from "@/sockets/SocketPatient.js";
-	import {connectionStore} from "@/sockets/ConnectionStore.js";
+	import socketPatient from "@/sockets/SocketPatient"
+	import {connection} from "@/stores/Connection"
 
-	onMounted(() => socketPatient.connect());
+	onMounted(() => socketPatient.connect())
 	onBeforeUnmount(() => {
-		if (connectionStore.patientConnected) socketPatient.close();
-	});
+		if (connection.patientConnected) socketPatient.close()
+	})
 </script>
 
-<script>
+<script lang="ts">
 	import ScreenStatus from './screensPatient/ScreenStatus.vue'
 	import ScreenActions from './screensPatient/ScreenActions.vue'
-	import {ref} from "vue";
+	import {computed, ref} from "vue"
 
-	const screens = {
-		ScreenStatus,
-		ScreenActions
+	export enum Screens {
+		STATUS = "ScreenStatus",
+		ACTIONS = "ScreenActions",
 	}
 
-	const currentLeftScreen = ref('ScreenStatus');
-	const currentRightScreen = ref('ScreenActions');
+	const currentLeftScreen = ref(Screens.STATUS)
+	const currentLeftScreenComponent = computed(() => getScreenComponent(currentLeftScreen.value))
+	const currentRightScreen = ref(Screens.ACTIONS)
+	const currentRightScreenComponent = computed(() => getScreenComponent(currentRightScreen.value))
 
-	export const setLeftScreen = (newScreen) => {
-		currentLeftScreen.value = newScreen;
+	const getScreenComponent = (screen: Screens) => {
+		switch (screen) {
+			case Screens.STATUS:
+				return ScreenStatus
+			case Screens.ACTIONS:
+				return ScreenActions
+			default:
+				return ScreenStatus
+		}
 	}
 
-	export const setRightScreen = (newScreen) => {
-		currentRightScreen.value = newScreen;
+	export const setLeftScreen = (newScreen: Screens) => {
+		currentLeftScreen.value = newScreen
+	}
+
+	export const setRightScreen = (newScreen: Screens) => {
+		currentRightScreen.value = newScreen
 	}
 </script>
 
 <template>
 	<div id="leftScreen">
-		<component :is="screens[currentLeftScreen]" />
+		<component :is="currentLeftScreenComponent" />
 	</div>
 	<div id="rightScreen">
-		<component :is="screens[currentRightScreen]" />
+		<component :is="currentRightScreenComponent" />
 	</div>
 </template>
 

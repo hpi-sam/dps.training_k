@@ -1,5 +1,5 @@
-<script setup>
-	import socketTrainer from "@/sockets/SocketTrainer.js";
+<script setup lang="ts">
+	import socketTrainer from "@/sockets/SocketTrainer"
 </script>
 
 <template>

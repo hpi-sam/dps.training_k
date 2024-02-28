@@ -1,58 +1,60 @@
-import {connectionStore} from "@/sockets/ConnectionStore.js";
-import {useTrainerStore} from "@/stores/Trainer.js";
-import {useExerciseStore} from "@/stores/Exercise.js";
-import {showErrorToast, showWarningToast} from "@/App.vue";
-import {setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
+import {connection} from "@/stores/Connection"
+import {useTrainerStore} from "@/stores/Trainer"
+import {useExerciseStore} from "@/stores/Exercise"
+import {showErrorToast, showWarningToast} from "@/App.vue"
+import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 
 class SocketTrainer {
-	constructor(url) {
-		this.url = url;
-		this.socket = null;
+	private readonly url: string
+	socket: WebSocket | null = null
+
+	constructor(url: string) {
+		this.url = url
 	}
 
 	connect() {
-		this.socket = new WebSocket(this.url);
+		this.socket = new WebSocket(this.url)
 
 		this.socket.onopen = () => {
-			console.log('Trainer WebSocket connection established');
-			connectionStore.trainerConnected = true;
+			console.log('Trainer WebSocket connection established')
+			connection.trainerConnected = true
 			this.authentication(useTrainerStore().token)
-		};
+		}
 
 		this.socket.onclose = () => {
-			console.log('Trainer WebSocket connection closed');
-			connectionStore.trainerConnected = false;
-		};
+			console.log('Trainer WebSocket connection closed')
+			connection.trainerConnected = false
+		}
 
 		this.socket.onerror = (error) => {
-			console.error('Trainer WebSocket error:', error);
-		};
+			console.error('Trainer WebSocket error:', error)
+		}
 
 		this.socket.onmessage = (message) => {
-			let data
+			let data: MessageData
 			try {
 				data = JSON.parse(message.data)
 			} catch (e) {
-				console.error('Error parsing message data:', e);
-				console.error('Problematic message data:', message.data);
+				console.error('Error parsing message data:', e)
+				console.error('Problematic message data:', message.data)
 				return
 			}
 
 			switch (data.messageType) {
 				case 'test-passthrough':
-					showWarningToast(data.message)
-					break;
+					showWarningToast(data.message || '')
+					break
 				case 'exercise':
-					useExerciseStore().createFromJSON(data.exercise)
-					moduleTrainerSetLeftScreen('ScreenExerciseCreation')
-					moduleTrainerSetRightScreen('ScreenResourceCreation')
-					break;
+					useExerciseStore().createFromJSON(data.exercise as Exercise)
+					moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
+					moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
+					break
 				case 'exercise-start':
 					console.log('Trainer Websocket ToDo: handle exercise-start event ', data)
-					break;
+					break
 				case 'exercise-stop':
 					console.log('Trainer Websocket ToDo: handle exercise-stop event ', data)
-					break;
+					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten: ' + data.messageType)
 					console.error('Trainer received unknown message type:', data.messageType, 'with data:', data)
@@ -61,26 +63,26 @@ class SocketTrainer {
 	}
 
 	close() {
-		if (this.socket) this.socket.close();
+		if (this.socket) this.socket.close()
 	}
 
-	#sendMessage(message) {
-		if (connectionStore.trainerConnected && this.socket) {
-			this.socket.send(message);
+	#sendMessage(message: string) {
+		if (connection.trainerConnected && this.socket) {
+			this.socket.send(message)
 		} else {
-			console.log('Trainer WebSocket is not connected.');
+			console.log('Trainer WebSocket is not connected.')
 		}
 	}
 
-	authentication(token) {
+	authentication(token: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'authentication',
-			'token': `${token}`
-		}));
+			'token': token
+		}))
 	}
 
 	testPassthrough() {
-		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}));
+		this.#sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
 
 	exerciseCreate() {
@@ -96,8 +98,8 @@ class SocketTrainer {
 	}
 }
 
-const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/');
-export default socketTrainer;
+const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/')
+export default socketTrainer
 
 export const serverMockEvents = [
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
@@ -113,4 +115,4 @@ export const serverMockEvents = [
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
-];
+]

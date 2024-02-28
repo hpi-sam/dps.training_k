@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import LoginPatient from '../widgets/LoginPatient.vue'
 </script>
 

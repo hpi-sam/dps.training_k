@@ -1,6 +1,6 @@
-<script setup>
-	import {useTrainerStore} from '@/stores/Trainer';
-	import {useExerciseStore} from '@/stores/Exercise';
+<script setup lang="ts">
+	import {useTrainerStore} from '@/stores/Trainer'
+	import {useExerciseStore} from '@/stores/Exercise'
 
 	const trainerStore = useTrainerStore()
 	const exerciseStore = useExerciseStore()

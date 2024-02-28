@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import LoginTrainer from '../widgets/LoginTrainer.vue'
 </script>
 

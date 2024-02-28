@@ -1,27 +1,27 @@
-<script setup>
-	import {ref, computed} from 'vue'
-	import {usePatientStore} from '@/stores/Patient';
-	import TriagePopup from '@/components/widgets/TriagePopup.vue';
-	import PatientStatus from '@/components/widgets/PatientStatus.vue';
+<script setup lang="ts">
+	import {computed, ref} from 'vue'
+	import {usePatientStore} from '@/stores/Patient'
+	import TriagePopup from '@/components/widgets/TriagePopup.vue'
+	import PatientStatus from '@/components/widgets/PatientStatus.vue'
 
 	const patientStore = usePatientStore()
 
 	const triageColor = ref(computed(() => {
 		switch (patientStore.triage) {
 			case 'G':
-				return 'green';
+				return 'green'
 			case 'Y':
-				return 'yellow';
+				return 'yellow'
 			case 'A':
 			case 'B':
 			case 'C':
 			case 'D':
 			case 'E':
-				return 'red';
+				return 'red'
 			default:
-				return 'gray';
+				return 'gray'
 		}
-	}));
+	}))
 
 	const showPopup = ref(false)
 </script>
