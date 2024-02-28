@@ -14,19 +14,35 @@
 	import ScreenJoinExercise from './screensTrainer/ScreenJoinExercise.vue'
 	import ScreenExerciseCreation from './screensTrainer/ScreenExerciseCreation.vue'
 	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue'
-	import {ref} from "vue"
+	import {computed, ref} from "vue"
+	import ScreenStatus from "@/components/screensPatient/ScreenStatus.vue"
 
-	export const Screens = {
-		CREATE_EXERCISE: ScreenCreateExercise,
-		JOIN_EXERCISE: ScreenJoinExercise,
-		EXERCISE_CREATION: ScreenExerciseCreation,
-		RESOURCE_CREATION: ScreenResourceCreation
-	} as const
-	// eslint-disable-next-line no-redeclare
-	type Screens = typeof Screens[keyof typeof Screens]
+	export enum Screens {
+		CREATE_EXERCISE = "ScreenCreateExercise",
+		JOIN_EXERCISE = "ScreenJoinExercise",
+		EXERCISE_CREATION = "ScreenExerciseCreation",
+		RESOURCE_CREATION = "ScreenResourceCreation"
+	}
 
 	const currentLeftScreen = ref(Screens.CREATE_EXERCISE)
+	const currentLeftScreenComponent = computed(() => getScreenComponent(currentLeftScreen.value))
 	const currentRightScreen = ref(Screens.JOIN_EXERCISE)
+	const currentRightScreenComponent = computed(() => getScreenComponent(currentRightScreen.value))
+
+	const getScreenComponent = (screen: Screens) => {
+		switch (screen) {
+			case Screens.CREATE_EXERCISE:
+				return ScreenCreateExercise
+			case Screens.JOIN_EXERCISE:
+				return ScreenJoinExercise
+			case Screens.EXERCISE_CREATION:
+				return ScreenExerciseCreation
+			case Screens.RESOURCE_CREATION:
+				return ScreenResourceCreation
+			default:
+				return ScreenStatus
+		}
+	}
 
 	export const setLeftScreen = (newScreen: Screens) => {
 		currentLeftScreen.value = newScreen
@@ -39,10 +55,10 @@
 
 <template>
 	<div id="leftScreen">
-		<component :is="currentLeftScreen" />
+		<component :is="currentLeftScreenComponent" />
 	</div>
 	<div id="rightScreen">
-		<component :is="currentRightScreen" />
+		<component :is="currentRightScreenComponent" />
 	</div>
 </template>
 

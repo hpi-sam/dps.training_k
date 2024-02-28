@@ -12,17 +12,28 @@
 <script lang="ts">
 	import ScreenStatus from './screensPatient/ScreenStatus.vue'
 	import ScreenActions from './screensPatient/ScreenActions.vue'
-	import {ref} from "vue"
+	import {computed, ref} from "vue"
 
-	export const Screens = {
-		STATUS: ScreenStatus,
-		ACTIONS: ScreenActions,
-	} as const
-	// eslint-disable-next-line no-redeclare
-	type Screens = typeof Screens[keyof typeof Screens]
+	export enum Screens {
+		STATUS = "ScreenStatus",
+		ACTIONS = "ScreenActions",
+	}
 
 	const currentLeftScreen = ref(Screens.STATUS)
+	const currentLeftScreenComponent = computed(() => getScreenComponent(currentLeftScreen.value))
 	const currentRightScreen = ref(Screens.ACTIONS)
+	const currentRightScreenComponent = computed(() => getScreenComponent(currentRightScreen.value))
+
+	const getScreenComponent = (screen: Screens) => {
+		switch (screen) {
+			case Screens.STATUS:
+				return ScreenStatus
+			case Screens.ACTIONS:
+				return ScreenActions
+			default:
+				return ScreenStatus
+		}
+	}
 
 	export const setLeftScreen = (newScreen: Screens) => {
 		currentLeftScreen.value = newScreen
@@ -35,10 +46,10 @@
 
 <template>
 	<div id="leftScreen">
-		<component :is="currentLeftScreen" />
+		<component :is="currentLeftScreenComponent" />
 	</div>
 	<div id="rightScreen">
-		<component :is="currentRightScreen" />
+		<component :is="currentRightScreenComponent" />
 	</div>
 </template>
 
