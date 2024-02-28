@@ -39,11 +39,14 @@ class SocketPatient {
 			}
 
 			switch (data.messageType) {
+				case 'failure':
+					showErrorToast(data.message || '')
+					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
-				case 'load-stopped':
-					console.log('Patient Websocket ToDo: handle load-stopped event ', data)
+				case 'triage':
+					usePatientStore().triage = data.triage || '-'
 					break
 				case 'state':
 					usePatientStore().loadStatusFromJSON(data.state as State)
@@ -57,6 +60,12 @@ class SocketPatient {
 					break
 				case 'exercise-stop':
 					console.log('Patient Websocket ToDo: handle exercise-stop event ', data)
+					break
+				case 'delete':
+					console.log('Patient Websocket ToDo: handle delete event ', data)
+					break
+				case 'information':
+					console.log('Patient Websocket ToDo: handle information event ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)

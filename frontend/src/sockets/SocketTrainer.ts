@@ -40,6 +40,9 @@ class SocketTrainer {
 			}
 
 			switch (data.messageType) {
+				case 'failure':
+					showErrorToast(data.message || '')
+					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
@@ -53,6 +56,9 @@ class SocketTrainer {
 					break
 				case 'exercise-stop':
 					console.log('Trainer Websocket ToDo: handle exercise-stop event ', data)
+					break
+				case 'log-update':
+					console.log('Trainer Websocket ToDo: handle log-update event ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten: ' + data.messageType)
