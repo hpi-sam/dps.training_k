@@ -80,14 +80,6 @@ class SocketTrainer {
 	exerciseCreate() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-create'}))
 	}
-
-	exerciseStart() {
-		this.#sendMessage(JSON.stringify({'messageType': 'exercise-start'}))
-	}
-
-	exerciseStop() {
-		this.#sendMessage(JSON.stringify({'messageType': 'exercise-stop'}))
-	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')

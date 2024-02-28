@@ -87,13 +87,6 @@ class SocketPatient {
 			'triage': triage,
 		}))
 	}
-
-	actionAdd(name: string) {
-		this.sendMessage(JSON.stringify({
-			'messageType': 'action-add',
-			'name': name,
-		}))
-	}
 }
 
 const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
