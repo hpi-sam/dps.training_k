@@ -1,6 +1,7 @@
 <script setup>
 	import {usePatientStore} from '@/stores/Patient';
 	import socketPatient from "@/sockets/SocketPatient.js";
+	import { ref } from 'vue';
 
 	const emit = defineEmits(['close-popup'])
 	
@@ -9,6 +10,17 @@
 		socketPatient.triage(triage)
 	};
 
+	const triageButtons = ref([
+		{char: '-', color: 'gray'},
+		{char: 'G', color: 'green'},
+		{char: 'Y', color: 'yellow'},
+		{char: 'A', color: 'red'},
+		{char: 'B', color: 'red'},
+		{char: 'C', color: 'red'},
+		{char: 'D', color: 'red'},
+		{char: 'E', color: 'red'},
+	])
+
 </script>
 
 <template>
@@ -16,29 +28,13 @@
 		<div class="popup">
 			<h2>Sichtungsfarbe auswählen</h2>
 			<div class="button-container">
-				<button class="gray" @click="setTriage('-')">
-					-
-				</button>
-				<button class="green" @click="setTriage('G')">
-					G
-				</button>
-				<button class="yellow" @click="setTriage('Y')">
-					Y
-				</button>
-				<button class="red" @click="setTriage('A')">
-					A
-				</button>
-				<button class="red" @click="setTriage('B')">
-					B
-				</button>
-				<button class="red" @click="setTriage('C')">
-					C
-				</button>
-				<button class="red" @click="setTriage('D')">
-					D
-				</button>
-				<button class="red" @click="setTriage('E')">
-					E
+				<button
+					v-for="triageButton in triageButtons"
+					:key="triageButton.char"
+					:style="{backgroundColor: triageButton.color}"
+					@click="setTriage(triageButton.char)"
+				>
+					{{ triageButton.char }}
 				</button>
 			</div>
 		</div>
@@ -46,22 +42,6 @@
 </template>
 
 <style scoped>
-	.gray {
-		background-color: lightgray;
-	}
-
-	.green {
-		background-color: green;
-	}
-
-	.yellow {
-		background-color: yellow;
-	}
-
-	.red {
-		background-color: red;
-	}
-
 	.popup-overlay {
 		position: fixed;
 		top: 0;
