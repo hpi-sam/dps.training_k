@@ -40,37 +40,7 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_create_exercise(self):
-        exercise = Exercise.createExercise()
-        patient = Patient.objects.create(
-            name="Max Mustermann", exercise=exercise, patientCode=123456
-        )
-        exercise_object = {
-            "exerciseCode": "123456", # exercise.invitation_code
-            "areas": [
-                {
-                    "name": "ZNA",
-                    "patients": [
-                        {
-                            "name": patient.name,
-                            "patientCode": patient.patientCode,
-                            "patientId": 5,
-                            "patientDatabaseId": 3, # patient.pk
-                        }
-                    ],
-                    "personnel": [
-                        {
-                            "name": "Hanna Schulz",
-                            "role": "Arzt",
-                            "personnelDatabaseId": 6,
-                        }
-                    ],
-                    "devices": [{"name": "EKG", "deviceDatabaseId": 15}],
-                }
-            ],
-        }
-        self.send_event(
-            self.TrainerOutgoingMessageTypes.EXERCISE_CREATED, exercise=exercise_object
-        )
+        self._send_exercise()
 
     def handle_test_passthrough(self):
         self.send_event(

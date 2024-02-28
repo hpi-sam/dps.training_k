@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from abc import ABC, abstractmethod
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
-
+from game.models import Exercise, Patient
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -16,6 +16,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     class OutgoingMessageTypes:
         FAILURE = "failure"
         SUCCESS = "success"
+        EXERCISE = "exercise"
 
     class FailureCodes:
         UNKNOWN = 0
@@ -150,3 +151,41 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         except Token.DoesNotExist:
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
             return False
+
+    def _send_exercise(self):
+        exercise = Exercise.createExercise()
+        patient = Patient.objects.create(
+            name="Max Mustermann", exercise=exercise, patientCode=123456
+        )
+        exercise_object = {
+            "exercise": {
+                "exerciseId": exercise.invitation_code,
+                "areas": [
+                    {
+                        "areaName": "X",
+                        "patients": [
+                            {
+                                "patientId": patient.patientCode,
+                                "patientName": patient.name,
+                                "patientCode": 0
+                            }
+                        ],
+                        "personnel": [
+                            {
+                                "personnelId": 0,
+                                "personnelName": "X"
+                            }
+                        ],
+                        "devices": [
+                            {
+                                "deviceId": 0,
+                                "deviceName": "X"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        self.send_event(
+            self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object
+        )

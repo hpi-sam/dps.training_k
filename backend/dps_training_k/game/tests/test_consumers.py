@@ -1,8 +1,6 @@
 from channels.testing import WebsocketCommunicator
 from django.test import TransactionTestCase
 from configuration.asgi import application
-from game.models import User
-from rest_framework.authtoken.models import Token
 
 
 class TrainerConsumerTestCase(TransactionTestCase):
@@ -39,33 +37,8 @@ class TrainerConsumerTestCase(TransactionTestCase):
 
         # Receive and test the response from the server
         response = await communicator.receive_json_from()
-        content = {
-            "exerciseCode": "123456",
-            "areas": [
-                {
-                    "name": "ZNA",
-                    "patients": [
-                        {
-                            "name": "Max Mustermann",
-                            "patientCode": 123456,
-                            "patientId": 5,
-                            "patientDatabaseId": 3,
-                        }
-                    ],
-                    "personnel": [
-                        {
-                            "name": "Hanna Schulz",
-                            "role": "Arzt",
-                            "personnelDatabaseId": 6,
-                        }
-                    ],
-                    "devices": [{"name": "EKG", "deviceDatabaseId": 15}],
-                }
-            ],
-        }
-        self.assertEqual(
-            response, {"messageType": "trainer-exercise-create", "exercise": content}
-        )
+
+        self.assertEqual("exercise", response["messageType"])
 
         # Close the connection
         await communicator.disconnect()

@@ -20,6 +20,9 @@ class PatientWebSocketTest(TransactionTestCase):
         connected, _ = await communicator.connect()
         self.assertTrue(connected, "Failed to connect to WebSocket")
 
+        # receive exercise object
+        response = await communicator.receive_json_from()
+        
         # Send a message to the WebSocket
         await communicator.send_json_to(
             {
