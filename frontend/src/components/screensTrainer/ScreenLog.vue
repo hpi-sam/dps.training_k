@@ -1,0 +1,3 @@
+<template>
+	Log Screen
+</template>

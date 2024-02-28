@@ -1,9 +1,15 @@
 <script setup lang="ts">
 	import {useTrainerStore} from '@/stores/Trainer'
 	import {useExerciseStore} from '@/stores/Exercise'
+	import socketTrainer from "@/sockets/SocketTrainer"
+	import ButtonMainAction from "@/components/widgets/ButtonMainAction.vue"
 
 	const trainerStore = useTrainerStore()
 	const exerciseStore = useExerciseStore()
+
+	function exerciseStart() {
+		socketTrainer.exerciseStart()
+	}
 </script>
 
 <template>
@@ -16,6 +22,10 @@
 		</div>
 	</nav>
 	<div>Geladenes Übungsobjekt: <br>{{ exerciseStore }}</div>
+	<ButtonMainAction
+		:button-text="'Übung starten'"
+		@on-pressed="exerciseStart"
+	/>
 </template>
 
 <style scoped>
