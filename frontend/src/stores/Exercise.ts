@@ -18,12 +18,22 @@ export const useExerciseStore = defineStore('exercise', {
 				return foundArea
 			}
 		},
+		getPatient: (state) => {
+			return (patientId: number): Patient | null => {
+				let foundPatient: Patient | null = null
+				state.areas.forEach((area) => {
+					area.patients.forEach((patient) => {
+						if (patient.patientId == patientId) foundPatient = patient
+					})
+				})
+				return foundPatient
+			}
+		}
 	},
 	actions: {
 		createFromJSON(json: Exercise) {
 			this.exerciseId = json.exerciseId
 			this.areas = json.areas
-			console.log(json)
 		}
 	}
 })
