@@ -1,10 +1,10 @@
 from django.db import models
 from django.conf import settings
 from .saved_exercise import SavedExercise
-from .eventable import NestedEventable
+from helpers.eventable import NonEventable
 
 
-class Exercise(NestedEventable, models.Model):
+class Exercise(NonEventable, models.Model):
     class ExerciseStateTypes(models.TextChoices):
         CONFIGURATION = "C", "configuration"
         RUNNING = "R", "running"

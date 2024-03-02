@@ -1,8 +1,8 @@
 from django.db import models
-from .eventable import NestedEventable
+from helpers.eventable import Eventable
 
 
-class Patient(NestedEventable, models.Model):
+class Patient(Eventable, models.Model):
     name = models.CharField(
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
