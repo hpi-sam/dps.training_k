@@ -27,18 +27,20 @@ Env.read_env(os.path.join(BASE_DIR, ".env"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-i#@t22r$*j@7-t=00kfye@mnd+!zzd-%*2rt4s^k5e8o%v3-+n"
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 
+SECRET_KEY = env.str("SECRET_KEY")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+INTERNAL_IPS = env.list("INTERNAL_IPS", None)
 
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "channels",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -46,7 +48,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "game.apps.GameConfig",
+    "django_celery_beat",
+    "django_celery_results",
     "django_celery_beat",
     "django_celery_results",
 ]
@@ -142,6 +147,14 @@ CHANNEL_LAYERS = {
         if env.bool("CHANNEL_REDIS", False)
         else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
     )
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env.str("REDIS_URL", default="redis://localhost:6379")]  # for production
+        },
+    }
+    if env.bool("CHANNEL_REDIS", False)
+    else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 }
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
 
@@ -166,3 +179,25 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 1.0,
     },
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Celery
+# ------------------------------------------------------------------------------
+# See: http://docs.celeryproject.org/en/latest/userguide/configuration.html
+if USE_TZ:
+    CELERY_TIMEZONE = TIME_ZONE
+CELERY_BROKER_URL = env.str("REDIS_URL", default="redis://localhost:6379")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_TIME_LIMIT = 5 * 60  # TODO: Change if necessary
+CELERY_TASK_SOFT_TIME_LIMIT = 60  # TODO: Change if necessary
+
+# CELERY_BEAT_SCHEDULE = {
+#     "update_patients": {
+#         "task": "game.tasks.check_for_updates",
+#         "schedule": 1.0,
+#     },
+# }

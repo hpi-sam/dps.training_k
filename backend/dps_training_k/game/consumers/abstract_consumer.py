@@ -41,14 +41,14 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         Wrapper to send_json() in order to have always the same structure: at least a type and often a content.
         Allows some other high level information in the kwargs.
         """
-        d = {"type": event_type}
+        d = {"messageType": event_type}
         for key, value in kwargs.items():
             d[key] = value
         self.send_json(d)
 
     def send_failure(self, message="unknown failure", code=0, **kwargs):
         message_dict = {
-            "type": self.OutgoingMessageTypes.FAILURE,
+            "messageType": self.OutgoingMessageTypes.FAILURE,
             "message": message,
             "code": code,
         }
@@ -61,7 +61,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         Wrapper to send_json() in order to always have the same structure. Notifies the client
         that the asked request was evaluated and executed.
         """
-        d = {"type": self.OutgoingMessageTypes.SUCCESS, "request": request_type}
+        d = {"messageType": self.OutgoingMessageTypes.SUCCESS, "request": request_type}
         for key, value in kwargs.items():
             d[key] = value
         self.send_json(d)
@@ -80,7 +80,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         :param content: A dictionary that should contain 'type' and all required params for the method corresponding
         to this type
         """
-        request_type = content.get("type")
+        request_type = content.get("messageType")
 
         if not request_type:
             self.send_failure(
