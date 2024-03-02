@@ -31,7 +31,7 @@ Env.read_env(os.path.join(BASE_DIR, ".env"))
 DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 
 SECRET_KEY = env.str("SECRET_KEY")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
@@ -147,14 +147,6 @@ CHANNEL_LAYERS = {
         if env.bool("CHANNEL_REDIS", False)
         else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
     )
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [env.str("REDIS_URL", default="redis://localhost:6379")]  # for production
-        },
-    }
-    if env.bool("CHANNEL_REDIS", False)
-    else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 }
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
 
