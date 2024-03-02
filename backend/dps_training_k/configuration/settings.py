@@ -130,14 +130,18 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [env.str("REDIS_URL", default="redis://localhost:6379")]  # for production
-        },
-    }
-    if env.bool("CHANNEL_REDIS", False)
-    else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+    "default": (
+        {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    env.str("REDIS_URL", default="redis://localhost:6379")
+                ]  # for production
+            },
+        }
+        if env.bool("CHANNEL_REDIS", False)
+        else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+    )
 }
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
 
@@ -156,9 +160,9 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_TIME_LIMIT = 5 * 60  # TODO: Change if necessary
 CELERY_TASK_SOFT_TIME_LIMIT = 60  # TODO: Change if necessary
 
-# CELERY_BEAT_SCHEDULE = {
-#     "update_patients": {
-#         "task": "game.tasks.check_for_updates",
-#         "schedule": 1.0,
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    "update_patients": {
+        "task": "game.tasks.check_for_updates",
+        "schedule": 1.0,
+    },
+}
