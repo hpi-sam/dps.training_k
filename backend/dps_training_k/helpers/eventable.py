@@ -1,8 +1,7 @@
-from django.db import models
 from abc import abstractmethod
 
 
-class AbstractEventable(models.Model):
+class AbstractEventable:
     class Meta:
         abstract = True
 
