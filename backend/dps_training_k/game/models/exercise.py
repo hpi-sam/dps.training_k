@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
+from helpers.eventable import NonEventable
 
 
-class Exercise(models.Model):
+class Exercise(NonEventable, models.Model):
     class ExerciseStateTypes(models.TextChoices):
         CONFIGURATION = "C", "configuration"
         RUNNING = "R", "running"
