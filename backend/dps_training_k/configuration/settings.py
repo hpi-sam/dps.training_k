@@ -41,7 +41,6 @@ INTERNAL_IPS = env.list("INTERNAL_IPS", None)
 
 INSTALLED_APPS = [
     "channels",
-    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,8 +49,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "game.apps.GameConfig",
-    "django_celery_beat",
-    "django_celery_results",
     "django_celery_beat",
     "django_celery_results",
 ]
@@ -187,9 +184,9 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_TIME_LIMIT = 5 * 60  # TODO: Change if necessary
 CELERY_TASK_SOFT_TIME_LIMIT = 60  # TODO: Change if necessary
 
-# CELERY_BEAT_SCHEDULE = {
-#     "update_patients": {
-#         "task": "game.tasks.check_for_updates",
-#         "schedule": 1.0,
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    "update_patients": {
+        "task": "game.tasks.check_for_updates",
+        "schedule": 1.0,
+    },
+}

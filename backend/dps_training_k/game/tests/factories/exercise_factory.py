@@ -1,9 +1,6 @@
 import factory
 from django.conf import settings
-import os, sys
-
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "models"))
-from .exercise import Exercise
+from game.models import Exercise, SavedExercise
 
 
 class ExerciseFactory(factory.django.DjangoModelFactory):

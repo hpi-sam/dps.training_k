@@ -1,8 +1,7 @@
 from django.test import TestCase
 from django.conf import settings
-from factories.patient_factory import PatientFactory
-from models.patient import Patient
-from models.scheduled_event import ScheduledEvent
+from game.tests.factories import PatientFactory
+from game.models import Patient, ScheduledEvent
 
 
 class TempEventTest:
