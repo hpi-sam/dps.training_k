@@ -1,9 +1,11 @@
-from abc import abstractmethod
+from django.db.models.base import ModelBase
+from abc import ABCMeta, abstractmethod
 
+# Create a new metaclass that inherits from both ModelBase and ABCMeta
+class CustomModelBase(ABCMeta, ModelBase):
+    pass
 
-class AbstractEventable:
-    class Meta:
-        abstract = True
+class AbstractEventable(metaclass=ABCMeta):
 
     @abstractmethod
     def schedule_events(self):
@@ -14,7 +16,7 @@ class AbstractEventable:
         pass
 
 
-class NonEventable(AbstractEventable):
+class NonEventable(AbstractEventable, metaclass=CustomModelBase):
 
     def schedule_events(self):
         pass
@@ -23,7 +25,7 @@ class NonEventable(AbstractEventable):
         pass
 
 
-class Eventable(AbstractEventable):
+class Eventable(AbstractEventable, metaclass=CustomModelBase):
     class Meta:
         abstract = True
 

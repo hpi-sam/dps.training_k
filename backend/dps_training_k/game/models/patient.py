@@ -1,5 +1,6 @@
 from django.db import models
 from helpers.eventable import Eventable
+from .exercise import Exercise
 
 
 class Patient(Eventable, models.Model):
@@ -7,7 +8,7 @@ class Patient(Eventable, models.Model):
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
     # patientID = models.ForeignKey()  # currently called "SensenID"
-    exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     # stateID = models.ForeignKey()
     # measureID = models.ManyToManyField()
     patientCode = models.IntegerField(
