@@ -1,5 +1,6 @@
 from .abstract_consumer import AbstractConsumer
 from game.models import Exercise, Patient
+from django.conf import settings
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -65,7 +66,8 @@ class TrainerConsumer(AbstractConsumer):
             name="Max Mustermann", exercise=exercise, patientCode=123456
         )
         exercise_object = {
-            "exerciseCode": "123456",  # exercise.invitation_code
+            "exerciseCode": "a"
+            * settings.INVITATION_LOGIC.code_length,  # exercise.invitation_code
             "areas": [
                 {
                     "name": "ZNA",

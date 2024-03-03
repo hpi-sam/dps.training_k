@@ -3,18 +3,15 @@ from django.conf import settings
 
 
 class ScheduledEvent(models.Model):
-    class EventTypes(models.TextChoices):
-        PATIENT_EVENT = "P", "Patient update"
-
     class Meta:
         ordering = ["exercise", "date"]
 
-    date = models.DateTimeField()
     exercise = models.ForeignKey(
         "Exercise",
         on_delete=models.CASCADE,
         related_name="events",
     )
+    date = models.DateTimeField()
     owner = models.OneToOneField(
         "Owner",
         on_delete=models.CASCADE,
