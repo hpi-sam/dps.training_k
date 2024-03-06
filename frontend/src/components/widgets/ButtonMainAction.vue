@@ -1,0 +1,62 @@
+<script setup lang="ts">
+	import {defineEmits, defineProps} from 'vue'
+
+	withDefaults(defineProps<{
+		buttonText: string
+	}>(), {
+		buttonText: 'Button Text'
+	})
+
+	const emits = defineEmits(['on-pressed'])
+	const handleClick = () => emits('on-pressed')
+</script>
+
+<template>
+	<button class="button-mainAction" @click="handleClick">
+		{{ buttonText }}
+	</button>
+</template>
+
+<style scoped>
+	.button-mainAction {
+		position: absolute;
+		bottom: 0;
+		background-color: #FFFFFF;
+		border: 1px solid rgb(209, 213, 219);
+		border-radius: .5rem;
+		box-sizing: border-box;
+		display: block;
+		width: calc(100% - 2rem);
+		color: #111827;
+		font-size: 1.25rem;
+		line-height: 1.25rem;
+		padding: .75rem 1rem;
+		margin: 1rem;
+		text-align: center;
+		text-decoration: none #D1D5DB solid;
+		text-decoration-thickness: auto;
+		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		touch-action: manipulation;
+		vertical-align: bottom;
+	}
+
+	.button-mainAction:hover {
+		background-color: rgb(249, 250, 251);
+	}
+
+	.button-mainAction:focus {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+
+	.button-mainAction:focus-visible {
+		box-shadow: none;
+	}
+
+	.button-mainAction:active {
+		background-color: rgb(243, 244, 246);
+	}
+</style>

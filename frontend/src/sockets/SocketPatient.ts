@@ -2,6 +2,7 @@ import {connection} from "@/stores/Connection"
 import {usePatientStore} from "@/stores/Patient"
 import {useExerciseStore} from "@/stores/Exercise"
 import {showErrorToast, showWarningToast} from "@/App.vue"
+import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 
 class SocketPatient {
 	private readonly url: string
@@ -53,13 +54,15 @@ class SocketPatient {
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
+					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientID)?.patientName || ''
 					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientID)?.areaName || ''
 					break
 				case 'exercise-start':
-					console.log('Patient Websocket ToDo: handle exercise-start event ', data)
+					setScreen(Screens.STATUS, ScreenPosition.LEFT)
+					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				case 'exercise-stop':
-					console.log('Patient Websocket ToDo: handle exercise-stop event ', data)
+					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
 				case 'delete':
 					console.log('Patient Websocket ToDo: handle delete event ', data)

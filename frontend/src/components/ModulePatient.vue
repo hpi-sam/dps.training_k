@@ -13,16 +13,27 @@
 	import ScreenStatus from './screensPatient/ScreenStatus.vue'
 	import ScreenActions from './screensPatient/ScreenActions.vue'
 	import {computed, ref} from "vue"
+	import ScreenInactive from "@/components/screensPatient/ScreenInactive.vue"
+
+	export enum ScreenPosition {
+		LEFT = "left",
+		RIGHT = "right",
+		FULL = "full",
+	}
 
 	export enum Screens {
 		STATUS = "ScreenStatus",
 		ACTIONS = "ScreenActions",
+		INACTIVE = "ScreenInactive",
 	}
 
 	const currentLeftScreen = ref(Screens.STATUS)
 	const currentLeftScreenComponent = computed(() => getScreenComponent(currentLeftScreen.value))
 	const currentRightScreen = ref(Screens.ACTIONS)
 	const currentRightScreenComponent = computed(() => getScreenComponent(currentRightScreen.value))
+	const currentFullScreen = ref(Screens.INACTIVE)
+	const currentFullScreenComponent = computed(() => getScreenComponent(currentFullScreen.value))
+	const fullScreen = ref(true)
 
 	const getScreenComponent = (screen: Screens) => {
 		switch (screen) {
@@ -30,31 +41,52 @@
 				return ScreenStatus
 			case Screens.ACTIONS:
 				return ScreenActions
-			default:
-				return ScreenStatus
+			case Screens.INACTIVE:
+				return ScreenInactive
 		}
 	}
 
-	export const setLeftScreen = (newScreen: Screens) => {
-		currentLeftScreen.value = newScreen
-	}
-
-	export const setRightScreen = (newScreen: Screens) => {
-		currentRightScreen.value = newScreen
+	export const setScreen = (newScreen: Screens, pos: ScreenPosition) => {
+		switch (pos) {
+			case ScreenPosition.LEFT:
+				currentLeftScreen.value = newScreen
+				fullScreen.value = false
+				break
+			case ScreenPosition.RIGHT:
+				currentRightScreen.value = newScreen
+				fullScreen.value = false
+				break
+			case ScreenPosition.FULL:
+				currentFullScreen.value = newScreen
+				fullScreen.value = true
+				break
+		}
 	}
 </script>
 
 <template>
-	<div id="leftScreen">
+	<div v-if="!fullScreen" id="leftScreen">
 		<component :is="currentLeftScreenComponent" />
 	</div>
-	<div id="rightScreen">
+	<div v-if="!fullScreen" id="rightScreen">
 		<component :is="currentRightScreenComponent" />
+	</div>
+	<div v-if="fullScreen" id="fullScreen">
+		<component :is="currentFullScreenComponent" />
 	</div>
 </template>
 
 <style scoped>
+	#fullScreen {
+		position: relative;
+		float: left;
+		width: 100%;
+		height: 100%;
+		border: 8px solid black;
+	}
+
 	#leftScreen, #rightScreen {
+		position: relative;
 		float: left;
 		width: 50%;
 		height: 100%;

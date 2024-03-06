@@ -52,10 +52,12 @@ class SocketTrainer {
 					moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
 					break
 				case 'exercise-start':
-					console.log('Trainer Websocket ToDo: handle exercise-start event ', data)
+					moduleTrainerSetLeftScreen(Screens.LOG)
+					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
 				case 'exercise-stop':
-					console.log('Trainer Websocket ToDo: handle exercise-stop event ', data)
+					moduleTrainerSetLeftScreen(Screens.CREATE_EXERCISE)
+					moduleTrainerSetRightScreen(Screens.JOIN_EXERCISE)
 					break
 				case 'log-update':
 					console.log('Trainer Websocket ToDo: handle log-update event ', data)
@@ -85,6 +87,14 @@ class SocketTrainer {
 
 	exerciseCreate() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-create'}))
+	}
+
+	exerciseStart() {
+		this.#sendMessage(JSON.stringify({'messageType': 'exercise-start'}))
+	}
+
+	exerciseStop() {
+		this.#sendMessage(JSON.stringify({'messageType': 'exercise-stop'}))
 	}
 }
 
