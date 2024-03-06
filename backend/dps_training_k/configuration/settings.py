@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "game.apps.GameConfig",
+    "rest_framework",
+    "rest_framework.authtoken",
     "django_celery_beat",
     "django_celery_results",
 ]
@@ -108,6 +110,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -142,6 +149,8 @@ CHANNEL_LAYERS = {
     else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 }
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
+
+AUTH_USER_MODEL = "game.User"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
