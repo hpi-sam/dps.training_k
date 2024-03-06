@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import {usePatientStore} from '@/stores/Patient'
 	import socketPatient from "@/sockets/SocketPatient"
-	import { ref } from 'vue'
+	import {ref} from 'vue'
 
 	const emit = defineEmits(['close-popup'])
 
@@ -53,6 +53,7 @@
 		justify-content: center;
 		align-items: center;
 		text-align: center;
+		z-index: 1;
 	}
 
 	.popup {
