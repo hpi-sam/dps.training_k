@@ -1,34 +1,30 @@
 <script setup lang="ts">
-	import {computed, ref} from 'vue'
-	import {usePatientStore} from '@/stores/Patient'
-
-	const patientStore = usePatientStore()
-</script>
-<script lang="ts">
 	import PageActionOverview from './pagesAction/PageActionOverview.vue'
 	import PageResources from './pagesAction/PageResources.vue'
 	import PageActionSelection from './pagesAction/PageActionSelection.vue'
+	import {computed, ref} from 'vue'
 
-	export enum Pages {
-		ACTIONOVERVIEW = "PageActionOverview",
+	enum Pages {
+		ACTION_OVERVIEW = "PageActionOverview",
 		RESOURCES = "PageResources",
-		ACTIONSELECTION = "PageActionSelection",
+		ACTION_SELECTION = "PageActionSelection",
 	}
-	const currentPage = ref(Pages.ACTIONOVERVIEW)
+
+	const currentPage = ref(Pages.ACTION_OVERVIEW)
 	const currentPageComponent = computed(() => getPageComponent(currentPage.value))
 
 	const getPageComponent = (page: Pages) => {
 		switch (page) {
-			case Pages.ACTIONOVERVIEW:
+			case Pages.ACTION_OVERVIEW:
 				return PageActionOverview
 			case Pages.RESOURCES:
 				return PageResources
-			case Pages.ACTIONSELECTION:
+			case Pages.ACTION_SELECTION:
 				return PageActionSelection
 		}
 	}
 
-	export const setPage = (newPage: Pages) => {
+	const setPage = (newPage: Pages) => {
 		currentPage.value = newPage
 	}
 </script>
@@ -36,13 +32,13 @@
 <template>
 	<component :is="currentPageComponent" />
 	<nav>
-		<button id="nav-action-overview" :class="{ 'selected': currentPage === Pages.ACTIONOVERVIEW }" @click="setPage(Pages.ACTIONOVERVIEW)">
+		<button id="nav-action-overview" :class="{ 'selected': currentPage === Pages.ACTION_OVERVIEW }" @click="setPage(Pages.ACTION_OVERVIEW)">
 			Übersicht
 		</button>
 		<button id="nav-resources" :class="{ 'selected': currentPage === Pages.RESOURCES }" @click="setPage(Pages.RESOURCES)">
 			Ressourcen
 		</button>
-		<button id="nav-action-selection" :class="{ 'selected': currentPage === Pages.ACTIONSELECTION }" @click="setPage(Pages.ACTIONSELECTION)">
+		<button id="nav-action-selection" :class="{ 'selected': currentPage === Pages.ACTION_SELECTION }" @click="setPage(Pages.ACTION_SELECTION)">
 			Neue Aktion
 		</button>
 	</nav>
@@ -52,7 +48,7 @@
 	nav {
 		width: 100%;
 		height: 60px;
-		bottom: 0px;
+		bottom: 0;
 		position: absolute;
 		display: flex;
 		float: left;
