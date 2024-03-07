@@ -89,6 +89,13 @@ class SocketPatient {
 		}
 	}
 
+	actionAdd(actionName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'action-add',
+			'actionName': actionName,
+		}))
+	}
+	
 	testPassthrough() {
 		this.sendMessage(JSON.stringify({'messageType': 'test-passthrough'}))
 	}
