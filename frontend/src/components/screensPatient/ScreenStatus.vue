@@ -28,15 +28,15 @@
 
 <template>
 	<nav>
-		<div id="nav-trainer">
+		<button id="nav-trainer">
 			{{ patientStore.patientID }}
-		</div>
-		<div id="nav-triage" :class="triageColor" @click="showPopup = true">
+		</button>
+		<button id="nav-triage" :class="triageColor" @click="showPopup = true">
 			{{ patientStore.triage }}
-		</div>
-		<div id="nav-exercise-code">
+		</button>
+		<button id="nav-exercise-code">
 			{{ patientStore.areaName }}
-		</div>
+		</button>
 	</nav>
 	<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
 	<PatientStatus />
@@ -50,13 +50,15 @@
 		float: left;
 	}
 
-	#nav-trainer, #nav-triage, #nav-exercise-code {
+	button {
 		height: 100%;
-		border-bottom: 8px solid black;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		font-size: 1.5em;
+		background-color: white;
+		border: none;
+		border-bottom: 8px solid black;
 	}
 
 	#nav-trainer {
