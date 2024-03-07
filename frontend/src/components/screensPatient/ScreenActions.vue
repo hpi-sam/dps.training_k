@@ -64,13 +64,14 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 1.5em;
-		background-color: white;
+		background-color: lightgray;
 		border: none;
 		border-top: 8px solid black;
 	}
 
 	button.selected {
-		border-top: none;
+		background-color: white;
+		font-weight: bold;
 	}
 
 	#nav-action-overview {
