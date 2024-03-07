@@ -3,9 +3,15 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-
-python manage.py makemigrations
-python manage.py migrate
-python manage.py collectstatic --noinput
+if [ "${RUN_MIGRATIONS:-0}" = "1" ]; then
+    python manage.py migrate admin
+    python manage.py migrate auth
+    python manage.py migrate contenttypes
+    python manage.py migrate django_celery_beat
+    python manage.py migrate django_celery_results
+    python manage.py migrate sessions
+    python manage.py migrate game
+    python manage.py collectstatic --noinput
+fi
 
 exec "$@"
