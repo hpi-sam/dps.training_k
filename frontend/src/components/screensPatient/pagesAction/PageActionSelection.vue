@@ -8,5 +8,7 @@
 
 <template>
 	<h1>ActionSelection</h1>
-	<button @click="actionAdd('testAction')">Fügt eine Test-Aktion hinzu</button>
+	<button @click="actionAdd('stabile-seitenlage')">
+		Fügt eine Test-Aktion hinzu
+	</button>
 </template>
