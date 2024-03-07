@@ -12,7 +12,7 @@ django-environ==0.11.2
 uvicorn[standard]==0.27.1
 celery==5.3.6
 watchgod==0.8.2
-django-celery-beat # needs to be without version so that it doesn't downgrade django to version 4. Yes, that's a thing
+django-celery-beat==2.6.0
 django-celery-results==2.5.1
 django-cors-headers==4.3.1
 djangorestframework==3.14.0
