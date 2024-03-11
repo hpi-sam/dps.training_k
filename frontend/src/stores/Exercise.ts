@@ -8,6 +8,15 @@ export const useExerciseStore = defineStore('exercise', {
 	getters: {
 		getExerciseCode: (state) => state.exerciseId,
 		getArea: (state) => {
+			return (areaName: string): Area | null => {
+				let foundArea: Area | null = null
+				state.areas.forEach((area) => {
+					if (area.areaName == areaName) foundArea = area
+				})
+				return foundArea
+			}
+		},
+		getAreaOfPatient: (state) => {
 			return (patientId: number): Area | null => {
 				let foundArea: Area | null = null
 				state.areas.forEach((area) => {
