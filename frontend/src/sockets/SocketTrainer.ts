@@ -96,6 +96,17 @@ class SocketTrainer {
 	exerciseStop() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-stop'}))
 	}
+
+	areaAdd() {
+		this.#sendMessage(JSON.stringify({'messageType': 'area-add'}))
+	}
+
+	areaDelete(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'area-delete',
+			'areaName': areaName
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')

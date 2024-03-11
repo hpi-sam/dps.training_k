@@ -33,27 +33,13 @@
 		padding: .75rem 1rem;
 		margin: 1rem;
 		text-align: center;
-		text-decoration: none #D1D5DB solid;
-		text-decoration-thickness: auto;
 		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 		cursor: pointer;
-		user-select: none;
-		-webkit-user-select: none;
-		touch-action: manipulation;
 		vertical-align: bottom;
 	}
 
 	.button-mainAction:hover {
 		background-color: rgb(249, 250, 251);
-	}
-
-	.button-mainAction:focus {
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-	}
-
-	.button-mainAction:focus-visible {
-		box-shadow: none;
 	}
 
 	.button-mainAction:active {

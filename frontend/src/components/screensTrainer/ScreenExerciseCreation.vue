@@ -6,6 +6,7 @@
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
 	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
+	import AreaPopup from '../widgets/AreaPopup.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -15,12 +16,22 @@
 
 	const areas = ref(exerciseStore.areas)
 
-	const openArea = (areaName: string) => {
+	const currentArea = ref("Kein Bereich ausgewählt")
+
+	function openArea(areaName: string) {
 		setArea(areaName)
+		currentArea.value = areaName
 	}
+
+	function addArea(){
+		socketTrainer.areaAdd()
+	}
+
+	const showPopup = ref(false)
 </script>
 
 <template>
+	<AreaPopup v-if="showPopup" :area-name="currentArea" @close-popup="showPopup=false" />
 	<TopBarTrainer />
 	<div id="list">
 		<button
@@ -30,17 +41,19 @@
 			@click="openArea(area.areaName)"
 		>
 			{{ area.areaName }}
-			<svg
-				id="settingsIcon"
-				xmlns="http://www.w3.org/2000/svg"
-				height="24"
-				viewBox="0 -960 960 960"
-				width="24"
-			>
-				<path :d="svg.settingsIcon" />
-			</svg>
+			<button id="settingsButton">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					height="24"
+					viewBox="0 -960 960 960"
+					width="24"
+					@click="showPopup = true"
+				>
+					<path :d="svg.settingsIcon" />
+				</svg>
+			</button>
 		</button>
-		<button id="addAreaButton">
+		<button id="addAreaButton" @click="addArea()">
 			Bereich hinzufügen
 		</button>
 	</div>
@@ -71,8 +84,18 @@
 		margin-top: -1px;
 	}
 
-	#settingsIcon {
+	.areaButtons:hover, #addAreaButton:hover {
+		background-color: rgb(249, 250, 251);
+	}
+
+	.areaButtons:active, #addAreaButton:active {
+		background-color: rgb(243, 244, 246);
+	}
+
+	#settingsButton {
 		margin-left: auto;
+		background-color: rgba(0,0,0,0);
+		border: rgba(0,0,0,0);
 	}
 
 	#addAreaButton {
