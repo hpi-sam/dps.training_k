@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 interface MessageData {
 	messageType: string
 	message?: string
@@ -67,4 +67,22 @@ interface LogEntry {
 	patientId: number
 	personnelId: number
 	deviceId: number
+}
+
+interface Availables {
+	actions: [],
+	patients: [],
+	material: [],
+}
+
+interface AvailableActions {
+	actions: [],
+}
+
+interface AvailablePatients {
+	patients: [],
+}
+
+interface AvailableMaterial {
+	material: [],
 }
