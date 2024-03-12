@@ -38,9 +38,8 @@
 			v-for="area in areas"
 			:key="area.areaName"
 			class="listitem"
-			@click="openArea(area.areaName)"
 		>
-			<button class="areaButton">
+			<button class="areaButton" @click="openArea(area.areaName)">
 				{{ area.areaName }}
 			</button>
 			<button class="settingsButton" @click="showPopup = true">
