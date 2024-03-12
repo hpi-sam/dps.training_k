@@ -55,7 +55,7 @@ class SocketPatient {
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientID)?.patientName || ''
-					usePatientStore().areaName = useExerciseStore().getArea(usePatientStore().patientID)?.areaName || ''
+					usePatientStore().areaName = useExerciseStore().getAreaOfPatient(usePatientStore().patientID)?.areaName || ''
 					break
 				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
