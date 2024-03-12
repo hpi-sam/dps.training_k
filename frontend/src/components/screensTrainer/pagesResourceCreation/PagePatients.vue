@@ -2,6 +2,7 @@
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
 	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
+	import PatientPopup from '@/components/widgets/PatientPopup.vue'
 
     const props = defineProps({
 		currentArea: {
@@ -13,16 +14,26 @@
 	const exerciseStore = useExerciseStore()
 
 	const currentAreaData = computed(() => exerciseStore.getArea(props.currentArea))
+
+	const showPopup = ref(false)
+
+	const currentPatientId = ref(Number.NEGATIVE_INFINITY)
+
+	function openPatient(patientId: number) {
+		currentPatientId.value = patientId
+		showPopup.value = true
+	}
 </script>
 
 <template>
+	<PatientPopup v-if="showPopup" :patient-id="currentPatientId" @close-popup="showPopup=false" />
 	<div id="list">
 		<div
 			v-for="patient in currentAreaData?.patients"
 			:key="patient.patientName"
 			class="listitem"
 		>
-			<button class="areaButton">
+			<button class="areaButton" @click="openPatient(patient.patientId)">
 				{{ patient.patientCode }}
 				{{ patient.patientName }}
 				{{ patient.patientId }}

@@ -19,6 +19,9 @@ interface MessageData {
 	exercise?: Exercise
 	state?: State
 	logEntry?: LogEntry
+	availablePatients: AvailablePatients
+	availableActions: AvailableActions
+	availableMaterial: AvailableMaterial
 }
 
 interface Exercise {
@@ -69,9 +72,18 @@ interface LogEntry {
 	deviceId: number
 }
 
+interface AvailablePatient {
+	patientCode: number
+	triage: string
+	patientInjury: string
+	patientHistory: string
+	patientPersonalDetails: string
+	patientBiometrics: string
+}
+
 interface Availables {
 	actions: [],
-	patients: [],
+	patients: AvailablePatient[],
 	material: [],
 }
 
@@ -80,7 +92,7 @@ interface AvailableActions {
 }
 
 interface AvailablePatients {
-	patients: [],
+	patients: AvailablePatient[],
 }
 
 interface AvailableMaterial {

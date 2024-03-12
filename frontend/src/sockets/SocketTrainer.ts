@@ -3,6 +3,7 @@ import {useTrainerStore} from "@/stores/Trainer"
 import {useExerciseStore} from "@/stores/Exercise"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
+import { useAvailablesStore } from "@/stores/Availables"
 
 class SocketTrainer {
 	private readonly url: string
@@ -45,6 +46,15 @@ class SocketTrainer {
 					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
+					break
+				case 'available-actions':
+					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableActions)
+					break
+				case 'available-material':
+					useAvailablesStore().loadAvailableMaterial(data.availableMaterial as AvailableMaterial)
+					break
+				case 'available-patients':
+					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatients)
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
@@ -115,6 +125,12 @@ export default socketTrainer
 export const serverMockEvents = [
 	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
+	{
+		id: "available-patients",
+		data: '{"messageType": "available-patients","availablePatients": [{"patientCode": 2,"triage": "red","patientInjury": "Fractured limb",' +
+			'"patientHistory": "No known allergies","patientPersonalDetails": "John Doe, Male, 30 years old",' +
+			'"patientBiometrics": "Height: 180cm, Weight: 75kg"}]}'
+	},
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
