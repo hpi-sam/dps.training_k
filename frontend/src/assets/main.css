@@ -14,4 +14,10 @@ main{
 
 button:hover {
   cursor: pointer;
+  filter: brightness(95%);
+}
+
+button:active {
+  cursor: pointer;
+  filter: brightness(90%);
 }

@@ -34,25 +34,26 @@
 	<AreaPopup v-if="showPopup" :area-name="currentArea" @close-popup="showPopup=false" />
 	<TopBarTrainer />
 	<div id="list">
-		<button
+		<div
 			v-for="area in areas"
 			:key="area.areaName"
-			class="areaButtons"
+			class="listitem"
 			@click="openArea(area.areaName)"
 		>
-			{{ area.areaName }}
-			<button id="settingsButton">
+			<button class="areaButton">
+				{{ area.areaName }}
+			</button>
+			<button class="settingsButton" @click="showPopup = true">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					height="24"
 					viewBox="0 -960 960 960"
 					width="24"
-					@click="showPopup = true"
 				>
 					<path :d="svg.settingsIcon" />
 				</svg>
 			</button>
-		</button>
+		</div>
 		<button id="addAreaButton" @click="addArea()">
 			Bereich hinzufügen
 		</button>
@@ -70,32 +71,34 @@
 		margin-right: 30px;
 	}
 
-	.areaButtons {
+	.listitem {
 		position: relative;
 		background-color: #FFFFFF;
 		border: 1px solid rgb(209, 213, 219);
-		box-sizing: border-box;
 		display: flex;
 		align-items: center;
-		width: 100%;
-		font-size: 1.25rem;
-		padding: .75rem 1rem;
 		text-align: left;
 		margin-top: -1px;
 	}
 
-	.areaButtons:hover, #addAreaButton:hover {
-		background-color: rgb(249, 250, 251);
+	.areaButton {
+		position: relative;
+		background-color: #FFFFFF;
+		border: none;
+		display: flex;
+		align-items: center;
+		font-size: 1.25rem;
+		padding: .75rem 1rem;
+		text-align: left;
+		height: 50px;
+		width: 100%;
 	}
 
-	.areaButtons:active, #addAreaButton:active {
+	.settingsButton {
+		height: 50px;
+		width: 50px;
+		border: none;
 		background-color: rgb(243, 244, 246);
-	}
-
-	#settingsButton {
-		margin-left: auto;
-		background-color: rgba(0,0,0,0);
-		border: rgba(0,0,0,0);
 	}
 
 	#addAreaButton {

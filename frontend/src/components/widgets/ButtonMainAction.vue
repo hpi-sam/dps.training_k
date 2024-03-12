@@ -37,12 +37,4 @@
 		cursor: pointer;
 		vertical-align: bottom;
 	}
-
-	.button-mainAction:hover {
-		background-color: rgb(249, 250, 251);
-	}
-
-	.button-mainAction:active {
-		background-color: rgb(243, 244, 246);
-	}
 </style>
