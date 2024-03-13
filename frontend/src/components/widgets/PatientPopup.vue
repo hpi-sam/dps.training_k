@@ -1,6 +1,9 @@
 <script setup lang="ts">
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import { useAvailablesStore } from "@/stores/Availables"
+	import PatientStatus from "./PatientStatus.vue"
+	import PatientInfo from "./PatientInfo.vue"
+	import { computed, ref } from "vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -11,35 +14,47 @@
 		}
 	})
 
-	const availablePatients = useAvailablesStore().patients
+	const availablesStore = useAvailablesStore()
+
+	const availablePatients = availablesStore.patients
+
+	const currentPatientCode = ref(Number.NEGATIVE_INFINITY)
+
+	const currentPatient = computed(() => availablesStore.getPatient(currentPatientCode.value))
 </script>
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
-		<div class="popup">
+		<div class="popup" @click.stop="">
 			<div id="leftSide">
-				<h2>{{ props.patientId }}</h2>
 				<div id="list">
-					Hier sollte die Liste stehen
-					{{ availablePatients }}
-					<div
+					<button
 						v-for="patient in availablePatients"
 						:key="patient.patientCode"
 						class="listitem"
+						:class="patient.triage"
+						@click="currentPatientCode = patient.patientCode; console.log(currentPatientCode)"
 					>
-						<button class="areaButton">
-							{{ patient.patientCode }}
-						</button>
-					</div>
+						{{ patient.patientCode }}
+					</button>
 				</div>
 			</div>
 			<div id="rightSide">
-				<button id="deleteButton">
-					Löschen
-				</button>
-				<button id="saveButton">
-					Speichern
-				</button>
+				<h2>{{ props.patientId }}</h2>
+				<PatientInfo
+					:injury="currentPatient?.patientInjury"
+					:history="currentPatient?.patientHistory"
+					:biometrics="currentPatient?.patientBiometrics"
+					:personal-details="currentPatient?.patientPersonalDetails"
+				/>
+				<div id="buttonRow">
+					<button id="deleteButton">
+						Löschen
+					</button>
+					<button id="saveButton">
+						Speichern
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -65,19 +80,27 @@
 		padding: 20px;
 		border-radius: 8px;
 		width: 80vw;
-		
+		display: flex;
 	}
 
-	#leftSide, #rightSide {
+	#leftSide {
 		float: left;
 		display: flex;
 		width: 50%;
 		padding: 10px;
 	}
 
+	#rightSide {
+		width: 50%;
+		padding: 10px;
+	}
+
+	#buttonRow {
+		display: flex;
+	}
+
 	#deleteButton, #saveButton {
 		position: relative;
-		background-color: #ee4035;
 		color: white;
 		border: 1px solid rgb(209, 213, 219);
 		border-radius: .5rem;
@@ -86,7 +109,10 @@
 		padding: .75rem 1rem;
 		text-align: center;
 		margin-top: 10px;
-		float: left;
+	}
+
+	#deleteButton {
+		background-color: #ee4035;
 	}
 
 	#saveButton {
@@ -94,9 +120,7 @@
 	}
 
 	#list {
-		margin-top: 90px;
-		margin-left: 30px;
-		margin-right: 30px;
+		display: flex;
 	}
 
 	.listitem {
@@ -105,7 +129,23 @@
 		border: 1px solid rgb(209, 213, 219);
 		display: flex;
 		align-items: center;
-		text-align: left;
 		margin-top: -1px;
+		font-size: 1.25rem;
+		padding: .75rem 1rem;
+		text-align: left;
+		height: 50px;
+		width: 100%;
+	}
+
+	.red {
+		background-color: red;
+	}
+
+	.yellow {
+		background-color: yellow;
+	}
+
+	.green {
+		background-color: green;
 	}
 </style>

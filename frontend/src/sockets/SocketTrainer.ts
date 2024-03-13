@@ -127,9 +127,13 @@ export const serverMockEvents = [
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: "available-patients",
-		data: '{"messageType": "available-patients","availablePatients": [{"patientCode": 2,"triage": "red","patientInjury": "Fractured limb",' +
-			'"patientHistory": "No known allergies","patientPersonalDetails": "John Doe, Male, 30 years old",' +
-			'"patientBiometrics": "Height: 180cm, Weight: 75kg"}]}'
+		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":[{"patientCode":201,'+
+			'"triage":"red","patientInjury":"Fractured limb",' +
+			'"patientHistory":"No known allergies","patientPersonalDetails":"John Doe, Male, 30 years old",' +
+			'"patientBiometrics":"Height:180cm, Weight: 75kg"},{"patientCode":202,'+
+			'"triage":"green","patientInjury":"Fractured hand",' +
+			'"patientHistory":"No known allergies","patientPersonalDetails":"Jane Doe, Female, 18 years old",' +
+			'"patientBiometrics":"Height:160cm, Weight: 55kg"}]}}'
 	},
 	{
 		id: 'exercise',

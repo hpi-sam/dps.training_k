@@ -41,6 +41,7 @@ export const useExerciseStore = defineStore('exercise', {
 	},
 	actions: {
 		createFromJSON(json: Exercise) {
+			console.log("Exercise: "+JSON.stringify(json))
 			this.exerciseId = json.exerciseId
 			this.areas = json.areas
 		}

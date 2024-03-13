@@ -3,6 +3,7 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import PatientPopup from '@/components/widgets/PatientPopup.vue'
+	import { useAvailablesStore } from '@/stores/Availables'
 
     const props = defineProps({
 		currentArea: {
@@ -23,6 +24,12 @@
 		currentPatientId.value = patientId
 		showPopup.value = true
 	}
+
+	const availablesStore = useAvailablesStore()
+
+	function getTriageColor(patientCode: number) {
+		return availablesStore.getPatient(patientCode)?.triage
+	}
 </script>
 
 <template>
@@ -33,10 +40,14 @@
 			:key="patient.patientName"
 			class="listitem"
 		>
-			<button class="areaButton" @click="openPatient(patient.patientId)">
-				{{ patient.patientCode }}
-				{{ patient.patientName }}
-				{{ patient.patientId }}
+			<button class="areaButton" @click="openPatient(patient.patientId); getTriageColor(patient.patientCode)">
+				<div :class="getTriageColor(patient.patientCode)" class="patientCode">
+					{{ patient.patientCode }}
+				</div>
+				<div class="patientName">
+					{{ patient.patientName }}
+					{{ patient.patientId }}
+				</div>
 			</button>
 			<ToggleSwitchForListItems />
 		</div>
@@ -71,6 +82,7 @@
 		align-items: center;
 		font-size: 1.25rem;
 		padding: .75rem 1rem;
+		padding-left: 0;
 		text-align: left;
 		height: 50px;
 		width: 100%;
@@ -94,5 +106,31 @@
 		line-height: 1.25rem;
 		padding: .75rem 1rem;
 		margin-top: -1px;
+	}
+
+	.patientCode {
+		position: relative;
+		display: inline-block;
+		height: 50px;
+		padding: .75rem 1rem;
+		display: flex;
+		align-items: center;
+		text-align: center;
+	}
+
+	.patientName {
+		padding: .75rem 1rem;
+	}
+
+	.red {
+		background-color: red;
+	}
+
+	.yellow {
+		background-color: yellow;
+	}
+
+	.green {
+		background-color: green;
 	}
 </style>

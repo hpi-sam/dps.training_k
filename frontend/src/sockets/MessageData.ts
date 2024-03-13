@@ -92,7 +92,7 @@ interface AvailableActions {
 }
 
 interface AvailablePatients {
-	patients: AvailablePatient[],
+	availablePatients: AvailablePatient[],
 }
 
 interface AvailableMaterial {
