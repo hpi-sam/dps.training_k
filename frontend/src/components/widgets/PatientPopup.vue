@@ -1,9 +1,9 @@
 <script setup lang="ts">
-	import socketTrainer from "@/sockets/SocketTrainer"
 	import { useAvailablesStore } from "@/stores/Availables"
-	import PatientStatus from "./PatientStatus.vue"
 	import PatientInfo from "./PatientInfo.vue"
 	import { computed, ref } from "vue"
+	import TriageForListItems from "./TriageForListItems.vue"
+	import { useExerciseStore } from "@/stores/Exercise"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -15,12 +15,14 @@
 	})
 
 	const availablesStore = useAvailablesStore()
-
 	const availablePatients = availablesStore.patients
 
 	const currentPatientCode = ref(Number.NEGATIVE_INFINITY)
+	const currentPatient = computed(() => availablesStore.getPatient(currentPatientCode.value))	
 
-	const currentPatient = computed(() => availablesStore.getPatient(currentPatientCode.value))
+	const exerciseStore = useExerciseStore()
+	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)	
+
 </script>
 
 <template>
@@ -31,7 +33,7 @@
 					<button
 						v-for="patient in availablePatients"
 						:key="patient.patientCode"
-						class="listitem"
+						class="availablePatientButton"
 						:class="patient.triage"
 						@click="currentPatientCode = patient.patientCode; console.log(currentPatientCode)"
 					>
@@ -40,7 +42,15 @@
 				</div>
 			</div>
 			<div id="rightSide">
-				<h2>{{ props.patientId }}</h2>
+				<div class="listitem">
+					<div class="patientId">
+						{{ props.patientId }}
+					</div>
+					<TriageForListItems :patient-code="currentPatientCode" />
+					<div class="patientName">
+						{{ currentPatientName }}
+					</div>
+				</div>
 				<PatientInfo
 					:injury="currentPatient?.patientInjury"
 					:history="currentPatient?.patientHistory"
@@ -123,7 +133,7 @@
 		display: flex;
 	}
 
-	.listitem {
+	.availablePatientButton, .listitem {
 		position: relative;
 		background-color: #FFFFFF;
 		border: 1px solid rgb(209, 213, 219);
@@ -137,15 +147,23 @@
 		width: 100%;
 	}
 
+	.listitem {
+		padding-left: 0;
+	}
+
+	.patientId, .patientName {
+		padding: .75rem 1rem;
+	}
+	
 	.red {
-		background-color: red;
+	background-color: red;
 	}
 
 	.yellow {
-		background-color: yellow;
+	background-color: yellow;
 	}
 
 	.green {
-		background-color: green;
+	background-color: green;
 	}
 </style>

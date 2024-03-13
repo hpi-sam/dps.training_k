@@ -4,6 +4,7 @@
 	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import PatientPopup from '@/components/widgets/PatientPopup.vue'
 	import { useAvailablesStore } from '@/stores/Availables'
+import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 
     const props = defineProps({
 		currentArea: {
@@ -28,7 +29,10 @@
 	const availablesStore = useAvailablesStore()
 
 	function getTriageColor(patientCode: number) {
-		return availablesStore.getPatient(patientCode)?.triage
+		if(availablesStore.getPatient(patientCode)?.triage){
+			return availablesStore.getPatient(patientCode)?.triage
+		}
+		return "gray"
 	}
 </script>
 
@@ -41,12 +45,12 @@
 			class="listitem"
 		>
 			<button class="areaButton" @click="openPatient(patient.patientId); getTriageColor(patient.patientCode)">
-				<div :class="getTriageColor(patient.patientCode)" class="patientCode">
-					{{ patient.patientCode }}
+				<div class="patientName">
+					{{ patient.patientId }}
 				</div>
+				<TriageForListItems :patient-code="patient.patientCode" />
 				<div class="patientName">
 					{{ patient.patientName }}
-					{{ patient.patientId }}
 				</div>
 			</button>
 			<ToggleSwitchForListItems />
@@ -108,29 +112,7 @@
 		margin-top: -1px;
 	}
 
-	.patientCode {
-		position: relative;
-		display: inline-block;
-		height: 50px;
-		padding: .75rem 1rem;
-		display: flex;
-		align-items: center;
-		text-align: center;
-	}
-
 	.patientName {
 		padding: .75rem 1rem;
-	}
-
-	.red {
-		background-color: red;
-	}
-
-	.yellow {
-		background-color: yellow;
-	}
-
-	.green {
-		background-color: green;
 	}
 </style>

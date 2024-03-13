@@ -21,3 +21,19 @@ button:active {
   cursor: pointer;
   filter: brightness(90%);
 }
+
+.gray {
+  background-color: gray;
+}
+
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.green {
+  background-color: green;
+}
