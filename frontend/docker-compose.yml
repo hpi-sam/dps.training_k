@@ -1,7 +1,8 @@
 version: '3'
 services:
   web:
-    container_name: K-dPS-frontend
+    container_name: dps_training_k-frontend
     build: .
+    image: dps_training_k-frontend
     ports:
       - "5173:5173"

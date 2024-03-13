@@ -44,7 +44,7 @@ services:
 
 
   redis:
-    image: redis:6
+    image: redis:latest
     container_name: K-dPS-redis
 
   celeryworker:
