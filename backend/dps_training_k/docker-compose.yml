@@ -10,6 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
+    image: dps_training_k-django
     container_name: K-dPS-django
     depends_on:
       - postgres
@@ -30,6 +31,7 @@ services:
     build:
       context: .
       dockerfile: ./deployment/postgres/Dockerfile
+    image: dps_training_k-postgres
     container_name: K-dPS-postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
@@ -53,6 +55,7 @@ services:
       dockerfile: ./deployment/django/Dockerfile
     env_file:
       - .env
+    image: dps_training_k-celeryworker
     container_name: K-dPS-celeryworker
     command: /start-celeryworker
     depends_on:
@@ -64,6 +67,7 @@ services:
       dockerfile: ./deployment/django/Dockerfile
     env_file:
       - .env
+    image: dps_training_k-celerybeat
     container_name: K-dPS-celerybeat
     command: /start-celerybeat
     depends_on:
@@ -71,6 +75,7 @@ services:
 
   nginx:
     build: deployment/nginx
+    image: dps_training_k-nginx
     container_name: K-dPS-nginx
     volumes:
       - static_volume:/app/staticfiles
