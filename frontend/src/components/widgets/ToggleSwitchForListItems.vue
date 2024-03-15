@@ -1,7 +1,17 @@
+<script setup lang="ts">
+	const props = defineProps({
+		isChecked: {
+			type: Boolean,
+			default: true
+		}
+	})
+	const emits = defineEmits(['update:isChecked'])
+</script>
+
 <template>
 	<div class="toggleSwitch">
 		<label>
-			<input type="checkbox">
+			<input type="checkbox" :checked="props.isChecked" @change="$emit('update:isChecked', !props.isChecked)">
 			<span class="slider" />
 		</label>
 	</div>

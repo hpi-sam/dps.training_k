@@ -14,14 +14,25 @@
 		}
 	})
 
+	const exerciseStore = useExerciseStore()
+	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)
+	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.patientCode)
+
 	const availablesStore = useAvailablesStore()
 	const availablePatients = availablesStore.patients
 
-	const currentPatientCode = ref(Number.NEGATIVE_INFINITY)
-	const currentPatient = computed(() => availablesStore.getPatient(currentPatientCode.value))	
-
-	const exerciseStore = useExerciseStore()
-	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)	
+	const currentPatient = computed(() => {
+		if (currentPatientCode.value !== undefined) {
+			return availablesStore.getPatient(currentPatientCode.value)
+		}
+		return null
+	})
+	
+	function changePatient(patientCode: number){
+		if (currentPatient.value && currentPatient.value.patientCode !== undefined) {
+			currentPatientCode.value = patientCode
+		}
+	}
 
 </script>
 
@@ -35,7 +46,7 @@
 						:key="patient.patientCode"
 						class="availablePatientButton"
 						:class="patient.triage"
-						@click="currentPatientCode = patient.patientCode; console.log(currentPatientCode)"
+						@click="changePatient(patient.patientCode)"
 					>
 						{{ patient.patientCode }}
 					</button>
@@ -46,7 +57,7 @@
 					<div class="patientId">
 						{{ props.patientId }}
 					</div>
-					<TriageForListItems :patient-code="currentPatientCode" />
+					<TriageForListItems :patient-code="currentPatient?.patientCode" />
 					<div class="patientName">
 						{{ currentPatientName }}
 					</div>

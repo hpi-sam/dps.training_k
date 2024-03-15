@@ -45,7 +45,7 @@ import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 			class="listitem"
 		>
 			<button class="areaButton" @click="openPatient(patient.patientId); getTriageColor(patient.patientCode)">
-				<div class="patientName">
+				<div class="patientId">
 					{{ patient.patientId }}
 				</div>
 				<TriageForListItems :patient-code="patient.patientCode" />
@@ -53,7 +53,7 @@ import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 					{{ patient.patientName }}
 				</div>
 			</button>
-			<ToggleSwitchForListItems />
+			<ToggleSwitchForListItems default="active" />
 		</div>
 		<button id="addAreaButton">
 			Patient hinzufügen
@@ -112,7 +112,7 @@ import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 		margin-top: -1px;
 	}
 
-	.patientName {
+	.patientId, .patientName {
 		padding: .75rem 1rem;
 	}
 </style>
