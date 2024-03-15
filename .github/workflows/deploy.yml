@@ -46,3 +46,16 @@ jobs:
           docker tag dps_training_k-postgres ghcr.io/hpi-sam/dps_training_k-postgres:latest
           docker push ghcr.io/hpi-sam/dps_training_k-postgres:latest
           # Skip redis as it is just the public Docker Hub image anyway and therefore should be directly pulled from there
+
+      - name: Prepare deployment files
+        run: |
+          mkdir deployment_files
+          cp docker-compose.yml deployment_files/
+          cp frontend/env.d.ts deployment_files/
+          cp backend/dps_training_k/.env deployment_files/
+
+      - name: Archive deployment files
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment-files
+          path: deployment_files/
