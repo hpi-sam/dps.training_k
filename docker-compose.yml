@@ -6,11 +6,14 @@ volumes:
   static_volume: { }
 
 services:
+  web:
+    image: ghcr.io/hpi-sam/dps_training_k-frontend:latest
+    container_name: K-dPS-frontend
+    ports:
+      - "5173:5173"
+    
   django:
-    build:
-      context: .
-      dockerfile: ./deployment/django/Dockerfile
-    image: dps_training_k-django
+    image: ghcr.io/hpi-sam/dps_training_k-django:latest
     container_name: K-dPS-django
     restart: unless-stopped
     depends_on:
@@ -22,17 +25,13 @@ services:
       - RUN_MIGRATIONS=1
     volumes:
       - static_volume:/app/staticfiles
-      - .:/app:z
     expose:
       - 8000
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
 
 
   postgres:
-    build:
-      context: .
-      dockerfile: ./deployment/postgres/Dockerfile
-    image: dps_training_k-postgres
+    image: ghcr.io/hpi-sam/dps_training_k-postgres:latest
     container_name: K-dPS-postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
@@ -50,32 +49,25 @@ services:
     container_name: K-dPS-redis
 
   celeryworker:
-    build:
-      context: .
-      dockerfile: ./deployment/django/Dockerfile
     env_file:
       - .env
-    image: dps_training_k-celeryworker
+    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:latest
     container_name: K-dPS-celeryworker
     command: /start-celeryworker
     depends_on:
       - django
 
   celerybeat:
-    build:
-      context: .
-      dockerfile: ./deployment/django/Dockerfile
     env_file:
       - .env
-    image: dps_training_k-celerybeat
+    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:latest
     container_name: K-dPS-celerybeat
     command: /start-celerybeat
     depends_on:
       - django
 
   nginx:
-    build: deployment/nginx
-    image: dps_training_k-nginx
+    image: ghcr.io/hpi-sam/dps_training_k-nginx:latest
     container_name: K-dPS-nginx
     volumes:
       - static_volume:/app/staticfiles
