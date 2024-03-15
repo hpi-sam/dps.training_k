@@ -4,6 +4,7 @@
 	import { computed, ref } from "vue"
 	import TriageForListItems from "./TriageForListItems.vue"
 	import { useExerciseStore } from "@/stores/Exercise"
+	import socketTrainer from "@/sockets/SocketTrainer"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -13,6 +14,14 @@
 			default: Number.NEGATIVE_INFINITY
 		}
 	})
+
+	function deletePatient(patientId: number){
+		socketTrainer.patientDelete(patientId)
+	}
+
+	function updatePatient(patientId: number, patientName: string, patientCode: number){
+		socketTrainer.patientUpdate(patientId, patientName, patientCode)
+	}
 
 	const exerciseStore = useExerciseStore()
 	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)
@@ -28,7 +37,7 @@
 		return null
 	})
 	
-	function changePatient(patientCode: number){
+	function changePatientCode(patientCode: number){
 		if (currentPatient.value && currentPatient.value.patientCode !== undefined) {
 			currentPatientCode.value = patientCode
 		}
@@ -46,7 +55,7 @@
 						:key="patient.patientCode"
 						class="availablePatientButton"
 						:class="patient.triage"
-						@click="changePatient(patient.patientCode)"
+						@click="changePatientCode(patient.patientCode)"
 					>
 						{{ patient.patientCode }}
 					</button>
@@ -69,10 +78,13 @@
 					:personal-details="currentPatient?.patientPersonalDetails"
 				/>
 				<div id="buttonRow">
-					<button id="deleteButton">
+					<button id="deleteButton" @click="deletePatient(props.patientId)">
 						Löschen
 					</button>
-					<button id="saveButton">
+					<button
+						id="saveButton"
+						@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.patientCode || Number.NEGATIVE_INFINITY)"
+					>
 						Speichern
 					</button>
 				</div>

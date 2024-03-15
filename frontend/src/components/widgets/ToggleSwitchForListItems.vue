@@ -5,13 +5,12 @@
 			default: true
 		}
 	})
-	const emits = defineEmits(['update:isChecked'])
 </script>
 
 <template>
 	<div class="toggleSwitch">
 		<label>
-			<input type="checkbox" :checked="props.isChecked" @change="$emit('update:isChecked', !props.isChecked)">
+			<input type="checkbox" :checked="props.isChecked">
 			<span class="slider" />
 		</label>
 	</div>

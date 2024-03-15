@@ -117,6 +117,22 @@ class SocketTrainer {
 			'areaName': areaName
 		}))
 	}
+
+	patientUpdate(patientId: number, patientName: string, patientCode: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-update',
+			'patientId': patientId,
+			'patientName': patientName,
+			'patientCode': patientCode
+		}))
+	}
+
+	patientDelete(patientId: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-delete',
+			'patientId': patientId
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')

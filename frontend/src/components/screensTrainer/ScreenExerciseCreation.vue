@@ -38,6 +38,7 @@
 			v-for="area in areas"
 			:key="area.areaName"
 			class="listitem"
+			:class="{ 'selected': currentArea === area.areaName }"
 		>
 			<button class="areaButton" @click="openArea(area.areaName)">
 				{{ area.areaName }}
@@ -111,5 +112,9 @@
 		line-height: 1.25rem;
 		padding: .75rem 1rem;
 		margin-top: -1px;
+	}
+
+	.selected .areaButton {
+		filter: brightness(90%);
 	}
 </style>
