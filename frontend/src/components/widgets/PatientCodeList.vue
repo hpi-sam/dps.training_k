@@ -1,3 +1,16 @@
+<script setup lang="ts">
+    import { useAvailablesStore } from "@/stores/Availables"
+  
+    const availablesStore = useAvailablesStore()
+    const availablePatients = availablesStore.patients
+  
+    const emit = defineEmits(['change-patient'])
+  
+    function changePatient(patientCode: number) {
+      emit('change-patient', patientCode)
+    }
+</script>
+
 <template>
 	<div id="list">
 		<button
@@ -12,20 +25,7 @@
 	</div>
 </template>
   
-  <script setup lang="ts">
-    import { useAvailablesStore } from "@/stores/Availables"
-  
-    const availablesStore = useAvailablesStore()
-    const availablePatients = availablesStore.patients
-  
-    const emit = defineEmits(['change-patient'])
-  
-    function changePatient(patientCode: number) {
-      emit('change-patient', patientCode)
-    }
-  </script>
-  
-  <style scoped>
+<style scoped>
     #list {
         display: flex;
     }

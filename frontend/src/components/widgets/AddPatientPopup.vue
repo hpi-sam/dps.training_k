@@ -126,7 +126,7 @@
 		display: flex;
 	}
 
-	#deleteButton, #saveButton {
+	#saveButton {
 		position: relative;
 		color: white;
 		border: 1px solid rgb(209, 213, 219);
@@ -136,13 +136,6 @@
 		padding: .75rem 1rem;
 		text-align: center;
 		margin-top: 10px;
-	}
-
-	#deleteButton {
-		background-color: #ee4035;
-	}
-
-	#saveButton {
 		background-color: #269f42;
 	}
 

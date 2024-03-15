@@ -56,7 +56,7 @@
 			:key="patient.patientName"
 			class="listitem"
 		>
-			<button class="areaButton" @click="editPatient(patient.patientId)">
+			<button class="patientButton" @click="editPatient(patient.patientId)">
 				<div class="patientId">
 					{{ patient.patientId }}
 				</div>
@@ -67,7 +67,7 @@
 			</button>
 			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button id="addAreaButton" @click="addPatient()">
+		<button id="addPatientButton" @click="addPatient()">
 			Patient hinzufügen
 		</button>
 	</div>
@@ -90,7 +90,7 @@
 		margin-top: -1px;
 	}
 
-	.areaButton {
+	.patientButton {
 		position: relative;
 		background-color: #FFFFFF;
 		border: none;
@@ -111,7 +111,7 @@
 		background-color: rgb(243, 244, 246);
 	}
 
-	#addAreaButton {
+	#addPatientButton {
 		text-align: center;
 		position: relative;
 		background-color: #FFFFFF;

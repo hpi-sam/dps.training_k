@@ -2,7 +2,7 @@
 	import {computed} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
 
-    const props = defineProps({
+	const props = defineProps({
 		currentArea: {
 			type: String,
 			default: "Kein Bereich ausgewählt"
