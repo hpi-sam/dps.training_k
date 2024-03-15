@@ -118,7 +118,19 @@ class SocketTrainer {
 		}))
 	}
 
+	patientAdd(areaName: string, patientId: number, patientName: string, patientCode: number) {
+		console.log("Add "+patientName)
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-add',
+			'areaName': areaName,
+			'patientId': patientId,
+			'patientName': patientName,
+			'patientCode': patientCode
+		}))
+	}
+
 	patientUpdate(patientId: number, patientName: string, patientCode: number) {
+		console.log("Update "+patientName)
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-update',
 			'patientId': patientId,
@@ -128,6 +140,7 @@ class SocketTrainer {
 	}
 
 	patientDelete(patientId: number) {
+		console.log("Delete "+patientId)
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-delete',
 			'patientId': patientId

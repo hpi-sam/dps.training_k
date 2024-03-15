@@ -5,6 +5,8 @@
 	import TriageForListItems from "./TriageForListItems.vue"
 	import { useExerciseStore } from "@/stores/Exercise"
 	import socketTrainer from "@/sockets/SocketTrainer"
+	import PatientCodeList from "./PatientCodeList.vue"
+	import {showErrorToast} from "@/App.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -12,23 +14,27 @@
 		patientId: {
 			type: Number,
 			default: Number.NEGATIVE_INFINITY
+		},
+		patientName: {
+			type: String,
+			default: 'No Name'
 		}
 	})
 
-	function deletePatient(patientId: number){
-		socketTrainer.patientDelete(patientId)
-	}
-
-	function updatePatient(patientId: number, patientName: string, patientCode: number){
-		socketTrainer.patientUpdate(patientId, patientName, patientCode)
-	}
-
 	const exerciseStore = useExerciseStore()
-	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)
+
+	function addPatient(){
+		if(!patientCodeChanged) {
+			showErrorToast('Es wurde kein Patientencode ausgewählt')
+			return
+		}
+		const areaName = exerciseStore.getAreaOfPatient(props.patientId)?.toString()
+		socketTrainer.patientAdd(areaName || '', props.patientId, props.patientName, currentPatientCode.value || Number.NEGATIVE_INFINITY)
+	}
+
 	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.patientCode)
 
 	const availablesStore = useAvailablesStore()
-	const availablePatients = availablesStore.patients
 
 	const currentPatient = computed(() => {
 		if (currentPatientCode.value !== undefined) {
@@ -36,11 +42,12 @@
 		}
 		return null
 	})
+
+	let patientCodeChanged = false
 	
 	function changePatientCode(patientCode: number){
-		if (currentPatient.value && currentPatient.value.patientCode !== undefined) {
-			currentPatientCode.value = patientCode
-		}
+		currentPatientCode.value = patientCode
+		patientCodeChanged = true
 	}
 
 </script>
@@ -49,17 +56,7 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<div id="leftSide">
-				<div id="list">
-					<button
-						v-for="patient in availablePatients"
-						:key="patient.patientCode"
-						class="availablePatientButton"
-						:class="patient.triage"
-						@click="changePatientCode(patient.patientCode)"
-					>
-						{{ patient.patientCode }}
-					</button>
-				</div>
+				<PatientCodeList @change-patient="changePatientCode" />
 			</div>
 			<div id="rightSide">
 				<div class="listitem">
@@ -68,7 +65,7 @@
 					</div>
 					<TriageForListItems :patient-code="currentPatient?.patientCode" />
 					<div class="patientName">
-						{{ currentPatientName }}
+						{{ props.patientName }}
 					</div>
 				</div>
 				<PatientInfo
@@ -78,14 +75,11 @@
 					:personal-details="currentPatient?.patientPersonalDetails"
 				/>
 				<div id="buttonRow">
-					<button id="deleteButton" @click="deletePatient(props.patientId)">
-						Löschen
-					</button>
 					<button
 						id="saveButton"
-						@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.patientCode || Number.NEGATIVE_INFINITY)"
+						@click="addPatient()"
 					>
-						Speichern
+						Patient hinzufügen
 					</button>
 				</div>
 			</div>
@@ -152,11 +146,7 @@
 		background-color: #269f42;
 	}
 
-	#list {
-		display: flex;
-	}
-
-	.availablePatientButton, .listitem {
+	.listitem {
 		position: relative;
 		background-color: #FFFFFF;
 		border: 1px solid rgb(209, 213, 219);
@@ -179,14 +169,14 @@
 	}
 	
 	.red {
-	background-color: red;
+		background-color: red;
 	}
 
 	.yellow {
-	background-color: yellow;
+		background-color: yellow;
 	}
 
 	.green {
-	background-color: green;
+		background-color: green;
 	}
 </style>

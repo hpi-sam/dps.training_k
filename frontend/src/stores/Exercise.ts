@@ -37,11 +37,21 @@ export const useExerciseStore = defineStore('exercise', {
 				})
 				return foundPatient
 			}
-		}
+		},
+		getNewPatientId: (state) => {
+			return (): number => {
+				let highestId: number = 0
+				state.areas.forEach((area) => {
+					area.patients.forEach((patient) => {
+						if (patient.patientId > highestId) highestId = patient.patientId
+					})
+				})
+				return highestId + 1
+			}
+		},
 	},
 	actions: {
 		createFromJSON(json: Exercise) {
-			console.log("Exercise: "+JSON.stringify(json))
 			this.exerciseId = json.exerciseId
 			this.areas = json.areas
 		}

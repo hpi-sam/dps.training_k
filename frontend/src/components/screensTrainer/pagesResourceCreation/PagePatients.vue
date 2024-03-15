@@ -2,9 +2,9 @@
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
 	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
-	import PatientPopup from '@/components/widgets/PatientPopup.vue'
-	import { useAvailablesStore } from '@/stores/Availables'
-import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
+	import EditPatientPopup from '@/components/widgets/EditPatientPopup.vue'
+	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
+	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 
     const props = defineProps({
 		currentArea: {
@@ -17,34 +17,46 @@ import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 
 	const currentAreaData = computed(() => exerciseStore.getArea(props.currentArea))
 
-	const showPopup = ref(false)
+	const showEditPatientPopup = ref(false)
+	const showAddPatientPopup = ref(false)
 
 	const currentPatientId = ref(Number.NEGATIVE_INFINITY)
 
-	function openPatient(patientId: number) {
+	function editPatient(patientId: number) {
 		currentPatientId.value = patientId
-		showPopup.value = true
+		showEditPatientPopup.value = true
 	}
 
-	const availablesStore = useAvailablesStore()
+	const firstNameList =  ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
+    const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
 
-	function getTriageColor(patientCode: number) {
-		if(availablesStore.getPatient(patientCode)?.triage){
-			return availablesStore.getPatient(patientCode)?.triage
-		}
-		return "gray"
+	function generateName(){
+		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
+		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
+		return `${firstName} ${surname}`
+	}
+
+	const newPatientId = ref(Number.NEGATIVE_INFINITY)
+	const newPatientName = ref('No Name')
+
+	function addPatient() {
+		newPatientId.value = exerciseStore.getNewPatientId()
+		newPatientName.value = generateName()
+		currentPatientId.value = newPatientId.value
+		showAddPatientPopup.value = true
 	}
 </script>
 
 <template>
-	<PatientPopup v-if="showPopup" :patient-id="currentPatientId" @close-popup="showPopup=false" />
+	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
+	<AddPatientPopup v-if="showAddPatientPopup" :patient-id="newPatientId" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
 	<div id="list">
 		<div
 			v-for="patient in currentAreaData?.patients"
 			:key="patient.patientName"
 			class="listitem"
 		>
-			<button class="areaButton" @click="openPatient(patient.patientId); getTriageColor(patient.patientCode)">
+			<button class="areaButton" @click="editPatient(patient.patientId)">
 				<div class="patientId">
 					{{ patient.patientId }}
 				</div>
@@ -55,7 +67,7 @@ import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 			</button>
 			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button id="addAreaButton">
+		<button id="addAreaButton" @click="addPatient()">
 			Patient hinzufügen
 		</button>
 	</div>

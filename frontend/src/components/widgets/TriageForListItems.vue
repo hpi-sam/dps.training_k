@@ -16,11 +16,18 @@
 		}
 		return "gray"
 	}
+
+	function getPatientCodeLabel(patientCode: number) {
+		if (patientCode === Number.NEGATIVE_INFINITY) {
+			return ""
+		}
+		return patientCode.toString()
+	}
 </script>
 
 <template>
 	<div :class="getTriageColor(props.patientCode)" class="patientCode">
-		{{ props.patientCode }}
+		{{ getPatientCodeLabel(props.patientCode) }}
 	</div>
 </template>
 
