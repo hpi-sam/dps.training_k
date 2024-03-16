@@ -7,13 +7,13 @@ volumes:
 
 services:
   web:
-    image: ghcr.io/hpi-sam/dps_training_k-frontend:latest
+    image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
     container_name: K-dPS-frontend
     ports:
       - "5173:5173"
     
   django:
-    image: ghcr.io/hpi-sam/dps_training_k-django:latest
+    image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
     container_name: K-dPS-django
     restart: unless-stopped
     depends_on:
@@ -31,7 +31,7 @@ services:
 
 
   postgres:
-    image: ghcr.io/hpi-sam/dps_training_k-postgres:latest
+    image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
     container_name: K-dPS-postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
@@ -51,7 +51,7 @@ services:
   celeryworker:
     env_file:
       - .env
-    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:latest
+    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
     container_name: K-dPS-celeryworker
     command: /start-celeryworker
     depends_on:
@@ -60,14 +60,14 @@ services:
   celerybeat:
     env_file:
       - .env
-    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:latest
+    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
     container_name: K-dPS-celerybeat
     command: /start-celerybeat
     depends_on:
       - django
 
   nginx:
-    image: ghcr.io/hpi-sam/dps_training_k-nginx:latest
+    image: ghcr.io/hpi-sam/dps_training_k-nginx:${IMAGE_TAG}
     container_name: K-dPS-nginx
     volumes:
       - static_volume:/app/staticfiles
