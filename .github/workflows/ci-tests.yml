@@ -1,12 +1,66 @@
 name: CI Tests
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
-  hello-world:
+  build-and-test-frontend:
     runs-on: ubuntu-latest
-
     steps:
-      - name: print hello world
-        run: echo "Hello World!"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build frontend Docker container
+        run: |
+          cd ./frontend/
+          docker-compose up -d
+
+  build-and-test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build backend Docker containers
+        run: |
+          cd ./backend/dps_training_k/
+          docker pull redis:latest
+          docker-compose up -d
+
+      - name: Run backend tests
+        run: docker exec K-dPS-django python3 manage.py test
+
+  test-integration:
+    needs: [build-and-test-frontend, build-and-test-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build frontend Docker container
+        run: |
+          cd ./frontend/
+          docker-compose up -d
+
+      - name: Build backend Docker containers
+        run: |
+          cd ./backend/dps_training_k/
+          docker pull redis:latest
+          docker-compose up -d
+
+      - name: Run integration tests
+        run: |
+          cd ./frontend/
+          npm install cypress --save-dev
+          npx cypress run --e2e
+          
