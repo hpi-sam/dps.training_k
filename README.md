@@ -13,11 +13,15 @@ The deployment process is automatically started on each release and can be manua
 This uploads the needed images to [GitHub Packages](https://github.com/orgs/hpi-sam/packages?repo_name=dps.training_k) and saves the needed 
 environment variables as well as the docker-compose file as 
 [Actions Artifacts](https://github.com/hpi-sam/dps.training_k/actions/workflows/deploy.yml).
-For deployment, the following steps are needed:
+For deployment on the server following steps are needed:
 1. Download the action artifacts and extract them in a folder
-2. Pull all the docker images from GitHub Packages using `docker pull ghcr.io/hpi-sam/dps.training_k:<image-name>`
-3. Additionally, pull the public redis image using `docker pull redis:latest`
-4. Run the docker-compose file from step 1 using `docker-compose up`
+2. Run following commands in that folder:
+```bash
+export IMAGE_TAG=latest
+envsubst '${IMAGE_TAG}' < docker-compose.template.yml > docker-compose.yml
+docker-compose up -d
+```
+The website should now be running on port 5173.
 
 ## MoSCoW and future plans
 We follow this [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4) (note that this is an internal 
