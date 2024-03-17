@@ -3,6 +3,8 @@ import traceback
 from asgiref.sync import async_to_sync
 from abc import ABC, abstractmethod
 from channels.generic.websocket import JsonWebsocketConsumer
+from rest_framework.authtoken.models import Token
+from game.models import Exercise, Patient
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -14,6 +16,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     class OutgoingMessageTypes:
         FAILURE = "failure"
         SUCCESS = "success"
+        EXERCISE = "exercise"
 
     class FailureCodes:
         UNKNOWN = 0
@@ -26,11 +29,13 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     class ClosureCodes:
         UNKNOWN = 0
+        NOT_AUTHENTICATED = 401
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.exercise_code = ""
         self.REQUESTS_MAP = {}
+        self.user = None
 
     @abstractmethod
     def connect(self):
@@ -38,7 +43,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def send_event(self, event_type, **kwargs):
         """
-        Wrapper to send_json() in order to have always the same structure: at least a type and often a content.
+        Wrapper to send_json() in order to always have the same structure: at least a messageType and often content.
         Allows some other high level information in the kwargs.
         """
         d = {"messageType": event_type}
@@ -136,3 +141,51 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         #     self.user.clear_channel_name()
         code = self.ClosureCodes.UNKNOWN if not code else code
         super().disconnect(code)
+    
+    def authenticate(self, token):
+        try:
+            token = Token.objects.get(key=token)
+            self.user = token.user
+            self.user.set_channel_name(self.channel_name)
+            return True
+        except Token.DoesNotExist:
+            self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
+            return False
+
+    def _send_exercise(self):
+        exercise = Exercise.createExercise()
+        patient = Patient.objects.create(
+            name="Max Mustermann", exercise=exercise, patientCode=123456
+        )
+        exercise_object = {
+            "exercise": {
+                "exerciseId": exercise.invitation_code,
+                "areas": [
+                    {
+                        "areaName": "X",
+                        "patients": [
+                            {
+                                "patientId": patient.patientCode,
+                                "patientName": patient.name,
+                                "patientCode": 0
+                            }
+                        ],
+                        "personnel": [
+                            {
+                                "personnelId": 0,
+                                "personnelName": "X"
+                            }
+                        ],
+                        "devices": [
+                            {
+                                "deviceId": 0,
+                                "deviceName": "X"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        self.send_event(
+            self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object
+        )

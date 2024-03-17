@@ -11,3 +11,13 @@ main{
   margin: 0 auto;
   font-weight: normal;
 }
+
+button:hover {
+  cursor: pointer;
+  filter: brightness(95%);
+}
+
+button:active {
+  cursor: pointer;
+  filter: brightness(90%);
+}

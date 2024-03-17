@@ -16,12 +16,16 @@
 	import ScreenResourceCreation from './screensTrainer/ScreenResourceCreation.vue'
 	import {computed, ref} from "vue"
 	import ScreenStatus from "@/components/screensPatient/ScreenStatus.vue"
+	import ScreenLog from "@/components/screensTrainer/ScreenLog.vue"
+	import ScreenScenario from "@/components/screensTrainer/ScreenScenario.vue"
 
 	export enum Screens {
 		CREATE_EXERCISE = "ScreenCreateExercise",
 		JOIN_EXERCISE = "ScreenJoinExercise",
 		EXERCISE_CREATION = "ScreenExerciseCreation",
-		RESOURCE_CREATION = "ScreenResourceCreation"
+		RESOURCE_CREATION = "ScreenResourceCreation",
+		LOG = "ScreenLog",
+		SCENARIO = "ScreenScenario",
 	}
 
 	const currentLeftScreen = ref(Screens.CREATE_EXERCISE)
@@ -39,6 +43,10 @@
 				return ScreenExerciseCreation
 			case Screens.RESOURCE_CREATION:
 				return ScreenResourceCreation
+			case Screens.LOG:
+				return ScreenLog
+			case Screens.SCENARIO:
+				return ScreenScenario
 			default:
 				return ScreenStatus
 		}
@@ -64,6 +72,7 @@
 
 <style scoped>
 	#leftScreen, #rightScreen {
+		position: relative;
 		float: left;
 		width: 50%;
 		height: 100%;
