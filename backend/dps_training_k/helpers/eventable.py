@@ -31,8 +31,6 @@ class NonEventable(AbstractEventable):
 
 
 class Eventable(AbstractEventable):
-    class Meta:
-        abstract = True
 
     def remove_events(self):
         for event in self.owned_events.all():
