@@ -3,7 +3,6 @@
 	import PatientInfo from "./PatientInfo.vue"
 	import { computed, ref } from "vue"
 	import TriageForListItems from "./TriageForListItems.vue"
-	import { useExerciseStore } from "@/stores/Exercise"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
@@ -11,9 +10,9 @@
 	const emit = defineEmits(['close-popup'])
 
 	const props = defineProps({
-		patientId: {
-			type: Number,
-			default: Number.NEGATIVE_INFINITY
+		areaName: {
+			type: String,
+			default: 'No Area'
 		},
 		patientName: {
 			type: String,
@@ -21,18 +20,15 @@
 		}
 	})
 
-	const exerciseStore = useExerciseStore()
-
 	function addPatient(){
 		if(!patientCodeChanged) {
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
-		const areaName = exerciseStore.getAreaOfPatient(props.patientId)?.toString()
-		socketTrainer.patientAdd(areaName || '', props.patientId, props.patientName, currentPatientCode.value || Number.NEGATIVE_INFINITY)
+		socketTrainer.patientAdd(props.areaName, props.patientName, currentPatientCode.value)
 	}
 
-	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.patientCode)
+	const currentPatientCode = ref()
 
 	const availablesStore = useAvailablesStore()
 
@@ -56,13 +52,11 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<div id="leftSide">
+				<h2>Patienten-Datensätze</h2>
 				<PatientCodeList @change-patient="changePatientCode" />
 			</div>
 			<div id="rightSide">
 				<div class="listitem">
-					<div class="patientId">
-						{{ props.patientId }}
-					</div>
 					<TriageForListItems :patient-code="currentPatient?.patientCode" />
 					<div class="patientName">
 						{{ props.patientName }}
@@ -112,7 +106,6 @@
 
 	#leftSide {
 		float: left;
-		display: flex;
 		width: 50%;
 		padding: 10px;
 	}

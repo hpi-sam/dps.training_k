@@ -38,6 +38,9 @@
 </script>
 
 <template>
+	<p v-if="!currentArea" id="noAreaText">
+		Wähle einen Bereich aus
+	</p>
 	<component :is="currentPageComponent" :current-area="currentArea" />
 	<nav>
 		<button id="nav-patients" :class="{ 'selected': currentPage === Pages.PATIENTS }" @click="setPage(Pages.PATIENTS)">
@@ -53,6 +56,12 @@
 </template>
 
 <style scoped>
+	#noAreaText {
+		text-align: center;
+		font-size: 1.8em;
+		margin-top: 40px;
+	}
+
 	nav {
 		width: 100%;
 		height: 60px;

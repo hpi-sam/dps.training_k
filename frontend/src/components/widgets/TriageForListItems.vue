@@ -12,21 +12,21 @@
 
 	function getTriageColor(patientCode: number) {
 		if(availablesStore.getPatient(patientCode)?.triage){
-			return availablesStore.getPatient(patientCode)?.triage
+			return "var(--"+availablesStore.getPatient(patientCode)?.triage+")"
 		}
-		return "gray"
+		return "var(--gray)"
 	}
 
 	function getPatientCodeLabel(patientCode: number) {
 		if (patientCode === Number.NEGATIVE_INFINITY) {
 			return ""
 		}
-		return patientCode.toString()
+		return patientCode.toString().padStart(3, '0')
 	}
 </script>
 
 <template>
-	<div :class="getTriageColor(props.patientCode)" class="patientCode">
+	<div class="patientCode" :style="{ backgroundColor: getTriageColor(props.patientCode) }">
 		{{ getPatientCodeLabel(props.patientCode) }}
 	</div>
 </template>
@@ -39,6 +39,6 @@
 		padding: .75rem 1rem;
 		display: flex;
 		align-items: center;
-		text-align: center;
+		color: white;
 	}
 </style>

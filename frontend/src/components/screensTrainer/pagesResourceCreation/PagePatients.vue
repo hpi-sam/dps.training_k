@@ -36,20 +36,17 @@
 		return `${firstName} ${surname}`
 	}
 
-	const newPatientId = ref(Number.NEGATIVE_INFINITY)
 	const newPatientName = ref('No Name')
 
 	function addPatient() {
-		newPatientId.value = exerciseStore.getNewPatientId()
 		newPatientName.value = generateName()
-		currentPatientId.value = newPatientId.value
 		showAddPatientPopup.value = true
 	}
 </script>
 
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
-	<AddPatientPopup v-if="showAddPatientPopup" :patient-id="newPatientId" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
+	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
 	<div id="list">
 		<div
 			v-for="patient in currentAreaData?.patients"
@@ -58,7 +55,7 @@
 		>
 			<button class="patientButton" @click="editPatient(patient.patientId)">
 				<div class="patientId">
-					{{ patient.patientId }}
+					{{ patient.patientId.toString().padStart(3, '0') }}
 				</div>
 				<TriageForListItems :patient-code="patient.patientCode" />
 				<div class="patientName">
@@ -67,7 +64,7 @@
 			</button>
 			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button id="addPatientButton" @click="addPatient()">
+		<button v-if="currentAreaData" id="addPatientButton" @click="addPatient()">
 			Patient hinzufügen
 		</button>
 	</div>
@@ -102,13 +99,6 @@
 		text-align: left;
 		height: 50px;
 		width: 100%;
-	}
-
-	.settingsButton {
-		height: 50px;
-		width: 50px;
-		border: none;
-		background-color: rgb(243, 244, 246);
 	}
 
 	#addPatientButton {

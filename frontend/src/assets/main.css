@@ -1,5 +1,12 @@
 @import './base.css';
 
+:root {
+  --red: #ee4035;
+  --yellow: #e6cf00;
+  --green: #269f42;
+  --gray: gray;
+}
+
 #app {
   height: 100vh;
   font-weight: normal;
@@ -23,17 +30,18 @@ button:active {
 }
 
 .gray {
-  background-color: gray;
+  background-color: var(--gray);
 }
 
 .red {
-  background-color: red;
+  background-color: var(--red);
 }
 
 .yellow {
-  background-color: yellow;
+  background-color: var(--yellow);
 }
 
 .green {
-  background-color: green;
+  background-color: var(--green);
 }
+

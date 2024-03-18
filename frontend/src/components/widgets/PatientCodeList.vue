@@ -1,5 +1,7 @@
 <script setup lang="ts">
     import { useAvailablesStore } from "@/stores/Availables"
+	import '@/assets/main.css'
+	import TriageForListItems from "./TriageForListItems.vue"
   
     const availablesStore = useAvailablesStore()
     const availablePatients = availablesStore.patients
@@ -17,10 +19,9 @@
 			v-for="patient in availablePatients"
 			:key="patient.patientCode"
 			class="availablePatientButton"
-			:class="patient.triage"
 			@click="changePatient(patient.patientCode)"
 		>
-			{{ patient.patientCode }}
+			<TriageForListItems :patient-code="patient.patientCode" />
 		</button>
 	</div>
 </template>
@@ -28,32 +29,19 @@
 <style scoped>
     #list {
         display: flex;
+		flex-wrap: wrap;
+		align-content: flex-start;
     }
 
     .availablePatientButton {
         position: relative;
-        background-color: #FFFFFF;
-        border: 1px solid rgb(209, 213, 219);
-		display: flex;
+        border: none;
+		padding: 0px;
+		margin-right: 5px;
+		margin-bottom: 5px;
 		align-items: center;
-		margin-top: -1px;
 		font-size: 1.25rem;
-		padding: .75rem 1rem;
-		text-align: left;
 		height: 50px;
-		width: 100%;
-	}
-	
-	.red {
-        background-color: red;
-	}
-
-	.yellow {
-        background-color: yellow;
-	}
-
-	.green {
-        background-color: green;
 	}
   </style>
   

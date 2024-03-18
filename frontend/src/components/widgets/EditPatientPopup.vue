@@ -47,12 +47,13 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<div id="leftSide">
+				<h2>Patienten-Datensätze</h2>
 				<PatientCodeList @change-patient="changePatientCode" />
 			</div>
 			<div id="rightSide">
 				<div class="listitem">
 					<div class="patientId">
-						{{ props.patientId }}
+						{{ props.patientId.toString().padStart(3, '0') }}
 					</div>
 					<TriageForListItems :patient-code="currentPatient?.patientCode" />
 					<div class="patientName">
@@ -106,7 +107,6 @@
 
 	#leftSide {
 		float: left;
-		display: flex;
 		width: 50%;
 		padding: 10px;
 	}
@@ -133,11 +133,11 @@
 	}
 
 	#deleteButton {
-		background-color: #ee4035;
+		background-color: var(--red);
 	}
 
 	#saveButton {
-		background-color: #269f42;
+		background-color: var(--green);
 	}
 
 	.listitem {
@@ -163,14 +163,14 @@
 	}
 	
 	.red {
-		background-color: red;
+		background-color: var(--red);
 	}
 
 	.yellow {
-		background-color: yellow;
+		background-color: var(--yellow);
 	}
 
 	.green {
-		background-color: green;
+		background-color: var(--green);
 	}
 </style>
