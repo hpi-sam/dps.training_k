@@ -176,10 +176,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
                                 "personnelName": "X"
                             }
                         ],
-                        "devices": [
+                        "material": [
                             {
-                                "deviceId": 0,
-                                "deviceName": "X"
+                                "materialId": 0,
+                                "materialName": "X"
                             }
                         ]
                     }
