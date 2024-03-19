@@ -1,5 +1,4 @@
 from .abstract_consumer import AbstractConsumer
-from game.models import Exercise, Patient
 
 
 class TrainerConsumer(AbstractConsumer):
