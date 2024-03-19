@@ -159,7 +159,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         )
         exercise_object = {
             "exercise": {
-                "exerciseId": exercise.invitation_code,
+                "exerciseId": exercise.exerciseId,
                 "areas": [
                     {
                         "areaName": "X",

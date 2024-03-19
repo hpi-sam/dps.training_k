@@ -19,7 +19,7 @@ class Exercise(models.Model):
         to="Trainer",
         on_delete=models.CASCADE,
     ) """
-    invitation_code = models.CharField(
+    exerciseId = models.CharField(
         unique=True,
         editable=settings.DEBUG,
         max_length=settings.INVITATION_LOGIC.code_length,
@@ -34,7 +34,7 @@ class Exercise(models.Model):
         new_Exercise = cls.objects.create(
             # config=settings.DEFAULT_EXCERCISE_CONFIG,
             # trainer=trainer
-            invitation_code=settings.INVITATION_LOGIC.get_invitation_code(),
+            exerciseId=settings.INVITATION_LOGIC.get_exerciseId(),
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )
         return new_Exercise
