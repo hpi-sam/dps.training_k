@@ -155,7 +155,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def _send_exercise(self):
         exercise = Exercise.createExercise()
         patient = Patient.objects.create(
-            name="Max Mustermann", exercise=exercise, patientCode=123456
+            name="Max Mustermann", exercise=exercise, patientId=123456
         )
         exercise_object = {
             "exercise": {
@@ -165,7 +165,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
                         "areaName": "X",
                         "patients": [
                             {
-                                "patientId": patient.patientCode,
+                                "patientId": patient.patientId,
                                 "patientName": patient.name,
                                 "patientCode": 0
                             }

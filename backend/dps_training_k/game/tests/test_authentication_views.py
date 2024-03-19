@@ -17,7 +17,7 @@ class PatientAccessViewTest(APITestCase):
         """
         Test the access with correct credentials.
         """
-        data = {"exerciseCode": "testuser", "patientCode": "testpassword"}
+        data = {"exerciseCode": "testuser", "patientId": "testpassword"}
         response = self.client.post(self.access_url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Check if the response contains a token
@@ -27,7 +27,7 @@ class PatientAccessViewTest(APITestCase):
         """
         Test the access with wrong credentials.
         """
-        data = {"exerciseCode": "wronguser", "patientCode": "wrongpassword"}
+        data = {"exerciseCode": "wronguser", "patientId": "wrongpassword"}
         response = self.client.post(self.access_url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Check that the response indicates a failure
@@ -40,7 +40,7 @@ class PatientAccessViewTest(APITestCase):
         """
         data = {
             "exerciseCode": "testuser"
-            # Missing "patientCode"
+            # Missing "patientId"
         }
         response = self.client.post(self.access_url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
