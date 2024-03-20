@@ -1,5 +1,6 @@
 import factory
 from .exercise_factory import ExerciseFactory
+from game.models import Patient
 
 
 class PatientFactory(factory.django.DjangoModelFactory):

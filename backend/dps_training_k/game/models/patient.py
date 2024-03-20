@@ -1,6 +1,7 @@
 from django.db import models
 from helpers.eventable import Eventable
 from .exercise import Exercise
+from .scheduled_event import ScheduledEvent
 
 
 class Patient(Eventable, models.Model):
@@ -17,3 +18,15 @@ class Patient(Eventable, models.Model):
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with code {self.patientCode}"
+
+    # ToDo remove
+    def schedule_temporary_event(self):
+        ScheduledEvent.create_event(
+            self.exercise,
+            10,
+            "temporary_event_test",
+            patient=self,
+        )
+
+    def temporary_event_test(self):
+        return True

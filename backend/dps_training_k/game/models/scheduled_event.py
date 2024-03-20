@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from datetime import timedelta
 
 
 class ScheduledEvent(models.Model):
@@ -30,7 +31,8 @@ class ScheduledEvent(models.Model):
 
     @classmethod
     def calculate_finish_time(cls, t_sim_delta, exercise):
-        return settings.CURRENT_SECONDS() + t_sim_delta * exercise.time_factor()
+        timedalta = timedelta(seconds=t_sim_delta * exercise.time_factor())
+        return settings.CURRENT_TIME() + timedalta
 
     def action(self):
         owner_instance = self.owner.owner_instance()
