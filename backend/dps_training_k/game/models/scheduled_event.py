@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import timedelta
+from helpers.one_field_not_null import OneFieldNotNull
 
 
 class ScheduledEvent(models.Model):
@@ -13,21 +14,17 @@ class ScheduledEvent(models.Model):
         related_name="events",
     )
     end_date = models.DateTimeField()
-    owner = models.OneToOneField(
-        "Owner",
-        on_delete=models.CASCADE,
-        related_name="event",
-    )
     method_name = models.CharField(max_length=100)
 
     @classmethod
     def create_event(cls, exercise, t_sim_delta, method_name, patient=None, area=None):
-        cls.objects.create(
+        scheduled_event = ScheduledEvent(
             exercise=exercise,
             end_date=cls.calculate_finish_time(t_sim_delta, exercise),
-            owner=Owner.create_owner(patient=patient, exercise=exercise, area=area),
             method_name=method_name,
         )
+        scheduled_event.save()
+        owner = Owner.create_owner(scheduled_event, patient=patient, area=area)
 
     @classmethod
     def calculate_finish_time(cls, t_sim_delta, exercise):
@@ -45,7 +42,12 @@ class ScheduledEvent(models.Model):
         return f"ScheduledEvent #{self.id}, model name {owner_instance.__class__.__name__}, instance #{owner_instance}, exercise #{self.exercise}, trigger on: {self.end_date}"
 
 
-class Owner(models.Model):
+class Owner(OneFieldNotNull, models.Model):
+    event = models.OneToOneField(
+        "ScheduledEvent",
+        on_delete=models.CASCADE,
+        related_name="owner",
+    )
     patient_owner = models.ForeignKey(
         "Patient",
         on_delete=models.CASCADE,
@@ -64,15 +66,15 @@ class Owner(models.Model):
     # area_owner = models.ForeignKey("Area", on_delete=models.CASCADE)
 
     @classmethod
-    def create_owner(cls, patient=None, exercise=None, area=None):
+    def create_owner(cls, event, patient=None, exercise=None, area=None):
         # patient always needs to be checked before exercise, as exercise and patient are being passed when patient creates scheduled event
         if patient:
-            return cls.objects.create(patient_owner=patient)
+            return cls.objects.create(event=event, patient_owner=patient)
         elif area:
-            # return cls.objects.create(area_owner=area)
+            # return cls.objects.create(event=event, area_owner=area)
             pass
         elif exercise:
-            return cls.objects.create(exercise_owner=exercise)
+            return cls.objects.create(event=event, exercise_owner=exercise)
         else:
             raise Exception("Owner must have a patient or exercise")
 
