@@ -19,7 +19,7 @@ class Patient(Eventable, models.Model):
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with code {self.patientCode}"
 
-    # ToDo remove
+    # ToDo remove when actual method is implemented
     def schedule_temporary_event(self):
         ScheduledEvent.create_event(
             self.exercise,

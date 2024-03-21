@@ -29,20 +29,13 @@ class EventPatientTestCase(TestCase):
 
     def setUp(self):
         self.patient = PatientFactory()
-        # ToDo: get to work
-        """self.patient.schedule_temporary_event = (
-            TempEventTest.schedule_temporary_event.__get__(self.patient)
-        )
-        self.patient.schedule_temporary_event = (
-            TempEventTest.temporary_event_test.__get__(self.patient)
-        )"""
         self.cache = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
 
     def test_event_is_triggered(self):
+        # ToDo: adapt to actual method later on
         self.patient.schedule_temporary_event()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
-        # ToDo: Adapt in case celery beat is running in parallel
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(9)
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
