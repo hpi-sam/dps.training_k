@@ -1,7 +1,9 @@
 from django.db import models
+from helpers.eventable import Eventable
+from .scheduled_event import ScheduledEvent
 
 
-class Patient(models.Model):
+class Patient(Eventable, models.Model):
     name = models.CharField(
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
@@ -15,3 +17,16 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with code {self.patientCode}"
+
+    # ToDo remove when actual method is implemented
+    def schedule_temporary_event(self):
+        ScheduledEvent.create_event(
+            self.exercise,
+            10,
+            "temporary_event_test",
+            patient=self,
+        )
+
+    def temporary_event_test(self):
+        print("temporary_event_test called")
+        return True

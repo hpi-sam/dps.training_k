@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
+from helpers.eventable import NonEventable
 
 
-class Exercise(models.Model):
+class Exercise(NonEventable, models.Model):
     class ExerciseStateTypes(models.TextChoices):
         CONFIGURATION = "C", "configuration"
         RUNNING = "R", "running"
@@ -38,3 +39,8 @@ class Exercise(models.Model):
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )
         return new_Exercise
+
+    def time_factor(self):
+        if self.config is None:
+            return 1
+        return 1 / self.config.time_speed_up
