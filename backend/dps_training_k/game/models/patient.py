@@ -1,6 +1,5 @@
 from django.db import models
 from helpers.eventable import Eventable
-from .exercise import Exercise
 from .scheduled_event import ScheduledEvent
 
 
@@ -9,7 +8,7 @@ class Patient(Eventable, models.Model):
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
     # patientID = models.ForeignKey()  # currently called "SensenID"
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     # stateID = models.ForeignKey()
     # measureID = models.ManyToManyField()
     patientCode = models.IntegerField(
@@ -29,4 +28,5 @@ class Patient(Eventable, models.Model):
         )
 
     def temporary_event_test(self):
+        print("temporary_event_test called")
         return True

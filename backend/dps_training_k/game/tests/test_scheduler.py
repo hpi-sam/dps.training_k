@@ -1,26 +1,11 @@
 from django.test import TestCase
 from django.conf import settings
 from game.tests.factories import PatientFactory
-from game.models import Patient, ScheduledEvent
+from game.models import ScheduledEvent
 from django.utils import timezone
 from game.tasks import check_for_updates
 import datetime
-import logging
-
-logger = logging.getLogger(__name__)
-
-
-class TempEventTest:
-    def schedule_temporary_event(self):
-        ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "temporary_event_test",
-            patient=self,
-        )
-
-    def temporary_event_test(self):
-        return True
+import time
 
 
 class EventPatientTestCase(TestCase):
@@ -29,7 +14,7 @@ class EventPatientTestCase(TestCase):
 
     def setUp(self):
         self.patient = PatientFactory()
-        self.cache = settings.CURRENT_TIME
+        self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
 
     def test_event_is_triggered(self):
@@ -44,4 +29,4 @@ class EventPatientTestCase(TestCase):
         self.assertEqual(ScheduledEvent.objects.count(), 0)
 
     def tearDown(self):
-        settings.CURRENT_TIME = self.cache
+        settings.CURRENT_TIME = self.variable_backup

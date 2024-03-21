@@ -178,25 +178,3 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 1.0,
     },
 }
-
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-# Celery
-# ------------------------------------------------------------------------------
-# See: http://docs.celeryproject.org/en/latest/userguide/configuration.html
-if USE_TZ:
-    CELERY_TIMEZONE = TIME_ZONE
-CELERY_BROKER_URL = env.str("REDIS_URL", default="redis://localhost:6379")
-CELERY_RESULT_BACKEND = "django-db"
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TASK_TIME_LIMIT = 5 * 60  # TODO: Change if necessary
-CELERY_TASK_SOFT_TIME_LIMIT = 60  # TODO: Change if necessary
-
-CELERY_BEAT_SCHEDULE = {
-    "update_patients": {
-        "task": "game.tasks.check_for_updates",
-        "schedule": 1.0,
-    },
-}

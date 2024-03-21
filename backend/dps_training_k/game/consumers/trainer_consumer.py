@@ -70,19 +70,19 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_start_exercise(self):
-        # Celery starten
-        # alle Objekte mit allen Zeittracks auf 0 starten
-        # Phasenübergänge schedulen
-        # über NestedEventable alles stoppen
+        # Start Celery
+        # Start all objects with zero time tracks
+        # Schedule phase transitions
+        # Stop everything using NestedEventable
         pass
 
     def handle_stop_exercise(self):
-        # Celery stoppen
-        # alle Objekte mit allen Zeittracks auf 0 stoppen
-        # Phasenübergänge stoppen
-        # Labor stoppen
-        # Maßnahmen stoppen
-        # über NestedEventable alles stoppen
+        # Stop Celery
+        # Stop all objects with all time tracks
+        # Stop phase transitions
+        # Stop laboratory
+        # Stop measures
+        # Stop everything using NestedEventable
         pass
 
     def handle_pause_exercise(self):
