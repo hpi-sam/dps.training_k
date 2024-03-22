@@ -3,3 +3,4 @@ from .saved_exercise import SavedExercise
 from .patient import Patient
 from .patient_state import PatientState
 from .user import User
+from .scheduled_event import ScheduledEvent

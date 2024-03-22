@@ -31,7 +31,7 @@ Env.read_env(os.path.join(BASE_DIR, ".env"))
 DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 
 SECRET_KEY = env.str("SECRET_KEY")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "game.apps.GameConfig",
+    "helpers.apps.GameConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "django_celery_beat",
@@ -111,8 +112,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
 }
 
@@ -139,14 +140,18 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [env.str("REDIS_URL", default="redis://localhost:6379")]  # for production
-        },
-    }
-    if env.bool("CHANNEL_REDIS", False)
-    else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+    "default": (
+        {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    env.str("REDIS_URL", default="redis://localhost:6379")
+                ]  # for production
+            },
+        }
+        if env.bool("CHANNEL_REDIS", False)
+        else {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+    )
 }
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
 
@@ -167,9 +172,9 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_TIME_LIMIT = 5 * 60  # TODO: Change if necessary
 CELERY_TASK_SOFT_TIME_LIMIT = 60  # TODO: Change if necessary
 
-# CELERY_BEAT_SCHEDULE = {
-#     "update_patients": {
-#         "task": "game.tasks.check_for_updates",
-#         "schedule": 1.0,
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    "update_patients": {
+        "task": "game.tasks.check_for_updates",
+        "schedule": 1.0,
+    },
+}

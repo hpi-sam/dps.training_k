@@ -8,6 +8,7 @@ from helpers.exercise_serializer import ExerciseSerializer
 class SavedExercise(models.Model):
     saved_exercise = models.JSONField()
     name = models.CharField(unique=True)
+    time_speed_up = models.FloatField(default=1.0)
 
     @classmethod
     def save_exercise(cls, serialized_exercise, name):
