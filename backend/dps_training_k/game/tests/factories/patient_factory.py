@@ -6,8 +6,8 @@ from game.models import Patient
 class PatientFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Patient
-        django_get_or_create = ("name", "exercise", "patientCode")
+        django_get_or_create = ("name", "exercise", "patientId")
 
     name = "Max Mustermann"
     exercise = factory.SubFactory(ExerciseFactory)
-    patientCode = 123456
+    patientId = 123456
