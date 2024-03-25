@@ -11,6 +11,7 @@ class PatientAccessView(APIView):
         if created:
             user.set_password("123")  # Properly hash the password
             user.save()
+
         if not (request.data.get("exerciseId") and request.data.get("patientId")):
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,

@@ -1,12 +1,10 @@
 <script setup lang="ts">
-	import {usePatientStore} from '@/stores/Patient'
 	import socketPatient from "@/sockets/SocketPatient"
 	import {ref} from 'vue'
 
 	const emit = defineEmits(['close-popup'])
 
-	const setTriage = (triage: string) => {
-		usePatientStore().triage = triage
+	function setTriage(triage: string) {
 		socketPatient.triage(triage)
 	}
 
@@ -21,6 +19,10 @@
 		{char: 'E', color: 'red'},
 	])
 
+	function getTriageColor(color: string) {
+		return "var(--"+color+")"
+	}
+
 </script>
 
 <template>
@@ -31,7 +33,8 @@
 				<button
 					v-for="triageButton in triageButtons"
 					:key="triageButton.char"
-					:style="{backgroundColor: triageButton.color}"
+					class="triageButton"
+					:style="{backgroundColor: getTriageColor(triageButton.color)}"
 					@click="setTriage(triageButton.char)"
 				>
 					{{ triageButton.char }}
@@ -68,9 +71,17 @@
 		justify-content: center;
 	}
 
-	.button-container > button {
+	.triageButton {
 		width: 50px;
 		height: 50px;
+        position: relative;
+        border: none;
+		padding: 0px;
 		margin: 10px;
+		margin-right: 5px;
+		margin-bottom: 5px;
+		align-items: center;
+		font-size: 1.25rem;
+		color: white;
 	}
 </style>

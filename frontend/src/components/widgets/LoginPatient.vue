@@ -18,7 +18,7 @@
 			return
 		}
 
-		patientStore.patientID = patientIdNumber
+		patientStore.patientId = patientIdNumber
 
 		const requestBody = {
 			"exerciseId": exerciseIdNumber,

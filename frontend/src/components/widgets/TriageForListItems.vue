@@ -1,0 +1,38 @@
+<script setup lang="ts">
+	import { useAvailablesStore } from '@/stores/Availables'
+	import { triageToColor } from '@/utils'
+
+    const props = defineProps({
+		patientCode: {
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
+		}
+	})
+
+	const availablesStore = useAvailablesStore()
+
+	function getPatientCodeLabel(patientCode: number) {
+		if (patientCode === Number.NEGATIVE_INFINITY) {
+			return ""
+		}
+		return patientCode.toString().padStart(3, '0')
+	}
+</script>
+
+<template>
+	<div class="patientCode" :style="{ backgroundColor: triageToColor(availablesStore.getPatient(patientCode)?.triage) }">
+		{{ getPatientCodeLabel(props.patientCode) }}
+	</div>
+</template>
+
+<style scoped>
+	.patientCode {
+		position: relative;
+		display: inline-block;
+		height: 50px;
+		padding: .75rem 1rem;
+		display: flex;
+		align-items: center;
+		color: white;
+	}
+</style>@/Utils@/utils

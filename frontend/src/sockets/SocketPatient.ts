@@ -46,16 +46,14 @@ class SocketPatient {
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
-				case 'triage':
-					usePatientStore().triage = data.triage || '-'
-					break
 				case 'state':
 					usePatientStore().loadStatusFromJSON(data.state as State)
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientID)?.patientName || ''
-					usePatientStore().areaName = useExerciseStore().getAreaOfPatient(usePatientStore().patientID)?.areaName || ''
+					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientId)?.patientName || ''
+					usePatientStore().areaName = useExerciseStore().getAreaOfPatient(usePatientStore().patientId)?.areaName || ''
+					usePatientStore().triage = useExerciseStore().getPatient(usePatientStore().patientId)?.triage || '-'
 					break
 				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
@@ -114,7 +112,6 @@ export default socketPatient
 export const serverMockEvents = [
 	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
-	{id: 'triage', data: '{"messageType":"triage","triage":"A"}'},
 	{
 		id: 'state',
 		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regular","circulation":"Stable",' +
@@ -123,14 +120,17 @@ export const serverMockEvents = [
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":20},{"patientId":2,"patientName":"Jane Doe",' +
-			'"patientCode":21}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
-			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"Strength Training","patients":' +
-			'[{"patientId":3,"patientName":"Jim Beam","patientCode":12},{"patientId":4,"patientName":"Jill Wine","patientCode":24}],' +
-			'"personnel":[{"personnelId":2,"personnelName":"Coach Taylor"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
-			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":32},' +
-			'{"patientId":6,"patientName":"Flexi Rods","patientCode":8}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
-			'"devices":[{"deviceId":3,"deviceName":"Yoga Mats"}]}]}}'
+			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
+			'{"patientId":3,"patientName":"Frank Huber",' +
+			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"devices":' +
+			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"ZNA","patients":' +
+			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
+			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
+			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
+			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
+			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
+			'"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
+			'"devices":[{"deviceId":3,"deviceName":"Beatmungsgerät"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
