@@ -1,15 +1,16 @@
 from .abstract_consumer import AbstractConsumer
 from urllib.parse import parse_qs
-from game.models import Exercise, Patient
 
 
 class PatientConsumer(AbstractConsumer):
     class PatientIncomingMessageTypes:
         EXAMPLE = "example"
+        TEST_PASSTHROUGH = "test-passthrough"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
         EXERCISE = "exercise"
+        TEST_PASSTHROUGH = "test-passthrough"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,7 +20,10 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_example,
                 "exercise_code",
                 "patient_code",
-            )
+            ),
+            self.PatientIncomingMessageTypes.TEST_PASSTHROUGH: (
+                self.handle_test_passthrough,
+            ),
         }
 
     def connect(self):
@@ -35,4 +39,10 @@ class PatientConsumer(AbstractConsumer):
         self.send_event(
             self.PatientOutgoingMessageTypes.RESPONSE,
             content=f"exercise_code {self.exercise_code} & patient_code {self.patient_code}",
+        )
+
+    def handle_test_passthrough(self):
+        self.send_event(
+            self.PatientOutgoingMessageTypes.TEST_PASSTHROUGH,
+            message="received test event",
         )
