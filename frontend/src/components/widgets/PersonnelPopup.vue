@@ -1,26 +1,29 @@
 <script setup lang="ts">
 	import socketTrainer from "@/sockets/SocketTrainer"
+	import { useExerciseStore } from "@/stores/Exercise"
 
 	const emit = defineEmits(['close-popup'])
 
 	const props = defineProps({
-		areaName: {
-			type: String,
-			default: "Kein Bereich ausgewählt"
+		personnelId: {
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
-	function deleteArea(){
-		socketTrainer.areaDelete(props.areaName as string)
+	const exerciseStore = useExerciseStore()
+
+	function deletePersonnel(){
+		socketTrainer.personnelDelete(props.personnelId)
 	}
 </script>
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup">
-			<h2>{{ props.areaName }}</h2>
-			<button id="deleteButton" @click="deleteArea()">
-				Bereich löschen
+			<h2>{{ exerciseStore.getPersonnel(props.personnelId)?.personnelName }}</h2>
+			<button id="deleteButton" @click="deletePersonnel()">
+				Personal löschen
 			</button>
 		</div>
 	</div>

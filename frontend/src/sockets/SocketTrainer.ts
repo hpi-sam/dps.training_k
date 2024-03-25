@@ -142,6 +142,20 @@ class SocketTrainer {
 			'patientId': patientId
 		}))
 	}
+
+	personnelAdd(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-add',
+			'areaName': areaName
+		}))
+	}
+
+	personnelDelete(personnelId: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-delete',
+			'personnelId': personnelId
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
@@ -197,7 +211,7 @@ export const serverMockEvents = [
 			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
 			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
 			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
-			'"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
+			'"personnel":[{"personnelId":3,"personnelName":"Antonio Fleiker"}],' +
 			'"devices":[{"deviceId":3,"deviceName":"Beatmungsgerät"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
