@@ -25,7 +25,7 @@
 			"patientId": patientIdNumber,
 		}
 
-		fetch('https://localhost:8000/login/', {
+		fetch('http://localhost:8000/patient/access', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
