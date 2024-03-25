@@ -1,5 +1,4 @@
 from .abstract_consumer import AbstractConsumer
-from django.conf import settings
 
 
 class TrainerConsumer(AbstractConsumer):
