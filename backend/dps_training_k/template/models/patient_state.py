@@ -6,7 +6,7 @@ class PatientState(models.Model):
         help_text="state number as it is used in original data set"
     )
     patientID = models.ForeignKey(
-        "Patient", on_delete=models.CASCADE, related_name="state"
+        "game.Patient", on_delete=models.CASCADE, related_name="state"
     )
     data = models.JSONField(help_text="data for patient in current phase")
     phase = models.IntegerField(help_text="current phase, e.g. 3")
