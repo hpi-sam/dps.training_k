@@ -129,7 +129,7 @@
 		padding: .75rem 1rem;
 		text-align: center;
 		margin-top: 10px;
-		background-color: #269f42;
+		background-color: var(--green);
 	}
 
 	.listitem {

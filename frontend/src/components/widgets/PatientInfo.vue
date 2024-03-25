@@ -6,15 +6,15 @@
 		},
 		history: {
 			type: String,
-			default: 'No Injury'
+			default: 'No History'
 		},
 		personalDetails: {
 			type: String,
-			default: 'No Injury'
+			default: 'No Personal Details'
 		},
 		biometrics: {
 			type: String,
-			default: 'No Injury'
+			default: 'No Biometrics'
 		}
 
 	})
