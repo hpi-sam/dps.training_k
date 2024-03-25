@@ -34,6 +34,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.exercise_code = ""
+        self.exercise = None
         self.REQUESTS_MAP = {}
         self.user = None
 
@@ -152,8 +153,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
             return False
 
-    def _send_exercise(self):
-        exercise = Exercise.createExercise()
+    def _send_exercise(self, exercise):
         patient = Patient.objects.create(
             name="Max Mustermann", exercise=exercise, patientCode=123456
         )
