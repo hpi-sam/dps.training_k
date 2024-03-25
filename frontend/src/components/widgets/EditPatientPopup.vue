@@ -161,16 +161,4 @@
 	.patientId, .patientName {
 		padding: .75rem 1rem;
 	}
-	
-	.red {
-		background-color: var(--red);
-	}
-
-	.yellow {
-		background-color: var(--yellow);
-	}
-
-	.green {
-		background-color: var(--green);
-	}
 </style>

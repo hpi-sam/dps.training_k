@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import { useAvailablesStore } from '@/stores/Availables'
+	import { triageToColor } from '@/utils'
 
     const props = defineProps({
 		patientCode: {
@@ -10,13 +11,6 @@
 
 	const availablesStore = useAvailablesStore()
 
-	function getTriageColor(patientCode: number) {
-		if(availablesStore.getPatient(patientCode)?.triage){
-			return "var(--"+availablesStore.getPatient(patientCode)?.triage+")"
-		}
-		return "var(--gray)"
-	}
-
 	function getPatientCodeLabel(patientCode: number) {
 		if (patientCode === Number.NEGATIVE_INFINITY) {
 			return ""
@@ -26,7 +20,7 @@
 </script>
 
 <template>
-	<div class="patientCode" :style="{ backgroundColor: getTriageColor(props.patientCode) }">
+	<div class="patientCode" :style="{ backgroundColor: triageToColor(availablesStore.getPatient(patientCode)?.triage) }">
 		{{ getPatientCodeLabel(props.patientCode) }}
 	</div>
 </template>
@@ -41,4 +35,4 @@
 		align-items: center;
 		color: white;
 	}
-</style>
+</style>@/Utils@/utils

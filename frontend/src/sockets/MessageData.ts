@@ -40,6 +40,7 @@ interface Patient {
 	patientId: number
 	patientName: string
 	patientCode: number
+	triage: string
 }
 
 interface Personnel {

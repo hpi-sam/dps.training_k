@@ -153,16 +153,4 @@
 	.patientId, .patientName {
 		padding: .75rem 1rem;
 	}
-	
-	.red {
-		background-color: red;
-	}
-
-	.yellow {
-		background-color: yellow;
-	}
-
-	.green {
-		background-color: green;
-	}
 </style>
