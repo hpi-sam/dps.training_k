@@ -1,27 +1,11 @@
 <script setup lang="ts">
-	import {computed, ref} from 'vue'
+	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient'
 	import TriagePopup from '@/components/widgets/TriagePopup.vue'
 	import PatientStatus from '@/components/widgets/PatientStatus.vue'
+	import { triageToColor } from '@/utils'
 
 	const patientStore = usePatientStore()
-
-	const triageColor = ref(computed(() => {
-		switch (patientStore.triage) {
-			case 'G':
-				return 'green'
-			case 'Y':
-				return 'yellow'
-			case 'A':
-			case 'B':
-			case 'C':
-			case 'D':
-			case 'E':
-				return 'red'
-			default:
-				return 'gray'
-		}
-	}))
 
 	const showPopup = ref(false)
 </script>
@@ -29,9 +13,13 @@
 <template>
 	<nav>
 		<button id="nav-trainer">
-			{{ patientStore.patientID }}
+			{{ patientStore.patientId }}
 		</button>
-		<button id="nav-triage" :class="triageColor" @click="showPopup = true">
+		<button
+			id="nav-triage"
+			:style="{backgroundColor: triageToColor(patientStore.triage)}"
+			@click="showPopup = true"
+		>
 			{{ patientStore.triage }}
 		</button>
 		<button id="nav-exercise-code">
@@ -70,30 +58,11 @@
 		width: 20%;
 		border-left: 4px solid black;
 		border-right: 4px solid black;
+		color: white;
 	}
 
 	#nav-exercise-code {
 		width: 40%;
 		border-left: 4px solid black;
 	}
-
-	/*noinspection CssUnusedSymbol*/
-	.gray {
-		background-color: lightgray;
-	}
-
-	/*noinspection CssUnusedSymbol*/
-	.green {
-		background-color: green;
-	}
-
-	/*noinspection CssUnusedSymbol*/
-	.yellow {
-		background-color: yellow;
-	}
-
-	/*noinspection CssUnusedSymbol*/
-	.red {
-		background-color: red;
-	}
-</style>
+</style>@/utils

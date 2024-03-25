@@ -8,11 +8,11 @@ class LevenshteinCode:
         self.code_length = code_length
         self.codes_taken = []
 
-    def get_invitation_code(self):
+    def get_exerciseId(self):
         """
-        Generates an unique alphabetic invitation_code of length self.code_length,
+        Generates an unique alphabetic exerciseId of length self.code_length,
         that is also distinctive from other non-finished excercises (levenshtein distance >= 3).
-        :return: a string, the invitation_code
+        :return: a string, the exerciseId
         """
         new_code = None
         letters = string.ascii_lowercase

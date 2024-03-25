@@ -1,6 +1,4 @@
 from .abstract_consumer import AbstractConsumer
-from game.models import Exercise, Patient
-from django.conf import settings
 
 
 class TrainerConsumer(AbstractConsumer):

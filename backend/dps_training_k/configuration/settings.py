@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "game.apps.GameConfig",
     "helpers.apps.GameConfig",
-    "templates.apps.GameConfig",
+    "template.apps.TemplateConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "django_celery_beat",

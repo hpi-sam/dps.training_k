@@ -11,7 +11,7 @@
 				Patient inaktiv
 			</div>
 			<div class="inactive-patient-details">
-				<div>Patient: {{ patientStore.patientName }} | {{ patientStore.patientID }}</div>
+				<div>Patient: {{ patientStore.patientName }} | {{ patientStore.patientId }}</div>
 				<div>Bereich: {{ patientStore.areaName }}</div>
 			</div>
 		</div>
