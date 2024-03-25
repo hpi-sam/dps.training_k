@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 interface MessageData {
 	messageType: string
 	message?: string
@@ -19,6 +19,9 @@ interface MessageData {
 	exercise?: Exercise
 	state?: State
 	logEntry?: LogEntry
+	availablePatients: AvailablePatients
+	availableActions: AvailableActions
+	availableMaterial: AvailableMaterial
 }
 
 interface Exercise {
@@ -37,6 +40,7 @@ interface Patient {
 	patientId: number
 	patientName: string
 	patientCode: number
+	triage: string
 }
 
 interface Personnel {
@@ -67,4 +71,31 @@ interface LogEntry {
 	patientId: number
 	personnelId: number
 	deviceId: number
+}
+
+interface AvailablePatient {
+	patientCode: number
+	triage: string
+	patientInjury: string
+	patientHistory: string
+	patientPersonalDetails: string
+	patientBiometrics: string
+}
+
+interface Availables {
+	actions: [],
+	patients: AvailablePatient[],
+	material: [],
+}
+
+interface AvailableActions {
+	actions: [],
+}
+
+interface AvailablePatients {
+	availablePatients: AvailablePatient[],
+}
+
+interface AvailableMaterial {
+	material: [],
 }

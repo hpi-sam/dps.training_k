@@ -3,7 +3,6 @@
 	import PagePersonnel from './pagesResourceCreation/PagePersonnel.vue'
 	import PageMaterial from './pagesResourceCreation/PageMaterial.vue'
 	import {computed, ref} from 'vue'
-	import {useExerciseStore} from '@/stores/Exercise'
 
 	enum Pages {
 		PATIENTS = "PagePatients",
@@ -28,10 +27,6 @@
 	const setPage = (newPage: Pages) => {
 		currentPage.value = newPage
 	}
-
-	const exerciseStore = useExerciseStore()
-
-	const currentAreaData = computed(() => exerciseStore.getArea(currentArea.value))
 </script>
 
 <script lang="ts">
@@ -43,9 +38,10 @@
 </script>
 
 <template>
-	<h1>ResourceCreation</h1>
-	{{ currentAreaData }}
-	<component :is="currentPageComponent" />
+	<p v-if="!currentArea" id="noAreaText">
+		Wähle einen Bereich aus
+	</p>
+	<component :is="currentPageComponent" :current-area="currentArea" />
 	<nav>
 		<button id="nav-patients" :class="{ 'selected': currentPage === Pages.PATIENTS }" @click="setPage(Pages.PATIENTS)">
 			Patienten
@@ -60,6 +56,12 @@
 </template>
 
 <style scoped>
+	#noAreaText {
+		text-align: center;
+		font-size: 1.8em;
+		margin-top: 40px;
+	}
+
 	nav {
 		width: 100%;
 		height: 60px;
