@@ -51,7 +51,7 @@ class SocketTrainer {
 					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableActions)
 					break
 				case 'available-material':
-					useAvailablesStore().loadAvailableMaterial(data.availableMaterial as AvailableMaterial)
+					useAvailablesStore().loadAvailableMaterial(data.availableMaterialList as unknown as AvailableMaterialList)
 					break
 				case 'available-patients':
 					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatients)
@@ -212,6 +212,24 @@ export const serverMockEvents = [
 			'{"patientCode":10,'+
 			'"triage":"Y","patientInjury":"shoulder broken","patientHistory":"illness",'+
 			'"patientPersonalDetails":"Male, 39 years old","patientBiometrics":"Height:173cm, Weight: 61kg"}'+
+			']}}'
+	},
+	{
+		id: "available-material",
+		data: '{"messageType":"available-material","availableMaterialList":{"availableMaterialList":['+
+			'{"materialName":"Beatmungsgerät","materialType":"device"},'+
+			'{"materialName":"Blutdruckmessgerät","materialType":"device"},'+
+			'{"materialName":"Defibrillator","materialType":"device"},'+
+			'{"materialName":"Endoskop","materialType":"device"},'+
+			'{"materialName":"Herz-Lungen-Maschine","materialType":"device"},'+
+			'{"materialName":"Blut 0 negativ","materialType":"blood"},'+
+			'{"materialName":"Blut 0 positiv","materialType":"blood"},'+
+			'{"materialName":"Blut A negativ","materialType":"blood"},'+
+			'{"materialName":"Blut A positiv","materialType":"blood"},'+
+			'{"materialName":"Blut B negativ","materialType":"blood"},'+
+			'{"materialName":"Blut B positiv","materialType":"blood"},'+
+			'{"materialName":"Blut AB negativ","materialType":"blood"},'+
+			'{"materialName":"Blut AB positiv","materialType":"blood"}'+
 			']}}'
 	},
 	{

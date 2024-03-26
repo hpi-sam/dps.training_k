@@ -21,7 +21,7 @@ interface MessageData {
 	logEntry?: LogEntry
 	availablePatients: AvailablePatients
 	availableActions: AvailableActions
-	availableMaterial: AvailableMaterial
+	availableMaterialList: AvailableMaterial
 }
 
 interface Exercise {
@@ -73,6 +73,26 @@ interface LogEntry {
 	materialId: number
 }
 
+interface Availables {
+	actions: AvailableAction[],
+	patients: AvailablePatient[],
+	material: AvailableMaterial[],
+}
+
+interface AvailableActions {
+	availableActions: AvailableAction[],
+}
+
+interface AvailableAction {
+	actionName: string
+	actionDescription: string
+	actionType: string
+}
+
+interface AvailablePatients {
+	availablePatients: AvailablePatient[],
+}
+
 interface AvailablePatient {
 	patientCode: number
 	triage: string
@@ -82,20 +102,11 @@ interface AvailablePatient {
 	patientBiometrics: string
 }
 
-interface Availables {
-	actions: [],
-	patients: AvailablePatient[],
-	material: [],
-}
-
-interface AvailableActions {
-	actions: [],
-}
-
-interface AvailablePatients {
-	availablePatients: AvailablePatient[],
+interface AvailableMaterialList {
+	availableMaterialList: AvailableMaterial[],
 }
 
 interface AvailableMaterial {
-	material: [],
+	materialName: string
+	materialType: string
 }
