@@ -183,35 +183,35 @@ export const serverMockEvents = [
 		id: "available-patients",
 		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":['+
 			'{"patientCode":1,'+
-			'"triage":"Y","patientInjury":"broken arm","patientHistory":"Asthma",'+
-			'"patientPersonalDetails":"Female, 30 years old","patientBiometrics":"Height:196cm, Weight: 76kg"},'+
+			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},'+
 			'{"patientCode":2,'+
-			'"triage":"G","patientInjury":"twisted ankle","patientHistory":"No known allergies",'+
-			'"patientPersonalDetails":"Male, 47 years old","patientBiometrics":"Height:164cm, Weight: 65kg"},'+
+			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",'+
+			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},'+
 			'{"patientCode":3,'+
-			'"triage":"R","patientInjury":"head injury","patientHistory":"Diabetes",'+
-			'"patientPersonalDetails":"Female, 20 years old","patientBiometrics":"Height:192cm, Weight: 77kg"},'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},'+
 			'{"patientCode":4,'+
-			'"triage":"Y","patientInjury":"sprained wrist","patientHistory":"gastroesophageal reflux disease",'+
-			'"patientPersonalDetails":"Male, 13 years old","patientBiometrics":"Height:165cm, Weight: 54kg"},'+
+			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},'+
 			'{"patientCode":5,'+
-			'"triage":"G","patientInjury":"bruised ribs","patientHistory":"No known allergies",'+
-			'"patientPersonalDetails":"Female, 53 years old","patientBiometrics":"Height:180cm, Weight: 71kg"},'+
+			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},'+
 			'{"patientCode":6,'+
-			'"triage":"Y","patientInjury":"shoulder dislocation","patientHistory":"paralyzed",'+
-			'"patientPersonalDetails":"Male, 49 years old","patientBiometrics":"Height:170cm, Weight: 67kg"},'+
+			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",'+
+			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},'+
 			'{"patientCode":7,'+
-			'"triage":"R","patientInjury":"head trauma","patientHistory":"Asthma",'+
-			'"patientPersonalDetails":"Female, 23 years old","patientBiometrics":"Height:162cm, Weight: 67kg"},'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},'+
 			'{"patientCode":8,'+
-			'"triage":"Y","patientInjury":"bruised ribs","patientHistory":"reflux disease",'+
-			'"patientPersonalDetails":"Male, 43 years old","patientBiometrics":"Height:161cm, Weight: 56kg"},'+
+			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},'+
 			'{"patientCode":9,'+
-			'"triage":"G","patientInjury":"sprained wrist","patientHistory":"hearth disease",'+
-			'"patientPersonalDetails":"Female, 23 years old","patientBiometrics":"Height:182cm, Weight: 75kg"},'+
+			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},'+
 			'{"patientCode":10,'+
-			'"triage":"Y","patientInjury":"shoulder broken","patientHistory":"illness",'+
-			'"patientPersonalDetails":"Male, 39 years old","patientBiometrics":"Height:173cm, Weight: 61kg"}'+
+			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",'+
+			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}'+
 			']}}'
 	},
 	{
@@ -238,12 +238,12 @@ export const serverMockEvents = [
 			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
 			'{"patientId":3,"patientName":"Frank Huber",' +
 			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"material":' +
-			'[{"materialName":"Treadmill","materialType":"device"},{"materialName":"Blut 0 positiv","materialType":"blood"}]},'+
+			'[{"materialName":"Beatmungsgerät","materialType":"device"},{"materialName":"Blut 0 positiv","materialType":"blood"}]},'+
 			'{"areaName":"ZNA","patients":' +
 			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
 			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
 			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],'+
-			'"material":[{"materialName":"Dumbbells","materialType":"device"},{"materialName":"Blut A positiv","materialType":"blood"}]},' +
+			'"material":[{"materialName":"Defibillator","materialType":"device"},{"materialName":"Blut A positiv","materialType":"blood"}]},' +
 			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
 			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
 			'"personnel":[{"personnelId":3,"personnelName":"Antonio Wilhelm David Fleiker"}],' +
