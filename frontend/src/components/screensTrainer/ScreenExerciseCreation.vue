@@ -6,7 +6,7 @@
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
 	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
-	import AreaPopup from '../widgets/AreaPopup.vue'
+	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -32,21 +32,27 @@
 		socketTrainer.areaAdd()
 	}
 
+	function deleteArea(){
+		socketTrainer.areaDelete(currentArea.value)
+	}
+
 	const showPopup = ref(false)
 </script>
 
 <template>
-	<AreaPopup v-if="showPopup" :area-name="currentArea" @close-popup="showPopup=false" />
+	<DeleteItemPopup v-if="showPopup" :name="currentArea" @close-popup="showPopup=false" @delete="deleteArea" />
 	<TopBarTrainer />
-	<div id="list">
+	<div class="list">
 		<div
 			v-for="area in areas"
 			:key="area.areaName"
-			class="listitem"
+			class="listItem"
 			:class="{ 'selected': currentArea === area.areaName }"
 		>
-			<button class="areaButton" @click="openArea(area.areaName)">
-				{{ area.areaName }}
+			<button class="listItemButton" @click="openArea(area.areaName)">
+				<div class="listItemName">
+					{{ area.areaName }}
+				</div>
 			</button>
 			<button class="settingsButton" @click="openPopup(area.areaName)">
 				<svg
@@ -59,7 +65,7 @@
 				</svg>
 			</button>
 		</div>
-		<button id="addAreaButton" @click="addArea()">
+		<button class="listItemAddButton" @click="addArea()">
 			Bereich hinzufügen
 		</button>
 	</div>
@@ -70,33 +76,8 @@
 </template>
 
 <style scoped>
-	#list {
+	.list {
 		margin-top: 90px;
-		margin-left: 30px;
-		margin-right: 30px;
-	}
-
-	.listitem {
-		position: relative;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		display: flex;
-		align-items: center;
-		text-align: left;
-		margin-top: -1px;
-	}
-
-	.areaButton {
-		position: relative;
-		background-color: #FFFFFF;
-		border: none;
-		display: flex;
-		align-items: center;
-		font-size: 1.25rem;
-		padding: .75rem 1rem;
-		text-align: left;
-		height: 50px;
-		width: 100%;
 	}
 
 	.settingsButton {
@@ -106,20 +87,7 @@
 		background-color: rgb(243, 244, 246);
 	}
 
-	#addAreaButton {
-		text-align: center;
-		position: relative;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		box-sizing: border-box;
-		width: 100%;
-		font-size: 1.25rem;
-		line-height: 1.25rem;
-		padding: .75rem 1rem;
-		margin-top: -1px;
-	}
-
-	.selected .areaButton {
+	.selected .listItemButton {
 		filter: brightness(90%);
 	}
 </style>

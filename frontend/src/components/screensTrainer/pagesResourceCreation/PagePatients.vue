@@ -47,74 +47,25 @@
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
 	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
-	<div id="list">
+	<div class="list">
 		<div
 			v-for="patient in currentAreaData?.patients"
 			:key="patient.patientName"
-			class="listitem"
+			class="listItem"
 		>
-			<button class="patientButton" @click="editPatient(patient.patientId)">
-				<div class="patientId">
+			<button class="listItemButton" @click="editPatient(patient.patientId)">
+				<div class="listItemId">
 					{{ patient.patientId.toString().padStart(3, '0') }}
 				</div>
 				<TriageForListItems :patient-code="patient.patientCode" />
-				<div class="patientName">
+				<div class="listItemName">
 					{{ patient.patientName }}
 				</div>
 			</button>
 			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button v-if="currentAreaData" id="addPatientButton" @click="addPatient()">
+		<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
 			Patient hinzufügen
 		</button>
 	</div>
 </template>
-
-<style scoped>
-	#list {
-		margin-top: 30px;
-		margin-left: 30px;
-		margin-right: 30px;
-	}
-
-	.listitem {
-		position: relative;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		display: flex;
-		align-items: center;
-		text-align: left;
-		margin-top: -1px;
-	}
-
-	.patientButton {
-		position: relative;
-		background-color: #FFFFFF;
-		border: none;
-		display: flex;
-		align-items: center;
-		font-size: 1.25rem;
-		padding: .75rem 1rem;
-		padding-left: 0;
-		text-align: left;
-		height: 50px;
-		width: 100%;
-	}
-
-	#addPatientButton {
-		text-align: center;
-		position: relative;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		box-sizing: border-box;
-		width: 100%;
-		font-size: 1.25rem;
-		line-height: 1.25rem;
-		padding: .75rem 1rem;
-		margin-top: -1px;
-	}
-
-	.patientId, .patientName {
-		padding: .75rem 1rem;
-	}
-</style>
