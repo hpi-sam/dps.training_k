@@ -42,6 +42,30 @@
 				</p>{{ patientStore.skin }}
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<p class="key">
+					Verletzungen
+				</p>{{ patientStore.injury }}
+			</td>
+			<td>
+				<p class="key">
+					Vorerkrankungen
+				</p>{{ patientStore.history }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="key">
+					Personalien
+				</p>{{ patientStore.personalDetails }}
+			</td>
+			<td>
+				<p class="key">
+					Biometrie
+				</p>{{ patientStore.biometrics }}
+			</td>
+		</tr>
 	</table>
 </template>
 
@@ -50,6 +74,7 @@
 		border-collapse: collapse;
 		width: 100%;
 		table-layout: fixed;
+		margin: 90px 30px 30px 30px;
 	}
 
 	td {

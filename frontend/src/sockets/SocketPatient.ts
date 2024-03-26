@@ -1,6 +1,7 @@
 import {connection} from "@/stores/Connection"
 import {usePatientStore} from "@/stores/Patient"
 import {useExerciseStore} from "@/stores/Exercise"
+import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 
@@ -13,6 +14,10 @@ class SocketPatient {
 	}
 
 	connect(): void {
+		const patientStore = usePatientStore()
+		const exerciseStore = useExerciseStore()
+		const availablesStore = useAvailablesStore()
+
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
 		this.socket.onopen = () => {
@@ -47,13 +52,15 @@ class SocketPatient {
 					showWarningToast(data.message || '')
 					break
 				case 'state':
-					usePatientStore().loadStatusFromJSON(data.state as State)
+					patientStore.loadStatusFromJSON(data.state as State)
+					break
+				case 'available-patients':
+					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
+					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'exercise':
-					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientId)?.patientName || ''
-					usePatientStore().areaName = useExerciseStore().getAreaOfPatient(usePatientStore().patientId)?.areaName || ''
-					usePatientStore().triage = useExerciseStore().getPatient(usePatientStore().patientId)?.triage || '-'
+					exerciseStore.createFromJSON(data.exercise as Exercise)
+					patientStore.initializePatientFromExercise()
 					break
 				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
@@ -114,8 +121,43 @@ export const serverMockEvents = [
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: 'state',
-		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regular","circulation":"Stable",' +
-			'"consciousness":"Alert","pupils":"Reactive","psyche":"Calm","skin":"Warm"}}'
+		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
+			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
+	},
+	{
+		id: "available-patients",
+		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":['+
+			'{"patientCode":1,'+
+			'"triage":"Y","patientInjury":"broken arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"Female, 30 years old","patientBiometrics":"Height:196cm, Weight: 76kg"},'+
+			'{"patientCode":2,'+
+			'"triage":"G","patientInjury":"twisted ankle","patientHistory":"No known allergies",'+
+			'"patientPersonalDetails":"Male, 47 years old","patientBiometrics":"Height:164cm, Weight: 65kg"},'+
+			'{"patientCode":3,'+
+			'"triage":"R","patientInjury":"head injury","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"Female, 20 years old","patientBiometrics":"Height:192cm, Weight: 77kg"},'+
+			'{"patientCode":4,'+
+			'"triage":"Y","patientInjury":"sprained wrist","patientHistory":"gastroesophageal reflux disease",'+
+			'"patientPersonalDetails":"Male, 13 years old","patientBiometrics":"Height:165cm, Weight: 54kg"},'+
+			'{"patientCode":5,'+
+			'"triage":"G","patientInjury":"bruised ribs","patientHistory":"No known allergies",'+
+			'"patientPersonalDetails":"Female, 53 years old","patientBiometrics":"Height:180cm, Weight: 71kg"},'+
+			'{"patientCode":6,'+
+			'"triage":"Y","patientInjury":"shoulder dislocation","patientHistory":"paralyzed",'+
+			'"patientPersonalDetails":"Male, 49 years old","patientBiometrics":"Height:170cm, Weight: 67kg"},'+
+			'{"patientCode":7,'+
+			'"triage":"R","patientInjury":"head trauma","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"Female, 23 years old","patientBiometrics":"Height:162cm, Weight: 67kg"},'+
+			'{"patientCode":8,'+
+			'"triage":"Y","patientInjury":"bruised ribs","patientHistory":"reflux disease",'+
+			'"patientPersonalDetails":"Male, 43 years old","patientBiometrics":"Height:161cm, Weight: 56kg"},'+
+			'{"patientCode":9,'+
+			'"triage":"G","patientInjury":"sprained wrist","patientHistory":"hearth disease",'+
+			'"patientPersonalDetails":"Female, 23 years old","patientBiometrics":"Height:182cm, Weight: 75kg"},'+
+			'{"patientCode":10,'+
+			'"triage":"Y","patientInjury":"shoulder broken","patientHistory":"illness",'+
+			'"patientPersonalDetails":"Male, 39 years old","patientBiometrics":"Height:173cm, Weight: 61kg"}'+
+			']}}'
 	},
 	{
 		id: 'exercise',
