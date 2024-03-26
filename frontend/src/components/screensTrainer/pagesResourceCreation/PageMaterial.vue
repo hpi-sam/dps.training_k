@@ -61,7 +61,7 @@
 	/>
 	<div class="list">
 		<div
-			v-for="device in devices"
+			v-for="device in devices as Material[]"
 			:key="device.materialName"
 			class="listItem"
 		>
@@ -78,7 +78,7 @@
 	</div>
 	<div class="list">
 		<div
-			v-for="blood in bloodList"
+			v-for="blood in bloodList as Material[]"
 			:key="blood.materialName"
 			class="listItem"
 		>
