@@ -156,6 +156,21 @@ class SocketTrainer {
 			'personnelId': personnelId
 		}))
 	}
+
+	materialAdd(areaName: string, materialName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'material-add',
+			'areaName': areaName,
+			'materialName': materialName
+		}))
+	}
+
+	materialDelete(materialName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'material-delete',
+			'materialName': materialName
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
@@ -204,15 +219,17 @@ export const serverMockEvents = [
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
 			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
 			'{"patientId":3,"patientName":"Frank Huber",' +
-			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"devices":' +
-			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"ZNA","patients":' +
+			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"material":' +
+			'[{"materialName":"Treadmill","materialType":"device"},{"materialName":"Blut 0 positiv","materialType":"blood"}]},'+
+			'{"areaName":"ZNA","patients":' +
 			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
 			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
-			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
+			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],'+
+			'"material":[{"materialName":"Dumbbells","materialType":"device"},{"materialName":"Blut A positiv","materialType":"blood"}]},' +
 			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
 			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
-			'"personnel":[{"personnelId":3,"personnelName":"Antonio Fleiker"}],' +
-			'"devices":[{"deviceId":3,"deviceName":"Beatmungsgerät"}]}]}}'
+			'"personnel":[{"personnelId":3,"personnelName":"Antonio Wilhelm David Fleiker"}],' +
+			'"material":[{"materialName":"Beatmungsgerät","materialType":"device"},{"materialName":"Blut 0 negativ","materialType":"blood"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},

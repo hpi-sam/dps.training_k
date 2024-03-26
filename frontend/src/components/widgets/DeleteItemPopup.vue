@@ -1,26 +1,24 @@
 <script setup lang="ts">
-	import socketTrainer from "@/sockets/SocketTrainer"
-
-	const emit = defineEmits(['close-popup'])
+	const emit = defineEmits(['close-popup','delete'])
 
 	const props = defineProps({
-		areaName: {
+		name: {
 			type: String,
-			default: "Kein Bereich ausgewählt"
-		}
+			default: "Kein Name angegeben"
+		},
+        deleteText: {
+            type: String,
+            default: "Löschen"
+        }
 	})
-
-	function deleteArea(){
-		socketTrainer.areaDelete(props.areaName as string)
-	}
 </script>
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup">
-			<h2>{{ props.areaName }}</h2>
-			<button id="deleteButton" @click="deleteArea()">
-				Bereich löschen
+			<h2>{{ props.name }}</h2>
+			<button id="deleteButton" @click="emit('delete')">
+				{{ props.deleteText }}
 			</button>
 		</div>
 	</div>
@@ -39,7 +37,7 @@
 		color: white;
 		border: 1px solid rgb(209, 213, 219);
 		border-radius: .5rem;
-		width: 100%;
+		width: 180px;
 		font-size: 1.25rem;
 		padding: .75rem 1rem;
 		text-align: center;

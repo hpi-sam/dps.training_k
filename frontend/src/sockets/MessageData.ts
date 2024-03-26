@@ -14,8 +14,8 @@ interface MessageData {
 	patientId?: number
 	personnelName?: string
 	personnelId?: number
-	deviceName?: string
-	deviceId?: number
+	materialName?: string
+	materialId?: number
 	exercise?: Exercise
 	state?: State
 	logEntry?: LogEntry
@@ -33,7 +33,7 @@ interface Area {
 	areaName: string
 	patients: Patient[]
 	personnel: Personnel[]
-	devices: Device[]
+	material: Material[]
 }
 
 interface Patient {
@@ -48,9 +48,9 @@ interface Personnel {
 	personnelName: string
 }
 
-interface Device {
-	deviceId: number
-	deviceName: string
+interface Material {
+	materialName: string
+	materialType: string
 }
 
 interface State {
@@ -70,7 +70,7 @@ interface LogEntry {
 	areaName: string
 	patientId: number
 	personnelId: number
-	deviceId: number
+	materialId: number
 }
 
 interface AvailablePatient {
