@@ -6,7 +6,7 @@
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
 	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
-	import AreaPopup from '../widgets/AreaPopup.vue'
+	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -32,11 +32,15 @@
 		socketTrainer.areaAdd()
 	}
 
+	function deleteArea(){
+		socketTrainer.areaDelete(currentArea.value)
+	}
+
 	const showPopup = ref(false)
 </script>
 
 <template>
-	<AreaPopup v-if="showPopup" :area-name="currentArea" @close-popup="showPopup=false" />
+	<DeleteItemPopup v-if="showPopup" :name="currentArea" @close-popup="showPopup=false" @delete="deleteArea" />
 	<TopBarTrainer />
 	<div class="list">
 		<div
@@ -83,7 +87,7 @@
 		background-color: rgb(243, 244, 246);
 	}
 
-	.selected .areaButton {
+	.selected .listItemButton {
 		filter: brightness(90%);
 	}
 </style>

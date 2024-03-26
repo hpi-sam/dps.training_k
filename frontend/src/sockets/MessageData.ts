@@ -14,14 +14,14 @@ interface MessageData {
 	patientId?: number
 	personnelName?: string
 	personnelId?: number
-	deviceName?: string
-	deviceId?: number
+	materialName?: string
+	materialId?: number
 	exercise?: Exercise
 	state?: State
 	logEntry?: LogEntry
 	availablePatients: AvailablePatients
 	availableActions: AvailableActions
-	availableMaterial: AvailableMaterial
+	availableMaterialList: AvailableMaterial
 }
 
 interface Exercise {
@@ -33,7 +33,7 @@ interface Area {
 	areaName: string
 	patients: Patient[]
 	personnel: Personnel[]
-	devices: Device[]
+	material: Material[]
 }
 
 interface Patient {
@@ -48,9 +48,9 @@ interface Personnel {
 	personnelName: string
 }
 
-interface Device {
-	deviceId: number
-	deviceName: string
+interface Material {
+	materialName: string
+	materialType: string
 }
 
 interface State {
@@ -70,7 +70,27 @@ interface LogEntry {
 	areaName: string
 	patientId: number
 	personnelId: number
-	deviceId: number
+	materialId: number
+}
+
+interface Availables {
+	actions: AvailableAction[],
+	patients: AvailablePatient[],
+	material: AvailableMaterial[],
+}
+
+interface AvailableActions {
+	availableActions: AvailableAction[],
+}
+
+interface AvailableAction {
+	actionName: string
+	actionDescription: string
+	actionType: string
+}
+
+interface AvailablePatients {
+	availablePatients: AvailablePatient[],
 }
 
 interface AvailablePatient {
@@ -82,20 +102,11 @@ interface AvailablePatient {
 	patientBiometrics: string
 }
 
-interface Availables {
-	actions: [],
-	patients: AvailablePatient[],
-	material: [],
-}
-
-interface AvailableActions {
-	actions: [],
-}
-
-interface AvailablePatients {
-	availablePatients: AvailablePatient[],
+interface AvailableMaterialList {
+	availableMaterialList: AvailableMaterial[],
 }
 
 interface AvailableMaterial {
-	material: [],
+	materialName: string
+	materialType: string
 }

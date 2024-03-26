@@ -2,8 +2,8 @@
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
 	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
-	import PersonnelPopup from '@/components/widgets/PersonnelPopup.vue'
 	import socketTrainer from '@/sockets/SocketTrainer'
+	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 
     const props = defineProps({
 		currentArea: {
@@ -28,10 +28,19 @@
 	function addPersonnel() {
 		socketTrainer.personnelAdd(props.currentArea)
 	}
+
+	function deletePersonnel(){
+		socketTrainer.personnelDelete(currentPersonnel.value)
+	}
 </script>
 
 <template>
-	<PersonnelPopup v-if="showPopup" :personnel-id="currentPersonnel" @close-popup="showPopup=false" />
+	<DeleteItemPopup
+		v-if="showPopup"
+		:name="exerciseStore.getPersonnel(currentPersonnel)?.personnelName"
+		@close-popup="showPopup=false"
+		@delete="deletePersonnel"
+	/>
 	<div class="list">
 		<div
 			v-for="personnel in currentAreaData?.personnel"
