@@ -15,7 +15,6 @@ interface MessageData {
 	personnelName?: string
 	personnelId?: number
 	materialName?: string
-	materialId?: number
 	exercise?: Exercise
 	state?: State
 	logEntry?: LogEntry
@@ -70,7 +69,6 @@ interface LogEntry {
 	areaName: string
 	patientId: number
 	personnelId: number
-	materialId: number
 }
 
 interface Availables {

@@ -255,10 +255,10 @@ export const serverMockEvents = [
 		id: 'log-update',
 		data: '{"messageType":"log-update","logEntry":[' +
 			'{"logMessage":"Patient admitted","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
-			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456,"deviceId":789},' +
+			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456},' +
 			'{"logMessage":"Treatment started","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 46, 0) +
-			',"areaName":"Operating Theater","patientId":123,"personnelId":456,"deviceId":789},' +
+			',"areaName":"Operating Theater","patientId":123,"personnelId":456},' +
 			'{"logMessage":"Patient stabilized","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
-			',"areaName":"ICU","patientId":123,"personnelId":456,"deviceId":789}]}'
+			',"areaName":"ICU","patientId":123,"personnelId":456}]}'
 	}
 ]
