@@ -38,7 +38,7 @@ class PatientConsumer(AbstractConsumer):
         token = query_string.get("token", [None])[0]
         success, patientId = self.authenticate(token)
         if success:
-            self.patient = Patient.objects.filter(patientId=patientId).first()
+            self.patient = Patient.objects.get(patientId=patientId)
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
