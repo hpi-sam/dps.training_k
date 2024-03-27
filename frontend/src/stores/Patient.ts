@@ -1,9 +1,12 @@
 import {defineStore} from "pinia"
+import {useExerciseStore} from "@/stores/Exercise"
+import { useAvailablesStore } from "./Availables"
 
 export const usePatientStore = defineStore('patient', {
 	state: () => ({
 		token: '',
-		patientID: Number.NEGATIVE_INFINITY,
+		patientId: Number.NEGATIVE_INFINITY,
+		patientCode: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',
 		areaName: '',
@@ -14,7 +17,11 @@ export const usePatientStore = defineStore('patient', {
 		phaseNumber: 0,
 		psyche: '',
 		pupils: '',
-		skin: ''
+		skin: '',
+		injury: '',
+		history: '',
+		personalDetails: '',
+		biometrics: ''
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
@@ -26,6 +33,20 @@ export const usePatientStore = defineStore('patient', {
 			this.psyche = state.psyche
 			this.pupils = state.pupils
 			this.skin = state.skin
+		},
+		initializePatientFromExercise() {
+			const exerciseStore = useExerciseStore()
+			this.patientName = exerciseStore.getPatient(this.patientId)?.patientName || ''
+			this.patientCode = exerciseStore.getPatient(this.patientId)?.patientCode || Number.NEGATIVE_INFINITY
+			this.areaName = exerciseStore.getAreaOfPatient(this.patientId)?.areaName || ''
+			this.triage = exerciseStore.getPatient(this.patientId)?.triage || '-'
+		},
+		initializePatientFromAvailablePatients() {
+			const availablesStore = useAvailablesStore()
+			this.injury = availablesStore.getPatient(this.patientCode)?.patientInjury || ''
+			this.history = availablesStore.getPatient(this.patientCode)?.patientHistory || ''
+			this.personalDetails = availablesStore.getPatient(this.patientCode)?.patientPersonalDetails || ''
+			this.biometrics = availablesStore.getPatient(this.patientCode)?.patientBiometrics || ''
 		}
 	}
 })

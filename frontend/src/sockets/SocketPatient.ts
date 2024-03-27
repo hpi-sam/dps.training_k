@@ -1,6 +1,7 @@
 import {connection} from "@/stores/Connection"
 import {usePatientStore} from "@/stores/Patient"
 import {useExerciseStore} from "@/stores/Exercise"
+import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 
@@ -13,6 +14,10 @@ class SocketPatient {
 	}
 
 	connect(): void {
+		const patientStore = usePatientStore()
+		const exerciseStore = useExerciseStore()
+		const availablesStore = useAvailablesStore()
+
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
 		this.socket.onopen = () => {
@@ -46,16 +51,16 @@ class SocketPatient {
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
-				case 'triage':
-					usePatientStore().triage = data.triage || '-'
-					break
 				case 'state':
-					usePatientStore().loadStatusFromJSON(data.state as State)
+					patientStore.loadStatusFromJSON(data.state as State)
+					break
+				case 'available-patients':
+					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
+					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'exercise':
-					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientID)?.patientName || ''
-					usePatientStore().areaName = useExerciseStore().getAreaOfPatient(usePatientStore().patientID)?.areaName || ''
+					exerciseStore.createFromJSON(data.exercise as Exercise)
+					patientStore.initializePatientFromExercise()
 					break
 				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
@@ -114,23 +119,60 @@ export default socketPatient
 export const serverMockEvents = [
 	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
-	{id: 'triage', data: '{"messageType":"triage","triage":"A"}'},
 	{
 		id: 'state',
-		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regular","circulation":"Stable",' +
-			'"consciousness":"Alert","pupils":"Reactive","psyche":"Calm","skin":"Warm"}}'
+		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
+			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
+	},
+	{
+		id: "available-patients",
+		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":['+
+			'{"patientCode":1,'+
+			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},'+
+			'{"patientCode":2,'+
+			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",'+
+			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},'+
+			'{"patientCode":3,'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},'+
+			'{"patientCode":4,'+
+			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},'+
+			'{"patientCode":5,'+
+			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},'+
+			'{"patientCode":6,'+
+			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",'+
+			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},'+
+			'{"patientCode":7,'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},'+
+			'{"patientCode":8,'+
+			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},'+
+			'{"patientCode":9,'+
+			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},'+
+			'{"patientCode":10,'+
+			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",'+
+			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}'+
+			']}}'
 	},
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":20},{"patientId":2,"patientName":"Jane Doe",' +
-			'"patientCode":21}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
-			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"Strength Training","patients":' +
-			'[{"patientId":3,"patientName":"Jim Beam","patientCode":12},{"patientId":4,"patientName":"Jill Wine","patientCode":24}],' +
-			'"personnel":[{"personnelId":2,"personnelName":"Coach Taylor"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
-			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":32},' +
-			'{"patientId":6,"patientName":"Flexi Rods","patientCode":8}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
-			'"devices":[{"deviceId":3,"deviceName":"Yoga Mats"}]}]}}'
+			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
+			'{"patientId":3,"patientName":"Frank Huber",' +
+			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"devices":' +
+			'[{"deviceName":"Treadmill"}]},{"areaName":"ZNA","patients":' +
+			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
+			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
+			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceName":"Dumbbells"}]},' +
+			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
+			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
+			'"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
+			'"devices":[{"deviceName":"Beatmungsgerät"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},

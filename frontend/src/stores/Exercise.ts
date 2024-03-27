@@ -37,6 +37,17 @@ export const useExerciseStore = defineStore('exercise', {
 				})
 				return foundPatient
 			}
+		},
+		getPersonnel: (state) => {
+			return (personnelId: number): Personnel | null => {
+				let foundPersonnel: Personnel | null = null
+				state.areas.forEach((area) => {
+					area.personnel.forEach((personnel) => {
+						if (personnel.personnelId == personnelId) foundPersonnel = personnel
+					})
+				})
+				return foundPersonnel
+			}
 		}
 	},
 	actions: {

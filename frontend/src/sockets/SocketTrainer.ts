@@ -3,6 +3,7 @@ import {useTrainerStore} from "@/stores/Trainer"
 import {useExerciseStore} from "@/stores/Exercise"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
+import { useAvailablesStore } from "@/stores/Availables"
 
 class SocketTrainer {
 	private readonly url: string
@@ -45,6 +46,15 @@ class SocketTrainer {
 					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
+					break
+				case 'available-actions':
+					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableActions)
+					break
+				case 'available-material':
+					useAvailablesStore().loadAvailableMaterial(data.availableMaterialList as unknown as AvailableMaterialList)
+					break
+				case 'available-patients':
+					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatients)
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
@@ -107,6 +117,60 @@ class SocketTrainer {
 			'areaName': areaName
 		}))
 	}
+
+	patientAdd(areaName: string, patientName: string, patientCode: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-add',
+			'areaName': areaName,
+			'patientName': patientName,
+			'patientCode': patientCode
+		}))
+	}
+
+	patientUpdate(patientId: number, patientName: string, patientCode: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-update',
+			'patientId': patientId,
+			'patientName': patientName,
+			'patientCode': patientCode
+		}))
+	}
+
+	patientDelete(patientId: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-delete',
+			'patientId': patientId
+		}))
+	}
+
+	personnelAdd(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-add',
+			'areaName': areaName
+		}))
+	}
+
+	personnelDelete(personnelId: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-delete',
+			'personnelId': personnelId
+		}))
+	}
+
+	materialAdd(areaName: string, materialName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'material-add',
+			'areaName': areaName,
+			'materialName': materialName
+		}))
+	}
+
+	materialDelete(materialName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'material-delete',
+			'materialName': materialName
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
@@ -116,16 +180,74 @@ export const serverMockEvents = [
 	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
+		id: "available-patients",
+		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":['+
+			'{"patientCode":1,'+
+			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},'+
+			'{"patientCode":2,'+
+			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",'+
+			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},'+
+			'{"patientCode":3,'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},'+
+			'{"patientCode":4,'+
+			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},'+
+			'{"patientCode":5,'+
+			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},'+
+			'{"patientCode":6,'+
+			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",'+
+			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},'+
+			'{"patientCode":7,'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},'+
+			'{"patientCode":8,'+
+			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},'+
+			'{"patientCode":9,'+
+			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},'+
+			'{"patientCode":10,'+
+			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",'+
+			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}'+
+			']}}'
+	},
+	{
+		id: "available-material",
+		data: '{"messageType":"available-material","availableMaterialList":{"availableMaterialList":['+
+			'{"materialName":"Beatmungsgerät","materialType":"device"},'+
+			'{"materialName":"Blutdruckmessgerät","materialType":"device"},'+
+			'{"materialName":"Defibrillator","materialType":"device"},'+
+			'{"materialName":"Endoskop","materialType":"device"},'+
+			'{"materialName":"Herz-Lungen-Maschine","materialType":"device"},'+
+			'{"materialName":"Blut 0 negativ","materialType":"blood"},'+
+			'{"materialName":"Blut 0 positiv","materialType":"blood"},'+
+			'{"materialName":"Blut A negativ","materialType":"blood"},'+
+			'{"materialName":"Blut A positiv","materialType":"blood"},'+
+			'{"materialName":"Blut B negativ","materialType":"blood"},'+
+			'{"materialName":"Blut B positiv","materialType":"blood"},'+
+			'{"materialName":"Blut AB negativ","materialType":"blood"},'+
+			'{"materialName":"Blut AB positiv","materialType":"blood"}'+
+			']}}'
+	},
+	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Cardio","patients":[{"patientId":1,"patientName":"John Doe","patientCode":101},{"patientId":2,"patientName":"Jane Doe",' +
-			'"patientCode":102}],"personnel":[{"personnelId":1,"personnelName":"Coach Carter"}],"devices":' +
-			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"Strength Training","patients":' +
-			'[{"patientId":3,"patientName":"Jim Beam","patientCode":201},{"patientId":4,"patientName":"Jill Wine","patientCode":202}],' +
-			'"personnel":[{"personnelId":2,"personnelName":"Coach Taylor"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
-			'{"areaName":"Flexibility","patients":[{"patientId":5,"patientName":"Yoga Mats","patientCode":301},' +
-			'{"patientId":6,"patientName":"Flexi Rods","patientCode":302}],"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
-			'"devices":[{"deviceId":3,"deviceName":"Yoga Mats"}]}]}}'
+			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
+			'{"patientId":3,"patientName":"Frank Huber",' +
+			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"material":' +
+			'[{"materialName":"Beatmungsgerät","materialType":"device"},{"materialName":"Blut 0 positiv","materialType":"blood"}]},'+
+			'{"areaName":"ZNA","patients":' +
+			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
+			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
+			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],'+
+			'"material":[{"materialName":"Defibillator","materialType":"device"},{"materialName":"Blut A positiv","materialType":"blood"}]},' +
+			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
+			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
+			'"personnel":[{"personnelId":3,"personnelName":"Antonio Wilhelm David Fleiker"}],' +
+			'"material":[{"materialName":"Beatmungsgerät","materialType":"device"},{"materialName":"Blut 0 negativ","materialType":"blood"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
@@ -133,10 +255,10 @@ export const serverMockEvents = [
 		id: 'log-update',
 		data: '{"messageType":"log-update","logEntry":[' +
 			'{"logMessage":"Patient admitted","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
-			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456,"deviceId":789},' +
+			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456},' +
 			'{"logMessage":"Treatment started","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 46, 0) +
-			',"areaName":"Operating Theater","patientId":123,"personnelId":456,"deviceId":789},' +
+			',"areaName":"Operating Theater","patientId":123,"personnelId":456},' +
 			'{"logMessage":"Patient stabilized","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
-			',"areaName":"ICU","patientId":123,"personnelId":456,"deviceId":789}]}'
+			',"areaName":"ICU","patientId":123,"personnelId":456}]}'
 	}
 ]

@@ -1,0 +1,143 @@
+<script setup lang="ts">
+	import { useAvailablesStore } from "@/stores/Availables"
+	import PatientInfo from "./PatientInfo.vue"
+	import { computed, ref } from "vue"
+	import TriageForListItems from "./TriageForListItems.vue"
+	import socketTrainer from "@/sockets/SocketTrainer"
+	import PatientCodeList from "./PatientCodeList.vue"
+	import {showErrorToast} from "@/App.vue"
+
+	const emit = defineEmits(['close-popup'])
+
+	const props = defineProps({
+		areaName: {
+			type: String,
+			default: 'No Area'
+		},
+		patientName: {
+			type: String,
+			default: 'No Name'
+		}
+	})
+
+	function addPatient(){
+		if(!patientCodeChanged) {
+			showErrorToast('Es wurde kein Patientencode ausgewählt')
+			return
+		}
+		socketTrainer.patientAdd(props.areaName, props.patientName, currentPatientCode.value)
+	}
+
+	const currentPatientCode = ref()
+
+	const availablesStore = useAvailablesStore()
+
+	const currentPatient = computed(() => {
+		if (currentPatientCode.value !== undefined) {
+			return availablesStore.getPatient(currentPatientCode.value)
+		}
+		return null
+	})
+
+	let patientCodeChanged = false
+	
+	function changePatientCode(patientCode: number){
+		currentPatientCode.value = patientCode
+		patientCodeChanged = true
+	}
+
+</script>
+
+<template>
+	<div class="popup-overlay" @click="emit('close-popup')">
+		<div class="popup" @click.stop="">
+			<div id="leftSide">
+				<h2>Patienten-Datensätze</h2>
+				<PatientCodeList @change-patient="changePatientCode" />
+			</div>
+			<div id="rightSide">
+				<div class="listitem">
+					<TriageForListItems :patient-code="currentPatient?.patientCode" />
+					<div class="patientName">
+						{{ props.patientName }}
+					</div>
+				</div>
+				<PatientInfo
+					:injury="currentPatient?.patientInjury"
+					:history="currentPatient?.patientHistory"
+					:biometrics="currentPatient?.patientBiometrics"
+					:personal-details="currentPatient?.patientPersonalDetails"
+				/>
+				<div id="buttonRow">
+					<button
+						id="saveButton"
+						@click="addPatient()"
+					>
+						Patient hinzufügen
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<style scoped>
+	.popup {
+		background-color: white;
+		padding: 20px;
+		border-radius: 8px;
+		width: 80vw;
+		display: flex;
+	}
+
+	#leftSide {
+		float: left;
+		width: 50%;
+		padding: 10px;
+	}
+
+	#rightSide {
+		width: 50%;
+		padding: 10px;
+	}
+
+	#buttonRow {
+		display: flex;
+	}
+
+
+	#saveButton {
+		position: relative;
+		color: white;
+		border: 1px solid rgb(209, 213, 219);
+		border-radius: .5rem;
+		width: 100%;
+		font-size: 1.25rem;
+		padding: .75rem 1rem;
+		text-align: center;
+		margin-top: 10px;
+		background-color: var(--green);
+	}
+
+	.listitem {
+		position: relative;
+		background-color: #FFFFFF;
+		border: 1px solid rgb(209, 213, 219);
+		display: flex;
+		align-items: center;
+		margin-top: -1px;
+		font-size: 1.25rem;
+		padding: .75rem 1rem;
+		text-align: left;
+		height: 50px;
+		width: 100%;
+	}
+
+	.listitem {
+		padding-left: 0;
+	}
+
+	.patientId, .patientName {
+		padding: .75rem 1rem;
+	}
+</style>

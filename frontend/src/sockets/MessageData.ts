@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 interface MessageData {
 	messageType: string
 	message?: string
@@ -14,11 +14,13 @@ interface MessageData {
 	patientId?: number
 	personnelName?: string
 	personnelId?: number
-	deviceName?: string
-	deviceId?: number
+	materialName?: string
 	exercise?: Exercise
 	state?: State
 	logEntry?: LogEntry
+	availablePatients: AvailablePatients
+	availableActions: AvailableActions
+	availableMaterialList: AvailableMaterial
 }
 
 interface Exercise {
@@ -30,13 +32,14 @@ interface Area {
 	areaName: string
 	patients: Patient[]
 	personnel: Personnel[]
-	devices: Device[]
+	material: Material[]
 }
 
 interface Patient {
 	patientId: number
 	patientName: string
 	patientCode: number
+	triage: string
 }
 
 interface Personnel {
@@ -44,9 +47,9 @@ interface Personnel {
 	personnelName: string
 }
 
-interface Device {
-	deviceId: number
-	deviceName: string
+interface Material {
+	materialName: string
+	materialType: string
 }
 
 interface State {
@@ -66,5 +69,42 @@ interface LogEntry {
 	areaName: string
 	patientId: number
 	personnelId: number
-	deviceId: number
+}
+
+interface Availables {
+	actions: AvailableAction[],
+	patients: AvailablePatient[],
+	material: AvailableMaterial[],
+}
+
+interface AvailableActions {
+	availableActions: AvailableAction[],
+}
+
+interface AvailableAction {
+	actionName: string
+	actionDescription: string
+	actionType: string
+}
+
+interface AvailablePatients {
+	availablePatients: AvailablePatient[],
+}
+
+interface AvailablePatient {
+	patientCode: number
+	triage: string
+	patientInjury: string
+	patientHistory: string
+	patientPersonalDetails: string
+	patientBiometrics: string
+}
+
+interface AvailableMaterialList {
+	availableMaterialList: AvailableMaterial[],
+}
+
+interface AvailableMaterial {
+	materialName: string
+	materialType: string
 }
