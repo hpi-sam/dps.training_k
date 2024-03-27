@@ -19,13 +19,13 @@ export const useAvailablesStore = defineStore('availables', {
 	},
 	actions: {
 		loadAvailableActions(json: AvailableActions) {
-			this.actions = json.actions
+			this.actions = json.availableActions
 		},
 		loadAvailablePatients(json: AvailablePatients) {
 			this.patients = json.availablePatients
 		},
-		loadAvailableMaterial(json: AvailableMaterial) {
-			this.material = json.material
+		loadAvailableMaterial(json: AvailableMaterialList) {
+			this.material = json.availableMaterialList
 		}
 	}
 })

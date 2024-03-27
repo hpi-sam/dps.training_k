@@ -165,14 +165,14 @@ export const serverMockEvents = [
 			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
 			'{"patientId":3,"patientName":"Frank Huber",' +
 			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"devices":' +
-			'[{"deviceId":1,"deviceName":"Treadmill"}]},{"areaName":"ZNA","patients":' +
+			'[{"deviceName":"Treadmill"}]},{"areaName":"ZNA","patients":' +
 			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
 			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
-			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceId":2,"deviceName":"Dumbbells"}]},' +
+			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceName":"Dumbbells"}]},' +
 			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
 			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
 			'"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
-			'"devices":[{"deviceId":3,"deviceName":"Beatmungsgerät"}]}]}}'
+			'"devices":[{"deviceName":"Beatmungsgerät"}]}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
