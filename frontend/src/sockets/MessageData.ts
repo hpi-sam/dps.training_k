@@ -21,6 +21,7 @@ interface MessageData {
 	availablePatients: AvailablePatients
 	availableActions: AvailableActions
 	availableMaterialList: AvailableMaterial
+	actionDeclinationReason?: string
 }
 
 interface Exercise {

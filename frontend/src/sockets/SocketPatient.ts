@@ -4,6 +4,7 @@ import {useExerciseStore} from "@/stores/Exercise"
 import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
+import { allowNewActions } from "@/components/widgets/ActionConfig.vue"
 
 class SocketPatient {
 	private readonly url: string
@@ -78,6 +79,18 @@ class SocketPatient {
 					break
 				case 'information':
 					console.log('Patient Websocket ToDo: handle information event ', data)
+					break
+				case 'action-confirmation':
+					allowNewActions()
+					console.log('Patient Websocket ToDo: handle action-confirmation event ', data)
+					break
+				case 'action-declination':
+					allowNewActions()
+					showErrorToast('Aktion '+ data.actionName +'konnte nicht angeordnet werden:\n ' + data.actionDeclinationReason)
+					console.log('Patient Websocket ToDo: handle action-declination event ', data)
+					break
+				case 'action-result':
+					console.log('Patient Websocket ToDo: handle action-result event ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -198,4 +211,17 @@ export const serverMockEvents = [
 		data: '{"messageType":"information","patientInjury":"Fractured limb","patientHistory":"No known allergies",' +
 			'"patientPersonalDetails":"John Doe, Male, 30 years old","patientBiometrics":"Height: 180cm, Weight: 75kg"}'
 	},
+	{
+		id: 'action-confirmation',
+		data: '{"messageType":"action-confirmation","actionName":"Stabile Seitenlage","actionId":"123"}'
+	},
+	{
+		id: 'action-declination',
+		data: '{"messageType":"action-declination","actionName":"Stabile Seitenlage","actionDeclinationReason":"Es fehlen die nötigen Ressourcen."}'
+	},
+	{
+		id: 'action-result',
+		data: '{"messageType":"action-result","actionName":"Blutprobe untersuchen","actionId":"125",'+
+			'"actionResult":"Der Patient hat eine Blutgruppe von 0+."}'
+	}
 ]
