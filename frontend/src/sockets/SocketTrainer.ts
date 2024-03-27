@@ -4,6 +4,7 @@ import {useExerciseStore} from "@/stores/Exercise"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 import { useAvailablesStore } from "@/stores/Availables"
+import { useLogStore } from "@/stores/Log"
 
 class SocketTrainer {
 	private readonly url: string
@@ -70,7 +71,8 @@ class SocketTrainer {
 					moduleTrainerSetRightScreen(Screens.JOIN_EXERCISE)
 					break
 				case 'log-update':
-					console.log('Trainer Websocket ToDo: handle log-update event ', data)
+					useLogStore().addLogEntries(data.logEntries as LogEntry[])
+					console.log('Socket Log ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten: ' + data.messageType)
@@ -253,12 +255,12 @@ export const serverMockEvents = [
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
 	{
 		id: 'log-update',
-		data: '{"messageType":"log-update","logEntry":[' +
+		data: '{"messageType":"log-update","logEntries":[' +
 			'{"logMessage":"Patient admitted","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
-			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456},' +
+			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456,"materialId":"123"},' +
 			'{"logMessage":"Treatment started","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 46, 0) +
-			',"areaName":"Operating Theater","patientId":123,"personnelId":456},' +
+			',"areaName":"Operating Theater","patientId":123,"personnelId":456,"materialId":"123"},' +
 			'{"logMessage":"Patient stabilized","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
-			',"areaName":"ICU","patientId":123,"personnelId":456}]}'
+			',"areaName":"ICU","patientId":123,"personnelId":456,"materialId":"123"}]}'
 	}
 ]
