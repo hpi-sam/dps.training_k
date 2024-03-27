@@ -58,6 +58,10 @@ class SocketPatient {
 					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
 					patientStore.initializePatientFromAvailablePatients()
 					break
+				case 'available-actions':
+					console.log('Socket: Available actions:', data.availableActions)
+					availablesStore.loadAvailableActions(data.availableActions as AvailableActions)
+					break
 				case 'exercise':
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
@@ -157,6 +161,18 @@ export const serverMockEvents = [
 			'{"patientCode":10,'+
 			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",'+
 			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}'+
+			']}}'
+	},
+	{
+		id: 'available-actions',
+		data: '{"messageType":"available-actions","availableActions":{"availableActions":[' +
+			'{"actionName":"Blutdruck messen","actionType":"treatment"},{"actionName":"Blutprobe untersuchen","actionType":"lab"},'+
+			'{"actionName":"Beatmungsmaske anlegen","actionType":"treatment"},' +
+			'{"actionName":"Infusion anlegen","actionType":"treatment"},{"actionName":"Blut abnehmen","actionType":"treatment"},'+
+			'{"actionName":"Medikament verabreichen","actionType":"treatment"},' +
+			'{"actionName":"Ruheposition einnehmen","actionType":"treatment"},{"actionName":"Röntgen","actionType":"lab"},'+
+			'{"actionName":"Wundversorgung","actionType":"treatment"},{"actionName":"Stabile Seitenlage","actionType":"treatment"},' +
+			'{"actionName":"Schienung anlegen","actionType":"treatment"},{"actionName":"Vitalwerte messen","actionType":"treatment"}'+
 			']}}'
 	},
 	{

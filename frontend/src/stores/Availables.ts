@@ -15,10 +15,14 @@ export const useAvailablesStore = defineStore('availables', {
 				})
 				return foundPatient
 			}
-		}
+		},
+		getActionTypes: (state) => {
+			return [...new Set(state.actions.map((action) => action.actionType))]
+		},
 	},
 	actions: {
 		loadAvailableActions(json: AvailableActions) {
+			console.log('Store: Available actions:', json.availableActions)
 			this.actions = json.availableActions
 		},
 		loadAvailablePatients(json: AvailablePatients) {
