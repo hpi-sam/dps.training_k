@@ -24,7 +24,7 @@ class ScheduledEvent(models.Model):
             method_name=method_name,
         )
         scheduled_event.save()
-        owner = Owner.create_owner(scheduled_event, patient=patient, area=area)
+        Owner.create_owner(scheduled_event, patient=patient, area=area)
 
     @classmethod
     def calculate_finish_time(cls, t_sim_delta, exercise):

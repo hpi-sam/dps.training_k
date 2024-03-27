@@ -2,21 +2,23 @@ from django.db import models
 from django.conf import settings
 from helpers.eventable import Eventable
 from helpers.transitionable import Transitionable
+from helpers.signals import UpdateSignals
 from .scheduled_event import ScheduledEvent
 from template.models.patient_state import PatientState
 
 
-class Patient(Eventable, models.Model):
+class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
     name = models.CharField(
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
     # patientCode = models.ForeignKey()  # currently called "SensenID"
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
-    stateID = models.OneToOneField(
+    # might want to add a StateInstance model and refernce that later on
+    state = models.OneToOneField(
         "template.PatientState",
         on_delete=models.SET_NULL,
         null=True,
-        default=settings.DEFAULT_STATE_ID,
+        # default=PatientState.objects.get(pk=settings.DEFAULT_STATE_ID),
     )
     # measureID = models.ManyToManyField()
     patientId = models.IntegerField(
@@ -48,6 +50,11 @@ class Patient(Eventable, models.Model):
         )
 
     def transition_state(self):
-        next_state = self.determine_next_state()
-        self.state = next_state
-        return True
+        if not self.execute_state_change():
+            return
+        self.schedule_state_transition()
+
+    def is_dead(self):
+        if self.stateID.is_dead:
+            return True
+        return False

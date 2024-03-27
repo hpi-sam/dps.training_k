@@ -22,6 +22,9 @@ class NonEventable(AbstractEventable):
 
 
 class Eventable(AbstractEventable):
+    """
+    This mixin provides the functionality of removing and scheduling all current events
+    """
 
     def remove_events(self):
         for event in self.owned_events.all():
