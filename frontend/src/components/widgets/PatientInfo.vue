@@ -16,13 +16,12 @@
 			type: String,
 			default: 'No Biometrics'
 		}
-
 	})
 </script>
 
 <template>
 	<p class="key">
-		Verletzung
+		Verletzungen
 	</p>{{ props.injury }}
 	<br>
 	<p class="key">

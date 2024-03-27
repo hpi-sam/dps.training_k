@@ -1,6 +1,7 @@
 import {connection} from "@/stores/Connection"
 import {usePatientStore} from "@/stores/Patient"
 import {useExerciseStore} from "@/stores/Exercise"
+import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 
@@ -13,6 +14,10 @@ class SocketPatient {
 	}
 
 	connect(): void {
+		const patientStore = usePatientStore()
+		const exerciseStore = useExerciseStore()
+		const availablesStore = useAvailablesStore()
+
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
 		this.socket.onopen = () => {
@@ -47,13 +52,15 @@ class SocketPatient {
 					showWarningToast(data.message || '')
 					break
 				case 'state':
-					usePatientStore().loadStatusFromJSON(data.state as State)
+					patientStore.loadStatusFromJSON(data.state as State)
+					break
+				case 'available-patients':
+					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
+					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'exercise':
-					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					usePatientStore().patientName = useExerciseStore().getPatient(usePatientStore().patientId)?.patientName || ''
-					usePatientStore().areaName = useExerciseStore().getAreaOfPatient(usePatientStore().patientId)?.areaName || ''
-					usePatientStore().triage = useExerciseStore().getPatient(usePatientStore().patientId)?.triage || '-'
+					exerciseStore.createFromJSON(data.exercise as Exercise)
+					patientStore.initializePatientFromExercise()
 					break
 				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
@@ -114,8 +121,43 @@ export const serverMockEvents = [
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: 'state',
-		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regular","circulation":"Stable",' +
-			'"consciousness":"Alert","pupils":"Reactive","psyche":"Calm","skin":"Warm"}}'
+		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
+			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
+	},
+	{
+		id: "available-patients",
+		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":['+
+			'{"patientCode":1,'+
+			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},'+
+			'{"patientCode":2,'+
+			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",'+
+			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},'+
+			'{"patientCode":3,'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},'+
+			'{"patientCode":4,'+
+			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},'+
+			'{"patientCode":5,'+
+			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},'+
+			'{"patientCode":6,'+
+			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",'+
+			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},'+
+			'{"patientCode":7,'+
+			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},'+
+			'{"patientCode":8,'+
+			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",'+
+			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},'+
+			'{"patientCode":9,'+
+			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",'+
+			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},'+
+			'{"patientCode":10,'+
+			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",'+
+			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}'+
+			']}}'
 	},
 	{
 		id: 'exercise',
