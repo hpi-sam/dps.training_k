@@ -7,6 +7,18 @@
 <template>
 	<table>
 		<tr>
+			<td colspan="2">
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<h1>
+					Status
+				</h1>
+			</td>
+		</tr>
+		<tr>
 			<td>
 				<p class="key">
 					Airway
@@ -43,6 +55,18 @@
 			</td>
 		</tr>
 		<tr>
+			<td colspan="2">
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<h1>
+					Info
+				</h1>
+			</td>
+		</tr>
+		<tr>
 			<td>
 				<p class="key">
 					Verletzungen
@@ -66,19 +90,24 @@
 				</p>{{ patientStore.biometrics }}
 			</td>
 		</tr>
+		<tr>
+			<td colspan="2">
+				<hr>
+			</td>
+		</tr>
 	</table>
 </template>
 
 <style scoped>
 	table {
 		border-collapse: collapse;
-		width: 100%;
+		width: 90%;
+		max-width: calc(100% - 60px);
 		table-layout: fixed;
-		margin: 90px 30px 30px 30px;
+		margin: 90px auto 30px auto;
 	}
 
 	td {
-		width: 50%;
 		padding: 10px;
 		vertical-align: top;
 		overflow: hidden;
@@ -86,5 +115,9 @@
 
 	.key {
 		font-weight: bold;
+	}
+
+	h1 {
+		text-align: center;
 	}
 </style>
