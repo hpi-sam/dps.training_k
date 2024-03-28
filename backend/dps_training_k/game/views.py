@@ -9,10 +9,10 @@ from game.models import User
 class PatientAccessView(APIView):
     def post(self, request, *args, **kwargs):
         user, created = User.objects.get_or_create(
-            username="123"
+            username="123456"
         )  # Ensure the username is a string
         if created:
-            user.set_password("123")  # Properly hash the password
+            user.set_password("2")  # Properly hash the password
             user.save()
 
         if not (request.data.get("exerciseId") and request.data.get("patientId")):
