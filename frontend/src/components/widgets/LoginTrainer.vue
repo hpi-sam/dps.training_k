@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import {ref} from 'vue'
 	import {useTrainerStore} from '@/stores/Trainer'
-	import {Modules, setModule, showErrorToast} from "@/App.vue"
+	import {Modules, setModule} from "@/App.vue"
 	import {svg} from "@/assets/Svg"
 
 	const usernameInput = ref("")
@@ -11,12 +11,16 @@
 		const trainerStore = useTrainerStore()
 		trainerStore.username = usernameInput.value
 
-		const requestBody = {
+		setModule(Modules.TRAINER)
+		return
+
+		// Will be used when trainer login is implemented in the backend
+		/*const requestBody = {
 			"username": usernameInput.value,
 			"password": passwordInput.value,
 		}
 
-		fetch('https://localhost:8000/login/', {
+		fetch('https://localhost:8000/trainer/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -41,7 +45,7 @@
 			.then(data => {
 				trainerStore.token = data.token
 				setModule(Modules.TRAINER)
-			})
+			})*/
 	}
 </script>
 
