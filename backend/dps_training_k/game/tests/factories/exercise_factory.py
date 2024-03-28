@@ -16,8 +16,8 @@ class SavedExerciseFactory(factory.django.DjangoModelFactory):
 class ExerciseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Exercise
-        django_get_or_create = ("config", "invitation_code", "state")
+        django_get_or_create = ("config", "exerciseId", "state")
 
     config = factory.SubFactory(SavedExerciseFactory)
-    invitation_code = "a" * settings.INVITATION_LOGIC.code_length
+    exerciseId = "a" * settings.INVITATION_LOGIC.code_length
     state = Exercise.ExerciseStateTypes.CONFIGURATION

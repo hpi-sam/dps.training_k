@@ -1,5 +1,6 @@
 from django.test import TransactionTestCase
 from game.models import User
+from .factories import PatientFactory
 from rest_framework.authtoken.models import Token
 from configuration.asgi import application
 from channels.testing import WebsocketCommunicator
@@ -9,8 +10,9 @@ class PatientWebSocketTest(TransactionTestCase):
     def setUp(self):
         super().setUp()
         # Create a user and token for testing
-        self.user = User.objects.create_user(username="testpatient123", password="test")
+        self.user = User.objects.create_user(username="123456", password="test")
         self.token, _ = Token.objects.get_or_create(user=self.user)
+        self.patient = PatientFactory()
 
     async def test_authenticated_websocket_connection(self):
         # Connect to the WebSocket

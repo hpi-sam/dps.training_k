@@ -34,6 +34,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.exercise_code = ""
+        self.exercise = None
         self.REQUESTS_MAP = {}
         self.user = None
 
@@ -147,19 +148,18 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             token = Token.objects.get(key=token)
             self.user = token.user
             self.user.set_channel_name(self.channel_name)
-            return True
+            return True, self.user.username
         except Token.DoesNotExist:
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
-            return False
+            return False, None
 
     def _send_exercise(self):
-        exercise = Exercise.createExercise()
         patient = Patient.objects.create(
-            name="Max Mustermann", exercise=exercise, patientId=123456
+            name="Max Mustermann", exercise=self.exercise, patientId=123456
         )
         exercise_object = {
             "exercise": {
-                "exerciseId": exercise.exerciseId,
+                "exerciseId": self.exercise.exerciseId,
                 "areas": [
                     {
                         "areaName": "X",
@@ -167,7 +167,8 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
                             {
                                 "patientId": patient.patientId,
                                 "patientName": patient.name,
-                                "patientCode": 0
+                                "patientCode": 0,
+                                "triage": patient.triage
                             }
                         ],
                         "personnel": [
