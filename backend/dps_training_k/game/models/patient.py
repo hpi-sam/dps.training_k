@@ -8,6 +8,17 @@ from template.models.patient_state import PatientState
 
 
 class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
+    class Triage(models.TextChoices):
+        UNDEFINED = "-", "undefined"
+        RED = "R", "red"
+        YELLOW = "Y", "yellow"
+        GREEN = "G", "green"
+        Airway = "A", "airway"
+        BREATHING = "B", "breathing"
+        CIRCULATION = "C", "circulation"
+        DISABILITY = "D", "disability"
+        EXPOSURE = "E", "exposure"
+
     name = models.CharField(
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
@@ -23,6 +34,10 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
     # measureID = models.ManyToManyField()
     patientId = models.IntegerField(
         help_text="patientId used to log into patient - therefore part of authentication"
+    )
+    triage = models.CharField(
+        choices=Triage.choices,
+        default=Triage.UNDEFINED,
     )
 
     def __str__(self):

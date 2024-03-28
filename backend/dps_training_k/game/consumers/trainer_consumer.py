@@ -1,4 +1,5 @@
 from .abstract_consumer import AbstractConsumer
+from game.models import Exercise
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -59,6 +60,7 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_create_exercise(self):
+        self.exercise = Exercise.createExercise()
         self._send_exercise()
 
     def handle_test_passthrough(self):

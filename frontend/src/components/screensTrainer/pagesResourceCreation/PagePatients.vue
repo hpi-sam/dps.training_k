@@ -47,24 +47,24 @@
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
 	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
-	<div id="list">
+	<div class="list">
 		<div
 			v-for="patient in currentAreaData?.patients"
 			:key="patient.patientName"
-			class="listitem"
+			class="listItem"
 		>
-			<button class="patientButton" @click="editPatient(patient.patientId)">
-				<div class="patientId">
+			<button class="listItemButton" @click="editPatient(patient.patientId)">
+				<div class="listItemId">
 					{{ patient.patientId.toString().padStart(3, '0') }}
 				</div>
 				<TriageForListItems :patient-code="patient.patientCode" />
-				<div class="patientName">
+				<div class="listItemName">
 					{{ patient.patientName }}
 				</div>
 			</button>
 			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button v-if="currentAreaData" id="addPatientButton" @click="addPatient()">
+		<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
 			Patient hinzufügen
 		</button>
 	</div>
