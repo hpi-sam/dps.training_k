@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from helpers.eventable import Eventable
+from game import channel_notifications
 from helpers.transitionable import Transitionable
 from helpers.signals import UpdateSignals
 from .scheduled_event import ScheduledEvent
@@ -25,7 +26,7 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
     # patientCode = models.ForeignKey()  # currently called "SensenID"
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     # might want to add a StateInstance model and refernce that later on
-    state = models.OneToOneField(
+    state = models.ForeignKey(
         "template.PatientState",
         on_delete=models.SET_NULL,
         null=True,
@@ -42,6 +43,22 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
+
+    def add_action(self, action):
+        AppliedAction.objects.create(patient=self, data=action)
+
+    def start_action(self, action):
+
+        AppliedAction.objects.create(patient=self, data=action)
+        ScheduledEvent.create_event(
+            self.exercise,
+            10,
+            "action_finished",
+            patient=self,
+        )
+
+    def action_finished(self):
+        self.applied_action.filter(state=AppliedAction.State.PLANNED).order_by()
 
     # ToDo remove when actual method is implemented
     def schedule_temporary_event(self):

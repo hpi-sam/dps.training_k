@@ -17,14 +17,22 @@ class ScheduledEvent(models.Model):
     method_name = models.CharField(max_length=100)
 
     @classmethod
-    def create_event(cls, exercise, t_sim_delta, method_name, patient=None, area=None):
+    def create_event(
+        cls, exercise, t_sim_delta, method_name, patient=None, area=None, action=None
+    ):
         scheduled_event = ScheduledEvent(
             exercise=exercise,
             end_date=cls.calculate_finish_time(t_sim_delta, exercise),
             method_name=method_name,
         )
         scheduled_event.save()
-        Owner.create_owner(scheduled_event, patient=patient, area=area)
+        Owner.create_owner(
+            scheduled_event,
+            exercise=exercise,
+            patient=patient,
+            area=area,
+            action=action,
+        )
 
     @classmethod
     def calculate_finish_time(cls, t_sim_delta, exercise):
@@ -43,6 +51,9 @@ class ScheduledEvent(models.Model):
 
 
 class Owner(OneFieldNotNull, models.Model):
+    """Wrapper model to avoid using GenericForeignKeys as recommended here:
+    https://lukeplant.me.uk/blog/posts/avoid-django-genericforeignkey/"""
+
     event = models.OneToOneField(
         "ScheduledEvent",
         on_delete=models.CASCADE,
@@ -57,6 +68,13 @@ class Owner(OneFieldNotNull, models.Model):
     )
     exercise_owner = models.ForeignKey(
         "Exercise",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="owned_events",
+    )
+    applied_action_owner = models.ForeignKey(
+        "AppliedAction",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
