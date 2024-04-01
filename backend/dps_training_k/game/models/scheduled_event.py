@@ -103,5 +103,7 @@ class Owner(OneFieldNotNull, models.Model):
             return self.exercise_owner
         # elif self.area_owner:
         #    return self.area_owner
+        elif self.applied_action_owner:
+            return self.applied_action_owner
         else:
             return None
