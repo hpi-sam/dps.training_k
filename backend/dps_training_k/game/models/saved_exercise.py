@@ -11,8 +11,8 @@ class SavedExercise(models.Model):
     time_speed_up = models.FloatField(default=1.0)
 
     @classmethod
-    def save_exercise(cls, serialized_exercise, name):
-        return cls.objects.create(serialized_exercise, name)
+    def save_exercise(cls, serialized_exercise, name, time_speed_up=1.0):
+        return cls.objects.create(serialized_exercise, name, time_speed_up)
 
 
 class SavedExerciseFactory:

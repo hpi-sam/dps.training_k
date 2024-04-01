@@ -3,6 +3,12 @@ from game.models import Exercise
 
 
 class TrainerConsumer(AbstractConsumer):
+    """
+    This class is responsible for DECODING messages from the frontend(user==trainer) into method calls and
+    ENCODING events from the backend into JSONs to send to the frontend. When encoding events this also implies
+    deciding what part of the event should be sent to the frontend(filtering).
+    """
+
     class TrainerIncomingMessageTypes:
         EXAMPLE = "example"
         EXERCISE_CREATE = "trainer-exercise-create"

@@ -4,15 +4,23 @@ from game.models import Patient
 
 
 class PatientConsumer(AbstractConsumer):
+    """
+    This class is responsible for DECODING messages from the frontend(user==patient) into method calls and
+    ENCODING events from the backend into JSONs to send to the frontend. When encoding events this also implies
+    deciding what part of the event should be sent to the frontend(filtering).
+    """
+
     class PatientIncomingMessageTypes:
         EXAMPLE = "example"
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
+        ACTION_ADD = "action-add"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
         EXERCISE = "exercise"
         TEST_PASSTHROUGH = "test-passthrough"
+        ACTION_CONFIRMATION = "action-confirmation"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,6 +39,7 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_triage,
                 "triage",
             ),
+            self.PatientIncomingMessageTypes.ACTION_ADD: (self.handle_action_add,),
         }
 
     def connect(self):
@@ -61,3 +70,10 @@ class PatientConsumer(AbstractConsumer):
     def handle_triage(self, triage):
         self.patient.triage = triage
         self._send_exercise()
+
+    def action_confirmation(self, event):
+        action = event["action"]
+        self.send_event(
+            self.PatientOutgoingMessageTypes.RESPONSE,
+            {"actionName": action.name, "actionId": action.id},
+        )
