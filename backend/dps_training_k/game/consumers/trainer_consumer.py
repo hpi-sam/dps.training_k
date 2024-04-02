@@ -1,5 +1,7 @@
 from .abstract_consumer import AbstractConsumer
 from game.models import Exercise
+from game.models import Area
+
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -17,6 +19,8 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_STOP = "exercise-stop"
         EXERCISE_PAUSE = "exercise-pause"
         EXERCISE_RESUME = "exercise-resume"
+        AREA_ADD = "area-add"
+        AREA_DELETE = "area-delete"
 
     class TrainerOutgoingMessageTypes:
         RESPONSE = "response"
@@ -26,10 +30,13 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_STOPED = "exercise-stop"
         EXERCISE_PAUSED = "exercise-pause"
         EXERCISE_RESUMED = "exercise-resume"
+        AREA_ADD = "area-add"
+        AREA_DELETE = "area-delete"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.exercise_code = None
+        self.exercise = None
         self.REQUESTS_MAP = {
             self.TrainerIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -53,6 +60,11 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.EXERCISE_RESUME: (
                 self.handle_resume_exercise,
             ),
+            self.TrainerIncomingMessageTypes.AREA_ADD: (self.handle_add_area,),
+            self.TrainerIncomingMessageTypes.AREA_DELETE: (
+                self.handle_delete_area,
+                "areaName",
+            ),
         }
 
     def connect(self):
@@ -67,7 +79,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_create_exercise(self):
         self.exercise = Exercise.createExercise()
-        self._send_exercise()
+        self._send_exercise(self.exercise)
 
     def handle_test_passthrough(self):
         self.send_event(
@@ -96,3 +108,11 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_resume_exercise(self):
         pass
+
+    def handle_add_area(self):
+        Area.create_area(name="Bereich", exercise=self.exercise, isPaused=False)
+        # TODO: send update to all subscribers
+
+    def handle_delete_area(self, areaName):
+        Area.objects.filter(name=areaName).delete()
+        # TODO: send update to all subscribers

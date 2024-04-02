@@ -153,13 +153,13 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
             return False, None
 
-    def _send_exercise(self):
+    def _send_exercise(self, exercise):
         patient = Patient.objects.create(
             name="Max Mustermann", exercise=self.exercise, patientId=123456
         )
         exercise_object = {
             "exercise": {
-                "exerciseId": self.exercise.exerciseId,
+                "exerciseId": exercise.exerciseId,
                 "areas": [
                     {
                         "areaName": "X",
