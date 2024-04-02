@@ -21,6 +21,8 @@ class PatientConsumer(AbstractConsumer):
         EXERCISE = "exercise"
         TEST_PASSTHROUGH = "test-passthrough"
         ACTION_CONFIRMATION = "action-confirmation"
+        ACTION_DECLINATION = "action-declination"
+        ACTION_RESULT = "action-result"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -71,9 +73,20 @@ class PatientConsumer(AbstractConsumer):
         self.patient.triage = triage
         self._send_exercise()
 
+    # ToDo: maybe deliver less stuff to the consumer
     def action_confirmation(self, event):
         action = event["action"]
         self.send_event(
-            self.PatientOutgoingMessageTypes.RESPONSE,
+            self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             {"actionName": action.name, "actionId": action.id},
+        )
+
+    def action_declination(self, event):
+        action = event["action"]
+        self.send_event(
+            self.PatientOutgoingMessageTypes.RESPONSE,
+            {
+                "actionName": action.name,
+                "actionDeclinationReason": action.reason_of_declination,
+            },
         )

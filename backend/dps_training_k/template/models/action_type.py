@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 
 
-class Action(models.Model):
+class ActionType(models.Model):
     name = models.CharField(max_length=100)
     duration = models.IntegerField(default=10)
     condition = models.JSONField(null=True, blank=True, default=None)
@@ -18,3 +18,6 @@ class Action(models.Model):
             else:
                 return True, None
         return True, None
+
+    def result(self, patient, area):
+        return None

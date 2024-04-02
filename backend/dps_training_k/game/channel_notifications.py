@@ -41,30 +41,41 @@ def notify_patient_phase_change(patient):
 
 
 # ToDO: Update for actual Actions
-@receiver(post_save, action=AppliedAction)
-def chose_notification_method(action):
-    if action.state == AppliedAction.State.DECLINED:
-        notify_action_declined(action)
-    if action.state == AppliedAction.State.PLANNED:
-        notify_action_confirmed(action)
+@receiver(post_save, applied_action=AppliedAction)
+def chose_notification_method(applied_action):
+    if applied_action.state == AppliedAction.State.DECLINED:
+        notify_action_declined(applied_action)
+    if applied_action.state == AppliedAction.State.PLANNED:
+        notify_action_confirmed(applied_action)
+    if applied_action.state == AppliedAction.State.FINISHED:
+        applied_action.patient.action_finished()
+        notify_action_result(applied_action)
 
 
-def notify_action_confirmed(action):
-    if action.state == AppliedAction.State.DECLINED:
-        return
-    channel = action.patient.group_name
+def notify_action_confirmed(applied_action):
+    channel = applied_action.patient.group_name
     event = {
         "messageType": ChannelEventTypes.ACTION_CONFIRMATION,
-        "appliedAction": action.id,
+        "actionName": applied_action.name,
+        "actionId": applied_action.id,
     }
     _notify_group(channel, event)
 
 
-def notify_action_declined(action):
-    channel = action.patient.group_name
+def notify_action_declined(applied_action):
+    channel = applied_action.patient.group_name
     event = {
         "messageType": ChannelEventTypes.ACTION_DECLINATION,
-        "appliedAction": action.id,
-        "actionDeclinationReason": action.reason_of_declination,
+        "actionName": applied_action.name,
+        "actionDeclinationReason": applied_action.reason_of_declination,
     }
     _notify_group(channel, event)
+
+
+def notify_action_result(applied_action):
+    channel = applied_action
+    event = {
+        "messageType": ChannelEventTypes.ACTION_RESULT,
+        "actionId": applied_action.id,
+        "actionResult": applied_action.result,
+    }

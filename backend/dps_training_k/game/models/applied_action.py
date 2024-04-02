@@ -15,11 +15,12 @@ class AppliedAction(models.Model):
         CANCELED = "CA", "canceled"
 
     patient = models.ForeignKey("Patient", on_delete=models.CASCADE)
-    action_type = models.ForeignKey("template.Action", on_delete=models.CASCADE)
+    action_type = models.ForeignKey("template.ActionType", on_delete=models.CASCADE)
     state = models.CharField(choices=State.choices, default=State.PLANNED, max_length=2)
     reason_of_declination = models.CharField(
         max_length=100, null=True, blank=True, default=None
     )
+    result = models.JSONField(null=True, blank=True, default=None)
 
     @property
     def name(self):
@@ -59,4 +60,5 @@ class AppliedAction(models.Model):
 
     def application_finished(self):
         self.state = AppliedAction.State.FINISHED
+        self.result = self.action_type.result(self.patient)
         self.save()

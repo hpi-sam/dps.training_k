@@ -1,10 +1,10 @@
 from django.db import models
 from django.conf import settings
 from helpers.eventable import Eventable
-from game import channel_notifications
 from helpers.transitionable import Transitionable
 from helpers.signals import UpdateSignals
 from .scheduled_event import ScheduledEvent
+from .applied_action import AppliedAction
 from template.models.patient_state import PatientState
 
 
@@ -45,17 +45,7 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
 
     def add_action(self, action):
-        AppliedAction.objects.create(patient=self, data=action)
-
-    def start_action(self, action):
-
-        AppliedAction.objects.create(patient=self, data=action)
-        ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "action_finished",
-            patient=self,
-        )
+        AppliedAction.try_application(self, action)
 
     def action_finished(self):
         self.applied_action.filter(state=AppliedAction.State.PLANNED).order_by()
