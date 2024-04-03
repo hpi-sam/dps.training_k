@@ -24,12 +24,17 @@ class Patient(Eventable, Transitionable, models.Model):
     )  # technically patientData but kept here for simplicity for now
     # patientCode = models.ForeignKey()  # currently called "SensenID"
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
-    area = models.ForeignKey("Area", on_delete=models.CASCADE)
+    area = models.ForeignKey(
+        "Area",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     patient_state = models.ForeignKey(
         PatientState,
         on_delete=models.SET_NULL,
-        null=True,
-        # default=PatientState.objects.get(pk=settings.DEFAULT_STATE_ID),
+        null=True,  # for debugging purposes
+        default=None,  # for debugging purposes
     )
     patientId = models.IntegerField(
         help_text="patientId used to log into patient - therefore part of authentication"
