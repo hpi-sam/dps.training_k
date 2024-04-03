@@ -10,9 +10,6 @@ Sending events is done by the celery worker.
 
 
 class ChannelEventTypes:
-    ACTION_CONFIRMATION_EVENT = "action-confirmation-event"
-    ACTION_DECLINATION_EVENT = "action-declination-event"
-    ACTION_RESULT_EVENT = "action-result-event"
     STATE_CHANGE_EVENT = "state-change-event"
 
 
@@ -31,48 +28,6 @@ def notify_patient_sate_change(patient):
         "patientId": patient.id,
     }
     _notify_group(channel, event)
-
-
-def chose_applied_action_notification_method(applied_action):
-    if applied_action.state == gm.AppliedAction.State.DECLINED:
-        notify_action_declined(applied_action)
-    if applied_action.state == gm.AppliedAction.State.PLANNED:
-        notify_action_confirmed(applied_action)
-    if applied_action.state == gm.AppliedAction.State.FINISHED:
-        applied_action.patient.action_finished()
-        notify_action_result(applied_action)
-
-
-def notify_action_confirmed(applied_action):
-    channel = applied_action.patient.group_name
-    event = {
-        "type": ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
-        "actionId": applied_action.id,
-    }
-    _notify_group(channel, event)
-
-
-def notify_action_declined(applied_action):
-    channel = applied_action.patient.group_name
-    event = {
-        "type": ChannelEventTypes.ACTION_DECLINATION_EVENT,
-        "actionId": applied_action.id,
-    }
-    _notify_group(channel, event)
-
-
-def notify_action_result(applied_action):
-    channel = applied_action.patient.group_name
-    event = {
-        "type": ChannelEventTypes.ACTION_RESULT_EVENT,
-        "actionId": applied_action.id,
-    }
-    _notify_group(channel, event)
-
-
-# decode events without context knowledge outside this package
-def get_applied_action_instance(event):
-    return gm.AppliedAction.objects.get(pk=event["actionId"])
 
 
 def get_patient_instance(event):

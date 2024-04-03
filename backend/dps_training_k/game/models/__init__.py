@@ -4,4 +4,3 @@ from .patient import Patient
 from .user import User
 from .scheduled_event import ScheduledEvent
 from .area import Area
-from .applied_action import AppliedAction

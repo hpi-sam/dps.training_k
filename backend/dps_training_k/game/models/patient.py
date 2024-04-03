@@ -3,7 +3,6 @@ from django.conf import settings
 from helpers.eventable import Eventable
 from helpers.transitionable import Transitionable
 from .scheduled_event import ScheduledEvent
-from .applied_action import AppliedAction
 from template.models.patient_state import PatientState
 
 
@@ -46,13 +45,6 @@ class Patient(Eventable, Transitionable, models.Model):
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
-
-    def add_action(self, action):
-        AppliedAction.try_application(self, action)
-
-    def action_finished(self):
-        # start next action
-        pass
 
     # ToDo: remove after actual method is implemented
     def schedule_temporary_event(self):

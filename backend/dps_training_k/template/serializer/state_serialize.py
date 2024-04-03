@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from game.models import PatientState
+from template.models import PatientState
 
 
 class StateSerializer(serializers.Serializer):

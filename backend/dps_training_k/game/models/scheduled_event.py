@@ -17,9 +17,7 @@ class ScheduledEvent(models.Model):
     method_name = models.CharField(max_length=100)
 
     @classmethod
-    def create_event(
-        cls, exercise, t_sim_delta, method_name, patient=None, area=None, action=None
-    ):
+    def create_event(cls, exercise, t_sim_delta, method_name, patient=None, area=None):
         scheduled_event = ScheduledEvent(
             exercise=exercise,
             end_date=cls.calculate_finish_time(t_sim_delta, exercise),
@@ -31,7 +29,6 @@ class ScheduledEvent(models.Model):
             exercise=exercise,
             patient=patient,
             area=area,
-            action=action,
         )
 
     @classmethod
@@ -73,15 +70,14 @@ class Owner(OneFieldNotNull, models.Model):
         blank=True,
         related_name="owned_events",
     )
-    applied_action_owner = models.ForeignKey(
-        "AppliedAction",
+
+    area_owner = models.ForeignKey(
+        "Area",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name="owned_events",
     )
-
-    # area_owner = models.ForeignKey("Area", on_delete=models.CASCADE)
 
     @classmethod
     def create_owner(cls, event, patient=None, exercise=None, area=None):
@@ -89,7 +85,7 @@ class Owner(OneFieldNotNull, models.Model):
         if patient:
             return cls.objects.create(event=event, patient_owner=patient)
         elif area:
-            # return cls.objects.create(event=event, area_owner=area)
+            return cls.objects.create(event=event, area_owner=area)
             pass
         elif exercise:
             return cls.objects.create(event=event, exercise_owner=exercise)
@@ -101,9 +97,7 @@ class Owner(OneFieldNotNull, models.Model):
             return self.patient_owner
         elif self.exercise_owner:
             return self.exercise_owner
-        # elif self.area_owner:
-        #    return self.area_owner
-        elif self.applied_action_owner:
-            return self.applied_action_owner
+        elif self.area_owner:
+            return self.area_owner
         else:
             return None
