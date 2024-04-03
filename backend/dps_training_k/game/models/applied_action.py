@@ -1,5 +1,7 @@
+from typing import Iterable
 from django.db import models
 from .scheduled_event import ScheduledEvent
+from game import channel_notifications
 
 
 class AppliedAction(models.Model):
@@ -36,7 +38,7 @@ class AppliedAction(models.Model):
 
     @classmethod
     def try_application(cls, patient, action_type):
-        is_applicable, context = action_type.application_status(patient, area)
+        is_applicable, context = action_type.application_status(patient, patient.area)
         if is_applicable:
             obj = cls.objects.create(patient=patient, action_type=action_type)
             obj.start_application()
@@ -62,3 +64,7 @@ class AppliedAction(models.Model):
         self.state = AppliedAction.State.FINISHED
         self.result = self.action_type.result(self.patient)
         self.save()
+
+    def save(self):
+        super().save()
+        channel_notifications.chose_applied_action_notification_method(self)
