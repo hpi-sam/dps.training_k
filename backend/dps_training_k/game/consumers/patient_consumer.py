@@ -1,6 +1,7 @@
 from .abstract_consumer import AbstractConsumer
 from urllib.parse import parse_qs
 from game.models import Patient
+from game import channel_notifications
 
 
 class PatientConsumer(AbstractConsumer):
@@ -73,20 +74,29 @@ class PatientConsumer(AbstractConsumer):
         self.patient.triage = triage
         self._send_exercise()
 
-    # ToDo: maybe deliver less stuff to the consumer
-    def action_confirmation(self, event):
-        action = event["action"]
+    def action_confirmation_event(self, event):
+        action = channel_notifications.get_applied_action_instance(event)
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             {"actionName": action.name, "actionId": action.id},
         )
 
-    def action_declination(self, event):
-        action = event["action"]
+    def action_declination_event(self, event):
+        action = channel_notifications.get_applied_action_instance(event)
         self.send_event(
-            self.PatientOutgoingMessageTypes.RESPONSE,
+            self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
             {
                 "actionName": action.name,
                 "actionDeclinationReason": action.reason_of_declination,
+            },
+        )
+
+    def action_result_event(self, event):
+        action = channel_notifications.get_applied_action_instance(event)
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_RESULT,
+            {
+                "actionId": action.name,
+                "actionResult": action.result,
             },
         )

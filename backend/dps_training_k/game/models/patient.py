@@ -2,13 +2,12 @@ from django.db import models
 from django.conf import settings
 from helpers.eventable import Eventable
 from helpers.transitionable import Transitionable
-from helpers.signals import UpdateSignals
 from .scheduled_event import ScheduledEvent
 from .applied_action import AppliedAction
 from template.models.patient_state import PatientState
 
 
-class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
+class Patient(Eventable, Transitionable, models.Model):
     class Triage(models.TextChoices):
         UNDEFINED = "-", "undefined"
         RED = "R", "red"
@@ -25,14 +24,13 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
     )  # technically patientData but kept here for simplicity for now
     # patientCode = models.ForeignKey()  # currently called "SensenID"
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
-    # might want to add a StateInstance model and refernce that later on
-    state = models.ForeignKey(
-        "template.PatientState",
+    area = models.ForeignKey("Area", on_delete=models.CASCADE)
+    patient_state = models.ForeignKey(
+        PatientState,
         on_delete=models.SET_NULL,
         null=True,
         # default=PatientState.objects.get(pk=settings.DEFAULT_STATE_ID),
     )
-    # measureID = models.ManyToManyField()
     patientId = models.IntegerField(
         help_text="patientId used to log into patient - therefore part of authentication"
     )
@@ -48,9 +46,10 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
         AppliedAction.try_application(self, action)
 
     def action_finished(self):
-        self.applied_action.filter(state=AppliedAction.State.PLANNED).order_by()
+        # start next action
+        pass
 
-    # ToDo remove when actual method is implemented
+    # ToDo: remove after actual method is implemented
     def schedule_temporary_event(self):
         ScheduledEvent.create_event(
             self.exercise,
@@ -77,6 +76,6 @@ class Patient(Eventable, Transitionable, UpdateSignals, models.Model):
         self.schedule_state_transition()
 
     def is_dead(self):
-        if self.stateID.is_dead:
+        if self.state.is_dead:
             return True
         return False
