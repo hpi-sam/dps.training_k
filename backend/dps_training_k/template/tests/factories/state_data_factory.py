@@ -2,7 +2,9 @@ from .JSON_factory import JSONFactory
 
 
 class StateDataFactory(JSONFactory):
-    def __init__(self):
+    def __new__(cls):
+        """Needed to copy interface of factory"""
+
         state_data_dict = {
             "airway": None,
             "breathing": None,
@@ -12,4 +14,4 @@ class StateDataFactory(JSONFactory):
             "psyche": None,
             "skin": None,
         }
-        super().__init__(state_data_dict)
+        return super().__new__(cls, state_data_dict)

@@ -10,7 +10,7 @@ class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("transition", "data", "state_phase", "is_dead")
 
     transition = factory.SubFactory(StateTransitionFactory)
-    data = factory.LazyFunction(lambda: StateDataFactory().generate())
+    data = factory.LazyFunction(lambda: StateDataFactory())
     state_phase = 1
     is_dead = False
 
@@ -21,7 +21,7 @@ class PatientStateFactory:
 
     def __new__(cls, depth=1, transition_count=1):
         """Needed to copy interface of factory_boy factories"""
-        instance = super(PatientStateFactory, cls).__new__(cls)
+        instance = super().__new__(cls)
         instance.__init__(depth, transition_count)
         return instance.generate()
 
@@ -70,6 +70,3 @@ class PatientStateFactory:
 
     def _generate_Patient_States(self, transition_count):
         return [EmptyPatientStateFactory() for _ in range(transition_count)]
-
-
-# ToDo: check if its possible to return from init
