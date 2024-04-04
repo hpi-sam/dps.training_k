@@ -63,14 +63,9 @@ class Patient(Eventable, Transitionable, models.Model):
         ScheduledEvent.create_event(
             self.exercise,
             10,
-            "transition_state",
+            "execute_state_change",
             patient=self,
         )
-
-    def transition_state(self):
-        if not self.execute_state_change():
-            return
-        self.schedule_state_transition()
 
     def is_dead(self):
         if self.state.is_dead:

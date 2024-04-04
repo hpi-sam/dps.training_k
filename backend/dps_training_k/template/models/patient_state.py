@@ -16,7 +16,7 @@ class PatientState(models.Model):
     is_dead = models.BooleanField(default=False)
 
     def is_final(self):
-        return self.transition.resulting_state is None
+        return self.transition.is_final()
 
     # class Meta:
     #    unique_together = (
