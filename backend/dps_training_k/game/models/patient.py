@@ -6,7 +6,7 @@ from .scheduled_event import ScheduledEvent
 from template.models.patient_state import PatientState
 
 
-class Patient(Eventable, Transitionable, models.Model):
+class Patient(Transitionable, Eventable, models.Model):
     class Triage(models.TextChoices):
         UNDEFINED = "-", "undefined"
         RED = "R", "red"
@@ -58,14 +58,6 @@ class Patient(Eventable, Transitionable, models.Model):
     def temporary_event_test(self):
         print("temporary_event_test called")
         return True
-
-    def schedule_state_transition(self):
-        ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "execute_state_change",
-            patient=self,
-        )
 
     def is_dead(self):
         if self.state.is_dead:
