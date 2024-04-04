@@ -15,6 +15,9 @@ class PatientState(models.Model):
     state_phase = models.IntegerField()
     is_dead = models.BooleanField(default=False)
 
+    def is_final(self):
+        return self.transition.resulting_state is None
+
     # class Meta:
     #    unique_together = (
     #        "stateID",

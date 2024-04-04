@@ -8,19 +8,14 @@ class Transitionable:
         if self.is_dead():
             return False
         # ToDo: Add actual logic, remove stub
-        next_state_id = self.determine_next_state(self.state.id)
-        if not next_state_id:
+        future_state = self.stub_determine_next_state(self.state.id)
+        if not future_state:
             return False
-        self.state = self.states.get(pk=next_state_id)
+        self.state = future_state
         return True
 
     def stub_determine_next_state(self, current_state):
-        while not self.states.get(pk=current_state + 1):
-            if current_state % 10:
-                return None
-            current_state += 1
-        return current_state + 1
-
+        while not self.state.is_dead and self.state.is_final():
 
 # ToDo: Implement Stub for now
 # ToDo: Imoprt old componenent from old dps
