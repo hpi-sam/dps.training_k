@@ -1,6 +1,6 @@
 from urllib.parse import parse_qs
 
-from game.models import Patient
+from game.models import Patient, Exercise
 from .abstract_consumer import AbstractConsumer
 
 
@@ -35,12 +35,14 @@ class PatientConsumer(AbstractConsumer):
         }
 
     def connect(self):
+        # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
+        tempExercise = Exercise.createExercise()
         # example patient creation for testing purposes as long as the actual patient flow is not implemented
         Patient.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
             patientId=6,  # has to be the same as the username in views.py#post
-            exercise_id=1,  # the real object id and not the exerciseId = 123456; has to be created beforehand e.g. via the admin interface
+            exercise_id=tempExercise.id,
         )
 
         query_string = parse_qs(self.scope["query_string"].decode())
@@ -54,8 +56,10 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
 
     def disconnect(self, code):
-        # example patient creation for testing purposes as long as the actual patient flow is not implemented
+        # example patient deletion - see #connect
         Patient.objects.filter(patientId=self.patientId).delete()
+        # example trainer deletion - see #connect
+        Exercise.objects.all().delete()
 
         super().disconnect(code)
 
