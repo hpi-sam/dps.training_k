@@ -1,10 +1,11 @@
 import traceback
+from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
-from abc import ABC, abstractmethod
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
-from game.models import Exercise, Patient
+
+from game.models import Patient
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -142,7 +143,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         #     self.user.clear_channel_name()
         code = self.ClosureCodes.UNKNOWN if not code else code
         super().disconnect(code)
-    
+
     def authenticate(self, token):
         try:
             token = Token.objects.get(key=token)
@@ -155,7 +156,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def _send_exercise(self, exercise):
         patient = Patient.objects.create(
-            name="Max Mustermann", exercise=self.exercise, patientId=123456
+            name="Max Mustermann", exercise=self.exercise, patientId=2
         )
         exercise_object = {
             "exercise": {
@@ -168,25 +169,13 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
                                 "patientId": patient.patientId,
                                 "patientName": patient.name,
                                 "patientCode": 0,
-                                "triage": patient.triage
+                                "triage": patient.triage,
                             }
                         ],
-                        "personnel": [
-                            {
-                                "personnelId": 0,
-                                "personnelName": "X"
-                            }
-                        ],
-                        "material": [
-                            {
-                                "materialId": 0,
-                                "materialName": "X"
-                            }
-                        ]
+                        "personnel": [{"personnelId": 0, "personnelName": "X"}],
+                        "material": [{"materialId": 0, "materialName": "X"}],
                     }
-                ]
+                ],
             }
         }
-        self.send_event(
-            self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object
-        )
+        self.send_event(self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object)
