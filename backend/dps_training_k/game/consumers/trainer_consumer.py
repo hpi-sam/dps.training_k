@@ -129,7 +129,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_add_personnel(self, areaName):
         try:
             area = Area.objects.get(name=areaName)
-            Personnel(area=area)
+            Personnel.objects.create(area=area)
             self._send_exercise(self.exercise)
         except Area.DoesNotExist:
             print(f"No area found with the name {areaName}.")
