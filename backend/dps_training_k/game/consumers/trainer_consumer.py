@@ -1,6 +1,6 @@
-from .abstract_consumer import AbstractConsumer
-from game.models import Exercise, Personnel
 from game.models import Area
+from game.models import Exercise, Personnel
+from .abstract_consumer import AbstractConsumer
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -132,10 +132,12 @@ class TrainerConsumer(AbstractConsumer):
             Personnel.objects.create(area=area)
             self._send_exercise(self.exercise)
         except Area.DoesNotExist:
-            print(f"No area found with the name {areaName}.")
+            self.send_failure(
+                f"No area found with the name '{areaName}'",
+            )
         except Area.MultipleObjectsReturned:
-            print(
-                f"Multiple areas found with the name {areaName}. Please provide a unique area name."
+            self.send_failure(
+                f"Multiple areas found with the name '{areaName}'",
             )
 
     def handle_delete_personnel(self, personnelId):
