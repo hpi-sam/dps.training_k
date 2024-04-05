@@ -1,6 +1,6 @@
-from .abstract_consumer import AbstractConsumer
-from game.models import Exercise
 from game.models import Area
+from game.models import Exercise, Personnel
+from .abstract_consumer import AbstractConsumer
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -14,6 +14,9 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_RESUME = "exercise-resume"
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        PERSONNEL_ADD = "personnel-add"
+        PERSONNEL_DELETE = "personnel-delete"
+        PERSONNEL_UPDATE = "personnel-update"
 
     class TrainerOutgoingMessageTypes:
         RESPONSE = "response"
@@ -57,6 +60,19 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.AREA_DELETE: (
                 self.handle_delete_area,
                 "areaName",
+            ),
+            self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
+                self.handle_add_personnel,
+                "areaName",
+            ),
+            self.TrainerIncomingMessageTypes.PERSONNEL_DELETE: (
+                self.handle_delete_personnel,
+                "personnelId",
+            ),
+            self.TrainerIncomingMessageTypes.PERSONNEL_UPDATE: (
+                self.handle_update_personnel,
+                "personnelId",
+                "personnelName",
             ),
         }
 
@@ -109,3 +125,27 @@ class TrainerConsumer(AbstractConsumer):
     def handle_delete_area(self, areaName):
         Area.objects.filter(name=areaName).delete()
         # TODO: send update to all subscribers
+
+    def handle_add_personnel(self, areaName):
+        try:
+            area = Area.objects.get(name=areaName)
+            Personnel.objects.create(area=area)
+            self._send_exercise(self.exercise)
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the name '{areaName}'",
+            )
+        except Area.MultipleObjectsReturned:
+            self.send_failure(
+                f"Multiple areas found with the name '{areaName}'",
+            )
+
+    def handle_delete_personnel(self, personnelId):
+        Personnel.objects.filter(id=personnelId).delete()
+        self._send_exercise(self.exercise)
+
+    def handle_update_personnel(self, personnelId, personnelName):
+        personnel = Personnel.objects.get(id=personnelId)
+        personnel.name = personnelName
+        personnel.save()
+        self._send_exercise(self.exercise)
