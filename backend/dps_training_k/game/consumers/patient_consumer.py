@@ -57,16 +57,6 @@ class PatientConsumer(AbstractConsumer):
             patient_state=self.temp_state,
         )
 
-        # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
-        self.tempExercise = Exercise.createExercise()
-        # example patient creation for testing purposes as long as the actual patient flow is not implemented
-        Patient.objects.create(
-            name="Max Mustermann",
-            exercise=self.exercise,
-            patientId=6,  # has to be the same as the username in views.py#post
-            exercise_id=self.tempExercise.id,
-        )
-
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
         success, patientId = self.authenticate(token)
