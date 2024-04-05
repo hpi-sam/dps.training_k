@@ -36,13 +36,13 @@ class PatientConsumer(AbstractConsumer):
 
     def connect(self):
         # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
-        tempExercise = Exercise.createExercise()
+        self.tempExercise = Exercise.createExercise()
         # example patient creation for testing purposes as long as the actual patient flow is not implemented
         Patient.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
             patientId=6,  # has to be the same as the username in views.py#post
-            exercise_id=tempExercise.id,
+            exercise_id=self.tempExercise.id,
         )
 
         query_string = parse_qs(self.scope["query_string"].decode())
@@ -57,9 +57,9 @@ class PatientConsumer(AbstractConsumer):
 
     def disconnect(self, code):
         # example patient deletion - see #connect
-        Patient.objects.filter(patientId=self.patientId).delete()
+        self.patient.delete()
         # example trainer deletion - see #connect
-        Exercise.objects.all().delete()
+        self.tempExercise.delete()
 
         super().disconnect(code)
 
