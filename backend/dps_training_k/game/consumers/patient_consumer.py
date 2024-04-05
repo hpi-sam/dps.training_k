@@ -53,6 +53,16 @@ class PatientConsumer(AbstractConsumer):
             exercise_id=self.tempExercise.id,
         )
 
+        # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
+        self.tempExercise = Exercise.createExercise()
+        # example patient creation for testing purposes as long as the actual patient flow is not implemented
+        Patient.objects.create(
+            name="Max Mustermann",
+            exercise=self.exercise,
+            patientId=6,  # has to be the same as the username in views.py#post
+            exercise_id=self.tempExercise.id,
+        )
+
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
         success, patientId = self.authenticate(token)
@@ -61,6 +71,15 @@ class PatientConsumer(AbstractConsumer):
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
+            self._send_exercise(exercise=self.exercise)
+
+    def disconnect(self, code):
+        # example patient deletion - see #connect
+        self.patient.delete()
+        # example trainer deletion - see #connect
+        self.tempExercise.delete()
+
+        super().disconnect(code)
             self._send_exercise(exercise=self.exercise)
 
     def disconnect(self, code):
