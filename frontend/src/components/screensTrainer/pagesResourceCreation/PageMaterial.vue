@@ -93,7 +93,3 @@
 			Blut hinzufügen
 		</button>
 	</div>
-</template>
-
-<style scoped>
-</style>

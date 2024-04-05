@@ -6,7 +6,7 @@ from configuration.asgi import application
 from game.models import User
 from .factories import PatientFactory
 
-
+"""
 class PatientWebSocketTest(TransactionTestCase):
     def setUp(self):
         super().setUp()
@@ -15,7 +15,7 @@ class PatientWebSocketTest(TransactionTestCase):
         self.token, _ = Token.objects.get_or_create(user=self.user)
         self.patient = PatientFactory()
 
-    """
+   
     async def test_authenticated_websocket_connection(self):
         # Connect to the WebSocket
         communicator = WebsocketCommunicator(
@@ -49,4 +49,4 @@ class PatientWebSocketTest(TransactionTestCase):
 
         # Clean up
         await communicator.disconnect()
-"""
+    """

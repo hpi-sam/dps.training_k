@@ -10,10 +10,6 @@ class SavedExercise(models.Model):
     name = models.CharField(unique=True)
     time_speed_up = models.FloatField(default=1.0)
 
-    @classmethod
-    def save_exercise(cls, serialized_exercise, name, time_speed_up=1.0):
-        return cls.objects.create(serialized_exercise, name, time_speed_up)
-
 
 class SavedExerciseFactory:
     def __init__(
@@ -29,4 +25,6 @@ class SavedExerciseFactory:
     def snapshot_exercise(self):
         serialized_exercise = self.exercise_serializer.serialize(self.exercise)
         name = self.name_generator.generate_name()
-        return SavedExercise.save_exercise(serialized_exercise, name)
+        return SavedExercise.objects.create(
+            saved_exercise=serialized_exercise, name=name
+        )

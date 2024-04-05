@@ -21,7 +21,7 @@ class StateTransition(models.Model):
         return self.resulting_state
 
     def is_valid(self, conditions: Dict):
-        # ToDo: This is a stub, should be replaced by the api to the condition-tree
+        # ToDo: This is a stub, should be replaced by old backend logic, specifically condition.is_fulfilled(self, subconditions_dict)
         return True
 
     def is_final(self):

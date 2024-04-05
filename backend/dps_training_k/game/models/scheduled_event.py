@@ -54,7 +54,6 @@ class Owner(OneFieldNotNull, models.Model):
     event = models.OneToOneField(
         "ScheduledEvent",
         on_delete=models.CASCADE,
-        related_name="owner",
     )
     patient_owner = models.ForeignKey(
         "Patient",
