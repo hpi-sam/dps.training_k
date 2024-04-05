@@ -1,10 +1,11 @@
 import traceback
+from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
-from abc import ABC, abstractmethod
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
-from game.models import Exercise, Patient
+
+from game.models import Patient
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -17,15 +18,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         FAILURE = "failure"
         SUCCESS = "success"
         EXERCISE = "exercise"
-
-    class FailureCodes:
-        UNKNOWN = 0
-        INCORRECT_REQUEST_TYPE = 1
-        MISSING_KEYS = 2
-        INCORRECT_KEY_FORMAT = 3
-        DATABASE_NOT_FOUND = 4
-        MISSING_REQUEST_TYPE = 5
-        INVALID_INTERNAL_MESSAGE = 6
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -52,11 +44,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             d[key] = value
         self.send_json(d)
 
-    def send_failure(self, message="unknown failure", code=0, **kwargs):
+    def send_failure(self, message="unknown failure", **kwargs):
         message_dict = {
             "messageType": self.OutgoingMessageTypes.FAILURE,
             "message": message,
-            "code": code,
         }
         for key, value in kwargs.items():
             message_dict[key] = value
@@ -91,7 +82,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         if not request_type:
             self.send_failure(
                 "Incoming message is without request type.",
-                code=self.FailureCodes.MISSING_REQUEST_TYPE,
             )
             return
 
@@ -100,7 +90,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         except KeyError:
             self.send_failure(
                 f"Invalid request type '{request_type}' for incoming message.",
-                code=self.FailureCodes.INCORRECT_REQUEST_TYPE,
             )
             return
 
@@ -110,7 +99,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             if key not in content:
                 self.send_failure(
                     f'Key "{key}" is missing for this request type',
-                    code=self.FailureCodes.MISSING_KEYS,
                 )
                 complete = False
             else:
@@ -155,7 +143,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def _send_exercise(self, exercise):
         patient = Patient.objects.create(
-            name="Max Mustermann", exercise=self.exercise, patientId=123456
+            name="Max Mustermann", exercise=self.exercise, patientId=2
         )
         exercise_object = {
             "exercise": {

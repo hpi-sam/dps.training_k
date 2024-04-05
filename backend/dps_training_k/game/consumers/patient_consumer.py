@@ -1,7 +1,7 @@
-from .abstract_consumer import AbstractConsumer
 from urllib.parse import parse_qs
-from game.models import Patient
-from game import channel_notifications
+
+from game.models import Patient, Exercise
+from .abstract_consumer import AbstractConsumer
 from template.serializer.state_serialize import StateSerializer
 
 
@@ -43,6 +43,16 @@ class PatientConsumer(AbstractConsumer):
         }
 
     def connect(self):
+        # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
+        self.tempExercise = Exercise.createExercise()
+        # example patient creation for testing purposes as long as the actual patient flow is not implemented
+        Patient.objects.create(
+            name="Max Mustermann",
+            exercise=self.exercise,
+            patientId=6,  # has to be the same as the username in views.py#post
+            exercise_id=self.tempExercise.id,
+        )
+
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
         success, patientId = self.authenticate(token)
@@ -51,7 +61,15 @@ class PatientConsumer(AbstractConsumer):
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
-            self._send_exercise()
+            self._send_exercise(exercise=self.exercise)
+
+    def disconnect(self, code):
+        # example patient deletion - see #connect
+        self.patient.delete()
+        # example trainer deletion - see #connect
+        self.tempExercise.delete()
+
+        super().disconnect(code)
 
     def handle_example(self, exercise_code, patient_code):
         self.exercise_code = exercise_code
@@ -70,7 +88,7 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_triage(self, triage):
         self.patient.triage = triage
-        self._send_exercise()
+        self._send_exercise(exercise=self.exercise)
 
     def state_change_event(self, event):
         serialized_state = StateSerializer(self.patient.state).data
