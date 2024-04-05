@@ -53,9 +53,9 @@
 	<div id="main">
 		<div id="form">
 			<h1>Trainer-Login</h1>
-			<input v-model="usernameInput" placeholder="Nutzername">
-			<input v-model="passwordInput" type="password" placeholder="Passwort">
-			<button @click="submit()">
+			<input id="trainer-login-username" v-model="usernameInput" placeholder="Nutzername">
+			<input id="trainer-login-password" v-model="passwordInput" type="password" placeholder="Passwort">
+			<button id="trainer-login" @click="submit()">
 				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 					<path :d="svg.loginIcon" />
 				</svg>

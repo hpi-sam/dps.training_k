@@ -61,9 +61,9 @@
 	<div id="main">
 		<div id="form">
 			<h1>Patienten-Zugang</h1>
-			<input v-model="exerciseIdInput" placeholder="Übungs-ID">
-			<input v-model="patientIdInput" placeholder="Patienten-ID">
-			<button @click="submit()">
+			<input id="patient-login-exercise-id" v-model="exerciseIdInput" placeholder="Übungs-ID">
+			<input id="patient-login-patient-id" v-model="patientIdInput" placeholder="Patienten-ID">
+			<button id="patient-login" @click="submit()">
 				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 					<path :d="svg.loginIcon" />
 				</svg>
