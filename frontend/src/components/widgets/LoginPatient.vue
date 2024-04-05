@@ -36,11 +36,14 @@
 				if (!response.ok) {
 					console.log('Login failed:', response)
 					switch (response.status) {
+						case 400:
+							showErrorToast("Fehler: Übungs-ID und oder Patienten-ID nicht angegeben")
+							break
 						case 401:
-							showErrorToast("Fehler: falsche Übungs- oder Patienten-ID")
+							showErrorToast("Fehler: Falsche Übungs- oder Patienten-ID")
 							break
 						default:
-							showErrorToast("Fehler: Server nicht erreichbar")
+							showErrorToast("Fehler: Unbekannter Fehler")
 							break
 					}
 					return Promise.reject('Patient login failed with status ' + response.status)

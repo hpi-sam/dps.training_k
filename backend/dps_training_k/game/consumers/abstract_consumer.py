@@ -143,7 +143,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def _send_exercise(self, exercise):
         patient = Patient.objects.create(
-            name="Max Mustermann", exercise=self.exercise, patientId=123456
+            name="Max Mustermann", exercise=self.exercise, patientId=2
         )
         exercise_object = {
             "exercise": {
