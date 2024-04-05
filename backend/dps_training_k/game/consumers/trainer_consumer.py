@@ -119,11 +119,8 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_start_exercise(self):
-        Patient.objects.filter(exercise=self.exercise).apply(
-            lambda p: p.schedule_state_transition()
-        )
-
-        pass
+        owned_patients = Patient.objects.filter(exercise=self.exercise)
+        [patient.schedule_state_transition() for patient in owned_patients]
 
     def handle_stop_exercise(self):
         # Stop Celery

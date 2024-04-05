@@ -46,11 +46,15 @@ class PatientConsumer(AbstractConsumer):
         # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
         self.tempExercise = Exercise.createExercise()
         # example patient creation for testing purposes as long as the actual patient flow is not implemented
+        from template.tests.factories.patient_state_factory import PatientStateFactory
+
+        self.temp_state = PatientStateFactory(10, 2)
         Patient.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
             patientId=6,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
+            patient_state=self.temp_state,
         )
 
         # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
@@ -78,16 +82,7 @@ class PatientConsumer(AbstractConsumer):
         self.patient.delete()
         # example trainer deletion - see #connect
         self.tempExercise.delete()
-
-        super().disconnect(code)
-            self._send_exercise(exercise=self.exercise)
-
-    def disconnect(self, code):
-        # example patient deletion - see #connect
-        self.patient.delete()
-        # example trainer deletion - see #connect
-        self.tempExercise.delete()
-
+        self.temp_state.delete()
         super().disconnect(code)
 
     def handle_example(self, exercise_code, patient_code):
