@@ -7,11 +7,11 @@ from .state_data_factory import StateDataFactory
 class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PatientState
-        django_get_or_create = ("transition", "data", "state_phase", "is_dead")
+        django_get_or_create = ("transition", "data", "state_depth", "is_dead")
 
     transition = factory.SubFactory(StateTransitionFactory)
     data = factory.LazyFunction(lambda: StateDataFactory())
-    state_phase = 1
+    state_depth = 1
     is_dead = False
 
 
