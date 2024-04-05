@@ -60,6 +60,6 @@ class Patient(Transitionable, Eventable, models.Model):
         return True
 
     def is_dead(self):
-        if self.state.is_dead:
+        if self.patient_state.is_dead:
             return True
         return False

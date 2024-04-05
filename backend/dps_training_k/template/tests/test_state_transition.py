@@ -10,7 +10,9 @@ class PatientStateBuildingTestCase(TestCase):
 
     def test_state_transition(self):
         patient_state = PatientStateFactory(2, 2)
-        self.assertEqual(
-            patient_state.transition.resulting_state.transition.resulting_state.transition.resulting_state,
-            None,
+        self.assertIsNone(
+            patient_state.transition.resulting_state.transition.resulting_state.transition.resulting_state
+        )
+        self.assertIsNone(
+            patient_state.transition.next_state_transition.next_state_transition
         )
