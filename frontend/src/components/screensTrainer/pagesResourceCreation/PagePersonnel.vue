@@ -5,7 +5,7 @@
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 
-    const props = defineProps({
+	const props = defineProps({
 		currentArea: {
 			type: String,
 			default: "Kein Bereich ausgewählt"
@@ -29,7 +29,7 @@
 		socketTrainer.personnelAdd(props.currentArea)
 	}
 
-	function deletePersonnel(){
+	function deletePersonnel() {
 		socketTrainer.personnelDelete(currentPersonnel.value)
 	}
 </script>
@@ -58,3 +58,4 @@
 			Personal hinzufügen
 		</button>
 	</div>
+</template>

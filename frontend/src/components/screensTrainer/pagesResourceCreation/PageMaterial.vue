@@ -6,7 +6,7 @@
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import AddMaterialPopup from '@/components/widgets/AddMaterialPopup.vue'
 
-    const props = defineProps({
+	const props = defineProps({
 		currentArea: {
 			type: String,
 			default: "Kein Bereich ausgewählt"
@@ -33,7 +33,7 @@
 		showAddPopup.value = true
 	}
 
-	function deleteMaterial(){
+	function deleteMaterial() {
 		socketTrainer.materialDelete(currentMaterialName.value)
 	}
 
@@ -93,3 +93,4 @@
 			Blut hinzufügen
 		</button>
 	</div>
+</template>
