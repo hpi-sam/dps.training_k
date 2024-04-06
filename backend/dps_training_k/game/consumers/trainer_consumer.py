@@ -1,9 +1,13 @@
 from game.models import Area
-from game.models import Exercise, Personnel
+from game.models import Exercise, Personnel, Patient
 from .abstract_consumer import AbstractConsumer
 
 
 class TrainerConsumer(AbstractConsumer):
+    """
+    for general functionality @see AbstractConsumer
+    """
+
     class TrainerIncomingMessageTypes:
         EXAMPLE = "example"
         EXERCISE_CREATE = "trainer-exercise-create"
@@ -97,11 +101,8 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_start_exercise(self):
-        # Start Celery
-        # Start all objects with zero time tracks
-        # Schedule phase transitions
-        # Stop everything using NestedEventable
-        pass
+        owned_patients = Patient.objects.filter(exercise=self.exercise)
+        [patient.schedule_state_transition() for patient in owned_patients]
 
     def handle_stop_exercise(self):
         # Stop Celery

@@ -12,6 +12,9 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     """
     Base consumer to be used as an abstract class, preparing some shared behaviour, but never to
     be used directly.
+    Inheriting classes are responsible for DECODING messages from the frontend into method calls and
+    ENCODING events from the backend into JSONs to send to the frontend. When encoding events this also implies
+    deciding what part of the event should be sent to the frontend(filtering).
     """
 
     class OutgoingMessageTypes:

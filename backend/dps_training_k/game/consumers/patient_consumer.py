@@ -2,9 +2,15 @@ from urllib.parse import parse_qs
 
 from game.models import Patient, Exercise
 from .abstract_consumer import AbstractConsumer
+from template.serializer.state_serialize import StateSerializer
+import game.channel_notifications as channel_notifications
 
 
 class PatientConsumer(AbstractConsumer):
+    """
+    for general functionality @see AbstractConsumer
+    """
+
     class PatientIncomingMessageTypes:
         EXAMPLE = "example"
         TEST_PASSTHROUGH = "test-passthrough"
@@ -14,6 +20,7 @@ class PatientConsumer(AbstractConsumer):
         RESPONSE = "response"
         EXERCISE = "exercise"
         TEST_PASSTHROUGH = "test-passthrough"
+        STATE_CHANGE = "state-change"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,11 +45,15 @@ class PatientConsumer(AbstractConsumer):
         # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
         self.tempExercise = Exercise.createExercise()
         # example patient creation for testing purposes as long as the actual patient flow is not implemented
+        from template.tests.factories.patient_state_factory import PatientStateFactory
+
+        self.temp_state = PatientStateFactory(10, 2)
         Patient.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
             patientId=6,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
+            patient_state=self.temp_state,
         )
 
         query_string = parse_qs(self.scope["query_string"].decode())
@@ -53,6 +64,7 @@ class PatientConsumer(AbstractConsumer):
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
+            self.subscribe(channel_notifications.get_group_name(self.patient))
             self._send_exercise(exercise=self.exercise)
 
     def disconnect(self, code):
@@ -60,7 +72,7 @@ class PatientConsumer(AbstractConsumer):
         self.patient.delete()
         # example trainer deletion - see #connect
         self.tempExercise.delete()
-
+        self.temp_state.delete()
         super().disconnect(code)
 
     def handle_example(self, exercise_code, patient_code):
@@ -80,3 +92,10 @@ class PatientConsumer(AbstractConsumer):
     def handle_triage(self, triage):
         self.patient.triage = triage
         self._send_exercise(exercise=self.exercise)
+
+    def state_change_event(self, event):
+        serialized_state = StateSerializer(self.patient.state).data
+        self.send_event(
+            self.PatientOutgoingMessageTypes.STATE_CHANGE,
+            **serialized_state,
+        )
