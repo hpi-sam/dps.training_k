@@ -85,7 +85,6 @@ class Owner(OneFieldNotNull, models.Model):
             return cls.objects.create(event=event, patient_owner=patient)
         elif area:
             return cls.objects.create(event=event, area_owner=area)
-            pass
         elif exercise:
             return cls.objects.create(event=event, exercise_owner=exercise)
         else:

@@ -16,8 +16,12 @@ class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
 
 
 class PatientStateFactory:
-    """Generates complex of states and transitions to be used by a patient.
-    The complex uses the same list of transitions for states of the same depth"""
+    """
+    Generates complex of states and transitions to be used by a patient.
+    The complex uses the same list of transitions for states of the same depth
+    :param depth: The number of states after the initial state
+    :param transition_count: The number of follow up states per state
+    """
 
     def __new__(cls, depth=1, transition_count=1):
         """Needed to copy interface of factory_boy factories"""

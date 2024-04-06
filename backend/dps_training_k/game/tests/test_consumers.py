@@ -61,10 +61,3 @@ class TrainerConsumerTestCase(TransactionTestCase):
 
         # Close the connection
         await communicator.disconnect()
-
-
-class PatientConsumerTestCase(TransactionTestCase):
-
-    path = "/ws/trainer/"
-    communicator = WebsocketCommunicator(application, path)
-    # ich erstelle nen event

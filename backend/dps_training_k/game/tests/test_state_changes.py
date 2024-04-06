@@ -10,7 +10,7 @@ class TransitionableTestCase(TestCase):
         patient = PatientFactory()
         patient_state = PatientStateFactory(1, 1)
         patient.patient_state = patient_state
-        patient.save()
+        patient.save(update_fields=["patient_state"])
         patient.schedule_state_transition()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
         self.assertTrue(patient.execute_state_change())
@@ -21,7 +21,7 @@ class TransitionableTestCase(TestCase):
         patient.patient_state = patient_state
         patient_state.is_dead = True
         patient.patient_state = patient_state
-        patient.save()
+        patient.save(update_fields=["patient_state"])
         scheduled_events = ScheduledEvent.objects.count()
         patient.schedule_state_transition()
         self.assertEqual(ScheduledEvent.objects.count(), scheduled_events)
@@ -30,7 +30,7 @@ class TransitionableTestCase(TestCase):
         patient = PatientFactory()
         patient_state = PatientStateFactory(1, 1)
         patient.patient_state = patient_state
-        patient.save()
+        patient.save(update_fields=["patient_state"])
         patient.schedule_state_transition()
         patient.execute_state_change()
         scheduled_events = ScheduledEvent.objects.count()
