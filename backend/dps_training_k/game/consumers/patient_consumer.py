@@ -3,13 +3,12 @@ from urllib.parse import parse_qs
 from game.models import Patient, Exercise
 from .abstract_consumer import AbstractConsumer
 from template.serializer.state_serialize import StateSerializer
+import game.channel_notifications as channel_notifications
 
 
 class PatientConsumer(AbstractConsumer):
     """
-    This class is responsible for DECODING messages from the frontend(user==patient) into method calls and
-    ENCODING events from the backend into JSONs to send to the frontend. When encoding events this also implies
-    deciding what part of the event should be sent to the frontend(filtering).
+    for general functionality @see AbstractConsumer
     """
 
     class PatientIncomingMessageTypes:
@@ -65,6 +64,7 @@ class PatientConsumer(AbstractConsumer):
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
+            self.subscribe(channel_notifications.get_group_name(self.patient))
             self._send_exercise(exercise=self.exercise)
 
     def disconnect(self, code):
@@ -83,7 +83,6 @@ class PatientConsumer(AbstractConsumer):
             content=f"exercise_code {self.exercise_code} & patient_code {self.patientId}",
         )
 
-    # comment
     def handle_test_passthrough(self):
         self.send_event(
             self.PatientOutgoingMessageTypes.TEST_PASSTHROUGH,

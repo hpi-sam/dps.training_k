@@ -1,5 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.core.cache import cache
 import game.models as gm  # needed to avoid circular imports
 
 """
@@ -17,21 +18,23 @@ def _notify_group(group_channel_name, event):
     async_to_sync(get_channel_layer().group_send)(group_channel_name, event)
 
 
-def _notify_instance(instance_channel_name, event):
-    async_to_sync(get_channel_layer().send)(instance_channel_name, event)
-
-
 def dispatch_patient_event(patient, changes):
+    if not changes:
+        return
     if "patient_state" in changes:
-        notify_patient_state_change(get_patient_instance(patient))
+        notify_patient_state_change(patient)
 
 
 def notify_patient_state_change(patient):
-    channel = patient.channel_name
+    channel = get_group_name(patient)
     event = {
         "type": ChannelEventTypes.STATE_CHANGE_EVENT,
     }
     _notify_group(channel, event)
+
+
+def get_group_name(obj):
+    return f"{obj.__class__.__name__}_{obj.id}"
 
 
 def get_patient_instance(event):

@@ -26,8 +26,8 @@ class Patient(Eventable, models.Model):
     area = models.ForeignKey(
         "Area",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+        null=True,  # for debugging purposes
+        blank=True,  # for debugging purposes
     )
     patient_state = models.ForeignKey(
         PatientState,
@@ -44,14 +44,15 @@ class Patient(Eventable, models.Model):
     )
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         update_fields = kwargs.get("update_fields", None)
-        if update_fields:
-            channel_notifications.dispatch_patient_event(self, update_fields)
-        elif self._state.adding:
+        is_updated = not self._state.adding
+        if is_updated and not update_fields:
             message = """Patients have to be saved with save(update_fields=[...]) after initial creation. 
             This is to ensure that the frontend is notified of changes."""
             raise Exception(message)
+
+        super().save(*args, **kwargs)
+        channel_notifications.dispatch_patient_event(self, update_fields)
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
@@ -93,7 +94,7 @@ class Patient(Eventable, models.Model):
         if not future_state:
             return False
         self.patient_state = future_state
-        self.save()
+        self.save(update_fields=["patient_state"])
         self.schedule_state_transition()
         return True
 
