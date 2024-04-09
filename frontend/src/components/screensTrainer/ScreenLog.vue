@@ -1,21 +1,33 @@
 <script setup lang="ts">
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
 	import {useLogStore} from "@/stores/Log"
+	import LogPopup from "../widgets/LogPopup.vue"
+	import {ref} from "vue"
 
 	const logStore = useLogStore()
+
+	const currentLogId = ref(Number.NEGATIVE_INFINITY)
+
+	function openPopup(logId: number) {
+		currentLogId.value = logId
+		showPopup.value = true
+	}
+
+	const showPopup = ref(false)
 </script>
 
 <template>
+	<LogPopup v-if="showPopup" :log-id="currentLogId" @close-popup="showPopup=false" />
 	<TopBarTrainer />
 	<h1>Log</h1>
 	<div class="list">
 		<div
 			v-for="logEntry in logStore.log"
-			:key="logEntry.logTime.toString()"
+			:key="logEntry.logId"
 			class="listItem"
 		>
-			<button class="listItemButton">
-				<div class="listItemName">
+			<button class="listItemButton" @click="openPopup(logEntry.logId)">
+				<div class="listItemId">
 					{{ new Date(logEntry.logTime).toTimeString().split(' ')[0] }}
 				</div>
 				I
