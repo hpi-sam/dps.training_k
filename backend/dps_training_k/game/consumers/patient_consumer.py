@@ -91,6 +91,7 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_triage(self, triage):
         self.patient.triage = triage
+        self.patient.save(update_fields=["triage"])
         self._send_exercise(exercise=self.exercise)
 
     def state_change_event(self, event):
