@@ -30,7 +30,9 @@
 </script>
 
 <template>
-	<component :is="currentPageComponent" />
+	<div class="page">
+		<component :is="currentPageComponent" />
+	</div>
 	<nav>
 		<button id="nav-action-overview" :class="{ 'selected': currentPage === Pages.ACTION_OVERVIEW }" @click="setPage(Pages.ACTION_OVERVIEW)">
 			Übersicht
@@ -45,6 +47,10 @@
 </template>
 
 <style scoped>
+	.page {
+		height: calc(100% - 60px);
+	}
+
 	nav {
 		width: 100%;
 		height: 60px;

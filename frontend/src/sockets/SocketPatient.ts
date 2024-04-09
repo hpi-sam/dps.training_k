@@ -4,6 +4,7 @@ import {useExerciseStore} from "@/stores/Exercise"
 import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
+import { allowNewActions } from "@/components/widgets/ActionConfig.vue"
 
 class SocketPatient {
 	private readonly url: string
@@ -58,6 +59,10 @@ class SocketPatient {
 					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
 					patientStore.initializePatientFromAvailablePatients()
 					break
+				case 'available-actions':
+					console.log('Socket: Available actions:', data.availableActions)
+					availablesStore.loadAvailableActions(data.availableActions as AvailableActions)
+					break
 				case 'exercise':
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
@@ -74,6 +79,18 @@ class SocketPatient {
 					break
 				case 'information':
 					console.log('Patient Websocket ToDo: handle information event ', data)
+					break
+				case 'action-confirmation':
+					allowNewActions()
+					console.log('Patient Websocket ToDo: handle action-confirmation event ', data)
+					break
+				case 'action-declination':
+					allowNewActions()
+					showErrorToast('Aktion '+ data.actionName +' konnte nicht angeordnet werden:\n ' + data.actionDeclinationReason)
+					console.log('Patient Websocket ToDo: handle action-declination event ', data)
+					break
+				case 'action-result':
+					console.log('Patient Websocket ToDo: handle action-result event ', data)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -160,6 +177,18 @@ export const serverMockEvents = [
 			']}}'
 	},
 	{
+		id: 'available-actions',
+		data: '{"messageType":"available-actions","availableActions":{"availableActions":[' +
+			'{"actionName":"Blutdruck messen","actionType":"treatment"},{"actionName":"Blutprobe untersuchen","actionType":"lab"},'+
+			'{"actionName":"Beatmungsmaske anlegen","actionType":"treatment"},' +
+			'{"actionName":"Infusion anlegen","actionType":"treatment"},{"actionName":"Blut abnehmen","actionType":"treatment"},'+
+			'{"actionName":"Medikament verabreichen","actionType":"treatment"},' +
+			'{"actionName":"Ruheposition einnehmen","actionType":"treatment"},{"actionName":"Röntgen","actionType":"lab"},'+
+			'{"actionName":"Wundversorgung","actionType":"treatment"},{"actionName":"Stabile Seitenlage","actionType":"treatment"},' +
+			'{"actionName":"Schienung anlegen","actionType":"treatment"},{"actionName":"Vitalwerte messen","actionType":"treatment"}'+
+			']}}'
+	},
+	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
 			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
@@ -182,4 +211,17 @@ export const serverMockEvents = [
 		data: '{"messageType":"information","patientInjury":"Fractured limb","patientHistory":"No known allergies",' +
 			'"patientPersonalDetails":"John Doe, Male, 30 years old","patientBiometrics":"Height: 180cm, Weight: 75kg"}'
 	},
+	{
+		id: 'action-confirmation',
+		data: '{"messageType":"action-confirmation","actionName":"Stabile Seitenlage","actionId":"123"}'
+	},
+	{
+		id: 'action-declination',
+		data: '{"messageType":"action-declination","actionName":"Stabile Seitenlage","actionDeclinationReason":"Es fehlen die nötigen Ressourcen."}'
+	},
+	{
+		id: 'action-result',
+		data: '{"messageType":"action-result","actionName":"Blutprobe untersuchen","actionId":"125",'+
+			'"actionResult":"Der Patient hat eine Blutgruppe von 0+."}'
+	}
 ]
