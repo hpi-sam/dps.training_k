@@ -24,6 +24,8 @@ services:
     expose:
       - 8000
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
+    stdin_open: true
+    tty: true
 
 
   postgres:
