@@ -10,7 +10,7 @@ class TrainerConsumer(AbstractConsumer):
 
     class TrainerIncomingMessageTypes:
         EXAMPLE = "example"
-        EXERCISE_CREATE = "trainer-exercise-create"
+        EXERCISE_CREATE = "exercise-create"
         TEST_PASSTHROUGH = "test-passthrough"
         EXERCISE_START = "exercise-start"
         EXERCISE_STOP = "exercise-stop"
