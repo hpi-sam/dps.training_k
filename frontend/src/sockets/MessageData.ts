@@ -107,6 +107,7 @@ interface Log {
 }
 
 interface LogEntry {
+	logid: number
 	logMessage: string
 	logTime: Date
 	areaName: string

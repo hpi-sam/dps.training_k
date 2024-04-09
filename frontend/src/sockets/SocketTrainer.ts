@@ -254,13 +254,23 @@ export const serverMockEvents = [
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
 	{
-		id: 'log-update',
+		id: 'log-update-1',
 		data: '{"messageType":"log-update","logEntries":[' +
-			'{"logMessage":"Patient admitted","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
-			',"areaName":"EmergencyRoom","patientId":123,"personnelId":456,"materialId":"123"},' +
-			'{"logMessage":"Treatment started","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 46, 0) +
-			',"areaName":"Operating Theater","patientId":123,"personnelId":456,"materialId":"123"},' +
-			'{"logMessage":"Patient stabilized","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
-			',"areaName":"ICU","patientId":123,"personnelId":456,"materialId":"123"}]}'
+			'{"logId":"0","logMessage":"Patient admitted","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
+			',"areaName":"EmergencyRoom","patientId":"123","personnelId":"456","materialId":"123"},' +
+			'{"logId":"1","logMessage":"Treatment started","logTime":' + Date.UTC(2024, 2, 20, 14, 31, 46, 0) +
+			',"areaName":"Operating Theater","patientId":"123","personnelId":"456","materialId":"123"},' +
+			'{"logId":"2","logMessage":"Patient stabilized","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
+			',"areaName":"ICU","patientId":"123","personnelId":"456","materialId":"123"}]}'
+	},
+	{
+		id: 'log-update-2',
+		data: '{"messageType":"log-update","logEntries":[' +
+			'{"logId":"4","logMessage":"Patient transported","logTime":' + Date.UTC(2024, 2, 20, 14, 31, 10, 0) +
+			',"areaName":"EmergencyRoom","patientId":"123","personnelId":"456","materialId":"123"},' +
+			'{"logId":"5","logMessage":"Treatment cancled","logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
+			',"areaName":"Operating Theater","patientId":"123","personnelId":"456","materialId":"123"},' +
+			'{"logId":"6","logMessage":"Blood requested","logTime":' + Date.UTC(2024, 2, 20, 14, 32, 8, 0) +
+			',"areaName":"ICU","patientId":"123","personnelId":"456","materialId":"123"}]}'
 	}
 ]
