@@ -1,5 +1,4 @@
 <script setup lang="ts">
-	import ButtonMainAction from "@/components/widgets/ButtonMainAction.vue"
 	import socketTrainer from "@/sockets/SocketTrainer"
 
 	function exerciseStop() {
@@ -8,9 +7,10 @@
 </script>
 
 <template>
-	Scenario Screen
-	<ButtonMainAction
-		:button-text="'Übung beenden'"
-		@on-pressed="exerciseStop"
-	/>
+	<div class="flex-container">
+		Scenario Screen
+		<button class="main-button" @click="exerciseStop">
+			Übung beenden
+		</button>
+	</div>
 </template>

@@ -39,9 +39,9 @@
 		</div>
 		<div>
 			<h3 v-if="!newActionsAllowed" class="waiting-text">
-				Warte bis wieder neue Aktionen angeordnet werden können.
+				Warte, bis wieder neue Aktionen angeordnet werden können.
 			</h3>
-			<button class="add-action-button" :disabled="!newActionsAllowed" @click="addAction()">
+			<button class="main-button" :disabled="!newActionsAllowed" @click="addAction()">
 				Aktion anordnen
 			</button>
 		</div>
@@ -49,17 +49,6 @@
 </template>
 
 <style scoped>
-	h1 {
-		text-align: center;
-		margin-top: 30px;
-	}
-	.flex-container {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		height: 100%;
-		position: relative;
-	}
 	.close-button {
 		display: flex;
 		justify-content: center;
@@ -77,20 +66,18 @@
 		line-height: 1.25rem;
 		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 	}
-	.add-action-button {
-		align-self: center;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		border-radius: .5rem;
-		width: calc(100% - 2rem);
-		font-size: 1.25rem;
-		line-height: 1.25rem;
-		padding: .75rem 1rem;
-		margin: 1rem;
-		text-align: center;
-		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-	}
+
 	.waiting-text {
 		text-align: center;
 	}
+
+	.main-button {
+		background-color: var(--green);
+		color: white;
+	}
+
+	.main-button:disabled {
+		background-color: var(--gray);
+	}
+	
 </style>

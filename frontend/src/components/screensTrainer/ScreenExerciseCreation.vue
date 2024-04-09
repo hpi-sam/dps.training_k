@@ -2,7 +2,6 @@
 	import {ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
-	import ButtonMainAction from "@/components/widgets/ButtonMainAction.vue"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
 	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
@@ -41,38 +40,41 @@
 
 <template>
 	<DeleteItemPopup v-if="showPopup" :name="currentArea" @close-popup="showPopup=false" @delete="deleteArea" />
-	<TopBarTrainer />
-	<div class="list">
-		<div
-			v-for="area in areas"
-			:key="area.areaName"
-			class="listItem"
-			:class="{ 'selected': currentArea === area.areaName }"
-		>
-			<button class="listItemButton" @click="openArea(area.areaName)">
-				<div class="listItemName">
-					{{ area.areaName }}
-				</div>
-			</button>
-			<button class="settingsButton" @click="openPopup(area.areaName)">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					height="24"
-					viewBox="0 -960 960 960"
-					width="24"
+	<div class="flex-container">
+		<div>
+			<TopBarTrainer />
+			<div class="list">
+				<div
+					v-for="area in areas"
+					:key="area.areaName"
+					class="listItem"
+					:class="{ 'selected': currentArea === area.areaName }"
 				>
-					<path :d="svg.settingsIcon" />
-				</svg>
-			</button>
+					<button class="listItemButton" @click="openArea(area.areaName)">
+						<div class="listItemName">
+							{{ area.areaName }}
+						</div>
+					</button>
+					<button class="settingsButton" @click="openPopup(area.areaName)">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							height="24"
+							viewBox="0 -960 960 960"
+							width="24"
+						>
+							<path :d="svg.settingsIcon" />
+						</svg>
+					</button>
+				</div>
+				<button class="listItemAddButton" @click="addArea()">
+					Bereich hinzufügen
+				</button>
+			</div>
 		</div>
-		<button class="listItemAddButton" @click="addArea()">
-			Bereich hinzufügen
+		<button class="main-button" @click="exerciseStart">
+			Übung starten
 		</button>
 	</div>
-	<ButtonMainAction
-		:button-text="'Übung starten'"
-		@on-pressed="exerciseStart"
-	/>
 </template>
 
 <style scoped>
