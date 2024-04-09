@@ -1,9 +1,9 @@
 from urllib.parse import parse_qs
 
-from game.models import Patient, Exercise
-from .abstract_consumer import AbstractConsumer
-from template.serializer.state_serialize import StateSerializer
 import game.channel_notifications as channel_notifications
+from game.models import Patient, Exercise
+from template.serializer.state_serialize import StateSerializer
+from .abstract_consumer import AbstractConsumer
 
 
 class PatientConsumer(AbstractConsumer):
@@ -51,7 +51,7 @@ class PatientConsumer(AbstractConsumer):
         Patient.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
-            patientId=6,  # has to be the same as the username in views.py#post
+            patientId=2,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
             patient_state=self.temp_state,
         )

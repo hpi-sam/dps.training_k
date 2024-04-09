@@ -10,7 +10,7 @@ from game.models import User
 class PatientAccessView(APIView):
     def post(self, request, *args, **kwargs):
         user, created = User.objects.get_or_create(
-            username="6"  # has to be the same as the username in abstract_consumer.py#authenticate
+            username="2"  # has to be the same as the username in abstract_consumer.py#authenticate
         )  # Ensure the username is a string
         if created:
             user.set_password("123456")  # Properly hash the password
