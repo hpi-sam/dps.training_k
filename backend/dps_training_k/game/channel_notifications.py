@@ -9,7 +9,7 @@ Sending events is done by the celery worker.
 
 
 class ChannelEventTypes:
-    STATE_CHANGE = "state.change.event"
+    STATE_CHANGE_EVENT = "state.change.event"
     EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_DECLINATION_EVENT = "action.declination.event"
@@ -18,15 +18,15 @@ class ChannelEventTypes:
 
 class ChannelNotifier:
     @classmethod
-    def save_and_notify(cls, obj, update_fields, *args, **kwargs):
+    def save_and_notify(cls, obj, changes, *args, **kwargs):
         is_updated = not obj._state.adding
-        if is_updated and not update_fields:
+        if is_updated and not changes:
             message = """AppliedActions have to be saved with save(update_fields=[...]) after initial creation. 
             This is to ensure that the frontend is notified of changes."""
             raise Exception(message)
 
         super(obj.__class__, obj).save(*args, **kwargs)
-        cls.dispatch_event(obj, update_fields)
+        cls.dispatch_event(obj, changes)
 
     @classmethod
     def _notify_group(cls, group_channel_name, event):
