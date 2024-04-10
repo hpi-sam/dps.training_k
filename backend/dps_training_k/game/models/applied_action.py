@@ -42,8 +42,8 @@ class AppliedAction(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        update_fields = kwargs.get("update_fields", None)
-        AppliedActionDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
+        changes = kwargs.get("update_fields", None)
+        AppliedActionDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     @classmethod
     def try_application(cls, patient, action_type):
