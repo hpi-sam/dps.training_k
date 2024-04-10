@@ -1,6 +1,6 @@
 from urllib.parse import parse_qs
 
-import game.channel_notifications as channel_notifications
+from game.channel_notifications import PatientDispatcher
 from game.models import Patient, Exercise
 from template.serializer.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
@@ -64,7 +64,7 @@ class PatientConsumer(AbstractConsumer):
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
-            self.subscribe(channel_notifications.get_group_name(self.patient))
+            self.subscribe(PatientDispatcher.get_group_name(self.patient))
             self._send_exercise(exercise=self.exercise)
 
     def disconnect(self, code):
