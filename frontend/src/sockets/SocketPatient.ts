@@ -233,11 +233,11 @@ export const serverMockEvents = [
 	{
 		id: 'ressource-assignments',
 		data: '{"messageType":"ressource-assignments","ressourceAssignments":{"ressourceAssignments":[' +
-			'{"areaName":"Intensiv","personnel":[{"personnelId":1,"patientId":5},{"personnelId":1,"patientId":3}],' +
+			'{"areaName":"Intensiv","personnel":[{"personnelId":1,"patientId":5},{"personnelId":2,"patientId":3}],' +
 			'"material":[{"materialId":1,"patientId":3},{"materialId":2,"patientId":5}]},' +
-			'{"areaName":"ZNA","personnel":[{"personnelId":2,"patientId":2},{"personnelId":2,"patientId":6}],' +
+			'{"areaName":"ZNA","personnel":[{"personnelId":3,"patientId":2},{"personnelId":4,"patientId":6},{"personnelId":7,"patientId":null}],' +
 			'"material":[{"materialId":3,"patientId":6},{"materialId":4,"patientId":6}]},' +
-			'{"areaName":"Wagenhalle","personnel":[{"personnelId":3,"patientId":1},{"personnelId":3,"patientId":4}],' +
+			'{"areaName":"Wagenhalle","personnel":[{"personnelId":5,"patientId":1},{"personnelId":6,"patientId":4}],' +
 			'"material":[{"materialId":5,"patientId":1},{"materialId":6,"patientId":4}]}]}}'
 	}
 ]
