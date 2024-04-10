@@ -18,5 +18,5 @@ class Area(models.Model):
             number += 1
 
         return cls.objects.create(
-            name=unique_name, exerciseId=exercise, isPaused=isPaused
+            name=unique_name, exercise=exercise, isPaused=isPaused
         )
