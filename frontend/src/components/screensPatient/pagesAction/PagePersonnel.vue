@@ -1,3 +1,3 @@
 <template>
-	<h1>Resources</h1>
+	<h1>Personal</h1>
 </template>

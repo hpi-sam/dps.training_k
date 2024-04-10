@@ -2,6 +2,9 @@
 	import { ref } from 'vue'
 	import { useAvailablesStore } from '@/stores/Availables'
 	import ActionConfig from '@/components/widgets/ActionConfig.vue'
+	import {svg} from '@/assets/Svg'
+
+	const emit = defineEmits(['close-action-selection'])
 
 	const availablesStore = useAvailablesStore()
 	const availableActions = ref(availablesStore.actions)
@@ -32,25 +35,38 @@
 </script>
 
 <template>
-	<ActionConfig v-if="showAction" :current-action="currentAction" @close-action="showAction=false" />
-	<div v-if="!showAction">
-		<h1>Wähle eine Aktion</h1>
-		<div
-			v-for="actionTyp in availablesStore.getActionTypes"
-			:key="actionTyp"
-			class="list"
-		>
-			<h2>{{ getTypeLabel(actionTyp) }}</h2>
-			<div
-				v-for="action in filteredActions(actionTyp)"
-				:key="action.actionName"
-				class="listItem"
-			>
-				<button class="listItemButton" @click="openAction(action.actionName)">
-					<div class="listItemName">
-						{{ action.actionName }}
-					</div>
+	<ActionConfig
+		v-if="showAction"
+		:current-action="currentAction"
+		@close-action="showAction=false"
+	/>
+	<div class="flex-container">
+		<div>
+			<div v-if="!showAction">
+				<h1>Wähle eine Aktion</h1>
+				<button class="close-button" @click="emit('close-action-selection')">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+						<path :d="svg.closeIcon" />
+					</svg>
 				</button>
+				<div
+					v-for="actionTyp in availablesStore.getActionTypes"
+					:key="actionTyp"
+					class="list"
+				>
+					<h2>{{ getTypeLabel(actionTyp) }}</h2>
+					<div
+						v-for="action in filteredActions(actionTyp)"
+						:key="action.actionName"
+						class="listItem"
+					>
+						<button class="listItemButton" @click="openAction(action.actionName)">
+							<div class="listItemName">
+								{{ action.actionName }}
+							</div>
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
