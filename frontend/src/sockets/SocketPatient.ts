@@ -5,6 +5,7 @@ import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 import { allowNewActions } from "@/components/widgets/ActionConfig.vue"
+import { useRessourceAssignmentsStore } from "@/stores/RessourceAssignments"
 
 class SocketPatient {
 	private readonly url: string
@@ -18,6 +19,7 @@ class SocketPatient {
 		const patientStore = usePatientStore()
 		const exerciseStore = useExerciseStore()
 		const availablesStore = useAvailablesStore()
+		const ressourceAssignmentsStore = useRessourceAssignmentsStore()
 
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
@@ -91,6 +93,10 @@ class SocketPatient {
 					break
 				case 'action-result':
 					console.log('Patient Websocket ToDo: handle action-result event ', data)
+					break
+				case 'ressource-assignments':
+					ressourceAssignmentsStore.setRessourceAssignments(data.ressourceAssignments as RessourceAssignments)
+					console.log('ressource-assignments:', data.ressourceAssignments)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -223,5 +229,15 @@ export const serverMockEvents = [
 		id: 'action-result',
 		data: '{"messageType":"action-result","actionName":"Blutprobe untersuchen","actionId":"125",'+
 			'"actionResult":"Der Patient hat eine Blutgruppe von 0+."}'
+	},
+	{
+		id: 'ressource-assignments',
+		data: '{"messageType":"ressource-assignments","ressourceAssignments":{"ressourceAssignments":[' +
+			'{"areaName":"Intensiv","personnel":[{"personnelId":1,"patientId":5},{"personnelId":1,"patientId":3}],' +
+			'"material":[{"materialId":1,"patientId":3},{"materialId":2,"patientId":5}]},' +
+			'{"areaName":"ZNA","personnel":[{"personnelId":2,"patientId":2},{"personnelId":2,"patientId":6}],' +
+			'"material":[{"materialId":3,"patientId":6},{"materialId":4,"patientId":6}]},' +
+			'{"areaName":"Wagenhalle","personnel":[{"personnelId":3,"patientId":1},{"personnelId":3,"patientId":4}],' +
+			'"material":[{"materialId":5,"patientId":1},{"materialId":6,"patientId":4}]}]}}'
 	}
 ]
