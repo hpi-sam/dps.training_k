@@ -5,7 +5,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
-from game.models import Patient
+from game.models import Patient, Exercise
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -143,6 +143,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         except Token.DoesNotExist:
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
             return False, None
+
+    def send_exercise_event(self, event):
+        exercise = Exercise.objects.get(pk=event["exercise_pk"])
+        self._send_exercise(exercise=exercise)
 
     def _send_exercise(self, exercise):
         patient = Patient.objects.create(

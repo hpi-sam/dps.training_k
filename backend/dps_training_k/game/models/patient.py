@@ -1,9 +1,9 @@
 from django.db import models
-from django.conf import settings
-from helpers.eventable import Eventable
-from .scheduled_event import ScheduledEvent
-from template.models.patient_state import PatientState
+
 from game.channel_notifications import PatientDispatcher
+from helpers.eventable import Eventable
+from template.models.patient_state import PatientState
+from .scheduled_event import ScheduledEvent
 
 
 class Patient(Eventable, models.Model):
@@ -44,8 +44,8 @@ class Patient(Eventable, models.Model):
     )
 
     def save(self, *args, **kwargs):
-        update_fields = kwargs.get("update_fields", None)
-        PatientDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
+        changes = kwargs.get("update_fields", None)
+        PatientDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"

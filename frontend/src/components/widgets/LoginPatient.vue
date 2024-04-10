@@ -10,18 +10,18 @@
 	function submit() {
 		const patientStore = usePatientStore()
 
-		const exerciseIdNumber = parseInt(exerciseIdInput.value)
+		const exerciseId = exerciseIdInput.value
 		const patientIdNumber = parseInt(patientIdInput.value)
 
-		if (isNaN(exerciseIdNumber) || isNaN(patientIdNumber)) {
-			showErrorToast("Fehler: Übungs- oder Patienten-ID nicht numerisch")
+		if (isNaN(patientIdNumber)) {
+			showErrorToast("Fehler: Patienten-ID nicht numerisch")
 			return
 		}
 
 		patientStore.patientId = patientIdNumber
 
 		const requestBody = {
-			"exerciseId": exerciseIdNumber,
+			"exerciseId": exerciseId,
 			"patientId": patientIdNumber,
 		}
 
