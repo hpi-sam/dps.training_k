@@ -1,6 +1,7 @@
 from game.models import Area
 from game.models import Exercise, Personnel, Patient
 from .abstract_consumer import AbstractConsumer
+from ..channel_notifications import ChannelNotifier
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -93,6 +94,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_create_exercise(self):
         self.exercise = Exercise.createExercise()
         self._send_exercise(self.exercise)
+        self.subscribe(ChannelNotifier.get_group_name(self.exercise))
 
     def handle_test_passthrough(self):
         self.send_event(

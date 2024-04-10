@@ -1,7 +1,5 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.core.cache import cache
-import game.models as gm  # needed to avoid circular imports
 
 """
 This package is responsible to decide when to notify which consumers.
@@ -11,7 +9,8 @@ Sending events is done by the celery worker.
 
 
 class ChannelEventTypes:
-    STATE_CHANGE_EVENT = "state.change.event"
+    STATE_CHANGE = "state.change.event"
+    EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_DECLINATION_EVENT = "action.declination.event"
     ACTION_RESULT_EVENT = "action.result.event"
@@ -62,9 +61,16 @@ class PatientDispatcher(ChannelNotifier):
         cls._notify_group(channel, event)
 
 
-def get_group_name(obj):
-    return f"{obj.__class__.__name__}_{obj.id}"
+class AreaDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, area, changes):
+        cls._notify_exercise_update(area.exercise)
 
-
-def get_patient_instance(event):
-    return gm.Patient.objects.get(pk=event["patientId"])
+    @classmethod
+    def _notify_exercise_update(cls, exercise):
+        channel = cls.get_group_name(exercise)
+        event = {
+            "type": ChannelEventTypes.EXERCISE_UPDATE,
+            "exercise_pk": exercise.id,
+        }
+        cls._notify_group(channel, event)

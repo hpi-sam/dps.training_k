@@ -1,5 +1,7 @@
 from django.db import models
 
+from game.channel_notifications import AreaDispatcher
+
 
 class Area(models.Model):
     name = models.CharField(unique=True, max_length=30)
@@ -20,3 +22,7 @@ class Area(models.Model):
         return cls.objects.create(
             name=unique_name, exercise=exercise, isPaused=isPaused
         )
+
+    def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields", None)
+        AreaDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
