@@ -13,6 +13,22 @@ class AppliedActionState(models.TextChoices):
     CANCELED = "CA", "canceled"
 
 
+class AppliedActionTimestamp(models.Model):
+    applied_action = models.OneToOneField(
+        "AppliedAction",
+        on_delete=models.CASCADE,
+    )
+    state_name = models.CharField(choices=AppliedActionState.choices, max_length=2)
+    t_local_begin = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    t_local_end = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+
 class AppliedAction(models.Model):
     patient = models.ForeignKey("Patient", on_delete=models.CASCADE)
     action_type = models.ForeignKey("template.Action", on_delete=models.CASCADE)
