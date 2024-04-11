@@ -1,18 +1,20 @@
 <script setup lang="ts">
+	import { useExerciseStore } from '@/stores/Exercise'
 	import { usePatientStore } from '@/stores/Patient'
 	import { useRessourceAssignmentsStore } from '@/stores/RessourceAssignments'
 	import {computed} from 'vue'
 
 	const patientStore = usePatientStore()
-
 	const ressourceAssignmentStore = useRessourceAssignmentsStore()
-
 	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaName))
+	
+	const exerciseStore = useExerciseStore()
+	const personnel = computed(() => exerciseStore.getPersonnelOfArea(patientStore.areaName))
 
 	const assignedPersonnel = computed(() => assignments.value?.personnel.filter(assignment => assignment.patientId === patientStore.patientId))
-
-	const freePersonnel = computed(() => assignments.value?.personnel.filter(assignment => assignment.patientId === null))
-
+	const freePersonnel = computed(() => personnel.value.filter(personnel => 
+		!assignments.value?.personnel.some(assignment => assignment.personnelId === personnel.personnelId)
+	))
 	const busyPersonnel = computed(() => assignments.value?.personnel.filter(assignment => 
 		assignment.patientId != patientStore.patientId && 
 		assignment.patientId != null
@@ -28,11 +30,11 @@
 			:key="personnelAssignment.personnelId"
 			class="listItem"
 		>
-			<button class="listItemButton">
+			<div class="listItemButton">
 				<div class="listItemName">
-					Personal {{ personnelAssignment.personnelId }}
+					{{ personnelAssignment.personnelName }}
 				</div>
-			</button>
+			</div>
 			<button class="button-free">
 				Freigeben
 			</button>
@@ -44,11 +46,11 @@
 			:key="personnelAssignment.personnelId"
 			class="listItem"
 		>
-			<button class="listItemButton">
+			<div class="listItemButton">
 				<div class="listItemName">
-					Personal {{ personnelAssignment.personnelId }}
+					{{ personnelAssignment.personnelName }}
 				</div>
-			</button>
+			</div>
 			<button class="button-assign">
 				Zuweisen
 			</button>
@@ -60,14 +62,14 @@
 			:key="personnelAssignment.personnelId"
 			class="listItem"
 		>
-			<button class="listItemButton">
+			<div class="listItemButton">
 				<div class="listItemName">
-					Personal {{ personnelAssignment.personnelId }}
+					{{ personnelAssignment.personnelName }}
 				</div>
 				<div class="listItemName assigned-patient">
 					Patient {{ personnelAssignment.patientId }}
 				</div>
-			</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -85,11 +87,18 @@
 		display: flex;
 		align-items: center;
 		color: white;
-		background-color: var(--green);
 		border: none;
 		font-size: 1.25rem;
 		width: 120px;
 		justify-content: center;
+	}
+
+	.button-free {
+		background-color: var(--red);
+	}
+
+	.button-assign {
+		background-color: var(--green);
 	}
 
 	.assigned-patient {

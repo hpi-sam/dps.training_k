@@ -50,6 +50,7 @@ interface Personnel {
 }
 
 interface Material {
+	materialId: number
 	materialName: string
 	materialType: string
 }
@@ -123,10 +124,12 @@ interface RessourceAssignment {
 
 interface PersonnelAssignments {
 	personnelId: number
+	personnelName: string
 	patientId: number
 }
 
 interface MaterialAssignments {
 	materialId: number
+	materialName: string
 	patientId: number
 }

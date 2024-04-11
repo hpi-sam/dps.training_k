@@ -197,17 +197,57 @@ export const serverMockEvents = [
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Intensiv","patients":[{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
-			'{"patientId":3,"patientName":"Frank Huber",' +
-			'"patientCode":2,"triage":"G"}],"personnel":[{"personnelId":1,"personnelName":"Sebastian Lieb"}],"devices":' +
-			'[{"deviceName":"Treadmill"}]},{"areaName":"ZNA","patients":' +
-			'[{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
-			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}],'+
-			'"personnel":[{"personnelId":2,"personnelName":"Hannah Mayer"}],"devices":[{"deviceName":"Dumbbells"}]},' +
-			'{"areaName":"Wagenhalle","patients":[{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
-			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}],' +
-			'"personnel":[{"personnelId":3,"personnelName":"Coach Flex"}],' +
-			'"devices":[{"deviceName":"Beatmungsgerät"}]}]}}'
+			'{"areaName":"Intensiv",'+
+				'"patients":['+
+					'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
+					'{"patientId":3,"patientName":"Frank Huber","patientCode":2,"triage":"G"}'+
+				'],'+
+				'"personnel":['+
+					'{"personnelId":10,"personnelName":"Sebastian Lieb"},'+
+					'{"personnelId":1,"personnelName":"Albert Spahn"},'+
+					'{"personnelId":4,"personnelName":"Anna Neumann"}' +
+				'],'+
+				'"material":['+
+					'{"materialId":1,"materialName":"Beatmungsgerät"},'+
+					'{"materialId":2,"materialName":"Defibrillator"}'+
+				']'+
+			'},'+
+			'{"areaName":"ZNA",'+
+				'"patients":['+
+					'{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
+					'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}'+
+				'],'+
+				'"personnel":['+
+					'{"personnelId":11,"personnelName":"Hannah Mayer"},'+
+					'{"personnelId":3,"personnelName":"Jens Schweizer"},'+
+					'{"personnelId":2,"personnelName":"Lena Schulze"},'+
+					'{"personnelId":7,"personnelName":"Günther Beutle"},' +
+					'{"personnelId":8,"personnelName":"Julian Mohn"},'+
+					'{"personnelId":9,"personnelName":"Elisabeth Bauer"}'+
+				'],'+
+				'"material":['+
+					'{"materialId":3,"materialName":"Defibrillator"},'+
+					'{"materialId":4,"materialName":"EKG-Monitor"},'+
+					'{"materialId":7,"materialName":"Pulsoximeter"},'+
+					'{"materialId":8,"materialName":"EEG"},'+
+					'{"materialId":9,"materialName":"Narkosegerät"}'+
+				']'+
+			'},' +
+			'{"areaName":"Wagenhalle",'+
+				'"patients":['+
+					'{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
+					'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}'+
+				'],' +
+				'"personnel":['+
+					'{"personnelId":5,"personnelName":"Finn Heizmann"},'+
+					'{"personnelId":6,"personnelName":"Ursula Seiler"}'+
+				'],' +
+				'"material":['+
+					'{"materialId":5,"materialName":"EKG-Gerät"},'+
+					'{"materialId":6,"materialName":"Blutdruckmessgerät"},'+
+					'{"materialId":10,"materialName":"Beatmungsgerät"}'+
+				']'+
+			'}]}}'
 	},
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
@@ -233,11 +273,36 @@ export const serverMockEvents = [
 	{
 		id: 'ressource-assignments',
 		data: '{"messageType":"ressource-assignments","ressourceAssignments":{"ressourceAssignments":[' +
-			'{"areaName":"Intensiv","personnel":[{"personnelId":1,"patientId":5},{"personnelId":2,"patientId":3}],' +
-			'"material":[{"materialId":1,"patientId":3},{"materialId":2,"patientId":5}]},' +
-			'{"areaName":"ZNA","personnel":[{"personnelId":3,"patientId":2},{"personnelId":4,"patientId":6},{"personnelId":7,"patientId":null}],' +
-			'"material":[{"materialId":3,"patientId":6},{"materialId":4,"patientId":6}]},' +
-			'{"areaName":"Wagenhalle","personnel":[{"personnelId":5,"patientId":1},{"personnelId":6,"patientId":4}],' +
-			'"material":[{"materialId":5,"patientId":1},{"materialId":6,"patientId":4}]}]}}'
+			'{"areaName":"Intensiv",'+
+				'"personnel":['+
+					'{"personnelId":1,"personnelName":"Albert Spahn","patientId":5},'+
+					'{"personnelId":2,"personnelName":"Anna Neumann","patientId":3}'+
+				'],' +
+				'"material":['+
+					'{"materialId":1,"materialName":"Beatmungsgerät","patientId":3},'+
+					'{"materialId":2,"materialName":"Defibrillator","patientId":5}'+
+				']},' +
+			'{"areaName":"ZNA",'+
+				'"personnel":['+
+					'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":2},'+
+					'{"personnelId":4,"personnelName":"Lena Schulze","patientId":6},'+
+					'{"personnelId":8,"personnelName":"Julian Mohn","patientId":2},'+
+					'{"personnelId":9,"personnelName":"Elisabeth Bauer","patientId":8}'+
+				'],' +
+				'"material":['+
+					'{"materialId":3,"materialName":"Defibrillator","patientId":2},'+
+					'{"materialId":4,"materialName":"EKG-Monitor","patientId":2},'+
+					'{"materialId":9,"materialName":"Narkosegerät","patientId":9}'+
+				']},' +
+			'{"areaName":"Wagenhalle",'+
+				'"personnel":['+
+					'{"personnelId":5,"personnelName":"Finn Heizmann","patientId":1},'+
+					'{"personnelId":6,"personnelName":"Ursula Seiler","patientId":4}'+
+				'],' +
+				'"material":['+
+					'{"materialId":5,"materialName":"EKG-Gerät","patientId":1},'+
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","patientId":4}'+
+				']'+
+			'}]}}'
 	}
 ]
