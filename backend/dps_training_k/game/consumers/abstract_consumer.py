@@ -1,11 +1,13 @@
 import traceback
+import json
 from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
-from game.models import Patient
+from game.models import Patient, Exercise
+from template.models import Action
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -21,6 +23,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         FAILURE = "failure"
         SUCCESS = "success"
         EXERCISE = "exercise"
+        AVAILABLE_ACTIONS = "available-actions"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -144,6 +147,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
             return False, None
 
+    def send_exercise_event(self, event):
+        exercise = Exercise.objects.get(pk=event["exercise_pk"])
+        self._send_exercise(exercise=exercise)
+
     def _send_exercise(self, exercise):
         patient = Patient.objects.create(
             name="Max Mustermann", exercise=self.exercise, patientId=2
@@ -169,3 +176,18 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             }
         }
         self.send_event(self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object)
+
+    def send_available_actions(self):
+        actions = Action.objects.all()
+        actions = [
+            json.dumps(
+                {
+                    "actionId": action.id,
+                    "actionName": action.name,
+                    "actionCategory": action.category,
+                }
+            )
+            for action in actions
+        ]
+        actions = json.dumps({"actions": actions})
+        self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, actions=actions)

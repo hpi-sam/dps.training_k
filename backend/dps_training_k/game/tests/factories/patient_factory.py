@@ -1,8 +1,9 @@
 import factory
-from .exercise_factory import ExerciseFactory
-from .area_factory import AreaFactory
-from template.tests.factories import EmptyPatientStateFactory
+
 from game.models import Patient
+from template.tests.factories import EmptyPatientStateFactory
+from .area_factory import AreaFactory
+from .exercise_factory import ExerciseFactory
 
 
 class PatientFactory(factory.django.DjangoModelFactory):

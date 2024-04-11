@@ -114,11 +114,13 @@ button:active {
   display: flex;
   align-items: center;
   font-size: 1.25rem;
-  padding: .75rem 1rem;
-  padding-left: 0;
+  padding: 0;
   text-align: left;
   height: 50px;
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .listItemAddButton {
@@ -134,7 +136,12 @@ button:active {
   margin-top: -1px;
 }
 
-.listItemId, .listItemName {
+.listItemId {
+  padding: .75rem 1rem;
+  width: fit-content;
+}
+
+.listItemName {
   padding: .75rem 1rem;
 }
 
@@ -154,4 +161,7 @@ button:active {
   font-size: 1.25rem;
   line-height: 1.25rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

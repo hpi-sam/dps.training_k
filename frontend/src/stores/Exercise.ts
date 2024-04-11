@@ -2,51 +2,35 @@ import {defineStore} from 'pinia'
 
 export const useExerciseStore = defineStore('exercise', {
 	state: (): Exercise => ({
-		exerciseId: Number.NEGATIVE_INFINITY,
+		exerciseId: "",
 		areas: [],
 	}),
 	getters: {
 		getExerciseCode: (state) => state.exerciseId,
 		getArea: (state) => {
 			return (areaName: string): Area | null => {
-				let foundArea: Area | null = null
-				state.areas.forEach((area) => {
-					if (area.areaName == areaName) foundArea = area
-				})
-				return foundArea
+				return state.areas?.find(area => area.areaName === areaName) ?? null
 			}
 		},
 		getAreaOfPatient: (state) => {
 			return (patientId: number): Area | null => {
-				let foundArea: Area | null = null
-				state.areas.forEach((area) => {
-					area.patients.forEach((patient) => {
-						if (patient.patientId == patientId) foundArea = area
-					})
-				})
-				return foundArea
+				return state.areas?.find(area =>
+					area.patients.some(patient => patient.patientId === patientId)
+				) ?? null
 			}
 		},
 		getPatient: (state) => {
 			return (patientId: number): Patient | null => {
-				let foundPatient: Patient | null = null
-				state.areas.forEach((area) => {
-					area.patients.forEach((patient) => {
-						if (patient.patientId == patientId) foundPatient = patient
-					})
-				})
-				return foundPatient
+				return state.areas?.find(area =>
+					area.patients.find(patient => patient.patientId === patientId)
+				)?.patients?.find(patient => patient.patientId === patientId) ?? null
 			}
 		},
 		getPersonnel: (state) => {
 			return (personnelId: number): Personnel | null => {
-				let foundPersonnel: Personnel | null = null
-				state.areas.forEach((area) => {
-					area.personnel.forEach((personnel) => {
-						if (personnel.personnelId == personnelId) foundPersonnel = personnel
-					})
-				})
-				return foundPersonnel
+				return state.areas?.find(area =>
+					area.personnel.find(personnel => personnel.personnelId === personnelId)
+				)?.personnel?.find(personnel => personnel.personnelId === personnelId) ?? null
 			}
 		},
 		getPersonnelOfArea: (state) => {

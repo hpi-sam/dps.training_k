@@ -17,7 +17,7 @@ interface MessageData {
 	materialName?: string
 	exercise?: Exercise
 	state?: State
-	logEntry?: LogEntry
+	logEntries?: LogEntry[]
 	availablePatients: AvailablePatients
 	availableActions: AvailableActions
 	availableMaterialList: AvailableMaterial
@@ -26,7 +26,7 @@ interface MessageData {
 }
 
 interface Exercise {
-	exerciseId: number
+	exerciseId: string
 	areas: Area[]
 }
 
@@ -64,14 +64,6 @@ interface State {
 	pupils: string
 	psyche: string
 	skin: string
-}
-
-interface LogEntry {
-	logMessage: string
-	logTime: Date
-	areaName: string
-	patientId: number
-	personnelId: number
 }
 
 interface Availables {
@@ -132,4 +124,17 @@ interface MaterialAssignments {
 	materialId: number
 	materialName: string
 	patientId: number
+}
+
+interface Log {
+	log: LogEntry[]
+}
+
+interface LogEntry {
+	logId: number
+	logMessage: string
+	logTime: Date
+	areaName: string
+	patientId: number
+	personnelId: number
 }
