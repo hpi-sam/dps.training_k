@@ -8,7 +8,7 @@ class Action(models.Model):
         LAB = "LA", "lab"
         OTHER = "OT", "other"
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, primary_key=True)
     category = models.CharField(choices=Category.choices, max_length=2)
     duration = models.IntegerField(
         default=10,
