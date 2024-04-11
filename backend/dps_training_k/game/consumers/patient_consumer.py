@@ -67,6 +67,7 @@ class PatientConsumer(AbstractConsumer):
             self.subscribe(ChannelNotifier.get_group_name(self.patient))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             self._send_exercise(exercise=self.exercise)
+            self.send_available_actions()
 
     def disconnect(self, code):
         # example patient deletion - see #connect
@@ -76,6 +77,9 @@ class PatientConsumer(AbstractConsumer):
         self.temp_state.delete()
         super().disconnect(code)
 
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # API Methods, open to client.
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
     def handle_example(self, exercise_code, patient_code):
         self.exercise_code = exercise_code
         self.patientId = patient_code
@@ -95,6 +99,9 @@ class PatientConsumer(AbstractConsumer):
         self.patient.save(update_fields=["triage"])
         self._send_exercise(exercise=self.exercise)
 
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # Events triggered internally by channel notifications
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
     def state_change_event(self, event):
         serialized_state = StateSerializer(self.patient.state).data
         self.send_event(

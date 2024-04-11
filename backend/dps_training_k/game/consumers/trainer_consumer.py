@@ -84,6 +84,9 @@ class TrainerConsumer(AbstractConsumer):
     def connect(self):
         self.accept()
 
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # API Methods, open to client.
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
     def handle_example(self, exercise_code):
         self.exercise_code = exercise_code
         self.send_event(

@@ -1,4 +1,5 @@
 import traceback
+import json
 from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
@@ -6,6 +7,7 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
 from game.models import Patient, Exercise
+from template.models import Action
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -173,3 +175,18 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             }
         }
         self.send_event(self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object)
+
+    def send_available_actions(self):
+        actions = Action.objects.all()
+        actions = [
+            json.dumps(
+                {
+                    "actionId": action.actionId,
+                    "actionName": action.name,
+                    "actionCategory": action.category,
+                }
+            )
+            for action in actions
+        ]
+        actions = json.dumps({"actions": actions})
+        self.send_event("availableActions", json.dumps(actions))

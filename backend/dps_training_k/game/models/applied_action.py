@@ -32,7 +32,7 @@ class AppliedActionTimestamp(models.Model):
 
 class AppliedAction(models.Model):
     patient = models.ForeignKey("Patient", on_delete=models.CASCADE)
-    action_type = models.ForeignKey("template.Action", on_delete=models.CASCADE)
+    action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     state = models.CharField(
         choices=AppliedActionState.choices,
         default=AppliedActionState.PLANNED,
