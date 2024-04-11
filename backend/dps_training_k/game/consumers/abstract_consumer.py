@@ -23,6 +23,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         FAILURE = "failure"
         SUCCESS = "success"
         EXERCISE = "exercise"
+        AVAILABLE_ACTIONS = "available-actions"
 
     class ClosureCodes:
         UNKNOWN = 0
