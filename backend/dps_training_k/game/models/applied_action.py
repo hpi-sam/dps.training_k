@@ -42,6 +42,9 @@ class AppliedAction(models.Model):
         max_length=100, null=True, blank=True, default=None
     )
 
+    @property
+    def name(self):
+        return self.action_template.name
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         # AppliedActionDispatcher.save_and_notify(self, changes, *args, **kwargs)
