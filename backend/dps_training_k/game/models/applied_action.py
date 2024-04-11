@@ -1,10 +1,10 @@
 from django.db import models
 from .scheduled_event import ScheduledEvent
 
-# from game.channel_notifications import AppliedActionDispatcher
+# from game.channel_notifications import ActionInstanceDispatcher
 
 
-class AppliedActionState(models.TextChoices):
+class ActionInstanceState(models.TextChoices):
     PLANNED = "PL", "planned"
     IN_PROGRESS = "IP", "in_progress"
     FINISHED = "FI", "finished"
@@ -14,12 +14,12 @@ class AppliedActionState(models.TextChoices):
     CANCELED = "CA", "canceled"
 
 
-class AppliedActionTimestamp(models.Model):
+class ActionInstanceTimestamp(models.Model):
     applied_action = models.OneToOneField(
-        "AppliedAction",
+        "ActionInstance",
         on_delete=models.CASCADE,
     )
-    state_name = models.CharField(choices=AppliedActionState.choices, max_length=2)
+    state_name = models.CharField(choices=ActionInstanceState.choices, max_length=2)
     t_local_begin = models.IntegerField(
         blank=True,
         null=True,
@@ -30,12 +30,12 @@ class AppliedActionTimestamp(models.Model):
     )
 
 
-class AppliedAction(models.Model):
+class ActionInstance(models.Model):
     patient = models.ForeignKey("Patient", on_delete=models.CASCADE)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     state = models.CharField(
-        choices=AppliedActionState.choices,
-        default=AppliedActionState.PLANNED,
+        choices=ActionInstanceState.choices,
+        default=ActionInstanceState.PLANNED,
         max_length=2,
     )
     reason_of_declination = models.CharField(
@@ -45,9 +45,10 @@ class AppliedAction(models.Model):
     @property
     def name(self):
         return self.action_template.name
+
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        # AppliedActionDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        # ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     @classmethod
     def try_application(cls, patient, action_type):

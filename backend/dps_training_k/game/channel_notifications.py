@@ -21,7 +21,7 @@ class ChannelNotifier:
     def save_and_notify(cls, obj, changes, *args, **kwargs):
         is_updated = not obj._state.adding
         if is_updated and not changes:
-            message = """AppliedActions have to be saved with save(update_fields=[...]) after initial creation. 
+            message = f"""{cls.__name} have to be saved with save(update_fields=[...]) after initial creation. 
             This is to ensure that the frontend is notified of changes."""
             raise Exception(message)
 

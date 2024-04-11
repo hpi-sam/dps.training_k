@@ -181,7 +181,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         actions = [
             json.dumps(
                 {
-                    "actionId": action.actionId,
+                    "actionId": action.id,
                     "actionName": action.name,
                     "actionCategory": action.category,
                 }
@@ -189,4 +189,4 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             for action in actions
         ]
         actions = json.dumps({"actions": actions})
-        self.send_event("availableActions", json.dumps(actions))
+        self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, actions=actions)
