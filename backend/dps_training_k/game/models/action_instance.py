@@ -1,5 +1,7 @@
 from django.db import models
-from game.models import ScheduledEvent
+from game.models import ScheduledEvent, Patient, Area
+from template.models import Action
+from game.channel_notifications import ActionInstanceDispatcher
 
 
 class ActionInstanceState(models.TextChoices):
@@ -13,19 +15,26 @@ class ActionInstanceState(models.TextChoices):
 
 
 class ActionInstanceTimestamp(models.Model):
-    applied_action = models.OneToOneField(
+    action_instance = models.OneToOneField(
         "ActionInstance",
         on_delete=models.CASCADE,
+        related_name="timestamps",
     )
     state_name = models.CharField(choices=ActionInstanceState.choices, max_length=2)
-    t_local_begin = models.IntegerField(
-        blank=True,
-        null=True,
-    )
+    t_local_begin = models.IntegerField()
     t_local_end = models.IntegerField(
         blank=True,
         null=True,
     )
+
+    def update(self, state, time):
+        if state == self.state_name:
+            return False, None
+        self.t_local_end = time
+        self.save(update_fields=["t_local_end"])
+        return True, ActionInstanceTimestamp.objects.create(
+            action_instance=self.action_instance, state=state, time=time
+        )
 
 
 class ActionInstance(models.Model):
@@ -36,6 +45,9 @@ class ActionInstance(models.Model):
         default=ActionInstanceState.PLANNED,
         max_length=2,
     )
+    current_timestamp = models.ForeignKey(
+        "ActionInstanceTimestamp", on_delete=models.CASCADE, blank=True, null=True
+    )
     reason_of_declination = models.CharField(
         max_length=100, null=True, blank=True, default=None
     )
@@ -44,21 +56,54 @@ class ActionInstance(models.Model):
     def name(self):
         return self.action_template.name
 
+    def save(self, *args, **kwargs):
+        changes = kwargs.get("update_fields", None)
+        ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        self._update_timestamp()
+
+    def try_application(self):
+        is_applicable, context = self.action_template.application_status(
+            self.patient, self.patient.area
+        )
+        if not is_applicable:
+            self.state = ActionInstanceState.DECLINED
+            self.reason_of_declination = context
+            self.save(update_fields=["state", "reason_of_declination"])
+            return False
+
+        is_next = self.place_of_application().is_next_action(self)
+        if is_next:
+            self.start_application()
+            return True
+
     @classmethod
-    def try_application(cls, patient, action_template):
+    def create(cls, patient, action_template):
         is_applicable, context = action_template.application_status(
             patient, patient.area
         )
-        if is_applicable:
-            obj = cls.objects.create(patient=patient, action_template=action_template)
-            obj.start_application()
-            return obj
-        return cls.objects.create(
+        action_instance = ActionInstance(
             patient=patient,
             action_template=action_template,
-            state=ActionInstanceState.DECLINED,
-            reason_of_declination=context,
+            state=ActionInstanceState.PLANNED,
         )
+        action_instance.current_timestamp = ActionInstanceTimestamp.objects.create(
+            action_instance=action_instance,
+            state_name=ActionInstanceState.PLANNED,
+            t_local_begin=action_instance.get_local_time(),
+        )
+        if not is_applicable:
+            action_instance.state = ActionInstanceState.DECLINED
+            action_instance.current_timestamp.state_name = ActionInstanceState.DECLINED
+            action_instance.reason_of_declination = context
+            action_instance.save()
+            return False
+        action_instance.save()
+        return action_instance.try_application()
+
+    def place_of_application(self):
+        if self.action_template.category == Action.Category.LAB:
+            return Area
+        return Patient
 
     def start_application(self):
         ScheduledEvent.create_event(
@@ -73,3 +118,11 @@ class ActionInstance(models.Model):
     def application_finished(self):
         self.state = ActionInstanceState.FINISHED
         self.save(update_fields=["state"])
+
+    def _update_timestamp(self):
+        timestamp_changed, new_timestamp = self.current_timestamp.update(
+            self, self.state, self.get_local_time()
+        )
+        if timestamp_changed:
+            self.current_timestamp = new_timestamp
+            super().save(update_fields=["current_timestamp"])
