@@ -1,6 +1,7 @@
 from django.db import models
 from .scheduled_event import ScheduledEvent
-from game.channel_notifications import AppliedActionDispatcher
+
+# from game.channel_notifications import AppliedActionDispatcher
 
 
 class AppliedActionState(models.TextChoices):
@@ -43,7 +44,7 @@ class AppliedAction(models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        AppliedActionDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        # AppliedActionDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     @classmethod
     def try_application(cls, patient, action_type):
