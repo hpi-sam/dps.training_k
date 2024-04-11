@@ -1,6 +1,6 @@
 from urllib.parse import parse_qs
 
-from game.models import Patient, Exercise
+from game.models import Patient, Exercise, ActionInstance
 from template.serializer.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
@@ -15,12 +15,16 @@ class PatientConsumer(AbstractConsumer):
         EXAMPLE = "example"
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
+        ACTION_ADD = "action-add"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
         EXERCISE = "exercise"
         TEST_PASSTHROUGH = "test-passthrough"
         STATE_CHANGE = "state-change"
+        ACTION_CONFIRMATION = "action-confirmation"
+        ACTION_DECLINATION = "action-declination"
+        ACTION_RESULT = "action-result"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,6 +43,7 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_triage,
                 "triage",
             ),
+            self.PatientIncomingMessageTypes.ACTION_ADD: (self.handle_action_add,),
         }
 
     def connect(self):
@@ -99,12 +104,44 @@ class PatientConsumer(AbstractConsumer):
         self.patient.save(update_fields=["triage"])
         self._send_exercise(exercise=self.exercise)
 
+    def handle_action_add(self):
+        self.patient.add_action(self.tempExercise.action_set.first())
+        self._send_exercise(exercise=self.exercise)
+
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
+
     def state_change_event(self, event):
         serialized_state = StateSerializer(self.patient.state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,
+        )
+
+    def action_confirmation_event(self, event):
+        action = ActionInstance.objects.get(pk=event["action_pk"])
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
+            {"actionId": action.id, "actionName": action.name},
+        )
+
+    def action_declination_event(self, event):
+        action = ActionInstance.objects.get(pk=event["action_pk"])
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
+            {
+                "actionName": action.name,
+                "actionDeclinationReason": action.reason_of_declination,
+            },
+        )
+
+    def action_result_event(self, event):
+        action = ActionInstance.objects.get(pk=event["action_pk"])
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_RESULT,
+            {
+                "actionId": action.id,
+                "actionResult": event["action_result"],
+            },
         )

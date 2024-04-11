@@ -1,5 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+import game.models as models
 
 """
 This package is responsible to decide when to notify which consumers.
@@ -72,5 +73,33 @@ class AreaDispatcher(ChannelNotifier):
         event = {
             "type": ChannelEventTypes.EXERCISE_UPDATE,
             "exercise_pk": exercise.id,
+        }
+        cls._notify_group(channel, event)
+
+
+class ActionInstanceDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, obj, changes):
+        applied_action = obj
+        if changes and not "state" in changes:
+            raise ValueError(
+                "There has to be a state change whenever updating an ActionInstance."
+            )
+        if applied_action.state == models.ActionInstanceState.DECLINED:
+            event_type = ChannelEventTypes.ACTION_DECLINATION_EVENT
+        elif applied_action.state == models.ActionInstanceState.PLANNED:
+            event_type = ChannelEventTypes.ACTION_CONFIRMATION_EVENT
+        elif applied_action.state == models.ActionInstanceState.FINISHED:
+            event_type = ChannelEventTypes.ACTION_RESULT_EVENT
+        else:
+            return
+        cls._notify_action_event(applied_action, event_type)
+
+    @classmethod
+    def _notify_action_event(cls, applied_action, event_type):
+        channel = cls.get_group_name(applied_action.patient)
+        event = {
+            "type": event_type,
+            "action_pk": applied_action.id,
         }
         cls._notify_group(channel, event)

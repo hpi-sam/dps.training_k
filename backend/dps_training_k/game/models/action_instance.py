@@ -1,4 +1,5 @@
 from django.db import models
+from game.models import ScheduledEvent
 
 
 class ActionInstanceState(models.TextChoices):
@@ -42,3 +43,33 @@ class ActionInstance(models.Model):
     @property
     def name(self):
         return self.action_template.name
+
+    @classmethod
+    def try_application(cls, patient, action_template):
+        is_applicable, context = action_template.application_status(
+            patient, patient.area
+        )
+        if is_applicable:
+            obj = cls.objects.create(patient=patient, action_template=action_template)
+            obj.start_application()
+            return obj
+        return cls.objects.create(
+            patient=patient,
+            action_template=action_template,
+            state=ActionInstanceState.DECLINED,
+            reason_of_declination=context,
+        )
+
+    def start_application(self):
+        ScheduledEvent.create_event(
+            self.patient.exercise,
+            self.action_template.duration,  # ToDo: Replace with scalable local time system
+            "application_finished",
+            applied_action=self,
+        )
+        self.state = ActionInstanceState.IN_PROGRESS
+        self.save(update_fields=["state"])
+
+    def application_finished(self):
+        self.state = ActionInstanceState.FINISHED
+        self.save(update_fields=["state"])

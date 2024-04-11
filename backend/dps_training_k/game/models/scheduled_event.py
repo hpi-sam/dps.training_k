@@ -17,7 +17,15 @@ class ScheduledEvent(models.Model):
     method_name = models.CharField(max_length=100)
 
     @classmethod
-    def create_event(cls, exercise, t_sim_delta, method_name, patient=None, area=None):
+    def create_event(
+        cls,
+        exercise,
+        t_sim_delta,
+        method_name,
+        patient=None,
+        area=None,
+        action_instance=None,
+    ):
         scheduled_event = ScheduledEvent(
             exercise=exercise,
             end_date=cls.calculate_finish_time(t_sim_delta, exercise),
@@ -29,6 +37,7 @@ class ScheduledEvent(models.Model):
             exercise=exercise,
             patient=patient,
             area=area,
+            action_instance=action_instance,
         )
 
     @classmethod
@@ -78,8 +87,18 @@ class Owner(OneFieldNotNull, models.Model):
         related_name="owned_events",
     )
 
+    action_instance_owner = models.ForeignKey(
+        "ActionInstance",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="owned_events",
+    )
+
     @classmethod
-    def create_owner(cls, event, patient=None, exercise=None, area=None):
+    def create_owner(
+        cls, event, patient=None, exercise=None, area=None, action_instance=None
+    ):
         # patient always needs to be checked before exercise, as exercise and patient are being passed when patient creates scheduled event
         if patient:
             return cls.objects.create(event=event, patient_owner=patient)
@@ -87,6 +106,10 @@ class Owner(OneFieldNotNull, models.Model):
             return cls.objects.create(event=event, area_owner=area)
         elif exercise:
             return cls.objects.create(event=event, exercise_owner=exercise)
+        elif action_instance:
+            return cls.objects.create(
+                event=event, action_instance_owner=action_instance
+            )
         else:
             raise Exception("Owner must have a patient or exercise")
 
@@ -97,5 +120,7 @@ class Owner(OneFieldNotNull, models.Model):
             return self.exercise_owner
         elif self.area_owner:
             return self.area_owner
+        elif self.action_instance_owner:
+            return self.action_instance_owner
         else:
             return None
