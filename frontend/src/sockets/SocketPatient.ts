@@ -96,7 +96,6 @@ class SocketPatient {
 					break
 				case 'ressource-assignments':
 					ressourceAssignmentsStore.setRessourceAssignments(data.ressourceAssignments as RessourceAssignments)
-					console.log('ressource-assignments:', data.ressourceAssignments)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -132,6 +131,34 @@ class SocketPatient {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'triage',
 			'triage': triage,
+		}))
+	}
+
+	releasePersonnel(personnelId: number) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'personnel-release',
+			'personnelId': personnelId,
+		}))
+	}
+
+	assignPersonnel(personnelId: number) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'personnel-assign',
+			'personnelId': personnelId,
+		}))
+	}
+
+	releaseMaterial(materialId: number) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'material-release',
+			'materialId': materialId,
+		}))
+	}
+
+	assignMaterial(materialId: number) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'material-assign',
+			'materialId': materialId,
 		}))
 	}
 }
