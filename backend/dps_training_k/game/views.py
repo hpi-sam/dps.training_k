@@ -13,7 +13,7 @@ class PatientAccessView(APIView):
             username="2"  # has to be the same as the username in abstract_consumer.py#authenticate
         )  # Ensure the username is a string
         if created:
-            user.set_password("123456")  # Properly hash the password
+            user.set_password("abcdef")  # Properly hash the password
             user.save()
 
         if not (request.data.get("exerciseId") and request.data.get("patientId")):

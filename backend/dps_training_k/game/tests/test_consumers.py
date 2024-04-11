@@ -1,5 +1,6 @@
 from channels.testing import WebsocketCommunicator
 from django.test import TransactionTestCase
+
 from configuration.asgi import application
 
 
@@ -33,7 +34,7 @@ class TrainerConsumerTestCase(TransactionTestCase):
         self.assertTrue(connected)
 
         # Send an "example" request type message to the server
-        await communicator.send_json_to({"messageType": "trainer-exercise-create"})
+        await communicator.send_json_to({"messageType": "exercise-create"})
 
         # Receive and test the response from the server
         response = await communicator.receive_json_from()

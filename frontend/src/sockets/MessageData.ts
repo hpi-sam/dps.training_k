@@ -25,7 +25,7 @@ interface MessageData {
 }
 
 interface Exercise {
-	exerciseId: number
+	exerciseId: string
 	areas: Area[]
 }
 

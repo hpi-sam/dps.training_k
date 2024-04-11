@@ -1,5 +1,6 @@
-import string
 import random
+import string
+
 from Levenshtein import distance as lev
 
 
@@ -10,8 +11,8 @@ class LevenshteinCode:
 
     def get_exerciseId(self):
         """
-        Generates an unique alphabetic exerciseId of length self.code_length,
-        that is also distinctive from other non-finished excercises (levenshtein distance >= 3).
+        Generates a unique alphabetic exerciseId of length self.code_length,
+        that is also distinctive from other non-finished exercises (levenshtein distance >= 3).
         :return: a string, the exerciseId
         """
         new_code = None

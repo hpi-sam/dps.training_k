@@ -11,7 +11,7 @@ class PatientWebSocketTest(TransactionTestCase):
     def setUp(self):
         super().setUp()
         # Create a user and token for testing
-        self.user = User.objects.create_user(username="6", password="123456")
+        self.user = User.objects.create_user(username="2", password="abcdef")
         self.token, _ = Token.objects.get_or_create(user=self.user)
         self.patient = PatientFactory()
 
@@ -30,18 +30,22 @@ class PatientWebSocketTest(TransactionTestCase):
         await communicator.send_json_to(
             {
                 "messageType": "example",
-                "exercise_code": "123456",
-                "patient_code": "6",
+                "exercise_code": "abcdef",
+                "patient_code": "2",
             }
         )
 
         # Receive the response from the WebSocket
+        response = (
+            await communicator.receive_json_from()
+        )  # Catch the response from available actions
+
         response = await communicator.receive_json_from()
         self.assertEqual(
             response,
             {
                 "messageType": "response",
-                "content": "exercise_code 123456 & patient_code 6",
+                "content": "exercise_code abcdef & patient_code 2",
             },
             "Unexpected response from WebSocket",
         )

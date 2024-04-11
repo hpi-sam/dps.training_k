@@ -1,9 +1,9 @@
 from django.db import models
-from django.conf import settings
+
+from game.channel_notifications import PatientDispatcher
 from helpers.eventable import Eventable
-from .scheduled_event import ScheduledEvent
 from template.models.patient_state import PatientState
-from game import channel_notifications
+from .scheduled_event import ScheduledEvent
 
 
 class Patient(Eventable, models.Model):
@@ -44,15 +44,8 @@ class Patient(Eventable, models.Model):
     )
 
     def save(self, *args, **kwargs):
-        update_fields = kwargs.get("update_fields", None)
-        is_updated = not self._state.adding
-        if is_updated and not update_fields:
-            message = """Patients have to be saved with save(update_fields=[...]) after initial creation. 
-            This is to ensure that the frontend is notified of changes."""
-            raise Exception(message)
-
-        super().save(*args, **kwargs)
-        channel_notifications.dispatch_patient_event(self, update_fields)
+        changes = kwargs.get("update_fields", None)
+        PatientDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
