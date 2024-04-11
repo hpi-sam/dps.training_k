@@ -107,7 +107,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_start_exercise(self):
         owned_patients = Patient.objects.filter(exercise=self.exercise)
-        [patient.schedule_state_transition() for patient in owned_patients]
+        [patient.schedule_state_change() for patient in owned_patients]
 
     def handle_stop_exercise(self):
         # Stop Celery

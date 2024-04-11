@@ -63,7 +63,7 @@ class Patient(Eventable, models.Model):
         print("temporary_event_test called")
         return True
 
-    def schedule_state_transition(self):
+    def schedule_state_change(self):
         from game.models import ScheduledEvent
 
         if self.patient_state.is_dead:
@@ -88,7 +88,7 @@ class Patient(Eventable, models.Model):
             return False
         self.patient_state = future_state
         self.save(update_fields=["patient_state"])
-        self.schedule_state_transition()
+        self.schedule_state_change()
         return True
 
     def is_dead(self):
