@@ -30,7 +30,7 @@
 				<div class="listItemId">
 					{{ new Date(logEntry.logTime).toTimeString().split(' ')[0] }}
 				</div>
-				I
+				&#x2223;
 				<div class="listItemName">
 					{{ logEntry.logMessage }}
 				</div>

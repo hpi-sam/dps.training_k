@@ -133,7 +133,7 @@ button:active {
 
 .listItemId {
   padding: .75rem 1rem;
-  width: fit-content; /* If necessary */
+  width: fit-content;
 }
 
 .listItemName {
