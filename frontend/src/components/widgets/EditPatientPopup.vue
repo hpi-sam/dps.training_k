@@ -47,35 +47,41 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<div id="leftSide">
-				<h2>Patienten-Datensätze</h2>
-				<PatientCodeList @change-patient="changePatientCode" />
+				<div class="flex-container">
+					<h2>Patienten-Datensätze</h2>
+					<PatientCodeList @change-patient="changePatientCode" />
+				</div>
 			</div>
 			<div id="rightSide">
-				<div class="listitem">
-					<div class="patientId">
-						{{ props.patientId.toString().padStart(3, '0') }}
+				<div class="flex-container">
+					<div style="height:100%">
+						<div class="listitem">
+							<div class="patientId">
+								{{ props.patientId.toString().padStart(3, '0') }}
+							</div>
+							<TriageForListItems :patient-code="currentPatient?.patientCode" />
+							<div class="patientName">
+								{{ currentPatientName }}
+							</div>
+						</div>
+						<PatientInfo
+							:injury="currentPatient?.patientInjury"
+							:history="currentPatient?.patientHistory"
+							:biometrics="currentPatient?.patientBiometrics"
+							:personal-details="currentPatient?.patientPersonalDetails"
+						/>
 					</div>
-					<TriageForListItems :patient-code="currentPatient?.patientCode" />
-					<div class="patientName">
-						{{ currentPatientName }}
+					<div id="buttonRow">
+						<button id="deleteButton" @click="deletePatient(props.patientId)">
+							Löschen
+						</button>
+						<button
+							id="saveButton"
+							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.patientCode || Number.NEGATIVE_INFINITY)"
+						>
+							Speichern
+						</button>
 					</div>
-				</div>
-				<PatientInfo
-					:injury="currentPatient?.patientInjury"
-					:history="currentPatient?.patientHistory"
-					:biometrics="currentPatient?.patientBiometrics"
-					:personal-details="currentPatient?.patientPersonalDetails"
-				/>
-				<div id="buttonRow">
-					<button id="deleteButton" @click="deletePatient(props.patientId)">
-						Löschen
-					</button>
-					<button
-						id="saveButton"
-						@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.patientCode || Number.NEGATIVE_INFINITY)"
-					>
-						Speichern
-					</button>
 				</div>
 			</div>
 		</div>
@@ -88,6 +94,7 @@
 		padding: 20px;
 		border-radius: 8px;
 		width: 80vw;
+		height: 50vh;
 		display: flex;
 	}
 

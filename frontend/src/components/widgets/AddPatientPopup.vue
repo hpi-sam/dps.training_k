@@ -52,29 +52,35 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<div id="leftSide">
-				<h2>Patienten-Datensätze</h2>
-				<PatientCodeList @change-patient="changePatientCode" />
+				<div class="flex-container">
+					<h2>Patienten-Datensätze</h2>
+					<PatientCodeList @change-patient="changePatientCode" />
+				</div>
 			</div>
 			<div id="rightSide">
-				<div class="listitem">
-					<TriageForListItems :patient-code="currentPatient?.patientCode" />
-					<div class="patientName">
-						{{ props.patientName }}
+				<div class="flex-container">
+					<div style="height:100%">
+						<div class="listitem">
+							<TriageForListItems :patient-code="currentPatient?.patientCode" />
+							<div class="patientName">
+								{{ props.patientName }}
+							</div>
+						</div>
+						<PatientInfo
+							:injury="currentPatient?.patientInjury"
+							:history="currentPatient?.patientHistory"
+							:biometrics="currentPatient?.patientBiometrics"
+							:personal-details="currentPatient?.patientPersonalDetails"
+						/>
 					</div>
-				</div>
-				<PatientInfo
-					:injury="currentPatient?.patientInjury"
-					:history="currentPatient?.patientHistory"
-					:biometrics="currentPatient?.patientBiometrics"
-					:personal-details="currentPatient?.patientPersonalDetails"
-				/>
-				<div id="buttonRow">
-					<button
-						id="saveButton"
-						@click="addPatient()"
-					>
-						Patient hinzufügen
-					</button>
+					<div id="buttonRow">
+						<button
+							id="saveButton"
+							@click="addPatient()"
+						>
+							Patient hinzufügen
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -87,6 +93,7 @@
 		padding: 20px;
 		border-radius: 8px;
 		width: 80vw;
+		height: 50vh;
 		display: flex;
 	}
 

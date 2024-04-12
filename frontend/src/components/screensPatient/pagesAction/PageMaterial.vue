@@ -31,57 +31,61 @@
 </script>
 
 <template>
-	<h1>Material</h1>
-	<div class="list">
-		<div v-if="assignedMaterial?.length">
-			<p>Diesem Patienten zugeordnet</p>
-			<div
-				v-for="materialAssignment in assignedMaterial"
-				:key="materialAssignment.materialId"
-				class="listItem"
-			>
-				<div class="listItemButton">
-					<div class="listItemName">
-						{{ materialAssignment.materialName }}
+	<div class="flex-container">
+		<h1>Material</h1>
+		<div class="scroll">
+			<div class="list">
+				<div v-if="assignedMaterial?.length">
+					<p>Diesem Patienten zugeordnet</p>
+					<div
+						v-for="materialAssignment in assignedMaterial"
+						:key="materialAssignment.materialId"
+						class="listItem"
+					>
+						<div class="listItemButton">
+							<div class="listItemName">
+								{{ materialAssignment.materialName }}
+							</div>
+						</div>
+						<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
+							Freigeben
+						</button>
 					</div>
 				</div>
-				<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
-					Freigeben
-				</button>
-			</div>
-		</div>
-		<div v-if="freeMaterial.length">
-			<br>
-			<p>Freies Material</p>
-			<div
-				v-for="materialAssignment in freeMaterial"
-				:key="materialAssignment.materialId"
-				class="listItem"
-			>
-				<div class="listItemButton">
-					<div class="listItemName">
-						{{ materialAssignment.materialName }}
+				<div v-if="freeMaterial.length">
+					<br>
+					<p>Freies Material</p>
+					<div
+						v-for="materialAssignment in freeMaterial"
+						:key="materialAssignment.materialId"
+						class="listItem"
+					>
+						<div class="listItemButton">
+							<div class="listItemName">
+								{{ materialAssignment.materialName }}
+							</div>
+						</div>
+						<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
+							Zuweisen
+						</button>
 					</div>
 				</div>
-				<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
-					Zuweisen
-				</button>
-			</div>
-		</div>
-		<div v-if="busyMaterial?.length">
-			<br>
-			<p>Anderen Patienten zugeordnet</p>
-			<div
-				v-for="materialAssignment in busyMaterial"
-				:key="materialAssignment.materialId"
-				class="listItem"
-			>
-				<div class="listItemButton">
-					<div class="listItemName">
-						{{ materialAssignment.materialName }}
-					</div>
-					<div class="listItemName assigned-patient">
-						Patient {{ materialAssignment.patientId }}
+				<div v-if="busyMaterial?.length">
+					<br>
+					<p>Anderen Patienten zugeordnet</p>
+					<div
+						v-for="materialAssignment in busyMaterial"
+						:key="materialAssignment.materialId"
+						class="listItem"
+					>
+						<div class="listItemButton">
+							<div class="listItemName">
+								{{ materialAssignment.materialName }}
+							</div>
+							<div class="listItemName assigned-patient">
+								Patient {{ materialAssignment.patientId }}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

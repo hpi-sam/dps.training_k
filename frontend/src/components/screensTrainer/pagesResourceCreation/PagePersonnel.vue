@@ -41,21 +41,24 @@
 		@close-popup="showPopup=false"
 		@delete="deletePersonnel"
 	/>
-	<div class="list">
-		<div
-			v-for="personnel in currentAreaData?.personnel"
-			:key="personnel.personnelName"
-			class="listItem"
-		>
-			<button class="listItemButton" @click="openPopup(personnel.personnelId)">
-				<div class="listItemName">
-					{{ personnel.personnelName }}
-				</div>
+	<div class="scroll">
+		<h1>Personal</h1>
+		<div class="list">
+			<div
+				v-for="personnel in currentAreaData?.personnel"
+				:key="personnel.personnelName"
+				class="listItem"
+			>
+				<button class="listItemButton" @click="openPopup(personnel.personnelId)">
+					<div class="listItemName">
+						{{ personnel.personnelName }}
+					</div>
+				</button>
+				<ToggleSwitchForListItems default="active" />
+			</div>
+			<button v-if="currentAreaData" class="listItemAddButton" @click="addPersonnel()">
+				Personal hinzufügen
 			</button>
-			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button v-if="currentAreaData" class="listItemAddButton" @click="addPersonnel()">
-			Personal hinzufügen
-		</button>
 	</div>
 </template>

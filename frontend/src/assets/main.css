@@ -42,7 +42,7 @@ button:active {
 .flex-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 100%;
   position: relative;
 }
@@ -118,9 +118,10 @@ button:active {
   text-align: left;
   height: 50px;
   width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.selected .listItemButton {
+  filter: brightness(90%);
 }
 
 .listItemAddButton {
@@ -143,6 +144,27 @@ button:active {
 
 .listItemName {
   padding: .75rem 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 30px;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .close-button {

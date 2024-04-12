@@ -41,8 +41,8 @@
 <template>
 	<DeleteItemPopup v-if="showPopup" :name="currentArea" @close-popup="showPopup=false" @delete="deleteArea" />
 	<div class="flex-container">
-		<div>
-			<TopBarTrainer />
+		<TopBarTrainer />
+		<div class="scroll">
 			<div class="list">
 				<div
 					v-for="area in areas"
@@ -78,18 +78,10 @@
 </template>
 
 <style scoped>
-	.list {
-		margin-top: 90px;
-	}
-
 	.settingsButton {
 		height: 50px;
 		width: 50px;
 		border: none;
 		background-color: rgb(243, 244, 246);
-	}
-
-	.selected .listItemButton {
-		filter: brightness(90%);
 	}
 </style>

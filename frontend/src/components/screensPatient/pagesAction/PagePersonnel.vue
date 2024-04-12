@@ -31,57 +31,61 @@
 </script>
 
 <template>
-	<h1>Personal</h1>
-	<div class="list">
-		<div v-if="assignedPersonnel?.length">
-			<p>Diesem Patienten zugeordnet</p>
-			<div
-				v-for="personnelAssignment in assignedPersonnel"
-				:key="personnelAssignment.personnelId"
-				class="listItem"
-			>
-				<div class="listItemButton">
-					<div class="listItemName">
-						{{ personnelAssignment.personnelName }}
+	<div class="flex-container">
+		<h1>Personal</h1>
+		<div class="scroll">
+			<div class="list">
+				<div v-if="assignedPersonnel?.length">
+					<p>Diesem Patienten zugeordnet</p>
+					<div
+						v-for="personnelAssignment in assignedPersonnel"
+						:key="personnelAssignment.personnelId"
+						class="listItem"
+					>
+						<div class="listItemButton">
+							<div class="listItemName">
+								{{ personnelAssignment.personnelName }}
+							</div>
+						</div>
+						<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
+							Freigeben
+						</button>
 					</div>
 				</div>
-				<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
-					Freigeben
-				</button>
-			</div>
-		</div>
-		<div v-if="freePersonnel.length">
-			<br>
-			<p>Freies Personal</p>
-			<div
-				v-for="personnelAssignment in freePersonnel"
-				:key="personnelAssignment.personnelId"
-				class="listItem"
-			>
-				<div class="listItemButton">
-					<div class="listItemName">
-						{{ personnelAssignment.personnelName }}
+				<div v-if="freePersonnel.length">
+					<br>
+					<p>Freies Personal</p>
+					<div
+						v-for="personnelAssignment in freePersonnel"
+						:key="personnelAssignment.personnelId"
+						class="listItem"
+					>
+						<div class="listItemButton">
+							<div class="listItemName">
+								{{ personnelAssignment.personnelName }}
+							</div>
+						</div>
+						<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
+							Zuweisen
+						</button>
 					</div>
 				</div>
-				<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
-					Zuweisen
-				</button>
-			</div>
-		</div>
-		<div v-if="busyPersonnel?.length">
-			<br>
-			<p>Anderen Patienten zugeordnet</p>
-			<div
-				v-for="personnelAssignment in busyPersonnel"
-				:key="personnelAssignment.personnelId"
-				class="listItem"
-			>
-				<div class="listItemButton">
-					<div class="listItemName">
-						{{ personnelAssignment.personnelName }}
-					</div>
-					<div class="listItemName assigned-patient">
-						Patient {{ personnelAssignment.patientId }}
+				<div v-if="busyPersonnel?.length">
+					<br>
+					<p>Anderen Patienten zugeordnet</p>
+					<div
+						v-for="personnelAssignment in busyPersonnel"
+						:key="personnelAssignment.personnelId"
+						class="listItem"
+					>
+						<div class="listItemButton">
+							<div class="listItemName">
+								{{ personnelAssignment.personnelName }}
+							</div>
+							<div class="listItemName assigned-patient">
+								Patient {{ personnelAssignment.patientId }}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -47,22 +47,24 @@
 				<path :d="svg.closeIcon" />
 			</svg>
 		</button>
-		<div
-			v-for="actionTyp in availablesStore.getActionTypes"
-			:key="actionTyp"
-			class="list"
-		>
-			<h2>{{ getTypeLabel(actionTyp) }}</h2>
+		<div class="scroll">
 			<div
-				v-for="action in filteredActions(actionTyp)"
-				:key="action.actionName"
-				class="listItem"
+				v-for="actionTyp in availablesStore.getActionTypes"
+				:key="actionTyp"
+				class="list"
 			>
-				<button class="listItemButton" @click="openAction(action.actionName)">
-					<div class="listItemName">
-						{{ action.actionName }}
-					</div>
-				</button>
+				<h2>{{ getTypeLabel(actionTyp) }}</h2>
+				<div
+					v-for="action in filteredActions(actionTyp)"
+					:key="action.actionName"
+					class="listItem"
+				>
+					<button class="listItemButton" @click="openAction(action.actionName)">
+						<div class="listItemName">
+							{{ action.actionName }}
+						</div>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

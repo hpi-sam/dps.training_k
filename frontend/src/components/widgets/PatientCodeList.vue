@@ -14,25 +14,21 @@
 </script>
 
 <template>
-	<div id="list">
-		<button
-			v-for="patient in availablePatients"
-			:key="patient.patientCode"
-			class="availablePatientButton"
-			@click="changePatient(patient.patientCode)"
-		>
-			<TriageForListItems :patient-code="patient.patientCode" />
-		</button>
+	<div class="scroll">
+		<div class="list">
+			<button
+				v-for="patient in availablePatients"
+				:key="patient.patientCode"
+				class="availablePatientButton"
+				@click="changePatient(patient.patientCode)"
+			>
+				<TriageForListItems :patient-code="patient.patientCode" />
+			</button>
+		</div>
 	</div>
 </template>
   
 <style scoped>
-    #list {
-        display: flex;
-		flex-wrap: wrap;
-		align-content: flex-start;
-    }
-
     .availablePatientButton {
         position: relative;
         border: none;

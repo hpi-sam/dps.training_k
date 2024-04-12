@@ -59,38 +59,41 @@
 		:current-area="props.currentArea"
 		@close-popup="showAddPopup=false"
 	/>
-	<div class="list">
-		<div
-			v-for="device in devices as Material[]"
-			:key="device.materialName"
-			class="listItem"
-		>
-			<button class="listItemButton" @click="openDeletePopup(device.materialName)">
-				<div class="listItemName">
-					{{ device.materialName }}
-				</div>
+	<div class="scroll">
+		<h1>Material</h1>
+		<div class="list">
+			<div
+				v-for="device in devices as Material[]"
+				:key="device.materialName"
+				class="listItem"
+			>
+				<button class="listItemButton" @click="openDeletePopup(device.materialName)">
+					<div class="listItemName">
+						{{ device.materialName }}
+					</div>
+				</button>
+				<ToggleSwitchForListItems default="active" />
+			</div>
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
+				Gerät hinzufügen
 			</button>
-			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
-			Gerät hinzufügen
-		</button>
-	</div>
-	<div class="list">
-		<div
-			v-for="blood in bloodList as Material[]"
-			:key="blood.materialName"
-			class="listItem"
-		>
-			<button class="listItemButton" @click="openDeletePopup(blood.materialName)">
-				<div class="listItemName">
-					{{ blood.materialName }}
-				</div>
+		<div class="list">
+			<div
+				v-for="blood in bloodList as Material[]"
+				:key="blood.materialName"
+				class="listItem"
+			>
+				<button class="listItemButton" @click="openDeletePopup(blood.materialName)">
+					<div class="listItemName">
+						{{ blood.materialName }}
+					</div>
+				</button>
+				<ToggleSwitchForListItems default="active" />
+			</div>
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
+				Blut hinzufügen
 			</button>
-			<ToggleSwitchForListItems default="active" />
 		</div>
-		<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
-			Blut hinzufügen
-		</button>
 	</div>
 </template>
