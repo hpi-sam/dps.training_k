@@ -4,6 +4,7 @@ import game.models as models
 
 """
 This package is responsible to decide when to notify which consumers.
+This also implies that it should be as transparent as possible to the models it watches.
 Events must be sent as strings, thus objects are passed by ids.
 Sending events is done by the celery worker.
 """
@@ -19,6 +20,7 @@ class ChannelEventTypes:
 
 class ChannelNotifier:
     @classmethod
+    # If used in overwritten save method, it must be called before any calls to super().save
     def save_and_notify(cls, obj, changes, *args, **kwargs):
         is_updated = not obj._state.adding
         if is_updated and not changes:
@@ -85,11 +87,11 @@ class ActionInstanceDispatcher(ChannelNotifier):
             raise ValueError(
                 "There has to be a state change whenever updating an ActionInstance."
             )
-        if applied_action.state == models.ActionInstanceState.DECLINED:
+        if applied_action.state_name == models.ActionInstanceStateNames.DECLINED:
             event_type = ChannelEventTypes.ACTION_DECLINATION_EVENT
-        elif applied_action.state == models.ActionInstanceState.PLANNED:
+        elif applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
             event_type = ChannelEventTypes.ACTION_CONFIRMATION_EVENT
-        elif applied_action.state == models.ActionInstanceState.FINISHED:
+        elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
             event_type = ChannelEventTypes.ACTION_RESULT_EVENT
         else:
             return

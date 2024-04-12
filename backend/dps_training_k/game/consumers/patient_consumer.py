@@ -1,6 +1,6 @@
 from urllib.parse import parse_qs
 
-from game.models import Patient, Exercise, ActionInstance
+from game.models import Patient, Exercise, ActionInstanceStateNames
 from template.serializer.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
@@ -120,14 +120,14 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_confirmation_event(self, event):
-        action = ActionInstance.objects.get(pk=event["action_pk"])
+        action = ActionInstanceStateNames.objects.get(pk=event["action_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             {"actionId": action.id, "actionName": action.name},
         )
 
     def action_declination_event(self, event):
-        action = ActionInstance.objects.get(pk=event["action_pk"])
+        action = ActionInstanceStateNames.objects.get(pk=event["action_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
             {
@@ -137,7 +137,7 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_result_event(self, event):
-        action = ActionInstance.objects.get(pk=event["action_pk"])
+        action = ActionInstanceStateNames.objects.get(pk=event["action_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_RESULT,
             {
