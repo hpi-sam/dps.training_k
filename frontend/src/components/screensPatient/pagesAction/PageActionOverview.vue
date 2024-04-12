@@ -11,18 +11,6 @@
 <template>
 	<h1>Übersicht</h1>
 	<div class="list">
-		<!--<div
-			v-for="personnel in currentAreaData?.personnel"
-			:key="personnel.personnelName"
-			class="listItem"
-		>
-			<button class="listItemButton" @click="openPopup(personnel.personnelId)">
-				<div class="listItemName">
-					{{ personnel.personnelName }}
-				</div>
-			</button>
-			<ToggleSwitchForListItems default="active" />
-		</div>-->
 		<button class="listItemAddButton" @click="emit('add-action')">
 			Aktion hinzufügen
 		</button>
