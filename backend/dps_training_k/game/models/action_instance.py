@@ -2,6 +2,7 @@ from django.db import models
 from game.models import ScheduledEvent, Patient, Area
 from template.models import Action
 from game.channel_notifications import ActionInstanceDispatcher
+from helpers.local_timable import LocalTimeable
 
 
 class ActionInstanceStateNames(models.TextChoices):
