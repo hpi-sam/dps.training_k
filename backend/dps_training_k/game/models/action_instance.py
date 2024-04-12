@@ -86,7 +86,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 t_local_begin=action_instance.get_local_time(),
             )
             action_instance.save()
-            state=ActionInstanceState.PLANNED,
+            action_instance.place_of_application().register_to_queue(action_instance)
             return action_instance
         action_instance.current_timestamp = ActionInstanceState.objects.create(
             action_instance=action_instance,
@@ -102,37 +102,34 @@ class ActionInstance(LocalTimeable, models.Model):
             self.patient, self.patient.area
         )
         if not is_applicable:
-            action_instance.state = ActionInstanceState.DECLINED
-            action_instance.current_timestamp.state_name = ActionInstanceState.DECLINED
-            action_instance.reason_of_declination = context
-            action_instance.save()
+            entered_on_hold, new_state = self._update_state(
+                ActionInstanceStateNames.ON_HOLD
+            )
+            if entered_on_hold:
+                self.state = new_state
+                self.save(update_fields=["state"])
+            self.state.info_text = self.state.info_text + context
+            self.state.save(update_fields=["info_text"])
             return False
-        action_instance.save()
-        return action_instance.try_application()
+
+        self._start_application()
+        return True
 
     def place_of_application(self):
         if self.action_template.category == Action.Category.LAB:
-            return Area
-        return Patient
+            return self.patient.area
+        return self.patient
 
-    def start_application(self):
+    def _start_application(self):
         ScheduledEvent.create_event(
             self.patient.exercise,
             self.action_template.duration,  # ToDo: Replace with scalable local time system
             "application_finished",
             applied_action=self,
         )
-        self.state = ActionInstanceState.IN_PROGRESS
+        self.state = ActionInstanceStateNames.IN_PROGRESS
         self.save(update_fields=["state"])
 
-    def application_finished(self):
-        self.state = ActionInstanceState.FINISHED
+    def _application_finished(self):
+        self.state = ActionInstanceStateNames.FINISHED
         self.save(update_fields=["state"])
-
-    def _update_timestamp(self):
-        timestamp_changed, new_timestamp = self.current_timestamp.update(
-            self, self.state, self.get_local_time()
-        )
-        if timestamp_changed:
-            self.current_timestamp = new_timestamp
-            super().save(update_fields=["current_timestamp"])

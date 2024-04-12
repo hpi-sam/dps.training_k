@@ -2,11 +2,12 @@ from django.db import models
 
 from game.channel_notifications import PatientDispatcher
 from helpers.eventable import Eventable
+from helpers.actions_queueable import ActionsQueueable
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
 
-class Patient(Eventable, models.Model):
+class Patient(Eventable, ActionsQueueable, models.Model):
     class Triage(models.TextChoices):
         UNDEFINED = "-", "undefined"
         RED = "R", "red"
