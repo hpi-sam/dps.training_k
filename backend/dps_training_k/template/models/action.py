@@ -10,7 +10,7 @@ class Action(models.Model):
 
     name = models.CharField(max_length=100, unique=True, primary_key=True)
     category = models.CharField(choices=Category.choices, max_length=2)
-    duration = models.IntegerField(
+    application_duration = models.IntegerField(
         default=10,
         help_text="Duration in seconds in realtime. Might be scaled by external factors.",
     )

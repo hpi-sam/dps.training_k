@@ -132,7 +132,7 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
             {
                 "actionName": action.name,
-                "actionDeclinationReason": action.reason_of_declination,
+                "actionDeclinationReason": action.state.info_text,
             },
         )
 

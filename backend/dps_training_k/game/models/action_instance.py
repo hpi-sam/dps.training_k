@@ -33,6 +33,8 @@ class ActionInstanceState(models.Model):
     def update(self, state, time):
         if state == self.state_name:
             return False, None
+        if state == ActionInstanceStateNames.DECLINED:
+            raise ValueError("Once Declined, states cannot be changed")
         self.t_local_end = time
         self.save(update_fields=["t_local_end"])
         return True, ActionInstanceState.objects.create(
@@ -41,13 +43,13 @@ class ActionInstanceState(models.Model):
 
 
 class ActionInstance(LocalTimeable, models.Model):
-    patient = models.ForeignKey("Patient", on_delete=models.CASCADE)
+    patient = models.ForeignKey(
+        "Patient", on_delete=models.CASCADE, blank=True, null=True
+    )
+    area = models.ForeignKey("Area", on_delete=models.CASCADE, blank=True, null=True)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
-    )
-    reason_of_declination = models.CharField(
-        max_length=100, null=True, blank=True, default=None
     )
 
     @property
@@ -71,12 +73,13 @@ class ActionInstance(LocalTimeable, models.Model):
             super().save(update_fields=["current_state"])
 
     @classmethod
-    def create(cls, patient, action_template):
+    def create(cls, action_template, patient=None, area=None):
         is_applicable, context = action_template.application_status(
             patient, patient.area
         )
         action_instance = ActionInstance(
             patient=patient,
+            area=area,
             action_template=action_template,
         )
         if is_applicable:
@@ -88,16 +91,20 @@ class ActionInstance(LocalTimeable, models.Model):
             action_instance.save()
             action_instance.place_of_application().register_to_queue(action_instance)
             return action_instance
-        action_instance.current_timestamp = ActionInstanceState.objects.create(
+        action_instance.state = ActionInstanceState.objects.create(
             action_instance=action_instance,
             name=ActionInstanceStateNames.DECLINED,
             t_local_begin=action_instance.get_local_time(),
         )
         action_instance.state.info_text = context
+        action_instance.state.save()
         action_instance.save()
         return action_instance
 
     def try_application(self):
+        if self.state_name == ActionInstanceStateNames.DECLINED:
+            raise ValueError("Cannot start a declined action")
+
         is_applicable, context = self.action_template.application_status(
             self.patient, self.patient.area
         )
@@ -123,7 +130,7 @@ class ActionInstance(LocalTimeable, models.Model):
     def _start_application(self):
         ScheduledEvent.create_event(
             self.patient.exercise,
-            self.action_template.duration,  # ToDo: Replace with scalable local time system
+            self.action_template.application_duration,  # ToDo: Replace with scalable local time system
             "application_finished",
             applied_action=self,
         )
