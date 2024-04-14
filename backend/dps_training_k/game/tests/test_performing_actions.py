@@ -40,7 +40,7 @@ class ActionInstanceTestCase(TestCase):
         with self.assertRaises(ValueError):
             action_instance.try_application()
 
-    @patch("game.channel_notifications._notify_action_event")
+    @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
     def test_channel_notifications_being_send(self, _notify_action_event):
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()
