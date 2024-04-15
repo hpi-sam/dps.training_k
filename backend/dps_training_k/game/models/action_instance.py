@@ -30,15 +30,22 @@ class ActionInstanceState(models.Model):
     )
     info_text = models.CharField(null=True, blank=True, default=None)
 
-    def update(self, state, time):
-        if state == self.state_name:
-            return False, None
-        if state == ActionInstanceStateNames.DECLINED:
+    def update(self, state_name, time, info_text=None):
+        if self.name == ActionInstanceStateNames.DECLINED:
             raise ValueError("Once Declined, states cannot be changed")
+        if state_name == self.name and not info_text:
+            return None
+        if state_name == self.name and info_text:
+            self.info_text = self.info_text + info_text
+            self.save(update_fields=["info_text"])
+            return None
         self.t_local_end = time
         self.save(update_fields=["t_local_end"])
-        return True, ActionInstanceState.objects.create(
-            action_instance=self.action_instance, state=state, time=time
+        return ActionInstanceState.objects.create(
+            action_instance=self.action_instance,
+            name=state_name,
+            t_local_begin=time,
+            info_text=info_text,
         )
 
 
@@ -67,13 +74,14 @@ class ActionInstance(LocalTimeable, models.Model):
         changes = kwargs.get("update_fields", None)
         ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
-    def _update_state(self, state_name):
-        state_changed, new_state = self.current_state.update(
-            self, state_name, self.get_local_time()
+    def _update_state(self, state_name, info_text=None):
+        new_state = self.current_state.update(
+            state_name, self.get_local_time(), info_text
         )
-        if state_changed:
+        if new_state:
             self.current_state = new_state
             self.save(update_fields=["current_state"])
+        return self.current_state
 
     @classmethod
     def create(cls, action_template, patient=None, area=None):
@@ -111,14 +119,7 @@ class ActionInstance(LocalTimeable, models.Model):
             self.patient, self.patient.area
         )
         if not is_applicable:
-            entered_on_hold, new_state = self._update_state(
-                ActionInstanceStateNames.ON_HOLD
-            )
-            if entered_on_hold:
-                self.state = new_state
-                self.save(update_fields=["state"])
-            self.state.info_text = self.state.info_text + context
-            self.state.save(update_fields=["info_text"])
+            self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False
 
         self._start_application()
@@ -134,11 +135,9 @@ class ActionInstance(LocalTimeable, models.Model):
             self.patient.exercise,
             self.action_template.application_duration,  # ToDo: Replace with scalable local time system
             "application_finished",
-            applied_action=self,
+            action_instance=self,
         )
-        self.state = ActionInstanceStateNames.IN_PROGRESS
-        self.save(update_fields=["state"])
+        self._update_state(ActionInstanceStateNames.IN_PROGRESS)
 
     def _application_finished(self):
-        self.state = ActionInstanceStateNames.FINISHED
-        self.save(update_fields=["state"])
+        self._update_state(ActionInstanceStateNames.FINISHED)
