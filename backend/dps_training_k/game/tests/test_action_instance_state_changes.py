@@ -6,7 +6,7 @@ from .factories.action_instance_factory import (
 )
 from unittest.mock import patch
 
-"""
+
 class ActionInstanceStateChangeTestCase(TestCase):
 
     @patch("game.models.ActionInstance.get_local_time")
@@ -31,4 +31,3 @@ class ActionInstanceStateChangeTestCase(TestCase):
         action_instance = ActionInstanceFactoryFailedState()
         with self.assertRaises(ValueError):
             action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
-"""
