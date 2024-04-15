@@ -32,6 +32,24 @@ export const useExerciseStore = defineStore('exercise', {
 					area.personnel.find(personnel => personnel.personnelId === personnelId)
 				)?.personnel?.find(personnel => personnel.personnelId === personnelId) ?? null
 			}
+		},
+		getPersonnelOfArea: (state) => {
+			return (areaName: string): Personnel[] => {
+				let personnelList: Personnel[] = []
+				state.areas.forEach((area) => {
+					if (area.areaName == areaName) personnelList = area.personnel
+				})
+				return personnelList
+			}
+		},
+		getMaterialOfArea: (state) => {
+			return (areaName: string): Material[] => {
+				let materialList: Material[] = []
+				state.areas.forEach((area) => {
+					if (area.areaName == areaName) materialList = area.material
+				})
+				return materialList
+			}
 		}
 	},
 	actions: {

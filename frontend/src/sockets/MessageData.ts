@@ -22,6 +22,7 @@ interface MessageData {
 	availableActions: AvailableActions
 	availableMaterialList: AvailableMaterial
 	actionDeclinationReason?: string
+	ressourceAssignments: RessourceAssignments
 }
 
 interface Exercise {
@@ -49,6 +50,7 @@ interface Personnel {
 }
 
 interface Material {
+	materialId: number
 	materialName: string
 	materialType: string
 }
@@ -100,6 +102,28 @@ interface AvailableMaterialList {
 interface AvailableMaterial {
 	materialName: string
 	materialType: string
+}
+
+interface RessourceAssignments {
+	ressourceAssignments: RessourceAssignment[]
+}
+
+interface RessourceAssignment {
+	areaName: string
+	personnel: PersonnelAssignments[]
+	material: MaterialAssignments[]
+}
+
+interface PersonnelAssignments {
+	personnelId: number
+	personnelName: string
+	patientId: number
+}
+
+interface MaterialAssignments {
+	materialId: number
+	materialName: string
+	patientId: number
 }
 
 interface Log {
