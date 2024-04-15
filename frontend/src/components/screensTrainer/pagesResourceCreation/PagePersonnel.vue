@@ -44,6 +44,9 @@
 	<div class="scroll">
 		<h1>Personal</h1>
 		<div class="list">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="addPersonnel()">
+				Personal hinzufügen
+			</button>
 			<div
 				v-for="personnel in currentAreaData?.personnel"
 				:key="personnel.personnelName"
@@ -56,9 +59,6 @@
 				</button>
 				<ToggleSwitchForListItems default="active" />
 			</div>
-			<button v-if="currentAreaData" class="listItemAddButton" @click="addPersonnel()">
-				Personal hinzufügen
-			</button>
 		</div>
 	</div>
 </template>

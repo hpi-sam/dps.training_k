@@ -59,13 +59,13 @@
 			</div>
 			<div id="rightSide">
 				<div class="flex-container">
-					<div style="height:100%">
-						<div class="listitem">
-							<TriageForListItems :patient-code="currentPatient?.patientCode" />
-							<div class="patientName">
-								{{ props.patientName }}
-							</div>
+					<div class="listitem">
+						<TriageForListItems :patient-code="currentPatient?.patientCode" />
+						<div class="patientName">
+							{{ props.patientName }}
 						</div>
+					</div>
+					<div class="scroll">
 						<PatientInfo
 							:injury="currentPatient?.patientInjury"
 							:history="currentPatient?.patientHistory"

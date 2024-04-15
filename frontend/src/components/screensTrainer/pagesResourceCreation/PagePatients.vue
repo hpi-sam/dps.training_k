@@ -50,6 +50,9 @@
 	<div class="scroll">
 		<h1>Patients</h1>
 		<div class="list">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
+				Patient hinzufügen
+			</button>
 			<div
 				v-for="patient in currentAreaData?.patients"
 				:key="patient.patientName"
@@ -66,9 +69,6 @@
 				</button>
 				<ToggleSwitchForListItems default="active" />
 			</div>
-			<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
-				Patient hinzufügen
-			</button>
 		</div>
 	</div>
 </template>

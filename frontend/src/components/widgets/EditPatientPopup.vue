@@ -54,16 +54,16 @@
 			</div>
 			<div id="rightSide">
 				<div class="flex-container">
-					<div style="height:100%">
-						<div class="listitem">
-							<div class="patientId">
-								{{ props.patientId.toString().padStart(3, '0') }}
-							</div>
-							<TriageForListItems :patient-code="currentPatient?.patientCode" />
-							<div class="patientName">
-								{{ currentPatientName }}
-							</div>
+					<div class="listitem">
+						<div class="patientId">
+							{{ props.patientId.toString().padStart(3, '0') }}
 						</div>
+						<TriageForListItems :patient-code="currentPatient?.patientCode" />
+						<div class="patientName">
+							{{ currentPatientName }}
+						</div>
+					</div>
+					<div class="scroll">
 						<PatientInfo
 							:injury="currentPatient?.patientInjury"
 							:history="currentPatient?.patientHistory"

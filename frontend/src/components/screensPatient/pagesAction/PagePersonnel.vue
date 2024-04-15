@@ -32,8 +32,8 @@
 
 <template>
 	<div class="flex-container">
-		<h1>Personal</h1>
 		<div class="scroll">
+			<h1>Personal</h1>
 			<div class="list">
 				<div v-if="assignedPersonnel?.length">
 					<p>Diesem Patienten zugeordnet</p>

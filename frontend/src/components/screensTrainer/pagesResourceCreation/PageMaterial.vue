@@ -62,6 +62,9 @@
 	<div class="scroll">
 		<h1>Material</h1>
 		<div class="list">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
+				Gerät hinzufügen
+			</button>
 			<div
 				v-for="device in devices as Material[]"
 				:key="device.materialName"
@@ -74,11 +77,11 @@
 				</button>
 				<ToggleSwitchForListItems default="active" />
 			</div>
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
-				Gerät hinzufügen
-			</button>
 		</div>
 		<div class="list">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
+				Blut hinzufügen
+			</button>
 			<div
 				v-for="blood in bloodList as Material[]"
 				:key="blood.materialName"
@@ -91,9 +94,6 @@
 				</button>
 				<ToggleSwitchForListItems default="active" />
 			</div>
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
-				Blut hinzufügen
-			</button>
 		</div>
 	</div>
 </template>

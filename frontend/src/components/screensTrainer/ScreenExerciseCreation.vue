@@ -44,6 +44,9 @@
 		<TopBarTrainer />
 		<div class="scroll">
 			<div class="list">
+				<button class="listItemAddButton" @click="addArea()">
+					Bereich hinzufügen
+				</button>
 				<div
 					v-for="area in areas"
 					:key="area.areaName"
@@ -66,11 +69,9 @@
 						</svg>
 					</button>
 				</div>
-				<button class="listItemAddButton" @click="addArea()">
-					Bereich hinzufügen
-				</button>
 			</div>
 		</div>
+		<br><br>
 		<button class="main-button" @click="exerciseStart">
 			Übung starten
 		</button>
