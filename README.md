@@ -1,12 +1,31 @@
-# dps.training_k
-The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personal on how to act during medical surges / during mass casualty incidents.
+# K-dPS
+The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personal on how to act during medical 
+surges / during mass casualty incidents.
 The Frontend website and backend server are two different projects. For setup instructions see the Readmes in the respective folders.
 
-For a common understanding we use this [Code Glossary Notion page](https://k-dps.notion.site/9e82c16b6d9248679b87e0403bbf81a9?v=06e889f90e834b7baf2f879f9ad9551b&pvs=4) (note that this is an internal document and therefore neither formulated for others to understand nor written in English)
+For a common understanding we use this 
+[Code Glossary Notion page](https://k-dps.notion.site/9e82c16b6d9248679b87e0403bbf81a9?v=06e889f90e834b7baf2f879f9ad9551b&pvs=4) (note that this 
+is an internal document and therefore neither formulated for others to understand nor 
+written in English)
 
+## Deployment process
+The deployment process is automatically started on each release and can be manually triggered by running the GitHub action `deploy`.
+This uploads the needed images to [GitHub Packages](https://github.com/orgs/hpi-sam/packages?repo_name=dps.training_k) and saves the needed 
+environment variables as well as the docker-compose file as 
+[Actions Artifacts](https://github.com/hpi-sam/dps.training_k/actions/workflows/deploy.yml).
+For deployment on the server following steps are needed:
+1. Download the action artifacts and extract them in a folder
+2. Run following commands in that folder:
+```bash
+export IMAGE_TAG=latest
+envsubst '${IMAGE_TAG}' < docker-compose.template.yml > docker-compose.yml
+docker-compose up -d
+```
+The website should now be running on port 5173.
 
 ## MoSCoW and future plans
-We follow this [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4) (note that this is an internal document and therefore neither formulated for others to understand nor written in English)
+We follow this [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4) (note that this is an internal 
+document and therefore neither formulated for others to understand nor written in English)
 
 In addition to that we aim to always incorporate following non-functional requirements into our development:
 
@@ -29,4 +48,6 @@ In addition to that we aim to always incorporate following non-functional requir
   - A backend should be able to handle a single exercise with 30 clients.
  
 ## Interface Definition
-The communication between the frontend and backend uses an Interface as defined in our [interface definition Notion page](https://k-dps.notion.site/Interface-Definition-6852697ae02f41b29544550f84e1049a) (note that this is an internal document and therefore not necessarily formulated for others to understand)
+The communication between the frontend and backend uses an Interface as defined in our
+[interface definition Notion page](https://k-dps.notion.site/Interface-Definition-6852697ae02f41b29544550f84e1049a)(note that this is an internal 
+document and therefore not necessarily formulated for others to understand)

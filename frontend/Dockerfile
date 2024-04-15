@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:latest
 LABEL authors="Wolkenfarmer, Joshua Riewesell"
 WORKDIR /app
 RUN npm install -g vite
