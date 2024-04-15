@@ -10,8 +10,8 @@ describe('pass-through tests', () => {
 
 	it('patient route passthrough test', () => {
 		cy.visit('http://localhost:5173/')
-		cy.get('#patient-login-exercise-id').type('123456')
-		cy.get('#patient-login-patient-id').type('6')
+		cy.get('#patient-login-exercise-id').type('abcdef')
+		cy.get('#patient-login-patient-id').type('2')
 		cy.get('#patient-login').click()
 		cy.get('#ps-test').should('be.visible').click()
 		cy.get('.Vue-Toastification__toast-body').should('contain', 'received test event')
