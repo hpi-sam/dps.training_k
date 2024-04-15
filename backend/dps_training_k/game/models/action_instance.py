@@ -20,7 +20,7 @@ class ActionInstanceState(models.Model):
     action_instance = models.ForeignKey(
         "ActionInstance",
         on_delete=models.CASCADE,
-        related_name="timestamps",
+        related_name="states",
     )
     name = models.CharField(choices=ActionInstanceStateNames.choices, max_length=2)
     t_local_begin = models.IntegerField()
