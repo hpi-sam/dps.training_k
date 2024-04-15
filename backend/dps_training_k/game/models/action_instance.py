@@ -73,35 +73,34 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         if state_changed:
             self.current_state = new_state
-            super().save(update_fields=["current_state"])
+            self.save(update_fields=["current_state"])
 
     @classmethod
     def create(cls, action_template, patient=None, area=None):
         is_applicable, context = action_template.application_status(
             patient, patient.area
         )
-        action_instance = ActionInstance(
+        action_instance = ActionInstance.objects.create(
             patient=patient,
             area=area,
             action_template=action_template,
         )
         if is_applicable:
-            action_instance.state = ActionInstanceState.objects.create(
+            action_instance.current_state = ActionInstanceState.objects.create(
                 action_instance=action_instance,
                 name=ActionInstanceStateNames.PLANNED,
                 t_local_begin=action_instance.get_local_time(),
             )
-            action_instance.save()
+            action_instance.save(update_fields=["current_state"])
             action_instance.place_of_application().register_to_queue(action_instance)
             return action_instance
-        action_instance.state = ActionInstanceState.objects.create(
+        action_instance.current_state = ActionInstanceState.objects.create(
             action_instance=action_instance,
             name=ActionInstanceStateNames.DECLINED,
             t_local_begin=action_instance.get_local_time(),
+            info_text=context,
         )
-        action_instance.state.info_text = context
-        action_instance.state.save()
-        action_instance.save()
+        action_instance.save(update_fields=["current_state"])
         return action_instance
 
     def try_application(self):

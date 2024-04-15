@@ -25,8 +25,8 @@ class ChannelNotifier:
     def save_and_notify(cls, obj, changes, *args, **kwargs):
         is_updated = not obj._state.adding
         if is_updated and not changes:
-            message = f"""{cls.__name} have to be saved with save(update_fields=[...]) after initial creation. 
-            This is to ensure that the frontend is notified of changes."""
+            message = f"""{obj.__class__.__name__} have to be saved with save(update_fields=[...]) after initial creation.
+           This is to ensure that the frontend is notified of changes."""
             logging.warning(message)
 
         super(obj.__class__, obj).save(*args, **kwargs)
@@ -84,7 +84,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes):
         applied_action = obj
-        if changes and not "state" in changes:
+        if changes and not "current_state" in changes:
             raise ValueError(
                 "There has to be a state change whenever updating an ActionInstance."
             )
