@@ -43,7 +43,6 @@ jobs:
       - name: Build backend Docker containers
         run: |
           cd ./backend/dps_training_k/
-          docker pull redis:latest
           docker-compose up -d
 
       - name: Login to GitHub Container Registry
