@@ -38,10 +38,12 @@
 </script>
 
 <template>
-	<p v-if="!currentArea" id="noAreaText">
-		Wähle einen Bereich aus
-	</p>
-	<component :is="currentPageComponent" :current-area="currentArea" />
+	<div class="page">
+		<p v-if="!currentArea" id="noAreaText">
+			Wähle einen Bereich aus
+		</p>
+		<component :is="currentPageComponent" v-if="currentArea" :current-area="currentArea" />
+	</div>
 	<nav>
 		<button id="nav-patients" :class="{ 'selected': currentPage === Pages.PATIENTS }" @click="setPage(Pages.PATIENTS)">
 			Patienten
@@ -60,6 +62,10 @@
 		text-align: center;
 		font-size: 1.8em;
 		margin-top: 40px;
+	}
+
+	.page {
+		height: calc(100% - 60px);
 	}
 
 	nav {

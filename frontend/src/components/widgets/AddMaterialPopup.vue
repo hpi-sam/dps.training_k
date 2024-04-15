@@ -42,19 +42,21 @@
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
-		<div class="popup" @click.stop="">
-			<h2>{{ title }}</h2>
-			<div class="list">
-				<div
-					v-for="material in availableMaterial"
-					:key="material.materialName"
-					class="listItem"
-				>
-					<button class="listItemButton" @click="addMaterial(material.materialName)">
-						<div class="listItemName">
-							{{ material.materialName }}
-						</div>
-					</button>
+		<div class="popup scroll" @click.stop="">
+			<div class="flex-container">
+				<h2>{{ title }}</h2>
+				<div class="list">
+					<div
+						v-for="material in availableMaterial"
+						:key="material.materialName"
+						class="listItem"
+					>
+						<button class="listItemButton" @click="addMaterial(material.materialName)">
+							<div class="listItemName">
+								{{ material.materialName }}
+							</div>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -65,5 +67,7 @@
 		background-color: white;
 		padding: 20px;
 		border-radius: 8px;
+		height: fit-content;
+		max-height: 50vh;
 	}
 </style>
