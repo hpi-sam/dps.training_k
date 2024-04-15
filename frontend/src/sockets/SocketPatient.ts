@@ -224,7 +224,7 @@ export const serverMockEvents = [
 	},
 	{
 		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
+		data: '{"messageType":"exercise","exercise":{"exerciseId":"abcdef","areas":[' +
 			'{"areaName":"Intensiv",' +
 			'"patients":[' +
 			'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},' +
