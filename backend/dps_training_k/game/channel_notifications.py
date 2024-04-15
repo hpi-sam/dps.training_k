@@ -1,6 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import game.models as models
+import logging
 
 """
 This package is responsible to decide when to notify which consumers.
@@ -26,7 +27,7 @@ class ChannelNotifier:
         if is_updated and not changes:
             message = f"""{cls.__name} have to be saved with save(update_fields=[...]) after initial creation. 
             This is to ensure that the frontend is notified of changes."""
-            raise Exception(message)
+            logging.warning(message)
 
         super(obj.__class__, obj).save(*args, **kwargs)
         cls.dispatch_event(obj, changes)
