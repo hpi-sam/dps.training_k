@@ -1,5 +1,5 @@
 from django.test import TestCase
-from game.models import ActionInstanceStateNames
+from game.models import ActionInstanceStateNames, ActionInstance
 from .factories.action_instance_factory import (
     ActionInstanceFactory,
     ActionInstanceFactoryFailedState,
@@ -12,9 +12,9 @@ class ActionInstanceStateChangeTestCase(TestCase):
     @patch("game.models.ActionInstance.get_local_time")
     def test_action_instance_state_changed(self, get_local_time):
         action_instance = ActionInstanceFactory()
-        number_of_states = action_instance.objects.count()
+        number_of_states = ActionInstance.objects.count()
         get_local_time.return_value = 10
-        action_instance._updadate_state(ActionInstanceStateNames.IN_PROGRESS)
+        action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.assertEqual(action_instance.objects.count(), number_of_states + 1)
         self.assertEqual(
             action_instance.state.name, ActionInstanceStateNames.IN_PROGRESS

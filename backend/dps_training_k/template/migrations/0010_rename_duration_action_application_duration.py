@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('template', '0010_remove_action_id_alter_action_name'),
+        ('template', '0009_alter_action_category_alter_action_name'),
     ]
 
     operations = [

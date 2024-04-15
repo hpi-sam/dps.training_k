@@ -58,14 +58,17 @@ class ActionInstance(LocalTimeable, models.Model):
 
     @property
     def state_name(self):
-        return self.state.name
+        if self.current_state != None:
+            return self.current_state.name
+        else:
+            return None
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def _update_state(self, state_name):
-        state_changed, new_state = self.current_timestamp.update(
+        state_changed, new_state = self.current_state.update(
             self, state_name, self.get_local_time()
         )
         if state_changed:

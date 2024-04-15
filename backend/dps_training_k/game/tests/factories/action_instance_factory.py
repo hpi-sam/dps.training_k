@@ -20,6 +20,14 @@ class ActionInstanceStateFactory(factory.django.DjangoModelFactory):
     t_local_begin = 0
     t_local_end = None
 
+    @factory.post_generation
+    def set_current_state(self, create, extracted, **kwargs):
+        if not create:
+            return
+        # Update the ActionInstance `current_state` after creating ActionInstanceState
+        self.action_instance.current_state = self
+        self.action_instance.save()
+
 
 class ActionInstanceFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -29,11 +37,7 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
     patient = factory.SubFactory(PatientFactory)
     area = factory.SubFactory(AreaFactory)
     action_template = factory.SubFactory(ActionFactory)
-    current_state = factory.LazyAttribute(
-        lambda object: factory.RelatedFactory(
-            ActionInstanceStateFactory(action_instance=object)
-        )
-    )
+    current_state = None
 
 
 class FailedActionInstanceStateFactory(factory.django.DjangoModelFactory):
