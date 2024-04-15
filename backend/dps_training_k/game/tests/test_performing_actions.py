@@ -6,7 +6,7 @@ from .factories.action_instance_factory import (
 from template.tests.factories import ActionFactory
 from unittest.mock import patch
 
-"""
+
 class ActionInstanceTestCase(TestCase):
     def setUp(self):
         self.application_status_patch = patch(
@@ -27,21 +27,23 @@ class ActionInstanceTestCase(TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.PLANNED)
 
         self.application_status.return_value = False, "Not applicable"
+        action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.DECLINED)
 
     def test_action_starting(self):
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        action_instance.try_application()
+        self.assertTrue(action_instance.try_application())
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
 
         self.application_status.return_value = False, "Not applicable"
-        with self.assertRaises(ValueError):
-            action_instance.try_application()
+        self.assertFalse(action_instance.try_application())
+        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
     @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
     def test_channel_notifications_being_send(self, _notify_action_event):
+        self.application_status.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()
         self.assertEqual(_notify_action_event.call_count, 1)
@@ -49,8 +51,8 @@ class ActionInstanceTestCase(TestCase):
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
 
+        action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.application_status.return_value = False, "Not applicable"
         action_instance.try_application()
         self.assertEqual(_notify_action_event.call_count, 2)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
-"""
