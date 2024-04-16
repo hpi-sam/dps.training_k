@@ -48,6 +48,7 @@ class ScheduledEvent(models.Model):
     def action(self):
         owner_instance = self.owner.owner_instance()
         method = getattr(owner_instance, self.method_name)
+        breakpoint()
         method()
         self.delete()
 
@@ -99,17 +100,17 @@ class Owner(OneFieldNotNull, models.Model):
     def create_owner(
         cls, event, patient=None, exercise=None, area=None, action_instance=None
     ):
-        # patient always needs to be checked before exercise, as exercise and patient are being passed when patient creates scheduled event
+        # exercise needs to be checked last, as it is always passed to check for the time factor
         if patient:
             return cls.objects.create(event=event, patient_owner=patient)
         elif area:
             return cls.objects.create(event=event, area_owner=area)
-        elif exercise:
-            return cls.objects.create(event=event, exercise_owner=exercise)
         elif action_instance:
             return cls.objects.create(
                 event=event, action_instance_owner=action_instance
             )
+        elif exercise:
+            return cls.objects.create(event=event, exercise_owner=exercise)
         else:
             raise Exception("Owner must have a patient or exercise")
 

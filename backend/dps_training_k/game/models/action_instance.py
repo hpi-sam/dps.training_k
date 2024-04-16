@@ -134,7 +134,7 @@ class ActionInstance(LocalTimeable, models.Model):
         ScheduledEvent.create_event(
             self.patient.exercise,
             self.action_template.application_duration,  # ToDo: Replace with scalable local time system
-            "application_finished",
+            "_application_finished",
             action_instance=self,
         )
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)

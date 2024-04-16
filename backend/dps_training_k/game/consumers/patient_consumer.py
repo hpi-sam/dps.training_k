@@ -28,8 +28,8 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.patientId = ""
-        self.patient = None
+        self.patient_id = ""
+        self.patient_instance = None
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -56,27 +56,27 @@ class PatientConsumer(AbstractConsumer):
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
-            patientId=2,  # has to be the same as the username in views.py#post
+            patient_id=2,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
             patient_state=self.temp_state,
         )
 
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
-        success, patientId = self.authenticate(token)
+        success, patient_id = self.authenticate(token)
         if success:
-            self.patient = PatientInstance.objects.get(patientId=patientId)
-            self.patientId = patientId
-            self.exercise = self.patient.exercise
+            self.patient_instance = PatientInstance.objects.get(patient_id=patient_id)
+            self.patient_id = patient_id
+            self.exercise = self.patient_instance.exercise
             self.accept()
-            self.subscribe(ChannelNotifier.get_group_name(self.patient))
+            self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
 
     def disconnect(self, code):
-        # example patient deletion - see #connect
-        self.patient.delete()
+        # example patient_instance deletion - see #connect
+        self.patient_instance.delete()
         # example trainer deletion - see #connect
         self.tempExercise.delete()
         self.temp_state.delete()
@@ -87,10 +87,10 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def handle_example(self, exercise_code, patient_code):
         self.exercise_code = exercise_code
-        self.patientId = patient_code
+        self.patient_id = patient_code
         self.send_event(
             self.PatientOutgoingMessageTypes.RESPONSE,
-            content=f"exercise_code {self.exercise_code} & patient_code {self.patientId}",
+            content=f"exercise_code {self.exercise_code} & patient_code {self.patient_id}",
         )
 
     def handle_test_passthrough(self):
@@ -100,12 +100,12 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_triage(self, triage):
-        self.patient.triage = triage
-        self.patient.save(update_fields=["triage"])
+        self.patient_instance.triage = triage
+        self.patient_instance.save(update_fields=["triage"])
         self._send_exercise(exercise=self.exercise)
 
     def handle_action_add(self):
-        self.patient.add_action(self.tempExercise.action_set.first())
+        self.patient_instance.add_action(self.tempExercise.action_set.first())
         self._send_exercise(exercise=self.exercise)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
-        serialized_state = StateSerializer(self.patient.state).data
+        serialized_state = StateSerializer(self.patient_instance.state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,

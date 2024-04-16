@@ -36,8 +36,8 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         null=True,  # for debugging purposes
         default=None,  # for debugging purposes
     )
-    patientId = models.IntegerField(
-        help_text="patientId used to log into patient - therefore part of authentication"
+    patient_id = models.IntegerField(
+        help_text="patient_id used to log into patient - therefore part of authentication"
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -49,7 +49,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def __str__(self):
-        return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
+        return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
 
     # ToDo: remove after actual method is implemented
     def schedule_temporary_event(self):

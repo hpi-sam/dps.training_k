@@ -66,6 +66,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
         channel = cls.get_group_name(patient)
         event = {
             "type": ChannelEventTypes.STATE_CHANGE_EVENT,
+            "patient_pk": patient.id,
         }
         cls._notify_group(channel, event)
 
