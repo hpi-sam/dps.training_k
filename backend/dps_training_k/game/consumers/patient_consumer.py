@@ -1,6 +1,11 @@
 from urllib.parse import parse_qs
 
-from game.models import PatientInstance, Exercise, ActionInstanceStateNames
+from game.models import (
+    PatientInstance,
+    Exercise,
+    ActionInstanceStateNames,
+    ActionInstance,
+)
 from template.serializer.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
@@ -25,6 +30,7 @@ class PatientConsumer(AbstractConsumer):
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
         ACTION_RESULT = "action-result"
+        ACTION_CHECK = "action-check"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,7 +49,10 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_triage,
                 "triage",
             ),
-            self.PatientIncomingMessageTypes.ACTION_ADD: (self.handle_action_add,),
+            self.PatientIncomingMessageTypes.ACTION_ADD: (
+                self.handle_action_add,
+                "action_id",
+            ),
         }
 
     def connect(self):
@@ -104,9 +113,27 @@ class PatientConsumer(AbstractConsumer):
         self.patient_instance.save(update_fields=["triage"])
         self._send_exercise(exercise=self.exercise)
 
-    def handle_action_add(self):
-        self.patient_instance.add_action(self.tempExercise.action_set.first())
-        self._send_exercise(exercise=self.exercise)
+    def handle_action_add(self, action_id):
+        action = ActionInstanceStateNames.objects.get(pk=action_id)
+        action_instance = ActionInstance.create(self.patient_id, action)
+        action_instance.try_application()
+
+    def handle_action_check(self, action_id):
+        stub_action_name = "Recovery Position"
+        stub_time = 10
+        stub_requirements = [
+            {
+                "name": "a recovery position condition",
+                "category": "material",
+                "values": [{"available": 1, "assigned": 1, "needed": 1}],
+            }
+        ]
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_CHECK,
+            action_name=stub_action_name,
+            time=stub_time,
+            requirements=stub_requirements,
+        )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
