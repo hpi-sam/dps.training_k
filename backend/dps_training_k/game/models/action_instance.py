@@ -36,8 +36,7 @@ class ActionInstanceState(models.Model):
         if state_name == self.name and not info_text:
             return None
         if state_name == self.name and info_text:
-            self.info_text = self.info_text + info_text
-            self.save(update_fields=["info_text"])
+            self.add_info(info_text)
             return None
         self.t_local_end = time
         self.save(update_fields=["t_local_end"])
@@ -47,6 +46,10 @@ class ActionInstanceState(models.Model):
             t_local_begin=time,
             info_text=info_text,
         )
+
+    def add_info(self, info_text):
+        self.info_text = self.info_text + info_text
+        self.save(update_fields=["info_text"])
 
 
 class ActionInstance(LocalTimeable, models.Model):
@@ -141,3 +144,4 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def _application_finished(self):
         self._update_state(ActionInstanceStateNames.FINISHED)
+        self.place_of_application().remove_from_queue(self)

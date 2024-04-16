@@ -3,6 +3,10 @@ class ActionsQueueable:
         # stub for future queueing logic
         pass
 
+    def remove_from_queue(self, obj):
+        # stub for future queueing logic
+        pass
+
     def start_next_action(self):
         queue = self.action_instances.filter(
             state__name__in=[

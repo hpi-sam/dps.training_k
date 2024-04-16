@@ -1,10 +1,12 @@
 from django.test import TestCase
+from django.conf import settings
 from game.models import ScheduledEvent, ActionInstance, ActionInstanceStateNames
-from .factories.action_instance_factory import (
-    PatientFactory,
-)
+from game.tasks import check_for_updates
+from .factories import PatientFactory, ActionInstanceFactory
 from template.tests.factories import ActionFactory
 from unittest.mock import patch
+from django.utils import timezone
+import datetime
 
 
 class ActionInstanceTestCase(TestCase):
@@ -56,3 +58,28 @@ class ActionInstanceTestCase(TestCase):
         action_instance.try_application()
         self.assertEqual(_notify_action_event.call_count, 2)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
+
+
+class ActionInstanceScheduledTestCase(TestCase):
+    def timezoneFromTimestamp(self, timestamp):
+        return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
+
+    def setUp(self):
+        self.action_instance = ActionInstanceFactory()
+        self.variable_backup = settings.CURRENT_TIME
+        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
+
+    def tearDown(self):
+        settings.CURRENT_TIME = self.variable_backup
+
+    def test_action_is_scheduled(self):
+        self.action_instance._start_application()
+        self.assertEqual(ScheduledEvent.objects.count(), 1)
+        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
+        check_for_updates()
+        self.assertEqual(ScheduledEvent.objects.count(), 0)
+        self.action_instance.refresh_from_db()  # Warning: Not working without, although it should.
+        # ToDo: Find out why this is necessary at this test and not on the other ones
+        self.assertEqual(
+            self.action_instance.current_state.name, ActionInstanceStateNames.FINISHED
+        )

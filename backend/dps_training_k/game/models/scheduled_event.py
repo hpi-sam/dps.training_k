@@ -48,7 +48,6 @@ class ScheduledEvent(models.Model):
     def action(self):
         owner_instance = self.owner.owner_instance()
         method = getattr(owner_instance, self.method_name)
-        breakpoint()
         method()
         self.delete()
 
