@@ -34,6 +34,11 @@ class ChannelNotifier:
 
     @classmethod
     def _notify_group(cls, group_channel_name, event):
+        """
+        Handled internally by the channels dispatcher. Will try to call a method with event.type as name at the receiver; "." are replaced by "_".
+        For more info look into:
+        https://channels.readthedocs.io/en/stable/topics/channel_layers.html?highlight=periods#what-to-send-over-the-channel-layer
+        """
         async_to_sync(get_channel_layer().group_send)(group_channel_name, event)
 
     @classmethod
