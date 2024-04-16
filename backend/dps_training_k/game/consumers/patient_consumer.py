@@ -130,7 +130,7 @@ class PatientConsumer(AbstractConsumer):
         ]
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CHECK,
-            action_name=stub_action_name,
+            actionName=stub_action_name,
             time=stub_time,
             requirements=stub_requirements,
         )
