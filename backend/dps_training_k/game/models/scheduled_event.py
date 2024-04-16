@@ -65,7 +65,7 @@ class Owner(OneFieldNotNull, models.Model):
         on_delete=models.CASCADE,
     )
     patient_owner = models.ForeignKey(
-        "Patient",
+        "Patientinstance",
         on_delete=models.CASCADE,
         null=True,
         blank=True,

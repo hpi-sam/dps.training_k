@@ -1,5 +1,5 @@
 from django.db import models
-from game.models import ScheduledEvent, Patient, Area
+from game.models import ScheduledEvent, PatientInstance, Area
 from template.models import Action
 from game.channel_notifications import ActionInstanceDispatcher
 from helpers.local_timable import LocalTimeable
@@ -51,7 +51,7 @@ class ActionInstanceState(models.Model):
 
 class ActionInstance(LocalTimeable, models.Model):
     patient = models.ForeignKey(
-        "Patient", on_delete=models.CASCADE, blank=True, null=True
+        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, blank=True, null=True)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)

@@ -52,7 +52,7 @@ class ChannelNotifier:
         )
 
 
-class PatientDispatcher(ChannelNotifier):
+class PatientInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def dispatch_event(cls, patient, changes):

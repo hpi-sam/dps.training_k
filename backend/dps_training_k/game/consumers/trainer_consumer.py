@@ -1,5 +1,5 @@
 from game.models import Area
-from game.models import Exercise, Personnel, Patient
+from game.models import Exercise, Personnel, PatientInstance
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
 
@@ -106,7 +106,7 @@ class TrainerConsumer(AbstractConsumer):
         )
 
     def handle_start_exercise(self):
-        owned_patients = Patient.objects.filter(exercise=self.exercise)
+        owned_patients = PatientInstance.objects.filter(exercise=self.exercise)
         [patient.schedule_state_change() for patient in owned_patients]
 
     def handle_stop_exercise(self):

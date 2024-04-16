@@ -1,6 +1,6 @@
 import factory
 
-from game.models import Patient
+from game.models import PatientInstance
 from template.tests.factories import EmptyPatientStateFactory
 from .area_factory import AreaFactory
 from .exercise_factory import ExerciseFactory
@@ -8,7 +8,7 @@ from .exercise_factory import ExerciseFactory
 
 class PatientFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = Patient
+        model = PatientInstance
         django_get_or_create = ("name", "exercise", "patientId")
 
     name = "Max Mustermann"

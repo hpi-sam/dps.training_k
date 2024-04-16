@@ -1,13 +1,13 @@
 from django.db import models
 
-from game.channel_notifications import PatientDispatcher
+from game.channel_notifications import PatientInstanceDispatcher
 from helpers.eventable import Eventable
 from helpers.actions_queueable import ActionsQueueable
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
 
-class Patient(Eventable, ActionsQueueable, models.Model):
+class PatientInstance(Eventable, ActionsQueueable, models.Model):
     class Triage(models.TextChoices):
         UNDEFINED = "-", "undefined"
         RED = "R", "red"
@@ -46,7 +46,7 @@ class Patient(Eventable, ActionsQueueable, models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        PatientDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patientId}"

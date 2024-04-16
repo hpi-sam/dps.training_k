@@ -6,7 +6,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
-from game.models import Patient, Exercise
+from game.models import PatientInstance, Exercise
 from template.models import Action
 
 
@@ -152,7 +152,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         self._send_exercise(exercise=exercise)
 
     def _send_exercise(self, exercise):
-        patient = Patient.objects.create(
+        patient = PatientInstance.objects.create(
             name="Max Mustermann", exercise=self.exercise, patientId=2
         )
         exercise_object = {

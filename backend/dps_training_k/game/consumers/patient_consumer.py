@@ -1,6 +1,6 @@
 from urllib.parse import parse_qs
 
-from game.models import Patient, Exercise, ActionInstanceStateNames
+from game.models import PatientInstance, Exercise, ActionInstanceStateNames
 from template.serializer.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
@@ -53,7 +53,7 @@ class PatientConsumer(AbstractConsumer):
         from template.tests.factories.patient_state_factory import PatientStateFactory
 
         self.temp_state = PatientStateFactory(10, 2)
-        Patient.objects.create(
+        PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
             patientId=2,  # has to be the same as the username in views.py#post
@@ -65,7 +65,7 @@ class PatientConsumer(AbstractConsumer):
         token = query_string.get("token", [None])[0]
         success, patientId = self.authenticate(token)
         if success:
-            self.patient = Patient.objects.get(patientId=patientId)
+            self.patient = PatientInstance.objects.get(patientId=patientId)
             self.patientId = patientId
             self.exercise = self.patient.exercise
             self.accept()
