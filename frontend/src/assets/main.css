@@ -24,6 +24,11 @@ h1 {
   text-align: center;
 }
 
+button {
+  font-family: 'Montserrat-Black', Verdana, sans-serif;
+  color: var(--color-text);
+}
+
 button:hover {
   cursor: pointer;
   filter: brightness(95%);
@@ -37,12 +42,14 @@ button:active {
 .flex-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 100%;
   position: relative;
 }
 
 .main-button {
+  position: absolute;
+  bottom: 0rem;
   align-self: center;
   background-color: white;
   border: 1px solid rgb(209, 213, 219);
@@ -54,6 +61,12 @@ button:active {
   margin: 1rem;
   text-align: center;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  z-index: 1;
+}
+
+.main-button-space {
+  display: block;
+  margin: 20px 0;
 }
 
 .gray {
@@ -109,17 +122,21 @@ button:active {
   display: flex;
   align-items: center;
   font-size: 1.25rem;
-  padding: .75rem 1rem;
-  padding-left: 0;
+  padding: 0;
   text-align: left;
   height: 50px;
   width: 100%;
 }
 
+.selected .listItemButton {
+  filter: brightness(90%);
+}
+
 .listItemAddButton {
   text-align: center;
   position: relative;
-  background-color: #FFFFFF;
+  background-color: var(--green);
+  color: white;
   border: 1px solid rgb(209, 213, 219);
   box-sizing: border-box;
   width: 100%;
@@ -129,6 +146,55 @@ button:active {
   margin-top: -1px;
 }
 
-.listItemId, .listItemName {
+.listItemId {
   padding: .75rem 1rem;
+  width: fit-content;
+}
+
+.listItemName {
+  padding: .75rem 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scroll {
+  height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 30px;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.close-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  align-self: flex-end;
+  background-color: #FFFFFF;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: .5rem;
+  top: 1rem;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.25rem;
+  line-height: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1;
 }

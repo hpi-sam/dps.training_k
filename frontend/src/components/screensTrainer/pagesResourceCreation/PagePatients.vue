@@ -47,25 +47,28 @@
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
 	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
-	<div class="list">
-		<div
-			v-for="patient in currentAreaData?.patients"
-			:key="patient.patientName"
-			class="listItem"
-		>
-			<button class="listItemButton" @click="editPatient(patient.patientId)">
-				<div class="listItemId">
-					{{ patient.patientId.toString().padStart(3, '0') }}
-				</div>
-				<TriageForListItems :patient-code="patient.patientCode" />
-				<div class="listItemName">
-					{{ patient.patientName }}
-				</div>
+	<div class="scroll">
+		<h1>Patients</h1>
+		<div class="list">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
+				Patient hinzufügen
 			</button>
-			<ToggleSwitchForListItems default="active" />
+			<div
+				v-for="patient in currentAreaData?.patients"
+				:key="patient.patientName"
+				class="listItem"
+			>
+				<button class="listItemButton" @click="editPatient(patient.patientId)">
+					<div class="listItemId">
+						{{ patient.patientId.toString().padStart(3, '0') }}
+					</div>
+					<TriageForListItems :patient-code="patient.patientCode" />
+					<div class="listItemName">
+						{{ patient.patientName }}
+					</div>
+				</button>
+				<ToggleSwitchForListItems default="active" />
+			</div>
 		</div>
-		<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
-			Patient hinzufügen
-		</button>
 	</div>
 </template>

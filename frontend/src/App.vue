@@ -107,17 +107,17 @@
 	</main>
 
 	<div id="dev-bar">
-		<button @click="currentModule=Modules.LOGIN">
+		<button id="login-module-button" @click="currentModule=Modules.LOGIN">
 			Login
 		</button>
-		<button @click="currentModule=Modules.TRAINER">
+		<button id="trainer-module-button" @click="currentModule=Modules.TRAINER">
 			Trainer
 		</button>
-		<button @click="currentModule=Modules.PATIENT">
+		<button id="patient-module-button" @click="currentModule=Modules.PATIENT">
 			Patient
 		</button>
 
-		<button v-if="connectionState" id="ws-test" @click="sendPasstroughTest()">
+		<button v-if="connectionState" id="ps-test" @click="sendPasstroughTest()">
 			send pass-through test
 		</button>
 
@@ -138,7 +138,7 @@
 		align-items: center;
 	}
 
-	#ws-test {
+	#ws-test, #ps-test {
 		margin-left: 20px;
 	}
 </style>

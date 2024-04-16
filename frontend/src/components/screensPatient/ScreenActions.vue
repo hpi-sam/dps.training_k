@@ -1,13 +1,15 @@
 <script setup lang="ts">
 	import PageActionOverview from './pagesAction/PageActionOverview.vue'
-	import PageResources from './pagesAction/PageResources.vue'
 	import PageActionSelection from './pagesAction/PageActionSelection.vue'
+	import PagePersonnel from './pagesAction/PagePersonnel.vue'
+	import PageMaterial from './pagesAction/PageMaterial.vue'
 	import {computed, ref} from 'vue'
 
 	enum Pages {
 		ACTION_OVERVIEW = "PageActionOverview",
-		RESOURCES = "PageResources",
 		ACTION_SELECTION = "PageActionSelection",
+		PERSONNEL = "PagePersonnel",
+		MATERIAL = "PageMaterial"
 	}
 
 	const currentPage = ref(Pages.ACTION_OVERVIEW)
@@ -17,10 +19,12 @@
 		switch (page) {
 			case Pages.ACTION_OVERVIEW:
 				return PageActionOverview
-			case Pages.RESOURCES:
-				return PageResources
 			case Pages.ACTION_SELECTION:
 				return PageActionSelection
+			case Pages.PERSONNEL:
+				return PagePersonnel
+			case Pages.MATERIAL:
+				return PageMaterial
 		}
 	}
 
@@ -31,17 +35,25 @@
 
 <template>
 	<div class="page">
-		<component :is="currentPageComponent" />
+		<component
+			:is="currentPageComponent"
+			@add-action="setPage(Pages.ACTION_SELECTION)"
+			@close-action-selection="setPage(Pages.ACTION_OVERVIEW); console.log('close-action-selection')"
+		/>
 	</div>
 	<nav>
-		<button id="nav-action-overview" :class="{ 'selected': currentPage === Pages.ACTION_OVERVIEW }" @click="setPage(Pages.ACTION_OVERVIEW)">
+		<button
+			id="nav-left"
+			:class="{ 'selected': currentPage === Pages.ACTION_OVERVIEW }"
+			@click="setPage(Pages.ACTION_OVERVIEW)"
+		>
 			Übersicht
 		</button>
-		<button id="nav-resources" :class="{ 'selected': currentPage === Pages.RESOURCES }" @click="setPage(Pages.RESOURCES)">
-			Ressourcen
+		<button id="nav-center" :class="{ 'selected': currentPage === Pages.PERSONNEL }" @click="setPage(Pages.PERSONNEL)">
+			Personal
 		</button>
-		<button id="nav-action-selection" :class="{ 'selected': currentPage === Pages.ACTION_SELECTION }" @click="setPage(Pages.ACTION_SELECTION)">
-			Neue Aktion
+		<button id="nav-right" :class="{ 'selected': currentPage === Pages.MATERIAL }" @click="setPage(Pages.MATERIAL)">
+			Material
 		</button>
 	</nav>
 </template>
@@ -76,16 +88,16 @@
 		font-weight: bold;
 	}
 
-	#nav-action-overview {
+	#nav-left {
 		border-right: 4px solid black;
 	}
 
-	#nav-resources {
+	#nav-center {
 		border-left: 4px solid black;
 		border-right: 4px solid black;
 	}
 
-	#nav-action-selection {
+	#nav-right {
 		border-left: 4px solid black;
 	}
 </style>
