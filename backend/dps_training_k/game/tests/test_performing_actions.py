@@ -25,6 +25,9 @@ class ActionInstanceTestCase(TestCase):
         self.get_local_time_patch.stop()
 
     def test_action_creation(self):
+        """
+        ActionInstance initial state are influenced by the application status of the action template.
+        """
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.PLANNED)
 
@@ -33,6 +36,9 @@ class ActionInstanceTestCase(TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.DECLINED)
 
     def test_action_starting(self):
+        """
+        An action instance that was planned in the beginning enters on-hold state when the application cannot be started at the moment.
+        """
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.assertTrue(action_instance.try_application())
         self.assertEqual(
@@ -45,6 +51,9 @@ class ActionInstanceTestCase(TestCase):
 
     @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
     def test_channel_notifications_being_send(self, _notify_action_event):
+        """
+        Once an action instance is started, the dispatcher detects it and detecs the actual state.
+        """
         self.application_status.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()
@@ -73,13 +82,16 @@ class ActionInstanceScheduledTestCase(TestCase):
         settings.CURRENT_TIME = self.variable_backup
 
     def test_action_is_scheduled(self):
+        """
+        Once an action instance is started, it changes its state to finished after the scheduled time.
+        """
         self.action_instance._start_application()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 0)
-        self.action_instance.refresh_from_db()  # Warning: Not working without, although it should.
-        # ToDo: Find out why this is necessary at this test and not on the other ones
+        self.action_instance.refresh_from_db()  # Necessary because the check_for_updates changes happen out of scope,
+        # thus self.action_instance isn't refreshed automatically
         self.assertEqual(
             self.action_instance.current_state.name, ActionInstanceStateNames.FINISHED
         )

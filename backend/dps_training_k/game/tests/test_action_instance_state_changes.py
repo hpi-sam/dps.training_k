@@ -17,6 +17,10 @@ class ActionInstanceStateChangeTestCase(TestCase):
         self.get_local_time_patch.stop()
 
     def test_action_instance_state_changed(self):
+        """
+        ActionInstanceState always create a new state object when the state name is changed.
+        Two follow up states are gap free in time - on starts exectly when the other ends.
+        """
         action_instance = ActionInstanceFactory()
         number_of_states = ActionInstance.objects.count()
         action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
@@ -31,6 +35,9 @@ class ActionInstanceStateChangeTestCase(TestCase):
         self.assertEqual(previous_state.t_local_end, 10)
 
     def test_declined_action_instance_state_change(self):
+        """
+        ActionInstanceState does not allow to change the state of a declined action instance.
+        """
         action_instance = ActionInstanceFactoryFailedState()
         with self.assertRaises(ValueError):
             action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
