@@ -37,7 +37,8 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         default=None,  # for debugging purposes
     )
     patient_id = models.IntegerField(
-        help_text="patient_id used to log into patient - therefore part of authentication"
+        unique=True,
+        help_text="patient_id used to log into patient - therefore part of authentication",
     )
     triage = models.CharField(
         choices=Triage.choices,

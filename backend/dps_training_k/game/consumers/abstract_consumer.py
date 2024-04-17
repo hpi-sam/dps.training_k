@@ -152,7 +152,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         self._send_exercise(exercise=exercise)
 
     def _send_exercise(self, exercise):
-        patient = PatientInstance.objects.create(
+        patient, _ = PatientInstance.objects.get_or_create(
             name="Max Mustermann", exercise=self.exercise, patient_id=2
         )
         exercise_object = {

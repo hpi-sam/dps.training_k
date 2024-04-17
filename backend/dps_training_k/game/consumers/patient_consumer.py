@@ -36,7 +36,6 @@ class PatientConsumer(AbstractConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.patient_id = ""
-        self.patient_instance = None
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -56,6 +55,14 @@ class PatientConsumer(AbstractConsumer):
             ),
         }
 
+    @property
+    def patient_instance(self):
+        if not self.patient_id:
+            return None
+        return PatientInstance.objects.get(
+            patient_id=self.patient_id
+        )  # This enforces patient_instance to always work with valid data
+
     def connect(self):
         # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
         self.tempExercise = Exercise.createExercise()
@@ -63,6 +70,8 @@ class PatientConsumer(AbstractConsumer):
         from template.tests.factories.patient_state_factory import PatientStateFactory
 
         self.temp_state = PatientStateFactory(10, 2)
+        old_patient_instances = PatientInstance.objects.filter(patient_id=2)
+        [patient_instance.delete() for patient_instance in old_patient_instances]
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
@@ -75,8 +84,8 @@ class PatientConsumer(AbstractConsumer):
         token = query_string.get("token", [None])[0]
         success, patient_id = self.authenticate(token)
         if success:
-            self.patient_instance = PatientInstance.objects.get(patient_id=patient_id)
             self.patient_id = patient_id
+
             self.exercise = self.patient_instance.exercise
             self.accept()
             self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
@@ -110,8 +119,9 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_triage(self, triage):
-        self.patient_instance.triage = triage
-        self.patient_instance.save(update_fields=["triage"])
+        patient_instance = self.patient_instance
+        patient_instance.triage = triage
+        patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, action_id):
         action = Action.objects.get(pk=action_id)
@@ -140,9 +150,6 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
-        self.patient_instance = PatientInstance.objects.get(
-            pk=event["patient_instance_pk"]
-        )
         serialized_state = StateSerializer(self.patient_instance.state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
