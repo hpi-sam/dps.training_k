@@ -13,7 +13,7 @@
 	const material = computed(() => exerciseStore.getMaterialOfArea(patientStore.areaName))
 
 	const assignedMaterial = computed(() => assignments.value?.material.filter(assignment => assignment.patientId === patientStore.patientId))
-	const freeMaterial = computed(() => material.value.filter(material => 
+	const freeMaterial = computed(() => material.value?.filter(material => 
 		!assignments.value?.material.some(assignment => assignment.materialId === material.materialId)
 	))
 	const busyMaterial = computed(() => assignments.value?.material.filter(assignment => 
@@ -52,7 +52,7 @@
 						</button>
 					</div>
 				</div>
-				<div v-if="freeMaterial.length">
+				<div v-if="freeMaterial?.length">
 					<br>
 					<p>Freies Material</p>
 					<div

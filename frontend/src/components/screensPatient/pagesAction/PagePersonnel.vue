@@ -13,7 +13,7 @@
 	const personnel = computed(() => exerciseStore.getPersonnelOfArea(patientStore.areaName))
 
 	const assignedPersonnel = computed(() => assignments.value?.personnel.filter(assignment => assignment.patientId === patientStore.patientId))
-	const freePersonnel = computed(() => personnel.value.filter(personnel => 
+	const freePersonnel = computed(() => personnel.value?.filter(personnel => 
 		!assignments.value?.personnel.some(assignment => assignment.personnelId === personnel.personnelId)
 	))
 	const busyPersonnel = computed(() => assignments.value?.personnel.filter(assignment => 
@@ -52,7 +52,7 @@
 						</button>
 					</div>
 				</div>
-				<div v-if="freePersonnel.length">
+				<div v-if="freePersonnel?.length">
 					<br>
 					<p>Freies Personal</p>
 					<div

@@ -1,5 +1,30 @@
 <script setup lang="ts">
+	import { useActionOverviewStore } from '@/stores/ActionOverview'
+	import { computed } from 'vue'
+	import { svg } from '@/assets/Svg'
+
 	const emit = defineEmits(['add-action'])
+
+	const actionOverviewStore = useActionOverviewStore()
+
+	const actions = computed(() => actionOverviewStore.actions)
+
+	function openPopup(actionId: number) {
+		
+	}
+
+	const getIconPath = (status: string) => {
+		switch (status) {
+		case 'running':
+			return svg.playIcon
+		case 'finished':
+			return svg.checkIcon
+		case 'waiting':
+			return svg.scheduleIcon
+		case 'blocked':
+			return svg.blockIcon
+		}
+	}
 </script>
 
 <template>
@@ -9,6 +34,38 @@
 			<button class="listItemAddButton" @click="emit('add-action')">
 				Aktion hinzufügen
 			</button>
+			<div
+				v-for="action in actions"
+				:key="action.actionId"
+				class="listItem"
+			>
+				<button class="listItemButton" @click="openPopup(action.actionId)">
+					<div class="icon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="getIconPath(action.actionStatus)" />
+						</svg>
+					</div>
+					<div class="listItemName">
+						{{ action.actionName }}
+					</div>
+					<div class="time">
+						{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+					</div>
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
+
+<style scoped>
+	.icon {
+		margin-left: 16px;
+		display: flex;
+		justify-content: center;
+	}
+
+	.time {
+		margin-left: auto;
+		margin-right: 16px;
+	}
+</style>

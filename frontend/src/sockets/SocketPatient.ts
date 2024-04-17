@@ -6,6 +6,7 @@ import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
+import { useActionOverviewStore } from "@/stores/ActionOverview"
 
 class SocketPatient {
 	private readonly url: string
@@ -20,6 +21,7 @@ class SocketPatient {
 		const exerciseStore = useExerciseStore()
 		const availablesStore = useAvailablesStore()
 		const ressourceAssignmentsStore = useRessourceAssignmentsStore()
+		const actionOverview = useActionOverviewStore()
 
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
@@ -97,6 +99,11 @@ class SocketPatient {
 					break
 				case 'ressource-assignments':
 					ressourceAssignmentsStore.setRessourceAssignments(data.ressourceAssignments as RessourceAssignments)
+					break
+				case 'action-list':
+					console.log('Socket: Action list:', data)
+					actionOverview.loadActions(data.actions as Action[])
+					actionOverview.startUpdating()
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -364,5 +371,16 @@ export const serverMockEvents = [
 			'{"materialId":6,"materialName":"Blutdruckmessgerät","patientId":4}' +
 			']' +
 			'}]}}'
+	},
+	{
+		id: 'action-list',
+		data: '{"messageType":"action-list","actions":[' +
+			'{"actionId":1,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":2,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":3,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":'+
+			'"Der Patient hat eine Blutgruppe von 0+."},' +
+			'{"actionId":4,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":null},' +
+			'{"actionId":5,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			']}'
 	}
 ]

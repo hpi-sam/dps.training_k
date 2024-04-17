@@ -23,6 +23,7 @@ interface MessageData {
 	availableMaterialList: AvailableMaterial
 	actionDeclinationReason?: string
 	ressourceAssignments: RessourceAssignments
+	actions: Action[]
 }
 
 interface Exercise {
@@ -137,4 +138,17 @@ interface LogEntry {
 	areaName: string
 	patientId: number
 	personnelId: number
+}
+
+interface ActionOverview {
+	actions: Action[]
+	timersRunning: boolean
+}
+
+interface Action {
+	actionId: number
+	actionName: string
+	actionStatus: string
+	timeUntilCompletion: number
+	actionResult: string
 }
