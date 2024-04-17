@@ -55,18 +55,18 @@ class ChannelNotifier:
 class PatientInstanceDispatcher(ChannelNotifier):
 
     @classmethod
-    def dispatch_event(cls, patient, changes):
+    def dispatch_event(cls, patient_instance, changes):
         if not changes:
             return
-        if "patient_state" in changes:
-            cls._notify_patient_state_change(patient)
+        if "patient_instance_state" in changes:
+            cls._notify_patient_state_change(patient_instance)
 
     @classmethod
-    def _notify_patient_state_change(cls, patient):
-        channel = cls.get_group_name(patient)
+    def _notify_patient_state_change(cls, patient_instance):
+        channel = cls.get_group_name(patient_instance)
         event = {
             "type": ChannelEventTypes.STATE_CHANGE_EVENT,
-            "patient_pk": patient.id,
+            "patient_instance_pk": patient_instance.id,
         }
         cls._notify_group(channel, event)
 
@@ -106,9 +106,9 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def _notify_action_event(cls, applied_action, event_type):
-        channel = cls.get_group_name(applied_action.patient)
+        channel = cls.get_group_name(applied_action.patient_instance)
         event = {
             "type": event_type,
-            "action_pk": applied_action.id,
+            "action_instance_pk": applied_action.id,
         }
         cls._notify_group(channel, event)

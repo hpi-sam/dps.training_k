@@ -25,13 +25,13 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ActionInstance
         django_get_or_create = (
-            "patient",
+            "patient_instance",
             "area",
             "action_template",
             "current_state",
         )
 
-    patient = factory.SubFactory(PatientFactory)
+    patient_instance = factory.SubFactory(PatientFactory)
     area = factory.SubFactory(AreaFactory)
     action_template = factory.SubFactory(ActionFactory)
     current_state = None
@@ -65,9 +65,14 @@ class FailedActionInstanceStateFactory(factory.django.DjangoModelFactory):
 class ActionInstanceFactoryFailedState(factory.django.DjangoModelFactory):
     class Meta:
         model = ActionInstance
-        django_get_or_create = ("patient", "area", "action_template", "current_state")
+        django_get_or_create = (
+            "patient_instance",
+            "area",
+            "action_template",
+            "current_state",
+        )
 
-    patient = factory.SubFactory(PatientFactory)
+    patient_instance = factory.SubFactory(PatientFactory)
     area = factory.SubFactory(AreaFactory)
     action_template = factory.SubFactory(ActionFactory)
     current_state = None

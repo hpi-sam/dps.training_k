@@ -87,12 +87,16 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient=None, area=None):
+    def create(cls, action_template, patient_instance=None, area=None):
+        if not patient_instance and not area:
+            raise ValueError(
+                "Either patient_instance or area must be provided - an action instance always need a context"
+            )
         is_applicable, context = action_template.application_status(
-            patient, patient.area
+            patient_instance, patient_instance.area
         )
         action_instance = ActionInstance.objects.create(
-            patient=patient,
+            patient_instance=patient_instance,
             area=area,
             action_template=action_template,
         )
@@ -119,7 +123,7 @@ class ActionInstance(LocalTimeable, models.Model):
             raise ValueError("Cannot start a declined action")
 
         is_applicable, context = self.action_template.application_status(
-            self.patient, self.patient.area
+            self.patient_instance, self.patient_instance.area
         )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
@@ -130,12 +134,12 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def place_of_application(self):
         if self.action_template.category == Action.Category.LAB:
-            return self.patient.area
-        return self.patient
+            return self.patient_instance.area
+        return self.patient_instance
 
     def _start_application(self):
         ScheduledEvent.create_event(
-            self.patient.exercise,
+            self.patient_instance.exercise,
             self.action_template.application_duration,  # ToDo: Replace with scalable local time system
             "_application_finished",
             action_instance=self,

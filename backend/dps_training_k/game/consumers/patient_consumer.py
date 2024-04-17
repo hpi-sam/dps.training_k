@@ -6,6 +6,7 @@ from game.models import (
     ActionInstanceStateNames,
     ActionInstance,
 )
+from template.models import Action
 from template.serializer.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
@@ -114,8 +115,8 @@ class PatientConsumer(AbstractConsumer):
         self._send_exercise(exercise=self.exercise)
 
     def handle_action_add(self, action_id):
-        action = ActionInstanceStateNames.objects.get(pk=action_id)
-        action_instance = ActionInstance.create(self.patient_id, action)
+        action = Action.objects.get(pk=action_id)
+        action_instance = ActionInstance.create(self.patient_instance, action)
         action_instance.try_application()
 
     def handle_action_check(self, action_id):
@@ -140,6 +141,9 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
+        self.patient_instance = PatientInstance.objects.get(
+            pk=event["patient_instance_pk"]
+        )
         serialized_state = StateSerializer(self.patient_instance.state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
@@ -147,28 +151,25 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_confirmation_event(self, event):
-        action = ActionInstanceStateNames.objects.get(pk=event["action_pk"])
+        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
-            {"actionId": action.id, "actionName": action.name},
+            actionId=action_instance.id,
+            actionName=action_instance.name,
         )
 
     def action_declination_event(self, event):
-        action = ActionInstanceStateNames.objects.get(pk=event["action_pk"])
+        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
-            {
-                "actionName": action.name,
-                "actionDeclinationReason": action.state.info_text,
-            },
+            actionName=action_instance.name,
+            actionDeclinationReason=action_instance.current_state.info_text,
         )
 
     def action_result_event(self, event):
-        action = ActionInstanceStateNames.objects.get(pk=event["action_pk"])
+        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_RESULT,
-            {
-                "actionId": action.id,
-                "actionResult": event["action_result"],
-            },
+            actionId=action_instance.id,
+            actionResult=action_instance.result,
         )
