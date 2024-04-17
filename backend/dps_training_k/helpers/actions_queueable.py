@@ -14,5 +14,5 @@ class ActionsQueueable:
                 ActionInstanceStateName.ON_HOLD,
             ]
         )
-        while queue and not queue[0].try_action():
+        while queue and not queue[0].try_application():
             queue.pop()

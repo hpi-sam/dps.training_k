@@ -111,7 +111,7 @@ class Owner(OneFieldNotNull, models.Model):
         elif exercise:
             return cls.objects.create(event=event, exercise_owner=exercise)
         else:
-            raise Exception("Owner must have a patient or exercise")
+            raise ValueError("Owner must have a patient or exercise")
 
     def owner_instance(self):
         if self.patient_owner:
@@ -123,4 +123,4 @@ class Owner(OneFieldNotNull, models.Model):
         elif self.action_instance_owner:
             return self.action_instance_owner
         else:
-            return None
+            raise Exception("This owner instance was created  without and actual owner")

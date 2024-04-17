@@ -1,5 +1,5 @@
 from django.db import models
-from game.models import ScheduledEvent, PatientInstance, Area
+from game.models import ScheduledEvent
 from template.models import Action
 from game.channel_notifications import ActionInstanceDispatcher
 from helpers.local_timable import LocalTimeable
@@ -105,6 +105,7 @@ class ActionInstance(LocalTimeable, models.Model):
             raise ValueError(
                 "Either patient_instance or area must be provided - an action instance always need a context"
             )
+
         is_applicable, context = action_template.application_status(
             patient_instance, patient_instance.area
         )

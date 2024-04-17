@@ -112,7 +112,6 @@ class PatientConsumer(AbstractConsumer):
     def handle_triage(self, triage):
         self.patient_instance.triage = triage
         self.patient_instance.save(update_fields=["triage"])
-        self._send_exercise(exercise=self.exercise)
 
     def handle_action_add(self, action_id):
         action = Action.objects.get(pk=action_id)

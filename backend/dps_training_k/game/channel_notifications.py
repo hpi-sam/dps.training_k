@@ -1,6 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-import game.models as models
+import game.models as models  # needed to avoid circular imports
 import logging
 
 """
@@ -94,13 +94,15 @@ class ActionInstanceDispatcher(ChannelNotifier):
             raise ValueError(
                 "There has to be a state change whenever updating an ActionInstance."
             )
-        if applied_action.state_name == models.ActionInstanceStateNames.DECLINED:
-            event_type = ChannelEventTypes.ACTION_DECLINATION_EVENT
-        elif applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
-            event_type = ChannelEventTypes.ACTION_CONFIRMATION_EVENT
-        elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
-            event_type = ChannelEventTypes.ACTION_RESULT_EVENT
-        else:
+        event_type = {
+            models.ActionInstanceStateNames.DECLINED: ChannelEventTypes.ACTION_DECLINATION_EVENT,
+            models.ActionInstanceStateNames.PLANNED: ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
+            models.ActionInstanceStateNames.FINISHED: ChannelEventTypes.ACTION_RESULT_EVENT,
+        }.get(applied_action.state_name)
+        if event_type is None:
+            logging.warning(
+                f"No front end update for state {applied_action.state_name} send"
+            )
             return
         cls._notify_action_event(applied_action, event_type)
 
