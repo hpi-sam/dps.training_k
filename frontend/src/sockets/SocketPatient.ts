@@ -169,6 +169,13 @@ class SocketPatient {
 			'materialId': materialId,
 		}))
 	}
+
+	deleteAction(actionId: number) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'action-delete',
+			'actionId': actionId,
+		}))
+	}
 }
 
 const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
@@ -375,12 +382,14 @@ export const serverMockEvents = [
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
-			'{"actionId":2,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":3,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":'+
+			'{"actionId":1,"orderId":2,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":2,"orderId":1,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":4,"orderId":4,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":'+
+			'null},' +
+			'{"actionId":3,"orderId":3,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":'+
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":4,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":null},' +
-			'{"actionId":5,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":6,"orderId":6,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
+			'{"actionId":5,"orderId":5,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
 	}
 ]

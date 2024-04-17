@@ -147,6 +147,7 @@ interface ActionOverview {
 
 interface Action {
 	actionId: number
+	orderId: number
 	actionName: string
 	actionStatus: string
 	timeUntilCompletion: number

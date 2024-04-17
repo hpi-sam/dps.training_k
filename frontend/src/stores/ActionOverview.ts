@@ -7,8 +7,7 @@ export const useActionOverviewStore = defineStore('actionOverview', {
 	}),
 	actions: {
 		loadActions(json: Action[]) {
-			console.log('loadActions1 ', json)
-			this.actions = json
+			this.actions = json.sort((a, b) => a.orderId - b.orderId)
 		},
 		decreaseTimeForRunningActions() {
 			this.actions = this.actions.map(action => {

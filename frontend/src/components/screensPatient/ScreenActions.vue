@@ -38,7 +38,7 @@
 		<component
 			:is="currentPageComponent"
 			@add-action="setPage(Pages.ACTION_SELECTION)"
-			@close-action-selection="setPage(Pages.ACTION_OVERVIEW); console.log('close-action-selection')"
+			@close-action-selection="setPage(Pages.ACTION_OVERVIEW)"
 		/>
 	</div>
 	<nav>
