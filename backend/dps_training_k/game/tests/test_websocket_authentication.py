@@ -15,7 +15,6 @@ class PatientWebSocketTest(TransactionTestCase):
         self.patient = PatientFactory()
 
     async def test_authenticated_websocket_connection(self):
-        print("Startet test_authenticated_websocket_connection")
         communicator = WebsocketCommunicator(
             application=application, path=f"/ws/patient/?token={self.token.key}"
         )
@@ -47,4 +46,3 @@ class PatientWebSocketTest(TransactionTestCase):
         )
 
         await communicator.disconnect()
-        print("Finished test_authenticated_websocket_connection")

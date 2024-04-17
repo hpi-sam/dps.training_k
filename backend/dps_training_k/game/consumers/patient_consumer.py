@@ -70,8 +70,6 @@ class PatientConsumer(AbstractConsumer):
         from template.tests.factories.patient_state_factory import PatientStateFactory
 
         self.temp_state = PatientStateFactory(10, 2)
-        old_patient_instances = PatientInstance.objects.filter(patient_id=2)
-        [patient_instance.delete() for patient_instance in old_patient_instances]
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
