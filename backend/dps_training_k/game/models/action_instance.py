@@ -51,9 +51,12 @@ class ActionInstanceState(models.Model):
         self.info_text = self.info_text + info_text
         self.save(update_fields=["info_text"])
 
+    def success_states():
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
+
 
 class ActionInstance(LocalTimeable, models.Model):
-    patient = models.ForeignKey(
+    patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, blank=True, null=True)
@@ -70,6 +73,16 @@ class ActionInstance(LocalTimeable, models.Model):
     def state_name(self):
         if self.current_state != None:
             return self.current_state.name
+        else:
+            return None
+
+    @property
+    def result(self):
+        if (
+            self.current_state != None
+            and self.current_state.name in ActionInstanceState.success_states()
+        ):
+            return self.states.get(name=ActionInstanceStateNames.FINISHED).info_text
         else:
             return None
 
@@ -147,5 +160,10 @@ class ActionInstance(LocalTimeable, models.Model):
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
 
     def _application_finished(self):
-        self._update_state(ActionInstanceStateNames.FINISHED)
+        self._update_state(
+            ActionInstanceStateNames.FINISHED,
+            info_text=self.action_template.get_result(
+                self.patient_instance.patient_state
+            ),
+        )
         self.place_of_application().remove_from_queue(self)
