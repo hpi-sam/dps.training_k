@@ -1,9 +1,10 @@
 from django.db import models
 
+from helpers.actions_queueable import ActionsQueueable
 from game.channel_notifications import AreaDispatcher
 
 
-class Area(models.Model):
+class Area(ActionsQueueable, models.Model):
     name = models.CharField(unique=True, max_length=30)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     isPaused = models.BooleanField()

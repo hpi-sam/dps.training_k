@@ -1,12 +1,13 @@
 from django.db import models
 
-from game.channel_notifications import PatientDispatcher
+from game.channel_notifications import PatientInstanceDispatcher
 from helpers.eventable import Eventable
+from helpers.actions_queueable import ActionsQueueable
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
 
-class Patient(Eventable, models.Model):
+class PatientInstance(Eventable, ActionsQueueable, models.Model):
     class Triage(models.TextChoices):
         UNDEFINED = "-", "undefined"
         RED = "R", "red"
@@ -35,8 +36,9 @@ class Patient(Eventable, models.Model):
         null=True,  # for debugging purposes
         default=None,  # for debugging purposes
     )
-    patientId = models.IntegerField(
-        help_text="patientId used to log into patient - therefore part of authentication"
+    patient_id = models.IntegerField(
+        unique=True,
+        help_text="patient_id used to log into patient - therefore part of authentication",
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -45,10 +47,10 @@ class Patient(Eventable, models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        PatientDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def __str__(self):
-        return f"Patient #{self.id} called {self.name} with ID {self.patientId}"
+        return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
 
     # ToDo: remove after actual method is implemented
     def schedule_temporary_event(self):
@@ -63,7 +65,7 @@ class Patient(Eventable, models.Model):
         print("temporary_event_test called")
         return True
 
-    def schedule_state_transition(self):
+    def schedule_state_change(self):
         from game.models import ScheduledEvent
 
         if self.patient_state.is_dead:
@@ -88,7 +90,7 @@ class Patient(Eventable, models.Model):
             return False
         self.patient_state = future_state
         self.save(update_fields=["patient_state"])
-        self.schedule_state_transition()
+        self.schedule_state_change()
         return True
 
     def is_dead(self):
