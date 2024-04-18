@@ -2,6 +2,7 @@ import factory
 from template.models import PatientState
 from .state_transition_factory import StateTransitionFactory
 from .state_data_factory import StateDataFactory
+from template.models import StateTransition
 
 
 class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
@@ -38,7 +39,7 @@ class PatientStateFactory:
         self.transition_count = transition_count
 
     def generate(self):
-        self.initial_state = EmptyPatientStateFactory()
+        self.initial_state = EmptyPatientStateFactory(transition=None)
         self._generate(self.depth, self.transition_count, self.initial_state)
         return self.initial_state
 
@@ -51,11 +52,16 @@ class PatientStateFactory:
             current_states = self._generate_Patient_States(transition_count)
             for i in range(transition_count):
                 current_state_transitions[i].resulting_state = current_states[i]
-                current_states[i].save()
+                current_state_transitions[i].save()
+
             for state in previous_states:
                 state.transition = current_state_transitions[0]
                 state.save()
+
             previous_states = current_states
+        for state in previous_states:
+            state.transition = StateTransitionFactory()
+            state.save()
 
     def _generate_chained_transitions(self, transition_count):
         current_state_transitions = [StateTransitionFactory()]
@@ -73,4 +79,7 @@ class PatientStateFactory:
         return current_state_transitions
 
     def _generate_Patient_States(self, transition_count):
-        return [EmptyPatientStateFactory() for _ in range(transition_count)]
+        return [
+            EmptyPatientStateFactory(transition=None, state_depth=i)
+            for i in range(transition_count)
+        ]  # vielleicht immer das selbe
