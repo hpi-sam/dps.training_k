@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import { computed } from "vue"
     import { useLogStore } from '@/stores/Log'
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -25,6 +26,7 @@
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
+			<CloseButton @close="emit('close-popup')" />
 			<h2>
 				Log-Eintrag
 			</h2>
@@ -73,9 +75,6 @@
 
 <style scoped>
 	.popup {
-		background-color: white;
-		padding: 20px;
-		border-radius: 8px;
 		max-width: 50vw;
 		overflow: hidden;
 	}

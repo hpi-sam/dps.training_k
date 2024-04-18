@@ -75,6 +75,7 @@
 		position: absolute;
 		display: flex;
 		float: left;
+		border-top: 2px solid var(--border-color);
 	}
 
 	button {
@@ -83,26 +84,12 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 1.5em;
-		background-color: lightgray;
+		background-color: white;
 		border: none;
-		border-top: 8px solid black;
 	}
 
 	button.selected {
-		background-color: white;
+		filter: brightness(0.9);
 		font-weight: bold;
-	}
-
-	#nav-patients {
-		border-right: 4px solid black;
-	}
-
-	#nav-personnel {
-		border-left: 4px solid black;
-		border-right: 4px solid black;
-	}
-
-	#nav-material {
-		border-left: 4px solid black;
 	}
 </style>

@@ -2,7 +2,7 @@
 	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient'
 	import {Modules, setModule, showErrorToast} from "@/App.vue"
-	import {svg} from "@/assets/Svg"
+	import {svg} from "@/assets/svg"
 
 	const exerciseIdInput = ref("")
 	const patientIdInput = ref("")
@@ -74,4 +74,4 @@
 
 <style scoped>
 	@import url(../../assets/login.css);
-</style>
+</style>@/assets/svg

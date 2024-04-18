@@ -6,6 +6,7 @@
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
+import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -51,6 +52,7 @@
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
+			<CloseButton @close="emit('close-popup')" />
 			<div id="leftSide">
 				<div class="flex-container">
 					<h2>Patienten-Datensätze</h2>
@@ -58,29 +60,27 @@
 				</div>
 			</div>
 			<div id="rightSide">
-				<div class="flex-container">
-					<div class="listitem">
-						<TriageForListItems :patient-code="currentPatient?.patientCode" />
-						<div class="patientName">
-							{{ props.patientName }}
-						</div>
+				<div class="listItem">
+					<TriageForListItems :patient-code="currentPatient?.patientCode" />
+					<div class="patientName">
+						{{ props.patientName }}
 					</div>
-					<div class="scroll">
-						<PatientInfo
-							:injury="currentPatient?.patientInjury"
-							:history="currentPatient?.patientHistory"
-							:biometrics="currentPatient?.patientBiometrics"
-							:personal-details="currentPatient?.patientPersonalDetails"
-						/>
-					</div>
-					<div id="buttonRow">
-						<button
-							id="saveButton"
-							@click="addPatient()"
-						>
-							Patient hinzufügen
-						</button>
-					</div>
+				</div>
+				<div class="scroll">
+					<PatientInfo
+						:injury="currentPatient?.patientInjury"
+						:history="currentPatient?.patientHistory"
+						:biometrics="currentPatient?.patientBiometrics"
+						:personal-details="currentPatient?.patientPersonalDetails"
+					/>
+				</div>
+				<div id="buttonRow">
+					<button
+						id="saveButton"
+						@click="addPatient()"
+					>
+						Patient hinzufügen
+					</button>
 				</div>
 			</div>
 		</div>
@@ -89,6 +89,7 @@
 
 <style scoped>
 	.popup {
+		position: relative;
 		background-color: white;
 		padding: 20px;
 		border-radius: 8px;
@@ -106,12 +107,13 @@
 	#rightSide {
 		width: 50%;
 		padding: 10px;
+		display: flex;
+		flex-direction: column;
 	}
 
 	#buttonRow {
 		display: flex;
 	}
-
 
 	#saveButton {
 		position: relative;
@@ -126,21 +128,11 @@
 		background-color: var(--green);
 	}
 
-	.listitem {
-		position: relative;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		display: flex;
-		align-items: center;
-		margin-top: -1px;
+	.listItem {
+		margin-right: 40px;
 		font-size: 1.25rem;
-		padding: .75rem 1rem;
 		text-align: left;
 		height: 50px;
-		width: 100%;
-	}
-
-	.listitem {
 		padding-left: 0;
 	}
 

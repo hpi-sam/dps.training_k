@@ -2,7 +2,7 @@
 	import {ref} from 'vue'
 	import {useTrainerStore} from '@/stores/Trainer'
 	import {Modules, setModule} from "@/App.vue"
-	import {svg} from "@/assets/Svg"
+	import {svg} from "@/assets/svg"
 
 	const usernameInput = ref("")
 	const passwordInput = ref("")
@@ -66,4 +66,4 @@
 
 <style scoped>
 	@import url(../../assets/login.css);
-</style>
+</style>@/assets/svg

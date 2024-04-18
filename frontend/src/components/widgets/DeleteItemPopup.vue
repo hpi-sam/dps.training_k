@@ -1,4 +1,6 @@
 <script setup lang="ts">
+	import CloseButton from './CloseButton.vue'
+
 	const emit = defineEmits(['close-popup','delete'])
 
 	const props = defineProps({
@@ -16,6 +18,7 @@
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup">
+			<CloseButton @close="emit('close-popup')" />
 			<h2>{{ props.name }}</h2>
 			<button id="deleteButton" @click="emit('delete')">
 				{{ props.deleteText }}
@@ -26,9 +29,14 @@
 
 <style scoped>
 	.popup {
+		position: relative;
 		background-color: white;
 		padding: 20px;
 		border-radius: 8px;
+	}
+
+	h2 {
+		margin: 0px 50px;
 	}
 
 	#deleteButton {

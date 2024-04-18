@@ -36,6 +36,7 @@
 		height: 60px;
 		display: flex;
 		float: left;
+		border-bottom: 2px solid var(--border-color);
 	}
 
 	button {
@@ -46,23 +47,18 @@
 		font-size: 1.5em;
 		background-color: white;
 		border: none;
-		border-bottom: 8px solid black;
 	}
 
 	#nav-trainer {
 		width: 40%;
-		border-right: 4px solid black;
 	}
 
 	#nav-triage {
 		width: 20%;
-		border-left: 4px solid black;
-		border-right: 4px solid black;
 		color: white;
 	}
 
 	#nav-exercise-code {
 		width: 40%;
-		border-left: 4px solid black;
 	}
 </style>@/utils

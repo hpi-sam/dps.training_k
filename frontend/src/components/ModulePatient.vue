@@ -65,39 +65,13 @@
 </script>
 
 <template>
-	<div v-if="!fullScreen" id="leftScreen">
+	<div v-if="!fullScreen" class="leftScreen">
 		<component :is="currentLeftScreenComponent" />
 	</div>
-	<div v-if="!fullScreen" id="rightScreen">
+	<div v-if="!fullScreen" class="rightScreen">
 		<component :is="currentRightScreenComponent" />
 	</div>
-	<div v-if="fullScreen" id="fullScreen">
+	<div v-if="fullScreen" class="fullScreen">
 		<component :is="currentFullScreenComponent" />
 	</div>
 </template>
-
-<style scoped>
-	#fullScreen {
-		position: relative;
-		float: left;
-		width: 100%;
-		height: 100%;
-		border: 8px solid black;
-	}
-
-	#leftScreen, #rightScreen {
-		position: relative;
-		float: left;
-		width: 50%;
-		height: 100%;
-		border: 8px solid black;
-	}
-
-	#leftScreen {
-		border-right: 4px solid black;
-	}
-
-	#rightScreen {
-		border-left: 4px solid black;
-	}
-</style>

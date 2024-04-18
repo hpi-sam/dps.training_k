@@ -62,28 +62,10 @@
 </script>
 
 <template>
-	<div id="leftScreen">
+	<div class="leftScreen">
 		<component :is="currentLeftScreenComponent" />
 	</div>
-	<div id="rightScreen">
+	<div class="rightScreen">
 		<component :is="currentRightScreenComponent" />
 	</div>
 </template>
-
-<style scoped>
-	#leftScreen, #rightScreen {
-		position: relative;
-		float: left;
-		width: 50%;
-		height: 100%;
-		border: 8px solid black;
-	}
-
-	#leftScreen {
-		border-right: 4px solid black;
-	}
-
-	#rightScreen {
-		border-left: 4px solid black;
-	}
-</style>

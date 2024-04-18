@@ -2,7 +2,7 @@
 	import { ref } from 'vue'
 	import { useAvailablesStore } from '@/stores/Availables'
 	import ActionConfig from '@/components/widgets/ActionConfig.vue'
-	import {svg} from '@/assets/Svg'
+	import CloseButton from '@/components/widgets/CloseButton.vue'
 
 	const emit = defineEmits(['close-action-selection'])
 
@@ -43,11 +43,7 @@
 	<div v-if="!showAction" class="flex-container">
 		<div class="scroll">
 			<h1>Wähle eine Aktion</h1>
-			<button class="close-button" @click="emit('close-action-selection')">
-				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-					<path :d="svg.closeIcon" />
-				</svg>
-			</button>
+			<CloseButton @click="emit('close-action-selection')" />
 			<div
 				v-for="actionTyp in availablesStore.getActionTypes"
 				:key="actionTyp"
@@ -75,4 +71,4 @@
 		text-align: center;
 		margin-top: 30px;
 	}
-</style>
+</style>@/assets/svg

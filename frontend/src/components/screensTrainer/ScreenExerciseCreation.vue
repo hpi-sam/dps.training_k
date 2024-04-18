@@ -3,7 +3,7 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
-	import {svg} from "@/assets/Svg"
+	import {svg} from "@/assets/svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 
@@ -85,4 +85,9 @@
 		border: none;
 		background-color: rgb(243, 244, 246);
 	}
-</style>
+
+	.main-button {
+		background-color: var(--green);
+		color: white;
+	}
+</style>@/assets/svg
