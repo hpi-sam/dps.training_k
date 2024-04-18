@@ -19,7 +19,7 @@ class ActionInstanceStateChangeTestCase(TestCase):
     def test_action_instance_state_changed(self):
         """
         ActionInstanceState always create a new state object when the state name is changed.
-        Two follow up states are gap free in time - on starts exectly when the other ends.
+        Two follow up states are gap free in time - one starts exactly when the other ends.
         """
         action_instance = ActionInstanceFactory()
         number_of_states = ActionInstance.objects.count()

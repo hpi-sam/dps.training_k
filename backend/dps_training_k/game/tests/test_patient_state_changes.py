@@ -33,7 +33,7 @@ class TransitionableTestCase(TestCase):
 
     def test_state_change_is_not_triggered_final(self):
         """
-        Once a patient is in a final state, no further state changes are happening.
+        Patient does not change states when it reached its final state
         """
         patient = PatientFactory()
         patient_state = PatientStateFactory(1, 1)
