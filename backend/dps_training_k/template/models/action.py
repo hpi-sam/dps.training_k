@@ -1,7 +1,7 @@
 from django.db import models
+from helpers.models import UUIDable
 
-
-class Action(models.Model):
+class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
         TREATMENT = "TR", "treatment"
         EXAMINATION = "EX", "examination"
@@ -13,6 +13,11 @@ class Action(models.Model):
     application_duration = models.IntegerField(
         default=10,
         help_text="Duration in seconds in realtime. Might be scaled by external factors.",
+    )
+    effect_duration = models.IntegerField(
+        default=None,
+        null=True,
+        help_text="Effect duration in seconds in realtime. Might be scaled by external factors.",
     )
     conditions = models.JSONField(null=True, blank=True, default=None)
     # results = models.JSONField(null=True, blank=True, default=None)

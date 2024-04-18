@@ -10,10 +10,12 @@ class ActionFactory(factory.django.DjangoModelFactory):
             "name",
             "category",
             "application_duration",
+            "effect_duration",
             "conditions",
         )
 
     name = "Recovery Position"
     category = Action.Category.TREATMENT
     application_duration = 10
+    effect_duration = 10
     conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
