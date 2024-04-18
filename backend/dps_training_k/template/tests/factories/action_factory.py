@@ -17,5 +17,22 @@ class ActionFactory(factory.django.DjangoModelFactory):
     name = "Recovery Position"
     category = Action.Category.TREATMENT
     application_duration = 10
+    effect_duration = None
+    conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
+
+class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Action
+        django_get_or_create = (
+            "name",
+            "category",
+            "application_duration",
+            "effect_duration",
+            "conditions",
+        )
+
+    name = "Recovery Position"
+    category = Action.Category.TREATMENT
+    application_duration = 10
     effect_duration = 10
     conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})

@@ -11,6 +11,7 @@ class ActionInstanceStateNames(models.TextChoices):
     ON_HOLD = "OH", "on_hold"
     FINISHED = "FI", "finished"
     ACTIVE = "AC", "active"
+    EXPIRED = "EX", "expired"
 
     DECLINED = "DE", "declined"
     CANCELED = "CA", "canceled"
@@ -168,3 +169,14 @@ class ActionInstance(LocalTimeable, models.Model):
             ),
         )
         self.place_of_application().remove_from_queue(self)
+        if self.action_template.effect_duration != None:
+            ScheduledEvent.create_event(
+                self.patient_instance.exercise,
+                self.action_template.effect_duration,  # ToDo: Replace with scalable local time system
+                "_effect_expired",
+                action_instance=self,
+            )
+            self._update_state(ActionInstanceStateNames.ACTIVE)
+    
+    def _effect_expired(self):
+        self._update_state(ActionInstanceStateNames.EXPIRED)

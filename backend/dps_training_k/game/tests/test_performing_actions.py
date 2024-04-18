@@ -1,6 +1,11 @@
 from django.test import TestCase
 from django.conf import settings
-from game.models import ScheduledEvent, ActionInstance, ActionInstanceStateNames
+from game.models import (
+    ScheduledEvent,
+    ActionInstance,
+    ActionInstanceStateNames,
+    ActionInstanceState,
+)
 from game.tasks import check_for_updates
 from .factories import PatientFactory, ActionInstanceFactory
 from template.tests.factories import ActionFactory
@@ -92,6 +97,7 @@ class ActionInstanceScheduledTestCase(TestCase):
         self.assertEqual(ScheduledEvent.objects.count(), 0)
         self.action_instance.refresh_from_db()  # Necessary because the check_for_updates changes happen out of scope,
         # thus self.action_instance isn't refreshed automatically
-        self.assertEqual(
-            self.action_instance.current_state.name, ActionInstanceStateNames.FINISHED
+        self.assertIn(
+            self.action_instance.current_state.name,
+            ActionInstanceState.success_states(),
         )
