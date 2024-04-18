@@ -1,7 +1,7 @@
 from django.db import models
+from helpers.UUIDable import UUIDable
 
-
-class Action(models.Model):
+class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
         TREATMENT = "TR", "treatment"
         EXAMINATION = "EX", "examination"
