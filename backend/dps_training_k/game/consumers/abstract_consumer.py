@@ -1,12 +1,12 @@
-import traceback
 import json
+import traceback
 from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
-from game.models import PatientInstance, Exercise
+from game.models import Exercise
 from template.models import Action
 
 
@@ -152,28 +152,29 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         self._send_exercise(exercise=exercise)
 
     def _send_exercise(self, exercise):
-        patient, _ = PatientInstance.objects.get_or_create(
-            name="Max Mustermann", exercise=self.exercise, patient_id=2
-        )
         exercise_object = {
-            "exercise": {
-                "exerciseId": exercise.exerciseId,
-                "areas": [
-                    {
-                        "areaName": "X",
-                        "patients": [
-                            {
-                                "patientId": patient.patient_id,
-                                "patientName": patient.name,
-                                "patientCode": 0,
-                                "triage": patient.triage,
-                            }
-                        ],
-                        "personnel": [{"personnelId": 0, "personnelName": "X"}],
-                        "material": [{"materialId": 0, "materialName": "X"}],
-                    }
-                ],
-            }
+            "exerciseId": exercise.exerciseId,
+            "areas": [
+                {
+                    "areaName": "X",
+                    "patients": [
+                        {
+                            "patientId": "2",
+                            "patientName": "name",
+                            "patientCode": 0,
+                            "triage": "r",
+                        }
+                    ],
+                    "personnel": [{"personnelId": 0, "personnelName": "X"}],
+                    "material": [
+                        {
+                            "materialId": 0,
+                            "materialName": "X",
+                            "materialType": "device",
+                        }
+                    ],
+                }
+            ],
         }
         self.send_event(self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object)
 
