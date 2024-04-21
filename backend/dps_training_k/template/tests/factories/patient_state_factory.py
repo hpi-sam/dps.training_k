@@ -39,47 +39,38 @@ class PatientStateFactory:
         self.transition_count = transition_count
 
     def generate(self):
-        self.initial_state = EmptyPatientStateFactory(transition=None)
-        self._generate(self.depth, self.transition_count, self.initial_state)
-        return self.initial_state
+        initial_state = EmptyPatientStateFactory.build(transition=None)
+        states = [initial_state]
+        old_transitions = self._generate_chained_transitions()
+        states[0].transition = old_transitions[0]
+        states[0].depth = 1
+        states[0].save()
+        for i in range(2, self.depth + 2):
+            states = self._generate_Patient_States(i)
+            new_transitions = self._generate_chained_transitions()
+            for j in range(self.transition_count):
+                states[j].transition = new_transitions[j]
+                states[j].save()
+            for j in range(self.transition_count):
+                old_transitions[j].resulting_state = states[j]
+                old_transitions[j].save()
+            old_transitions = new_transitions
+        return initial_state
 
-    def _generate(self, depth, transition_count, initial_state):
-        previous_states = [initial_state]
-        for i in range(depth):
-            current_state_transitions = self._generate_chained_transitions(
-                transition_count
-            )
-            current_states = self._generate_Patient_States(transition_count)
-            for i in range(transition_count):
-                current_state_transitions[i].resulting_state = current_states[i]
-                current_state_transitions[i].save()
-
-            for state in previous_states:
-                state.transition = current_state_transitions[0]
-                state.save()
-
-            previous_states = current_states
-        for state in previous_states:
-            state.transition = StateTransitionFactory()
-            state.save()
-
-    def _generate_chained_transitions(self, transition_count):
+    def _generate_chained_transitions(self):
         current_state_transitions = [StateTransitionFactory()]
-        current_transition_count = 1
-
-        while current_transition_count < transition_count:
+        for _ in range(self.transition_count - 1):
             current_state_transitions.insert(
                 0,
                 StateTransitionFactory(
                     next_state_transition=current_state_transitions[0]
                 ),
             )
-            current_transition_count += 1
 
         return current_state_transitions
 
-    def _generate_Patient_States(self, transition_count):
+    def _generate_Patient_States(self, current_depth):
         return [
-            EmptyPatientStateFactory(transition=None, state_depth=i)
-            for i in range(transition_count)
-        ]  # vielleicht immer das selbe
+            EmptyPatientStateFactory.build(transition=None, state_depth=current_depth)
+            for i in range(self.transition_count)
+        ]
