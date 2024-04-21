@@ -6,7 +6,7 @@ import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
-import { useActionOverviewStore } from "@/stores/ActionOverview"
+import {useActionOverviewStore} from "@/stores/ActionOverview"
 
 class SocketPatient {
 	private readonly url: string
@@ -229,18 +229,18 @@ export const serverMockEvents = [
 		data: '{"messageType":"available-actions","availableActions":{"availableActions":[' +
 			'{"actionName":"Blutdruck messen","actionType":"treatment"},{"actionName":"Blutprobe untersuchen","actionType":"lab"},' +
 			'{"actionName":"Beatmungsmaske anlegen","actionType":"treatment"},' +
-			'{"actionName":"Infusion anlegen","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen1","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen2","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen3","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen4","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen5","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen6","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen7","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen8","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen9","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen10","actionType":"treatment"},'+
-			'{"actionName":"Blut abnehmen11","actionType":"treatment"},'+
+			'{"actionName":"Infusion anlegen","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen1","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen2","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen3","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen4","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen5","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen6","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen7","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen8","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen9","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen10","actionType":"treatment"},' +
+			'{"actionName":"Blut abnehmen11","actionType":"treatment"},' +
 			'{"actionName":"Medikament verabreichen","actionType":"treatment"},' +
 			'{"actionName":"Ruheposition einnehmen","actionType":"treatment"},{"actionName":"Röntgen","actionType":"lab"},' +
 			'{"actionName":"Wundversorgung","actionType":"treatment"},{"actionName":"Stabile Seitenlage","actionType":"treatment"},' +
@@ -250,62 +250,62 @@ export const serverMockEvents = [
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Intensiv",'+
-				'"patients":['+
-					'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},'+
-					'{"patientId":3,"patientName":"Frank Huber","patientCode":2,"triage":"G"}'+
-				'],'+
-				'"personnel":['+
-					'{"personnelId":10,"personnelName":"Sebastian Lieb"},'+
-					'{"personnelId":1,"personnelName":"Albert Spahn"}'+
-				'],'+
-				'"material":['+
-					'{"materialId":1,"materialName":"Beatmungsgerät"},'+
-					'{"materialId":2,"materialName":"Defibrillator"}'+
-				']'+
-			'},'+
-			'{"areaName":"ZNA",'+
-				'"patients":['+
-					'{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' + 
-					'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}'+
-				'],'+
-				'"personnel":['+
-					'{"personnelId":11,"personnelName":"Hannah Mayer"},'+
-					'{"personnelId":3,"personnelName":"Jens Schweizer"},'+
-					'{"personnelId":2,"personnelName":"Lena Schulze"},'+
-					'{"personnelId":7,"personnelName":"Günther Beutle"},' +
-					'{"personnelId":8,"personnelName":"Julian Mohn"},'+
-					'{"personnelId":9,"personnelName":"Elisabeth Bauer"},'+
-					'{"personnelId":12,"personnelName":"Hans Schmidt"},' +
-					'{"personnelId":13,"personnelName":"Johannes Müller"},' +
-					'{"personnelId":14,"personnelName":"Sophie Schneider"},' +
-					'{"personnelId":15,"personnelName":"Lisa Fischer"},' +
-					'{"personnelId":16,"personnelName":"Julia Meyer"},' +
-					'{"personnelId":17,"personnelName":"Max Weber"},' +
-					'{"personnelId":18,"personnelName":"Lukas Wagner"},' +
-					'{"personnelId":19,"personnelName":"Laura Becker"},' +
-					'{"personnelId":20,"personnelName":"Anna Schäfer"},' +
-					'{"personnelId":21,"personnelName":"David Hoffmann"},' +
-					'{"personnelId":22,"personnelName":"Sarah Bauer"}' +
-				'],'+
-				'"material":['+
-					'{"materialId":3,"materialName":"Defibrillator1"},'+
-					'{"materialId":10,"materialName":"Defibrillator2"},'+
-					'{"materialId":11,"materialName":"Defibrillator3"},'+
-					'{"materialId":12,"materialName":"Defibrillator4"},'+
-					'{"materialId":13,"materialName":"Defibrillator5"},'+
-					'{"materialId":14,"materialName":"Defibrillator6"},'+
-					'{"materialId":15,"materialName":"Defibrillator7"},'+
-					'{"materialId":16,"materialName":"Defibrillator8"},'+
-					'{"materialId":17,"materialName":"Defibrillator9"},'+
-					'{"materialId":18,"materialName":"Defibrillator10"},'+
-					'{"materialId":19,"materialName":"Defibrillator11"},'+
-					'{"materialId":20,"materialName":"Defibrillator12"},'+
-					'{"materialId":4,"materialName":"EKG-Monitor"},'+
-					'{"materialId":7,"materialName":"Pulsoximeter"},'+
-					'{"materialId":8,"materialName":"EEG"},'+
-					'{"materialId":9,"materialName":"Narkosegerät"}'+
-				']'+
+			'{"areaName":"Intensiv",' +
+			'"patients":[' +
+			'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},' +
+			'{"patientId":3,"patientName":"Frank Huber","patientCode":2,"triage":"G"}' +
+			'],' +
+			'"personnel":[' +
+			'{"personnelId":10,"personnelName":"Sebastian Lieb"},' +
+			'{"personnelId":1,"personnelName":"Albert Spahn"}' +
+			'],' +
+			'"material":[' +
+			'{"materialId":1,"materialName":"Beatmungsgerät"},' +
+			'{"materialId":2,"materialName":"Defibrillator"}' +
+			']' +
+			'},' +
+			'{"areaName":"ZNA",' +
+			'"patients":[' +
+			'{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' +
+			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}' +
+			'],' +
+			'"personnel":[' +
+			'{"personnelId":11,"personnelName":"Hannah Mayer"},' +
+			'{"personnelId":3,"personnelName":"Jens Schweizer"},' +
+			'{"personnelId":2,"personnelName":"Lena Schulze"},' +
+			'{"personnelId":7,"personnelName":"Günther Beutle"},' +
+			'{"personnelId":8,"personnelName":"Julian Mohn"},' +
+			'{"personnelId":9,"personnelName":"Elisabeth Bauer"},' +
+			'{"personnelId":12,"personnelName":"Hans Schmidt"},' +
+			'{"personnelId":13,"personnelName":"Johannes Müller"},' +
+			'{"personnelId":14,"personnelName":"Sophie Schneider"},' +
+			'{"personnelId":15,"personnelName":"Lisa Fischer"},' +
+			'{"personnelId":16,"personnelName":"Julia Meyer"},' +
+			'{"personnelId":17,"personnelName":"Max Weber"},' +
+			'{"personnelId":18,"personnelName":"Lukas Wagner"},' +
+			'{"personnelId":19,"personnelName":"Laura Becker"},' +
+			'{"personnelId":20,"personnelName":"Anna Schäfer"},' +
+			'{"personnelId":21,"personnelName":"David Hoffmann"},' +
+			'{"personnelId":22,"personnelName":"Sarah Bauer"}' +
+			'],' +
+			'"material":[' +
+			'{"materialId":3,"materialName":"Defibrillator1"},' +
+			'{"materialId":10,"materialName":"Defibrillator2"},' +
+			'{"materialId":11,"materialName":"Defibrillator3"},' +
+			'{"materialId":12,"materialName":"Defibrillator4"},' +
+			'{"materialId":13,"materialName":"Defibrillator5"},' +
+			'{"materialId":14,"materialName":"Defibrillator6"},' +
+			'{"materialId":15,"materialName":"Defibrillator7"},' +
+			'{"materialId":16,"materialName":"Defibrillator8"},' +
+			'{"materialId":17,"materialName":"Defibrillator9"},' +
+			'{"materialId":18,"materialName":"Defibrillator10"},' +
+			'{"materialId":19,"materialName":"Defibrillator11"},' +
+			'{"materialId":20,"materialName":"Defibrillator12"},' +
+			'{"materialId":4,"materialName":"EKG-Monitor"},' +
+			'{"materialId":7,"materialName":"Pulsoximeter"},' +
+			'{"materialId":8,"materialName":"EEG"},' +
+			'{"materialId":9,"materialName":"Narkosegerät"}' +
+			']' +
 			'},' +
 			'{"areaName":"Wagenhalle",' +
 			'"patients":[' +
@@ -382,14 +382,14 @@ export const serverMockEvents = [
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"orderId":2,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
-			'{"actionId":2,"orderId":1,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":4,"orderId":4,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":'+
+			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":' +
 			'null},' +
-			'{"actionId":3,"orderId":3,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":'+
+			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":' +
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":6,"orderId":6,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
-			'{"actionId":5,"orderId":5,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
+			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
 	}
 ]
