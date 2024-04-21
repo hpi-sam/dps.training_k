@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { svg } from '@/assets/svg'
+	import {svg} from '@/assets/Svg'
 
-    const emit = defineEmits(['close'])
+	const emit = defineEmits(['close'])
 </script>
 
 <template>

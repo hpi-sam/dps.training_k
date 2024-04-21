@@ -3,7 +3,7 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
-	import {svg} from "@/assets/svg"
+	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 
@@ -27,11 +27,11 @@
 		showPopup.value = true
 	}
 
-	function addArea(){
+	function addArea() {
 		socketTrainer.areaAdd()
 	}
 
-	function deleteArea(){
+	function deleteArea() {
 		socketTrainer.areaDelete(currentArea.value)
 	}
 
@@ -90,4 +90,4 @@
 		background-color: var(--green);
 		color: white;
 	}
-</style>@/assets/svg
+</style>

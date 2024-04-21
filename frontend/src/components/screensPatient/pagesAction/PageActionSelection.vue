@@ -1,6 +1,6 @@
 <script setup lang="ts">
-	import { ref } from 'vue'
-	import { useAvailablesStore } from '@/stores/Availables'
+	import {ref} from 'vue'
+	import {useAvailablesStore} from '@/stores/Availables'
 	import ActionConfig from '@/components/widgets/ActionConfig.vue'
 	import CloseButton from '@/components/widgets/CloseButton.vue'
 
@@ -71,4 +71,4 @@
 		text-align: center;
 		margin-top: 30px;
 	}
-</style>@/assets/svg
+</style>

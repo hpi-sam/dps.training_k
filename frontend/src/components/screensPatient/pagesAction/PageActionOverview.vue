@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import { useActionOverviewStore } from '@/stores/ActionOverview'
-	import { ref, computed } from 'vue'
-	import { svg } from '@/assets/svg'
+	import {useActionOverviewStore} from '@/stores/ActionOverview'
+	import {computed, ref} from 'vue'
+	import {svg} from '@/assets/Svg'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketPatient from '@/sockets/SocketPatient'
 	import ResultPopup from '@/components/widgets/ResultPopup.vue'
@@ -18,14 +18,14 @@
 
 	const getIconPath = (status: string) => {
 		switch (status) {
-		case 'running':
-			return svg.playIcon
-		case 'finished':
-			return svg.checkIcon
-		case 'waiting':
-			return svg.waitingIcon
-		case 'blocked':
-			return svg.blockIcon
+			case 'running':
+				return svg.playIcon
+			case 'finished':
+				return svg.checkIcon
+			case 'waiting':
+				return svg.waitingIcon
+			case 'blocked':
+				return svg.blockIcon
 		}
 	}
 
@@ -49,7 +49,7 @@
 	function openResultPopup(actionName: string, actionResult: string) {
 		currentActionName.value = actionName
 		currentActionResult.value = actionResult
-		if(actionResult)showResultPopup.value = true
+		if (actionResult) showResultPopup.value = true
 	}
 
 </script>
@@ -131,4 +131,4 @@
 		margin-left: auto;
 		margin-right: 16px;
 	}
-</style>@/assets/svg
+</style>
