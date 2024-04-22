@@ -1,7 +1,7 @@
 from django.db import models
 
-from helpers.actions_queueable import ActionsQueueable
 from game.channel_notifications import AreaDispatcher
+from helpers.actions_queueable import ActionsQueueable
 
 
 class Area(ActionsQueueable, models.Model):
@@ -27,3 +27,20 @@ class Area(ActionsQueueable, models.Model):
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields", None)
         AreaDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
+
+    def serialize(self):
+        from game.models import Personnel
+        from game.models import PatientInstance
+
+        return {
+            "areaName": self.name,
+            "patients": [
+                patient.serialize()
+                for patient in PatientInstance.objects.filter(area=self)
+            ],
+            "personnel": [
+                personnel.serialize()
+                for personnel in Personnel.objects.filter(area=self)
+            ],
+            "material": [],  # TODO: implement material
+        }

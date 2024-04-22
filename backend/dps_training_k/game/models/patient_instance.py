@@ -1,8 +1,8 @@
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
-from helpers.eventable import Eventable
 from helpers.actions_queueable import ActionsQueueable
+from helpers.eventable import Eventable
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
@@ -97,3 +97,11 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         if self.patient_state.is_dead:
             return True
         return False
+
+    def serialize(self):
+        return {
+            "patientId": self.patient_id,
+            "patientName": self.name,
+            "patientCode": 3,  # ToDo: replace with actual patientCode
+            "triage": self.triage,
+        }

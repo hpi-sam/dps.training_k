@@ -17,3 +17,9 @@ class Personnel(models.Model):
         if creating:
             self.name = f"Personnel {self.id}"
             super().save(update_fields=["name"])
+
+    def serialize(self):
+        return {
+            "personnelId": self.pk,
+            "personnelName": self.name,
+        }

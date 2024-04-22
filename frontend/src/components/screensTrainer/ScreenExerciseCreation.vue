@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import {ref} from 'vue'
+	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
@@ -13,7 +13,7 @@
 		socketTrainer.exerciseStart()
 	}
 
-	const areas = ref(exerciseStore.areas)
+	const areas = computed(() => exerciseStore.areas)
 
 	const currentArea = ref("Kein Bereich ausgewählt")
 

@@ -152,31 +152,9 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         self._send_exercise(exercise=exercise)
 
     def _send_exercise(self, exercise):
-        exercise_object = {
-            "exerciseId": exercise.exerciseId,
-            "areas": [
-                {
-                    "areaName": "X",
-                    "patients": [
-                        {
-                            "patientId": "2",
-                            "patientName": "name",
-                            "patientCode": 0,
-                            "triage": "r",
-                        }
-                    ],
-                    "personnel": [{"personnelId": 0, "personnelName": "X"}],
-                    "material": [
-                        {
-                            "materialId": 0,
-                            "materialName": "X",
-                            "materialType": "device",
-                        }
-                    ],
-                }
-            ],
-        }
-        self.send_event(self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object)
+        self.send_event(
+            self.OutgoingMessageTypes.EXERCISE, exercise=exercise.serialize()
+        )
 
     def send_available_actions(self):
         actions = Action.objects.all()

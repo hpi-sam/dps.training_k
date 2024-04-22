@@ -1,5 +1,6 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+
 from helpers.eventable import NonEventable
 
 
@@ -44,3 +45,11 @@ class Exercise(NonEventable, models.Model):
         if self.config is None:
             return 1
         return 1 / self.config.time_speed_up
+
+    def serialize(self):
+        from game.models import Area
+
+        return {
+            "exerciseId": self.exerciseId,
+            "areas": [area.serialize() for area in Area.objects.filter(exercise=self)],
+        }
