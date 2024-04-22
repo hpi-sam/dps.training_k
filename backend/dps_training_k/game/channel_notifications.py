@@ -58,7 +58,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
     def dispatch_event(cls, patient_instance, changes):
         if not changes:
             return
-        if "patient_instance_state" in changes:
+        if "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
     @classmethod
