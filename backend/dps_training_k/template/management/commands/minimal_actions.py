@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
-                    "material": {MaterialIDs.IV_ZUGANG: 1},
+                    "material": {str(MaterialIDs.IV_ZUGANG): 1},
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 "application_duration": 0,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": {
-                    "required_actions": [ActionIDs.IV_Zugang],
+                    "required_actions": [str(ActionIDs.IV_Zugang)],
                     "prohibitive_actions": None,
                     "material": None,
                     "num_personnel": 1,
