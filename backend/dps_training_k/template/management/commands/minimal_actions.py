@@ -64,7 +64,7 @@ class Command(BaseCommand):
                     "role": [
                         [
                             {role_map[RoleIDs.LABORASSISTENT]: 1},
-                            {role_map[RoleIDs.ARZT]},
+                            {role_map[RoleIDs.ARZT]: 1},
                         ]
                     ],
                 },
