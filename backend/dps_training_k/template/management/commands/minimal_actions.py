@@ -61,7 +61,12 @@ class Command(BaseCommand):
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,
-                    "role": [[{role_map[RoleIDs.LABORASSISTENT]: 1}, {role_map[RoleIDs.ARZT]: 1}]],
+                    "role": [
+                        [
+                            {role_map[RoleIDs.LABORASSISTENT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ]
+                    ],
                 },
             },
         )

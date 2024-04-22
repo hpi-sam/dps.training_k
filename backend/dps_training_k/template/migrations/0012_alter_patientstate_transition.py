@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('template', '0010_rename_duration_action_application_duration'),
+        ('template', '0011_action_effect_duration_action_uuid'),
     ]
 
     operations = [
