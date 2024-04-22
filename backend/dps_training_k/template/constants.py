@@ -8,6 +8,7 @@ The UUIDs are used as an indirect mapping to enable easier changing on names. Ot
 class ActionIDs:
     IV_Zugang = UUID("a8245193-5b5e-4dd0-944b-e2c47e168395")
     VOLLELEKTROLYT = UUID("eb83c9c2-0677-4f8b-b56b-1fd68f766068")
+    STABILE_SEITENLAGE = UUID("055eb04d-be97-418c-9159-3161907ad9ba")
 
 
 class MaterialIDs:
