@@ -126,17 +126,20 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_area(self):
         Area.create_area(name="Bereich", exercise=self.exercise, isPaused=False)
-        # TODO: send update to all subscribers
 
     def handle_delete_area(self, areaName):
-        Area.objects.filter(name=areaName).delete()
-        # TODO: send update to all subscribers
+        try:
+            area = Area.objects.get(name=areaName)
+            area.delete()
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the name '{areaName}'",
+            )
 
     def handle_add_personnel(self, areaName):
         try:
             area = Area.objects.get(name=areaName)
             Personnel.objects.create(area=area)
-            self._send_exercise(self.exercise)
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the name '{areaName}'",
@@ -146,12 +149,16 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the name '{areaName}'",
             )
 
-    def handle_delete_personnel(self, personnelId):
-        Personnel.objects.filter(id=personnelId).delete()
-        self._send_exercise(self.exercise)
+    def handle_delete_personnel(self, personnel_id):
+        try:
+            personnel = Personnel.objects.get(id=personnel_id)
+            personnel.delete()
+        except Personnel.DoesNotExist:
+            self.send_failure(
+                f"No personnel found with the pk '{personnel_id}'",
+            )
 
     def handle_update_personnel(self, personnelId, personnelName):
         personnel = Personnel.objects.get(id=personnelId)
         personnel.name = personnelName
         personnel.save()
-        self._send_exercise(self.exercise)

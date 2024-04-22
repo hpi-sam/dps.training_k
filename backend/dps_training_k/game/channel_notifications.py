@@ -1,7 +1,9 @@
+import logging
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
 import game.models as models  # needed to avoid circular imports
-import logging
 
 """
 This package is responsible to decide when to notify which consumers.
@@ -33,6 +35,12 @@ class ChannelNotifier:
         cls.dispatch_event(obj, changes)
 
     @classmethod
+    def delete_and_notify(cls, obj, changes):
+        raise NotImplementedError(
+            "Method dispatch_event must be implemented by subclass"
+        )
+
+    @classmethod
     def _notify_group(cls, group_channel_name, event):
         """
         Handled internally by the channels dispatcher. Will try to call a method with event.type as name at the receiver; "." are replaced by "_".
@@ -50,6 +58,15 @@ class ChannelNotifier:
         raise NotImplementedError(
             "Method dispatch_event must be implemented by subclass"
         )
+
+    @classmethod
+    def _notify_exercise_update(cls, exercise):
+        channel = cls.get_group_name(exercise)
+        event = {
+            "type": ChannelEventTypes.EXERCISE_UPDATE,
+            "exercise_pk": exercise.id,
+        }
+        cls._notify_group(channel, event)
 
 
 class PatientInstanceDispatcher(ChannelNotifier):
@@ -77,13 +94,22 @@ class AreaDispatcher(ChannelNotifier):
         cls._notify_exercise_update(area.exercise)
 
     @classmethod
-    def _notify_exercise_update(cls, exercise):
-        channel = cls.get_group_name(exercise)
-        event = {
-            "type": ChannelEventTypes.EXERCISE_UPDATE,
-            "exercise_pk": exercise.id,
-        }
-        cls._notify_group(channel, event)
+    def delete_and_notify(cls, area, *args, **kwargs):
+        exercise = area.exercise
+        super(area.__class__, area).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
+class PersonnelDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, personnel, changes):
+        cls._notify_exercise_update(personnel.area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, personnel, *args, **kwargs):
+        exercise = personnel.area.exercise
+        super(personnel.__class__, personnel).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
 
 
 class ActionInstanceDispatcher(ChannelNotifier):
