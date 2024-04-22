@@ -31,7 +31,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.exercise_code = ""
+        self.exercise_frontend_id = ""
         self.exercise = None
         self.REQUESTS_MAP = {}
         self.user = None

@@ -14,14 +14,12 @@ class TrainerConsumerTestCase(TransactionTestCase):
         self.assertTrue(connected)
 
         # Send an "example" request type message to the server
-        await communicator.send_json_to(
-            {"messageType": "example", "exercise_code": "123"}
-        )
+        await communicator.send_json_to({"messageType": "example", "exerciseId": "123"})
 
         # Receive and test the response from the server
         response = await communicator.receive_json_from()
         self.assertEqual(
-            response, {"messageType": "response", "content": "exercise_code 123"}
+            response, {"messageType": "response", "content": "exerciseId 123"}
         )
 
         # Close the connection

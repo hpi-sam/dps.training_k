@@ -36,12 +36,12 @@ class TrainerConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.exercise_code = None
+        self.exercise_frontend_id = None
         self.exercise = None
         self.REQUESTS_MAP = {
             self.TrainerIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
-                "exercise_code",
+                "exerciseId",
             ),
             self.TrainerIncomingMessageTypes.EXERCISE_CREATE: (
                 self.handle_create_exercise,
@@ -87,11 +87,11 @@ class TrainerConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_code):
-        self.exercise_code = exercise_code
+    def handle_example(self, exercise_frontend_id):
+        self.exercise_frontend_id = exercise_frontend_id
         self.send_event(
             self.TrainerOutgoingMessageTypes.RESPONSE,
-            content=f"exercise_code {self.exercise_code}",
+            content=f"exerciseId {self.exercise_frontend_id}",
         )
 
     def handle_create_exercise(self):

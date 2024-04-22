@@ -22,7 +22,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     name = models.CharField(
         max_length=100, default="Max Mustermann"
     )  # technically patientData but kept here for simplicity for now
-    # patientCode = models.ForeignKey()  # currently called "SensenID"
+    # patientCode = models.ForeignKey()
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     area = models.ForeignKey(
         "Area",
@@ -36,9 +36,9 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         null=True,  # for debugging purposes
         default=None,  # for debugging purposes
     )
-    patient_id = models.IntegerField(
+    patient_frontend_id = models.IntegerField(
         unique=True,
-        help_text="patient_id used to log into patient - therefore part of authentication",
+        help_text="patient_frontend_id used to log into patient - therefore part of authentication",
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -50,7 +50,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def __str__(self):
-        return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
+        return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"
 
     # ToDo: remove after actual method is implemented
     def schedule_temporary_event(self):
@@ -100,7 +100,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def serialize(self):
         return {
-            "patientId": self.patient_id,
+            "patientId": self.patient_frontend_id,
             "patientName": self.name,
             "patientCode": 3,  # ToDo: replace with actual patientCode
             "triage": self.triage,

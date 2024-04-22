@@ -9,11 +9,11 @@ class LevenshteinCode:
         self.code_length = code_length
         self.codes_taken = []
 
-    def get_exerciseId(self):
+    def get_exercise_frontend_id(self):
         """
-        Generates a unique alphabetic exerciseId of length self.code_length,
+        Generates a unique alphabetic exercise_frontend_id of length self.code_length,
         that is also distinctive from other non-finished exercises (levenshtein distance >= 3).
-        :return: a string, the exerciseId
+        :return: a string, the exercise_frontend_id
         """
         new_code = None
         letters = string.ascii_lowercase

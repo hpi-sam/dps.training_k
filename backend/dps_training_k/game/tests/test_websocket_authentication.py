@@ -30,8 +30,8 @@ class PatientWebSocketTest(TransactionTestCase):
         await communicator.send_json_to(
             {
                 "messageType": "example",
-                "exercise_code": "abcdef",
-                "patient_code": "2",
+                "exerciseId": "abcdef",
+                "patientId": "2",
             }
         )
 
@@ -43,7 +43,7 @@ class PatientWebSocketTest(TransactionTestCase):
             response,
             {
                 "messageType": "response",
-                "content": "exercise_code abcdef & patient_code 2",
+                "content": "exerciseId abcdef & patientId 2",
             },
             "Unexpected response from WebSocket",
         )

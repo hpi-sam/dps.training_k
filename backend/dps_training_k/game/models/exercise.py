@@ -21,7 +21,7 @@ class Exercise(NonEventable, models.Model):
         to="Trainer",
         on_delete=models.CASCADE,
     ) """
-    exerciseId = models.CharField(
+    exercise_frontend_id = models.CharField(
         unique=True,
         editable=settings.DEBUG,
         max_length=settings.INVITATION_LOGIC.code_length,
@@ -36,7 +36,7 @@ class Exercise(NonEventable, models.Model):
         new_Exercise = cls.objects.create(
             # config=settings.DEFAULT_EXCERCISE_CONFIG,
             # trainer=trainer
-            exerciseId=settings.INVITATION_LOGIC.get_exerciseId(),
+            exercise_frontend_id=settings.INVITATION_LOGIC.get_exercise_frontend_id(),
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )
         return new_Exercise
@@ -50,6 +50,6 @@ class Exercise(NonEventable, models.Model):
         from game.models import Area
 
         return {
-            "exerciseId": self.exerciseId,
+            "exerciseId": self.exercise_frontend_id,
             "areas": [area.serialize() for area in Area.objects.filter(exercise=self)],
         }

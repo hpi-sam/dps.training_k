@@ -3,7 +3,6 @@ from urllib.parse import parse_qs
 from game.models import (
     PatientInstance,
     Exercise,
-    ActionInstanceStateNames,
     ActionInstance,
 )
 from template.models import Action
@@ -35,12 +34,12 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.patient_id = ""
+        self.patient_patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
-                "exercise_code",
-                "patient_code",
+                "exerciseId",
+                "patientId",
             ),
             self.PatientIncomingMessageTypes.TEST_PASSTHROUGH: (
                 self.handle_test_passthrough,
@@ -57,10 +56,10 @@ class PatientConsumer(AbstractConsumer):
 
     @property
     def patient_instance(self):
-        if not self.patient_id:
+        if not self.patient_frontend_id:
             return None
         return PatientInstance.objects.get(
-            patient_id=self.patient_id
+            patient_frontend_id=self.patient_frontend_id
         )  # This enforces patient_instance to always work with valid data
 
     def connect(self):
@@ -73,16 +72,16 @@ class PatientConsumer(AbstractConsumer):
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
-            patient_id=2,  # has to be the same as the username in views.py#post
+            patient_frontend_id=2,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
             patient_state=self.temp_state,
         )
 
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
-        success, patient_id = self.authenticate(token)
+        success, patient_frontend_id = self.authenticate(token)
         if success:
-            self.patient_id = patient_id
+            self.patient_frontend_id = patient_frontend_id
 
             self.exercise = self.patient_instance.exercise
             self.accept()
@@ -102,12 +101,12 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_code, patient_code):
-        self.exercise_code = exercise_code
-        self.patient_id = patient_code
+    def handle_example(self, exercise_frontend_id, patient_frontend_id):
+        self.exercise_frontend_id = exercise_frontend_id
+        self.patient_frontend_id = patient_frontend_id
         self.send_event(
             self.PatientOutgoingMessageTypes.RESPONSE,
-            content=f"exercise_code {self.exercise_code} & patient_code {self.patient_id}",
+            content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
         )
 
     def handle_test_passthrough(self):

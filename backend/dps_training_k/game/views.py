@@ -21,10 +21,10 @@ class PatientAccessView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data="Some required fields are missing",
             )
-        exercise_id = str(request.data.get("exerciseId"))
-        patient_id = str(request.data.get("patientId"))
+        exercise_frontend_id = str(request.data.get("exerciseId"))
+        patient_frontend_id = str(request.data.get("patientId"))
 
-        user = authenticate(username=patient_id, password=exercise_id)
+        user = authenticate(username=patient_frontend_id, password=exercise_frontend_id)
 
         if user:
             token, created = Token.objects.get_or_create(user=user)
