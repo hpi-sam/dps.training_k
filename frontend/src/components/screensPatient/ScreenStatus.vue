@@ -12,26 +12,30 @@
 </script>
 
 <template>
-	<nav>
-		<button id="nav-trainer">
-			{{ patientStore.patientId }}
-		</button>
-		<button
-			id="nav-triage"
-			:style="{backgroundColor: triageToColor(patientStore.triage)}"
-			@click="showPopup = true"
-		>
-			{{ patientStore.triage }}
-		</button>
-		<button id="nav-exercise-code">
-			{{ patientStore.areaName }}
-		</button>
-	</nav>
-	<div class="overview">
-		<PatientModel />
+	<div class="flex-container">
+		<nav>
+			<button id="nav-trainer">
+				{{ patientStore.patientId }}
+			</button>
+			<button
+				id="nav-triage"
+				:style="{backgroundColor: triageToColor(patientStore.triage)}"
+				@click="showPopup = true"
+			>
+				{{ patientStore.triage }}
+			</button>
+			<button id="nav-exercise-code">
+				{{ patientStore.areaName }}
+			</button>
+		</nav>
+		<div class="scroll">
+			<div class="overview">
+				<PatientModel />
+			</div>
+			<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
+			<PatientStatus />
+		</div>
 	</div>
-	<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
-	<PatientStatus />
 </template>
 
 <style scoped>

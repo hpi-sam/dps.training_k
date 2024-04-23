@@ -130,6 +130,7 @@ import CloseButton from "./CloseButton.vue"
 
 	#saveButton {
 		background-color: var(--green);
+		margin-left: 10px;
 	}
 
 	.listItem {
