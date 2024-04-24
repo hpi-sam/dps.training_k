@@ -10,7 +10,7 @@ interface MessageData {
 	patientBiometrics?: string
 	areaName?: string
 	patientName?: string
-	patientCode?: number
+	code?: number
 	patientId?: number
 	personnelName?: string
 	personnelId?: number
@@ -42,7 +42,7 @@ interface Area {
 interface Patient {
 	patientId: number
 	patientName: string
-	patientCode: number
+	code: number
 	triage: string
 }
 

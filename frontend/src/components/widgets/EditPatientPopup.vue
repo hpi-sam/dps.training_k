@@ -1,9 +1,9 @@
 <script setup lang="ts">
-	import { useAvailablesStore } from "@/stores/Availables"
+	import {useAvailablesStore} from "@/stores/Availables"
 	import PatientInfo from "./PatientInfo.vue"
-	import { computed, ref } from "vue"
+	import {computed, ref} from "vue"
 	import TriageForListItems from "./TriageForListItems.vue"
-	import { useExerciseStore } from "@/stores/Exercise"
+	import {useExerciseStore} from "@/stores/Exercise"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import CloseButton from "./CloseButton.vue"
@@ -17,17 +17,17 @@
 		}
 	})
 
-	function deletePatient(patientId: number){
+	function deletePatient(patientId: number) {
 		socketTrainer.patientDelete(patientId)
 	}
 
-	function updatePatient(patientId: number, patientName: string, patientCode: number){
+	function updatePatient(patientId: number, patientName: string, patientCode: number) {
 		socketTrainer.patientUpdate(patientId, patientName, patientCode)
 	}
 
 	const exerciseStore = useExerciseStore()
 	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)
-	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.patientCode)
+	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.code)
 
 	const availablesStore = useAvailablesStore()
 
@@ -37,8 +37,8 @@
 		}
 		return null
 	})
-	
-	function changePatientCode(patientCode: number){
+
+	function changePatientCode(patientCode: number) {
 		currentPatientCode.value = patientCode
 	}
 
@@ -60,7 +60,7 @@
 						<div class="patientId">
 							{{ props.patientId.toString().padStart(3, '0') }}
 						</div>
-						<TriageForListItems :patient-code="currentPatient?.patientCode" />
+						<TriageForListItems :patient-code="currentPatient?.code" />
 						<div class="patientName">
 							{{ currentPatientName }}
 						</div>
@@ -79,7 +79,7 @@
 						</button>
 						<button
 							id="saveButton"
-							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.patientCode || Number.NEGATIVE_INFINITY)"
+							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.code || Number.NEGATIVE_INFINITY)"
 						>
 							Speichern
 						</button>

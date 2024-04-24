@@ -8,10 +8,10 @@ export const useAvailablesStore = defineStore('availables', {
 	}),
 	getters: {
 		getPatient: (state) => {
-			return (patientCode: number): AvailablePatient | null => {
+			return (code: number): AvailablePatient | null => {
 				let foundPatient: AvailablePatient | null = null
 				state.patients.forEach((patient) => {
-					if (patient.patientCode == patientCode) foundPatient = patient
+					if (patient.code == code) foundPatient = patient
 				})
 				return foundPatient
 			}

@@ -120,21 +120,21 @@ class SocketTrainer {
 		}))
 	}
 
-	patientAdd(areaName: string, patientName: string, patientCode: number) {
+	patientAdd(areaName: string, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-add',
 			'areaName': areaName,
 			'patientName': patientName,
-			'patientCode': patientCode
+			'code': code
 		}))
 	}
 
-	patientUpdate(patientId: number, patientName: string, patientCode: number) {
+	patientUpdate(patientId: number, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-update',
 			'patientId': patientId,
 			'patientName': patientName,
-			'patientCode': patientCode
+			'code': code
 		}))
 	}
 

@@ -61,7 +61,7 @@
 			</div>
 			<div id="rightSide">
 				<div class="listItem">
-					<TriageForListItems :patient-code="currentPatient?.patientCode" />
+					<TriageForListItems :patient-code="currentPatient?.code" />
 					<div class="patientName">
 						{{ props.patientName }}
 					</div>

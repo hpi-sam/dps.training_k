@@ -6,7 +6,7 @@
 	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
 	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 
-    const props = defineProps({
+	const props = defineProps({
 		currentArea: {
 			type: String,
 			default: "Kein Bereich ausgewählt"
@@ -27,10 +27,10 @@
 		showEditPatientPopup.value = true
 	}
 
-	const firstNameList =  ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
-    const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
+	const firstNameList = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
+	const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
 
-	function generateName(){
+	function generateName() {
 		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
 		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
 		return `${firstName} ${surname}`
@@ -62,7 +62,7 @@
 					<div class="listItemId">
 						{{ patient.patientId.toString().padStart(3, '0') }}
 					</div>
-					<TriageForListItems :patient-code="patient.patientCode" />
+					<TriageForListItems :patient-code="patient.code" />
 					<div class="listItemName">
 						{{ patient.patientName }}
 					</div>

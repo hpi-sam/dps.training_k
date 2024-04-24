@@ -1,12 +1,12 @@
 import {defineStore} from "pinia"
 import {useExerciseStore} from "@/stores/Exercise"
-import { useAvailablesStore } from "./Availables"
+import {useAvailablesStore} from "./Availables"
 
 export const usePatientStore = defineStore('patient', {
 	state: () => ({
 		token: '',
 		patientId: Number.NEGATIVE_INFINITY,
-		patientCode: Number.NEGATIVE_INFINITY,
+		code: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',
 		areaName: '',
@@ -37,7 +37,7 @@ export const usePatientStore = defineStore('patient', {
 		initializePatientFromExercise() {
 			const exerciseStore = useExerciseStore()
 			this.patientName = exerciseStore.getPatient(this.patientId)?.patientName || ''
-			this.patientCode = exerciseStore.getPatient(this.patientId)?.patientCode || Number.NEGATIVE_INFINITY
+			this.code = exerciseStore.getPatient(this.patientId)?.code || Number.NEGATIVE_INFINITY
 			this.areaName = exerciseStore.getAreaOfPatient(this.patientId)?.areaName || ''
 			this.triage = exerciseStore.getPatient(this.patientId)?.triage || '-'
 		},
