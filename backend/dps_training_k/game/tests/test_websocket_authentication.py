@@ -35,10 +35,8 @@ class PatientWebSocketTest(TransactionTestCase):
             }
         )
 
-        # Receive the response from the WebSocket
-        response = (
-            await communicator.receive_json_from()
-        )  # Catch the response from available actions
+        # Catch the response from available actions
+        response = await communicator.receive_json_from()
 
         response = await communicator.receive_json_from()
         self.assertEqual(

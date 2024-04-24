@@ -1,6 +1,6 @@
 <script setup lang="ts">
-	import { ref } from 'vue'
-	import { useAvailablesStore } from '@/stores/Availables'
+	import {ref} from 'vue'
+	import {useAvailablesStore} from '@/stores/Availables'
 	import ActionConfig from '@/components/widgets/ActionConfig.vue'
 	import CloseButton from '@/components/widgets/CloseButton.vue'
 

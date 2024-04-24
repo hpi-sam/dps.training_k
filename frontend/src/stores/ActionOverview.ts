@@ -7,14 +7,14 @@ export const useActionOverviewStore = defineStore('actionOverview', {
 	}),
 	actions: {
 		loadActions(json: Action[]) {
-			this.actions = json.sort((a, b) => a.orderId - b.orderId)
+			this.actions = json.sort((a, b) => b.orderId - a.orderId)
 		},
 		decreaseTimeForRunningActions() {
 			this.actions = this.actions.map(action => {
 				if (action.actionStatus === 'running' && action.timeUntilCompletion > 0) {
-					return { ...action, timeUntilCompletion: action.timeUntilCompletion - 1 }
+					return {...action, timeUntilCompletion: action.timeUntilCompletion - 1}
 				}
-			return action
+				return action
 			})
 		},
 		startUpdating() {

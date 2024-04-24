@@ -18,14 +18,14 @@
 
 	const getIconPath = (status: string) => {
 		switch (status) {
-		case 'running':
-			return svg.playIcon
-		case 'finished':
-			return svg.checkIcon
-		case 'waiting':
-			return svg.waitingIcon
-		case 'blocked':
-			return svg.blockIcon
+			case 'running':
+				return svg.playIcon
+			case 'finished':
+				return svg.checkIcon
+			case 'waiting':
+				return svg.waitingIcon
+			case 'blocked':
+				return svg.blockIcon
 		}
 	}
 
@@ -49,7 +49,7 @@
 	function openResultPopup(actionName: string, actionResult: string) {
 		currentActionName.value = actionName
 		currentActionResult.value = actionResult
-		if(actionResult)showResultPopup.value = true
+		if (actionResult) showResultPopup.value = true
 	}
 
 </script>
