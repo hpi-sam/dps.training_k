@@ -6,7 +6,7 @@ export const useExerciseStore = defineStore('exercise', {
 		areas: [],
 	}),
 	getters: {
-		getExerciseCode: (state) => state.exerciseId,
+		getExerciseId: (state) => state.exerciseId,
 		getArea: (state) => {
 			return (areaName: string): Area | null => {
 				return state.areas?.find(area => area.areaName === areaName) ?? null
