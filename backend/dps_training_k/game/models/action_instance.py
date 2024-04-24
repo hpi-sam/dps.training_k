@@ -55,6 +55,9 @@ class ActionInstanceState(models.Model):
     def success_states():
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
 
+    def completion_states():
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
+
 
 class ActionInstance(LocalTimeable, models.Model):
     patient_instance = models.ForeignKey(
@@ -65,6 +68,10 @@ class ActionInstance(LocalTimeable, models.Model):
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
+    order_id = models.IntegerField(null=True)
+
+    class Meta:
+        ordering = ["order_id"]
 
     @property
     def name(self):
@@ -87,6 +94,13 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             return None
 
+    @property
+    def completed(self):
+        if self.current_state in ActionInstanceState.completion_states():
+            return True
+        else:
+            return False
+
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
@@ -101,7 +115,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None):
+    def create(cls, action_template, patient_instance=None, area=None, order_id=None):
         if not patient_instance and not area:
             raise ValueError(
                 "Either patient_instance or area must be provided - an action instance always need a context"
@@ -114,6 +128,7 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance=patient_instance,
             area=area,
             action_template=action_template,
+            order_id=order_id,
         )
         if is_applicable:
             action_instance.current_state = ActionInstanceState.objects.create(
@@ -177,6 +192,6 @@ class ActionInstance(LocalTimeable, models.Model):
                 action_instance=self,
             )
             self._update_state(ActionInstanceStateNames.ACTIVE)
-    
+
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
