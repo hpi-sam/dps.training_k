@@ -12,7 +12,6 @@ export const useVisibleInjuriesStore = defineStore('visibleInjuries', {
         },
         showVisibleInjuries() {
             for (const injury of this.injuries) {
-                console.log('show:', injury)
                 addInjury(injury.injuryType, injury.position)
             }
         }
