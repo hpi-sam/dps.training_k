@@ -6,6 +6,7 @@
 	import { useExerciseStore } from "@/stores/Exercise"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
+import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -46,6 +47,7 @@
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
+			<CloseButton @close="emit('close-popup')" />
 			<div id="leftSide">
 				<div class="flex-container">
 					<h2>Patienten-Datensätze</h2>
@@ -54,7 +56,7 @@
 			</div>
 			<div id="rightSide">
 				<div class="flex-container">
-					<div class="listitem">
+					<div class="listItem">
 						<div class="patientId">
 							{{ props.patientId.toString().padStart(3, '0') }}
 						</div>
@@ -90,9 +92,6 @@
 
 <style scoped>
 	.popup {
-		background-color: white;
-		padding: 20px;
-		border-radius: 8px;
 		width: 80vw;
 		height: 50vh;
 		display: flex;
@@ -131,23 +130,14 @@
 
 	#saveButton {
 		background-color: var(--green);
+		margin-left: 10px;
 	}
 
-	.listitem {
-		position: relative;
-		background-color: #FFFFFF;
-		border: 1px solid rgb(209, 213, 219);
-		display: flex;
-		align-items: center;
-		margin-top: -1px;
+	.listItem {
+		margin-right: 40px;
 		font-size: 1.25rem;
-		padding: .75rem 1rem;
 		text-align: left;
 		height: 50px;
-		width: 100%;
-	}
-
-	.listitem {
 		padding-left: 0;
 	}
 

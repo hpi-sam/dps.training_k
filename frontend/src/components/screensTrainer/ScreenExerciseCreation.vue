@@ -27,11 +27,11 @@
 		showPopup.value = true
 	}
 
-	function addArea(){
+	function addArea() {
 		socketTrainer.areaAdd()
 	}
 
-	function deleteArea(){
+	function deleteArea() {
 		socketTrainer.areaDelete(currentArea.value)
 	}
 
@@ -84,5 +84,16 @@
 		width: 50px;
 		border: none;
 		background-color: rgb(243, 244, 246);
+	}
+
+	@-moz-document url-prefix() { /* for Firefox */
+		.scroll {
+			margin-bottom: 50px;
+		}
+	}
+
+	.main-button {
+		background-color: var(--green);
+		color: white;
 	}
 </style>

@@ -136,6 +136,8 @@
 	#dev-bar {
 		display: flex;
 		align-items: center;
+		background-color: var(--border-color);
+		padding: 5px;
 	}
 
 	#ws-test, #ps-test {

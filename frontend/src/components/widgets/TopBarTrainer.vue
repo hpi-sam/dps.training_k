@@ -23,23 +23,15 @@
 		height: 60px;
 		display: flex;
 		float: left;
+		border-bottom: 2px solid var(--border-color);
 	}
 
 	#nav-trainer, #nav-exercise-code {
 		width: 50%;
 		height: 100%;
-		border-bottom: 8px solid black;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		font-size: 1.5em;
-	}
-
-	#nav-trainer {
-		border-right: 4px solid black;
-	}
-
-	#nav-exercise-code {
-		border-left: 4px solid black;
 	}
 </style>

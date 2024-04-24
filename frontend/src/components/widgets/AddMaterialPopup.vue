@@ -2,6 +2,7 @@
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import { useAvailablesStore } from "@/stores/Availables"
 	import { computed ,ref } from "vue"
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -42,8 +43,9 @@
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
-		<div class="popup scroll" @click.stop="">
-			<div class="flex-container">
+		<div class="popup" @click.stop="">
+			<CloseButton @close="emit('close-popup')" />
+			<div class="scroll">
 				<h2>{{ title }}</h2>
 				<div class="list">
 					<div
@@ -64,10 +66,11 @@
 </template>
 <style scoped>
 	.popup {
+		position: relative;
 		background-color: white;
 		padding: 20px;
 		border-radius: 8px;
-		height: fit-content;
-		max-height: 50vh;
+		height: 50vh;
+		width: 50vw;
 	}
 </style>

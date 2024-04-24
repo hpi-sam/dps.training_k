@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import socketPatient from "@/sockets/SocketPatient"
 	import {ref} from 'vue'
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -28,6 +29,7 @@
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup">
+			<CloseButton @close="emit('close-popup')" />
 			<h2>Sichtungsfarbe auswählen</h2>
 			<div class="button-container">
 				<button
@@ -45,10 +47,8 @@
 </template>
 
 <style scoped>
-	.popup {
-		background-color: white;
-		padding: 20px;
-		border-radius: 8px;
+	h2{
+		margin: 0px 50px;
 	}
 
 	.button-container {

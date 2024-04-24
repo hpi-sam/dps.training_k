@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import {svg} from '@/assets/Svg'
 	import socketPatient from '@/sockets/SocketPatient'
 	import { ref } from 'vue'
+	import CloseButton from './CloseButton.vue'
 
 	const emit = defineEmits(['close-action'])
 
@@ -30,12 +30,8 @@
 <template>
 	<div class="flex-container">
 		<div>
+			<CloseButton @close="emit('close-action')" />
 			<h1>{{ props.currentAction }}</h1>
-			<button class="close-button" @click="emit('close-action')">
-				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-					<path :d="svg.closeIcon" />
-				</svg>
-			</button>
 		</div>
 		<div>
 			<h3 v-if="!newActionsAllowed" class="waiting-text">
@@ -61,5 +57,4 @@
 	.main-button:disabled {
 		background-color: var(--gray);
 	}
-	
 </style>
