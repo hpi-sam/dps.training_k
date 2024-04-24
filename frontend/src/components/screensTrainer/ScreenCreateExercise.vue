@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { svg } from "@/assets/svg"
+	import { svg } from "@/assets/Svg"
 	import socketTrainer from "@/sockets/SocketTrainer"
 </script>
 
@@ -30,4 +30,4 @@
 		width: 40px;
 		border-radius: 10px;
 	}
-</style>@/assets/svg
+</style>

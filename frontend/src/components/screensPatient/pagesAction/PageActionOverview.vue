@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import { useActionOverviewStore } from '@/stores/ActionOverview'
 	import { ref, computed } from 'vue'
-	import { svg } from '@/assets/svg'
+	import { svg } from '@/assets/Svg'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketPatient from '@/sockets/SocketPatient'
 	import ResultPopup from '@/components/widgets/ResultPopup.vue'
@@ -131,4 +131,4 @@
 		margin-left: auto;
 		margin-right: 16px;
 	}
-</style>@/assets/svg
+</style>

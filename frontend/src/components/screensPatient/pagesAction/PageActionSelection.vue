@@ -71,4 +71,4 @@
 		text-align: center;
 		margin-top: 30px;
 	}
-</style>@/assets/svg
+</style>
