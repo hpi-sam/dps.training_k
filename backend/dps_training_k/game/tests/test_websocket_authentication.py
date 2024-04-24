@@ -23,8 +23,7 @@ class PatientWebSocketTest(TransactionTestCase):
         connected, _ = await communicator.connect()
         self.assertTrue(connected, "Failed to connect to WebSocket")
 
-        # receive exercise object
-        response = await communicator.receive_json_from()
+        await communicator.receive_json_from()  # catch exercise object
 
         # Send a message to the WebSocket
         await communicator.send_json_to(
@@ -35,8 +34,8 @@ class PatientWebSocketTest(TransactionTestCase):
             }
         )
 
-        # Catch the response from available actions
-        response = await communicator.receive_json_from()
+        await communicator.receive_json_from()  # Catch available actions
+        await communicator.receive_json_from()  # Catch available patients
 
         response = await communicator.receive_json_from()
         self.assertEqual(

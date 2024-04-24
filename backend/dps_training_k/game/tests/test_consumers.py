@@ -13,6 +13,8 @@ class TrainerConsumerTestCase(TransactionTestCase):
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
 
+        await communicator.receive_json_from()  # catch available patients
+
         # Send an "example" request type message to the server
         await communicator.send_json_to({"messageType": "example", "exerciseId": "123"})
 
@@ -31,6 +33,8 @@ class TrainerConsumerTestCase(TransactionTestCase):
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
 
+        await communicator.receive_json_from()  # catch available patients
+
         # Send an "example" request type message to the server
         await communicator.send_json_to({"messageType": "exercise-create"})
 
@@ -47,6 +51,8 @@ class TrainerConsumerTestCase(TransactionTestCase):
         communicator = WebsocketCommunicator(application, path)
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
+
+        await communicator.receive_json_from()  # catch available patients
 
         # Send an "example" request type message to the server
         await communicator.send_json_to({"messageType": "test-passthrough"})
