@@ -8,7 +8,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.create_actions()
-        self.stdout.write(self.style.SUCCESS("Successfully added data to the database"))
+        self.stdout.write(
+            self.style.SUCCESS("Successfully added actions to the database")
+        )
 
     @staticmethod
     def create_actions():

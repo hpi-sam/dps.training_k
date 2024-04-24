@@ -12,7 +12,6 @@ class ActionIDs:
 
 
 class MaterialIDs:
-    #TODO: add UUIDable mixin to Material models once it exists 
     IV_ZUGANG = UUID("b6c90988-3c8c-4e0f-ab60-65679d30cfc3")
 
 
