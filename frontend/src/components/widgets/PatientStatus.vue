@@ -67,7 +67,23 @@
 			<td>
 				<p class="key">
 					Vorerkrankungen
-				</p>{{ patientStore.history }}
+				</p>{{ patientStore.preexistingIllnesses }}
+				<br>
+				<p class="key">
+					Dauer-Medikation
+				</p>{{ patientStore.permanentMedication }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="key">
+					Aktuelle Anamnese / Rettungsdienst-Übergabe
+				</p>{{ patientStore.currentCaseHistory }}
+			</td>
+			<td>
+				<p class="key">
+					Vorbehandlung
+				</p>{{ patientStore.pretreatment }}
 			</td>
 		</tr>
 		<tr>
@@ -80,6 +96,18 @@
 				<p class="key">
 					Biometrie
 				</p>{{ patientStore.biometrics }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="key">
+					Mobilität
+				</p>{{ patientStore.mobility }}
+			</td>
+			<td>
+				<p class="key">
+					Fortlaufende Eineindeutige Nummer
+				</p>{{ patientStore.consecutiveUniqueNumber }}
 			</td>
 		</tr>
 		<tr>

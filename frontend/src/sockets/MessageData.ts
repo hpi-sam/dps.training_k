@@ -89,12 +89,17 @@ interface AvailablePatients {
 }
 
 interface AvailablePatient {
-	patientCode: number
+	code: number
+	personalDetails: string
+	injury: string
+	biometrics: string
 	triage: string
-	patientInjury: string
-	patientHistory: string
-	patientPersonalDetails: string
-	patientBiometrics: string
+	consecutiveUniqueNumber: number
+	mobility: string
+	preexistingIllnesses: string
+	permanentMedication: string
+	currentCaseHistory: string
+	pretreatment: string
 }
 
 interface AvailableMaterialList {

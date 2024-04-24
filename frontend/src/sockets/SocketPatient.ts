@@ -203,36 +203,29 @@ export const serverMockEvents = [
 	{
 		id: "available-patients",
 		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":[' +
-			'{"patientCode":1,' +
-			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},' +
-			'{"patientCode":2,' +
-			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",' +
-			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},' +
-			'{"patientCode":3,' +
-			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",' +
-			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},' +
-			'{"patientCode":4,' +
-			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},' +
-			'{"patientCode":5,' +
-			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},' +
-			'{"patientCode":6,' +
-			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",' +
-			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},' +
-			'{"patientCode":7,' +
-			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},' +
-			'{"patientCode":8,' +
-			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",' +
-			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},' +
-			'{"patientCode":9,' +
-			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",' +
-			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},' +
-			'{"patientCode":10,' +
-			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",' +
-			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}' +
+			'{"code":1001,' +
+			'"personalDetails":"Annkatrin Rohde 01.05.1989 Aulgasse 75, 53721 Siegburg",' +
+			'"injury":"Schürfwunden beide Arme und Kopf; nicht mehr wesentlich blutend; leichte Bewegungseinschränkung im li. Ellbogengelenk",' +
+			'"biometrics":"weiblich; ca. 27; braune Augen, braune Haare, 1,60 m",' +
+			'"triage":"-",' +
+			'"consecutiveUniqueNumber":-1,' +
+			'"mobility":"initial gehfähig",' +
+			'"preexistingIllnesses":"v. Jahren unklare Anämie; v. 2 J. OSG- Fraktur re.",' +
+			'"permanentMedication":"keine Medikamente",' +
+			'"currentCaseHistory":"kommt selbst zu Fuß ins KrHs: bisher keine medizinische Versorgung, Taschentuch auf Wunde.",' +
+			'"pretreatment":"keine keine"},' +
+			'{"code":1004,' +
+			'"personalDetails":"Helena Raedder 15.03.1964 Albert-Einstein-Str. 34, 06122 Halle",' +
+			'"injury":"ca. 8 cm große, weit klaffende Kopfplatzwunde re. temporal, blutet noch; im Wundgrund vermutlich Knochensplitter sichtbar.",' +
+			'"biometrics":"weiblich; ca. 52; blond, braune Augen, Brille, 1,82 m",' +
+			'"triage":"G",' +
+			'"consecutiveUniqueNumber":5225,' +
+			'"mobility":"initial gehfähig",' +
+			'"preexistingIllnesses":"funktionelle Herzbeschwerden; beginnender Bechterew",' +
+			'"permanentMedication":"Schlafmittel",' +
+			'"currentCaseHistory":"wird vom Rettungsdienst gebracht: habe eine Deckenplatte vor den Kopf bekommen; Verband durchgeblutet; ' +
+			'nicht bewusstlos gewesen.",' +
+			'"pretreatment":" Wundversorgung,"}' +
 			']}}'
 	},
 	{
@@ -263,8 +256,8 @@ export const serverMockEvents = [
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
 			'{"areaName":"Intensiv",' +
 			'"patients":[' +
-			'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},' +
-			'{"patientId":3,"patientName":"Frank Huber","patientCode":2,"triage":"G"}' +
+			'{"patientId":5,"patientName":"Anna Müller","code":1,"triage":"Y"},' +
+			'{"patientId":3,"patientName":"Frank Huber","code":2,"triage":"G"}' +
 			'],' +
 			'"personnel":[' +
 			'{"personnelId":10,"personnelName":"Sebastian Lieb"},' +
@@ -277,8 +270,8 @@ export const serverMockEvents = [
 			'},' +
 			'{"areaName":"ZNA",' +
 			'"patients":[' +
-			'{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' +
-			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}' +
+			'{"patientId":2,"patientName":"Luna Patel","code":1004,"triage":"R"},' +
+			'{"patientId":6,"patientName":"Friedrich Gerhard","code":4,"triage":"Y"}' +
 			'],' +
 			'"personnel":[' +
 			'{"personnelId":11,"personnelName":"Hannah Mayer"},' +
@@ -320,8 +313,8 @@ export const serverMockEvents = [
 			'},' +
 			'{"areaName":"Wagenhalle",' +
 			'"patients":[' +
-			'{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
-			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}' +
+			'{"patientId":1,"patientName":"Isabelle Busch","code":5,"triage":"G"},' +
+			'{"patientId":4,"patientName":"Jasper Park","code":6,"triage":"Y"}' +
 			'],' +
 			'"personnel":[' +
 			'{"personnelId":5,"personnelName":"Finn Heizmann"},' +
@@ -337,11 +330,6 @@ export const serverMockEvents = [
 	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
 	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
 	{id: 'delete', data: '{"messageType":"delete"}'},
-	{
-		id: 'information',
-		data: '{"messageType":"information","patientInjury":"Fractured limb","patientHistory":"No known allergies",' +
-			'"patientPersonalDetails":"John Doe, Male, 30 years old","patientBiometrics":"Height: 180cm, Weight: 75kg"}'
-	},
 	{
 		id: 'action-confirmation',
 		data: '{"messageType":"action-confirmation","actionName":"Stabile Seitenlage","actionId":"123"}'

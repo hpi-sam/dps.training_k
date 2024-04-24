@@ -18,10 +18,15 @@ export const usePatientStore = defineStore('patient', {
 		psyche: '',
 		pupils: '',
 		skin: '',
-		injury: '',
-		history: '',
 		personalDetails: '',
-		biometrics: ''
+		injury: '',
+		biometrics: '',
+		consecutiveUniqueNumber: -1,
+		mobility: '',
+		preexistingIllnesses: '',
+		permanentMedication: '',
+		currentCaseHistory: '',
+		pretreatment: '',
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
@@ -43,10 +48,15 @@ export const usePatientStore = defineStore('patient', {
 		},
 		initializePatientFromAvailablePatients() {
 			const availablesStore = useAvailablesStore()
-			this.injury = availablesStore.getPatient(this.patientCode)?.patientInjury || ''
-			this.history = availablesStore.getPatient(this.patientCode)?.patientHistory || ''
-			this.personalDetails = availablesStore.getPatient(this.patientCode)?.patientPersonalDetails || ''
-			this.biometrics = availablesStore.getPatient(this.patientCode)?.patientBiometrics || ''
+			this.personalDetails = availablesStore.getPatient(this.code)?.personalDetails || ''
+			this.injury = availablesStore.getPatient(this.code)?.injury || ''
+			this.biometrics = availablesStore.getPatient(this.code)?.biometrics || ''
+			this.consecutiveUniqueNumber = availablesStore.getPatient(this.code)?.consecutiveUniqueNumber || -1
+			this.mobility = availablesStore.getPatient(this.code)?.mobility || ''
+			this.preexistingIllnesses = availablesStore.getPatient(this.code)?.preexistingIllnesses || ''
+			this.permanentMedication = availablesStore.getPatient(this.code)?.permanentMedication || ''
+			this.currentCaseHistory = availablesStore.getPatient(this.code)?.currentCaseHistory || ''
+			this.pretreatment = availablesStore.getPatient(this.code)?.pretreatment || ''
 		}
 	}
 })

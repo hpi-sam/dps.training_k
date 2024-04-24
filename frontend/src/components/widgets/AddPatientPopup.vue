@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import { useAvailablesStore } from "@/stores/Availables"
+	import {useAvailablesStore} from "@/stores/Availables"
 	import PatientInfo from "./PatientInfo.vue"
-	import { computed, ref } from "vue"
+	import {computed, ref} from "vue"
 	import TriageForListItems from "./TriageForListItems.vue"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
@@ -21,8 +21,8 @@
 		}
 	})
 
-	function addPatient(){
-		if(!patientCodeChanged) {
+	function addPatient() {
+		if (!patientCodeChanged) {
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
@@ -41,8 +41,8 @@
 	})
 
 	let patientCodeChanged = false
-	
-	function changePatientCode(patientCode: number){
+
+	function changePatientCode(patientCode: number) {
 		currentPatientCode.value = patientCode
 		patientCodeChanged = true
 	}
@@ -68,10 +68,15 @@
 				</div>
 				<div class="scroll">
 					<PatientInfo
-						:injury="currentPatient?.patientInjury"
-						:history="currentPatient?.patientHistory"
-						:biometrics="currentPatient?.patientBiometrics"
-						:personal-details="currentPatient?.patientPersonalDetails"
+						:personal-details="currentPatient?.personalDetails"
+						:injury="currentPatient?.injury"
+						:biometrics="currentPatient?.biometrics"
+						:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
+						:mobility="currentPatient?.mobility"
+						:preexisting-illnesses="currentPatient?.preexistingIllnesses"
+						:permanent-medication="currentPatient?.permanentMedication"
+						:current-case-history="currentPatient?.currentCaseHistory"
+						:pretreatment="currentPatient?.pretreatment"
 					/>
 				</div>
 				<div id="buttonRow">
