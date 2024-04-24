@@ -72,4 +72,4 @@
 		justify-content: center;
 		align-items: center;
 	}
-</style>@/utils
+</style>
