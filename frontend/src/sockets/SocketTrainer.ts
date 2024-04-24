@@ -49,7 +49,7 @@ class SocketTrainer {
 					showWarningToast(data.message || '')
 					break
 				case 'available-actions':
-					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableActions)
+					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableAction[])
 					break
 				case 'available-material':
 					useAvailablesStore().loadAvailableMaterial(data.availableMaterialList as unknown as AvailableMaterialList)

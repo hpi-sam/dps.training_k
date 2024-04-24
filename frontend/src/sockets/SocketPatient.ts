@@ -66,9 +66,7 @@ class SocketPatient {
 					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'available-actions':
-					console.log('Socket: Available actions:', data.availableActions)
-					if (data.availableActions === undefined) showErrorToast('Fehler: Keine verfügbaren Aktionen erhalten')
-					else availablesStore.loadAvailableActions(data.availableActions as AvailableActions)
+					availablesStore.loadAvailableActions(data.availableActions as AvailableAction[])
 					break
 				case 'exercise':
 					exerciseStore.createFromJSON(data.exercise as Exercise)
@@ -230,26 +228,26 @@ export const serverMockEvents = [
 	},
 	{
 		id: 'available-actions',
-		data: '{"messageType":"available-actions","availableActions":{"availableActions":[' +
-			'{"actionName":"Blutdruck messen","actionType":"treatment"},{"actionName":"Blutprobe untersuchen","actionType":"lab"},' +
-			'{"actionName":"Beatmungsmaske anlegen","actionType":"treatment"},' +
-			'{"actionName":"Infusion anlegen","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen1","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen2","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen3","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen4","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen5","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen6","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen7","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen8","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen9","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen10","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen11","actionType":"treatment"},' +
-			'{"actionName":"Medikament verabreichen","actionType":"treatment"},' +
-			'{"actionName":"Ruheposition einnehmen","actionType":"treatment"},{"actionName":"Röntgen","actionType":"lab"},' +
-			'{"actionName":"Wundversorgung","actionType":"treatment"},{"actionName":"Stabile Seitenlage","actionType":"treatment"},' +
-			'{"actionName":"Schienung anlegen","actionType":"treatment"},{"actionName":"Vitalwerte messen","actionType":"treatment"}' +
-			']}}'
+		data: '{"messageType":"available-actions","availableActions":[' +
+			'{"actionName":"Blutdruck messen","actionCategory":"TR"},{"actionName":"Blutprobe untersuchen","actionCategory":"LA"},' +
+			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen1","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen2","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen3","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen4","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen5","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen6","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen7","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen8","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen9","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen10","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen11","actionCategory":"TR"},' +
+			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
+			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
+			'{"actionName":"Wundversorgung","actionCategory":"TR"},{"actionName":"Stabile Seitenlage","actionCategory":"TR"},' +
+			'{"actionName":"Schienung anlegen","actionCategory":"TR"},{"actionName":"Vitalwerte messen","actionCategory":"EX"}' +
+			']}'
 	},
 	{
 		id: 'exercise',

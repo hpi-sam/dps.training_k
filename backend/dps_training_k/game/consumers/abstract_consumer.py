@@ -1,4 +1,3 @@
-import json
 import traceback
 from abc import ABC, abstractmethod
 
@@ -160,16 +159,12 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def send_available_actions(self):
         actions = Action.objects.all()
         actions = [
-            json.dumps(
-                {
-                    "actionId": action.id,
-                    "actionName": action.name,
-                    "actionCategory": action.category,
-                }
-            )
+            {
+                "actionName": action.name,
+                "actionCategory": action.category,
+            }
             for action in actions
         ]
-        actions = json.dumps({"actions": actions})
         self.send_event(
             self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
         )
