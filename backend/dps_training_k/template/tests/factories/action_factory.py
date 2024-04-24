@@ -1,6 +1,7 @@
 import factory
+import json
 from template.models import Action
-from .JSON_factory import JSONFactory
+from template.constants import MaterialIDs, RoleIDs, role_map
 from template.constants import ActionIDs
 
 
@@ -20,7 +21,17 @@ class ActionFactory(factory.django.DjangoModelFactory):
     category = Action.Category.TREATMENT
     application_duration = 10
     effect_duration = None
-    conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
+    conditions = json.dumps(
+        {
+            "required_actions": None,
+            "prohibitive_actions": None,
+            "material": {str(MaterialIDs.IV_ZUGANG): 1},
+            "num_personnel": 1,
+            "lab_devices": None,
+            "area": None,
+            "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+        }
+    )
     uuid = ActionIDs.STABILE_SEITENLAGE
 
 
@@ -40,5 +51,15 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
     category = Action.Category.TREATMENT
     application_duration = 10
     effect_duration = 10
-    conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
+    conditions = json.dumps(
+        {
+            "required_actions": None,
+            "prohibitive_actions": None,
+            "material": {str(MaterialIDs.IV_ZUGANG): 1},
+            "num_personnel": 1,
+            "lab_devices": None,
+            "area": None,
+            "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+        }
+    )
     uuid = ActionIDs.IV_Zugang

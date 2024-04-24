@@ -1,5 +1,9 @@
 from django.db import models
 from helpers.models import UUIDable
+from .resource import Resource
+import json
+import uuid
+
 
 class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
@@ -20,7 +24,15 @@ class Action(UUIDable, models.Model):
         help_text="Effect duration in seconds in realtime. Might be scaled by external factors.",
     )
     conditions = models.JSONField(null=True, blank=True, default=None)
-    # results = models.JSONField(null=True, blank=True, default=None)
+    # success_result = models.JSONField(null=True, blank=True, default=None)
+
+    def get_resources(self):
+        resources = json.loads(self.conditions)["material"]
+        resources = {
+            Resource.objects.get(uuid=uuid.UUID(key)): amount
+            for key, amount in resources.items()
+        }
+        return resources
 
     def get_result(self, patient_state=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:
