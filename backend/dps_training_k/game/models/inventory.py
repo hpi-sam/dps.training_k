@@ -25,8 +25,7 @@ class InventoryEntry(models.Model):
 
 class Inventory(models.Model):
     area = models.OneToOneField(
-        "Area",
-        on_delete=models.CASCADE,
+        "Area", on_delete=models.CASCADE, related_name="consuming_inventory"
     )
 
     def resource_stock(self, resource):

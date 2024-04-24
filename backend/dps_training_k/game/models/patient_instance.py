@@ -45,6 +45,10 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         default=Triage.UNDEFINED,
     )
 
+    @property
+    def consuming_inventory(self):
+        return self.area.consuming_inventory
+
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)

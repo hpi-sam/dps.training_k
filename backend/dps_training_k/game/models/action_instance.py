@@ -147,11 +147,6 @@ class ActionInstance(LocalTimeable, models.Model):
         self._start_application()
         return True
 
-    def place_of_application(self):
-        if self.action_template.category == Action.Category.LAB:
-            return self.patient_instance.area
-        return self.patient_instance
-
     def _start_application(self):
         ScheduledEvent.create_event(
             self.patient_instance.exercise,
@@ -159,6 +154,7 @@ class ActionInstance(LocalTimeable, models.Model):
             "_application_finished",
             action_instance=self,
         )
+        self._consume_resources()
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
 
     def _application_finished(self):
@@ -168,7 +164,9 @@ class ActionInstance(LocalTimeable, models.Model):
                 self.patient_instance.patient_state
             ),
         )
+        self._return_applicable_resources()
         self.place_of_application().remove_from_queue(self)
+
         if self.action_template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
@@ -177,6 +175,28 @@ class ActionInstance(LocalTimeable, models.Model):
                 action_instance=self,
             )
             self._update_state(ActionInstanceStateNames.ACTIVE)
-    
+
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # Helper functions
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    def place_of_application(self):
+        if self.action_template.category == Action.Category.LAB:
+            return self.patient_instance.area
+        return self.patient_instance
+
+    def _consume_resources(self):
+        inventory = self.place_of_application().consuming_inventory
+        resource_recipe = self.action_template.get_resources()
+        for resource, amount in resource_recipe.items():
+            inventory.change_resource(resource, -amount)
+
+    def _return_applicable_resources(self):
+        inventory = self.place_of_application().consuming_inventory
+        resource_recipe = self.action_template.get_resources()
+
+        for resource, amount in resource_recipe.items():
+            if resource.is_returnable:
+                inventory.change_resource(resource, amount)
