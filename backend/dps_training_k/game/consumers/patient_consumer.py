@@ -89,6 +89,7 @@ class PatientConsumer(AbstractConsumer):
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
+            self.send_available_patients()
 
     def disconnect(self, code):
         # example patient_instance deletion - see #connect

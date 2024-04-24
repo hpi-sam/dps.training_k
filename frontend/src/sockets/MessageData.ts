@@ -18,7 +18,7 @@ interface MessageData {
 	exercise?: Exercise
 	state?: State
 	logEntries?: LogEntry[]
-	availablePatients: AvailablePatients
+	availablePatients: AvailablePatient[]
 	availableActions: AvailableActions
 	availableMaterialList: AvailableMaterial
 	actionDeclinationReason?: string
@@ -82,10 +82,6 @@ interface AvailableAction {
 	actionName: string
 	actionDescription: string
 	actionType: string
-}
-
-interface AvailablePatients {
-	availablePatients: AvailablePatient[],
 }
 
 interface AvailablePatient {

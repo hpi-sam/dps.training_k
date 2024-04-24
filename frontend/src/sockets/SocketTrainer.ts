@@ -55,7 +55,7 @@ class SocketTrainer {
 					useAvailablesStore().loadAvailableMaterial(data.availableMaterialList as unknown as AvailableMaterialList)
 					break
 				case 'available-patients':
-					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatients)
+					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
@@ -183,7 +183,7 @@ export const serverMockEvents = [
 	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: "available-patients",
-		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":[' +
+		data: '{"messageType":"available-patients","availablePatients":[' +
 			'{"code":1001,' +
 			'"personalDetails":"Annkatrin Rohde 01.05.1989 Aulgasse 75, 53721 Siegburg",' +
 			'"injury":"Schürfwunden beide Arme und Kopf; nicht mehr wesentlich blutend; leichte Bewegungseinschränkung im li. Ellbogengelenk",' +
@@ -207,7 +207,7 @@ export const serverMockEvents = [
 			'"currentCaseHistory":"wird vom Rettungsdienst gebracht: habe eine Deckenplatte vor den Kopf bekommen; Verband durchgeblutet; ' +
 			'nicht bewusstlos gewesen.",' +
 			'"pretreatment":" Wundversorgung,"}' +
-			']}}'
+			']}'
 	},
 	{
 		id: "available-material",

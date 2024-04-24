@@ -83,6 +83,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def connect(self):
         self.accept()
+        self.send_available_patients()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.

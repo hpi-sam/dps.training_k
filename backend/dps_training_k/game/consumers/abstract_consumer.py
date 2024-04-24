@@ -7,7 +7,7 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
 from game.models import Exercise
-from template.models import Action
+from template.models import Action, PatientInformation
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -24,6 +24,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         SUCCESS = "success"
         EXERCISE = "exercise"
         AVAILABLE_ACTIONS = "available-actions"
+        AVAILABLE_PATIENTS = "available-patients"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -169,4 +170,29 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             for action in actions
         ]
         actions = json.dumps({"actions": actions})
-        self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions)
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
+        )
+
+    def send_available_patients(self):
+        patientsInformation = PatientInformation.objects.all()
+        availablePatients = [
+            {
+                "code": patient.code,
+                "personalDetails": patient.personal_details,
+                "injury": patient.injury,
+                "biometrics": patient.biometrics,
+                "triage": patient.triage,
+                "consecutiveUniqueNumber": patient.consecutive_unique_number,
+                "mobility": patient.mobility,
+                "preexistingIllnesses": patient.preexisting_illnesses,
+                "permanentMedication": patient.permanent_medication,
+                "currentCaseHistory": patient.current_case_history,
+                "pretreatment": patient.pretreatment,
+            }
+            for patient in patientsInformation
+        ]
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_PATIENTS,
+            availablePatients=availablePatients,
+        )

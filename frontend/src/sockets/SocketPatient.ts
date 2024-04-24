@@ -62,7 +62,7 @@ class SocketPatient {
 					patientStore.loadStatusFromJSON(data.state as State)
 					break
 				case 'available-patients':
-					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
+					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'available-actions':
@@ -202,7 +202,7 @@ export const serverMockEvents = [
 	},
 	{
 		id: "available-patients",
-		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":[' +
+		data: '{"messageType":"available-patients","availablePatients":[' +
 			'{"code":1001,' +
 			'"personalDetails":"Annkatrin Rohde 01.05.1989 Aulgasse 75, 53721 Siegburg",' +
 			'"injury":"Schürfwunden beide Arme und Kopf; nicht mehr wesentlich blutend; leichte Bewegungseinschränkung im li. Ellbogengelenk",' +
@@ -226,7 +226,7 @@ export const serverMockEvents = [
 			'"currentCaseHistory":"wird vom Rettungsdienst gebracht: habe eine Deckenplatte vor den Kopf bekommen; Verband durchgeblutet; ' +
 			'nicht bewusstlos gewesen.",' +
 			'"pretreatment":" Wundversorgung,"}' +
-			']}}'
+			']}'
 	},
 	{
 		id: 'available-actions',
