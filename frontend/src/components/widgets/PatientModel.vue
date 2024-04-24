@@ -39,7 +39,7 @@ const positions = [
 
 const svgRef = ref<SVGElement | null>(null)
 
-export function addInjury(position: string, injury: string) {
+export function addInjury(injuryType: string, position: string) {
     let x = 0
     let y = 0
     let rightPosition = ''
@@ -50,11 +50,11 @@ export function addInjury(position: string, injury: string) {
     } else {
         ({ x, y } = positions.find(p => p.name === position) || { x: 0, y: 0 })
     }
-    switch (injury) {
-        case 'wave':
+    switch (injuryType) {
+        case 'blood':
             addWave(x, y)
             break
-        case 'hash':
+        case 'fracture':
             addHash(x, y)
             break
     }

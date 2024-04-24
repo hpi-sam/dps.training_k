@@ -12,6 +12,7 @@
 </script>
 
 <template>
+	<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
 	<div class="flex-container">
 		<nav>
 			<button id="nav-trainer">
@@ -32,7 +33,6 @@
 			<div class="overview">
 				<PatientModel />
 			</div>
-			<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
 			<PatientStatus />
 		</div>
 	</div>
@@ -75,5 +75,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		margin-top: 30px;
 	}
 </style>

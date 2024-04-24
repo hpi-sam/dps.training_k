@@ -24,6 +24,7 @@ interface MessageData {
 	actionDeclinationReason?: string
 	ressourceAssignments: RessourceAssignments
 	actions: Action[]
+	injuries: Injury[]
 }
 
 interface Exercise {
@@ -152,4 +153,14 @@ interface Action {
 	actionStatus: string
 	timeUntilCompletion: number
 	actionResult: string
+}
+
+interface VisibleInjuries {
+	injuries: Injury[]
+}
+
+interface Injury {
+	injuryId: string
+	injuryType: string
+	position: string
 }
