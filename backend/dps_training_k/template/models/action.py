@@ -42,6 +42,7 @@ class Action(UUIDable, models.Model):
             Resource.objects.get(uuid=uuid.UUID(key)): amount
             for key, amount in resources.items()
         }
+        return resources
 
     def get_result(self, patient_state=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:

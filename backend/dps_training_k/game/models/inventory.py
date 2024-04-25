@@ -30,8 +30,15 @@ class Inventory(models.Model):
     )
 
     def resource_stock(self, resource):
-        return self.entries.filter(resource=resource).count()
+        entries = self.entries.filter(resource=resource)
+        if entries.count() > 1:
+            raise ValueError("Multiple entries for the same resource")
+        if entries.count() == 0:
+            return 0
+        return entries.first().amount
 
     def change_resource(self, resource, net_change):
-        entry = InventoryEntry.objects.get_or_create(inventory=self, resource=resource)
+        entry, _ = InventoryEntry.objects.get_or_create(
+            inventory=self, resource=resource
+        )
         return entry.change(net_change)
