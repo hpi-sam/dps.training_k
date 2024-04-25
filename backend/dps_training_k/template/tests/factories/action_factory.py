@@ -41,4 +41,4 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
     application_duration = 10
     effect_duration = 10
     conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
-    uuid = ActionIDs.IV_Zugang
+    uuid = ActionIDs.IV_ZUGANG
