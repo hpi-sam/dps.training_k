@@ -73,10 +73,11 @@ class PatientInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def dispatch_event(cls, patient_instance, changes):
-        if not changes:
-            return
-        if "patient_state" in changes:
+        if changes is not None and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
+
+        if not (changes is not None and len(changes) is 1 and "patient_state"):
+            cls._notify_exercise_update(patient_instance.exercise)
 
     @classmethod
     def _notify_patient_state_change(cls, patient_instance):
@@ -86,6 +87,12 @@ class PatientInstanceDispatcher(ChannelNotifier):
             "patient_instance_pk": patient_instance.id,
         }
         cls._notify_group(channel, event)
+
+    @classmethod
+    def delete_and_notify(cls, patient, *args, **kwargs):
+        exercise = patient.exercise
+        super(patient.__class__, patient).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
 
 
 class AreaDispatcher(ChannelNotifier):

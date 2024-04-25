@@ -1,3 +1,5 @@
+import secrets
+
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
@@ -8,12 +10,21 @@ from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
 
+def generate_secure_random_id():
+    while True:
+        frontend_id = secrets.randbelow(99999 - 10000) + 10000
+        if not PatientInstance.objects.filter(patient_frontend_id=frontend_id).exists():
+            return frontend_id
+
+
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
-    name = models.CharField(
-        max_length=100, default="Max Mustermann"
-    )  # technically patientData but kept here for simplicity for now
-    # patientCode = models.ForeignKey()
+    name = models.CharField(max_length=100, default="Max Mustermann")
+    static_information = models.ForeignKey(
+        "template.PatientInformation",
+        on_delete=models.CASCADE,
+        null=True,  # for migration purposes
+    )  # via Sensen ID
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     area = models.ForeignKey(
         "Area",
@@ -30,6 +41,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     patient_frontend_id = models.IntegerField(
         unique=True,
         help_text="patient_frontend_id used to log into patient - therefore part of authentication",
+        default=generate_secure_random_id,
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -39,6 +51,17 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        PatientInstanceDispatcher.delete_and_notify(self)
+
+    def serialize(self):
+        return {
+            "patientId": self.patient_frontend_id,
+            "patientName": self.name,
+            "code": self.static_information.code,
+            "triage": self.triage,
+        }
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"
@@ -88,11 +111,3 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         if self.patient_state.is_dead:
             return True
         return False
-
-    def serialize(self):
-        return {
-            "patientId": self.patient_frontend_id,
-            "patientName": self.name,
-            "patientCode": 3,  # ToDo: replace with actual patientCode
-            "triage": self.triage,
-        }

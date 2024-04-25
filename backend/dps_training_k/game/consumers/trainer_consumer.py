@@ -1,5 +1,6 @@
 from game.models import Area
 from game.models import Exercise, Personnel, PatientInstance
+from template.models import PatientInformation
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
 
@@ -19,6 +20,9 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_RESUME = "exercise-resume"
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        PATIENT_ADD = "patient-add"
+        PATIENT_UPDATE = "patient-update"
+        PATIENT_DELETE = "patient-delete"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_UPDATE = "personnel-update"
@@ -65,6 +69,22 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.AREA_DELETE: (
                 self.handle_delete_area,
                 "areaName",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_ADD: (
+                self.handle_add_patient,
+                "areaName",
+                "patientName",
+                "code",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_UPDATE: (
+                self.handle_update_patient,
+                "patientId",
+                "patientName",
+                "code",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_DELETE: (
+                self.handle_delete_patient,
+                "patientId",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
@@ -137,6 +157,41 @@ class TrainerConsumer(AbstractConsumer):
                 f"No area found with the name '{areaName}'",
             )
 
+    def handle_add_patient(self, areaName, patientName, code):
+        try:
+            area = Area.objects.get(name=areaName)
+            patient_information = PatientInformation.objects.get(code=code)
+            PatientInstance.objects.create(
+                name=patientName,
+                static_information=patient_information,
+                exercise=area.exercise,
+                area=area,
+            )
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the name '{areaName}'",
+            )
+        except Area.MultipleObjectsReturned:
+            self.send_failure(
+                f"Multiple areas found with the name '{areaName}'",
+            )
+
+    def handle_update_patient(self, patientFrontendId, patientName, code):
+        patient = PatientInstance.objects.get(patient_frontend_id=patientFrontendId)
+        patient_information = PatientInformation.objects.get(code=code)
+        patient.name = patientName
+        patient.static_information = patient_information
+        patient.save()
+
+    def handle_delete_patient(self, patientFrontendId):
+        try:
+            patient = PatientInstance.objects.get(patient_frontend_id=patientFrontendId)
+            patient.delete()
+        except PatientInstance.DoesNotExist:
+            self.send_failure(
+                f"No patient found with the patientId '{patientFrontendId}'",
+            )
+
     def handle_add_personnel(self, areaName):
         try:
             area = Area.objects.get(name=areaName)
@@ -150,6 +205,11 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the name '{areaName}'",
             )
 
+    def handle_update_personnel(self, personnelId, personnelName):
+        personnel = Personnel.objects.get(id=personnelId)
+        personnel.name = personnelName
+        personnel.save()
+
     def handle_delete_personnel(self, personnel_id):
         try:
             personnel = Personnel.objects.get(id=personnel_id)
@@ -158,8 +218,3 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No personnel found with the pk '{personnel_id}'",
             )
-
-    def handle_update_personnel(self, personnelId, personnelName):
-        personnel = Personnel.objects.get(id=personnelId)
-        personnel.name = personnelName
-        personnel.save()

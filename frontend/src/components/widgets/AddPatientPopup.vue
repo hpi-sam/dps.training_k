@@ -15,18 +15,28 @@
 			type: String,
 			default: 'No Area'
 		},
-		patientName: {
-			type: String,
-			default: 'No Name'
-		}
 	})
+
+	const firstNameList = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
+	const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
+
+	function generateName() {
+		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
+		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
+		return `${firstName} ${surname}`
+	}
+
+
+	const patientName = ref("")
+	patientName.value = generateName()
 
 	function addPatient() {
 		if (!patientCodeChanged) {
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
-		socketTrainer.patientAdd(props.areaName, props.patientName, currentPatientCode.value)
+		socketTrainer.patientAdd(props.areaName, patientName.value, currentPatientCode.value)
+		patientName.value = generateName()
 	}
 
 	const currentPatientCode = ref()
@@ -63,7 +73,7 @@
 				<div class="listItem">
 					<TriageForListItems :patient-code="currentPatient?.code" />
 					<div class="patientName">
-						{{ props.patientName }}
+						{{ patientName }}
 					</div>
 				</div>
 				<div class="scroll">

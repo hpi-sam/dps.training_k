@@ -19,10 +19,12 @@
 
 	function deletePatient(patientId: number) {
 		socketTrainer.patientDelete(patientId)
+		emit('close-popup')
 	}
 
 	function updatePatient(patientId: number, patientName: string, patientCode: number) {
 		socketTrainer.patientUpdate(patientId, patientName, patientCode)
+		emit('close-popup')
 	}
 
 	const exerciseStore = useExerciseStore()
@@ -58,7 +60,7 @@
 				<div class="flex-container">
 					<div class="listItem">
 						<div class="patientId">
-							{{ props.patientId.toString().padStart(3, '0') }}
+							{{ props.patientId.toString().padStart(5, '0') }}
 						</div>
 						<TriageForListItems :patient-code="currentPatient?.code" />
 						<div class="patientName">
@@ -67,10 +69,15 @@
 					</div>
 					<div class="scroll">
 						<PatientInfo
-							:injury="currentPatient?.patientInjury"
-							:history="currentPatient?.patientHistory"
-							:biometrics="currentPatient?.patientBiometrics"
-							:personal-details="currentPatient?.patientPersonalDetails"
+							:personal-details="currentPatient?.personalDetails"
+							:injury="currentPatient?.injury"
+							:biometrics="currentPatient?.biometrics"
+							:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
+							:mobility="currentPatient?.mobility"
+							:preexisting-illnesses="currentPatient?.preexistingIllnesses"
+							:permanent-medication="currentPatient?.permanentMedication"
+							:current-case-history="currentPatient?.currentCaseHistory"
+							:pretreatment="currentPatient?.pretreatment"
 						/>
 					</div>
 					<div id="buttonRow">

@@ -27,19 +27,9 @@
 		showEditPatientPopup.value = true
 	}
 
-	const firstNameList = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
-	const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
-
-	function generateName() {
-		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
-		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
-		return `${firstName} ${surname}`
-	}
-
 	const newPatientName = ref('No Name')
 
 	function addPatient() {
-		newPatientName.value = generateName()
 		showAddPatientPopup.value = true
 	}
 </script>
