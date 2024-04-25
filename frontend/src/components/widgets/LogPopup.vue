@@ -20,7 +20,6 @@
 		}
 		return null
 	})
-
 </script>
 
 <template>

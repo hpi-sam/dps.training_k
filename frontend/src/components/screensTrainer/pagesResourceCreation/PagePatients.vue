@@ -48,7 +48,7 @@
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
 	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
 	<div class="scroll">
-		<h1>Patients</h1>
+		<h1>Patienten</h1>
 		<div class="list">
 			<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
 				Patient hinzufügen

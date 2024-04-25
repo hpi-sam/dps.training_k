@@ -3,7 +3,7 @@
     import { svg }  from '@/assets/Svg'
 </script>
 <script lang="ts">
-const positions = [
+    const positions = [
         // head
         { name: 'head', x: 322, y: 50 },
         { name: 'right head', x: 370, y: 70 },
@@ -37,67 +37,66 @@ const positions = [
         { name: 'right foot', x: 420, y: 1240},
     ]
 
-const svgRef = ref<SVGElement | null>(null)
+    const svgRef = ref<SVGElement | null>(null)
 
-export function addInjury(injuryType: string, position: string) {
-    let x = 0
-    let y = 0
-    let rightPosition = ''
-    if (position.startsWith('left')) {
-        rightPosition = position.replace('left', 'right');
-        ({ x, y } = positions.find(p => p.name === rightPosition) || { x: 0, y: 0 })
-        x = 322 - (x - 322)
-    } else {
-        ({ x, y } = positions.find(p => p.name === position) || { x: 0, y: 0 })
+    export function addInjury(injuryType: string, position: string) {
+        let x = 0
+        let y = 0
+        let rightPosition = ''
+        if (position.startsWith('left')) {
+            rightPosition = position.replace('left', 'right');
+            ({ x, y } = positions.find(p => p.name === rightPosition) || { x: 0, y: 0 })
+            x = 322 - (x - 322)
+        } else {
+            ({ x, y } = positions.find(p => p.name === position) || { x: 0, y: 0 })
+        }
+        switch (injuryType) {
+            case 'blood':
+                addWave(x, y)
+                break
+            case 'fracture':
+                addHash(x, y)
+                break
+        }
     }
-    switch (injuryType) {
-        case 'blood':
-            addWave(x, y)
-            break
-        case 'fracture':
-            addHash(x, y)
-            break
+
+    export function addWave(x: number, y: number) {
+        const scale = 0.4
+        const waveWidth = (180 - 10) * scale
+        const waveHeight = (180 - 10) * scale
+        const wave = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        wave.setAttribute('d', `M${(10*scale)+x-waveWidth/2} ${y}
+        Q ${(52.5*scale)+x-waveWidth/2} ${(10*scale)+y-waveHeight/2}, ${(95*scale)+x-waveWidth/2} ${y}
+        T ${(180*scale)+x-waveWidth/2} ${y}`)
+        wave.setAttribute('stroke', 'red')
+        wave.setAttribute('stroke-width', '10')
+        wave.setAttribute('fill', 'transparent')
+        svgRef.value?.appendChild(wave)
     }
-}
 
-export function addWave(x: number, y: number) {
-    const scale = 0.3
-    const waveWidth = (180 - 10) * scale
-    const waveHeight = (180 - 10) * scale
-    const wave = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    wave.setAttribute('d', `M${(10*scale)+x-waveWidth/2} ${y}
-    Q ${(52.5*scale)+x-waveWidth/2} ${(10*scale)+y-waveHeight/2}, ${(95*scale)+x-waveWidth/2} ${y}
-    T ${(180*scale)+x-waveWidth/2} ${y}`)
-    wave.setAttribute('stroke', 'red')
-    wave.setAttribute('stroke-width', '10')
-    wave.setAttribute('fill', 'transparent')
-    svgRef.value?.appendChild(wave)
-}
+    export function addHash(x: number, y: number) {
+    const scale = 0.5
+    const hashWidth = (90 - 10) * scale
+    const hashHeight = (100 - 0) * scale
 
-export function addHash(x: number, y: number) {
-  const scale = 0.4
-  const hashWidth = (90 - 10) * scale
-  const hashHeight = (100 - 0) * scale
+    const lines = [
+        { x1: 10, y1: 20, x2: 90, y2: 20 },
+        { x1: 10, y1: 80, x2: 90, y2: 80 },
+        { x1: 30, y1: 0, x2: 30, y2: 100 },
+        { x1: 70, y1: 0, x2: 70, y2: 100 },
+    ]
 
-  const lines = [
-    { x1: 10, y1: 20, x2: 90, y2: 20 },
-    { x1: 10, y1: 80, x2: 90, y2: 80 },
-    { x1: 30, y1: 0, x2: 30, y2: 100 },
-    { x1: 70, y1: 0, x2: 70, y2: 100 },
-  ]
-
-  lines.forEach(({ x1, y1, x2, y2 }) => {
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-    line.setAttribute('x1', ((x1 * scale) + x - hashWidth / 2).toString())
-    line.setAttribute('y1', ((y1 * scale) + y - hashHeight / 2).toString())
-    line.setAttribute('x2', ((x2 * scale) + x - hashWidth / 2).toString())
-    line.setAttribute('y2', ((y2 * scale) + y - hashHeight / 2).toString())
-    line.setAttribute('stroke', 'lightgray')
-    line.setAttribute('stroke-width', (scale * 20).toString())
-    svgRef.value?.appendChild(line)
-  })
-}
-
+    lines.forEach(({ x1, y1, x2, y2 }) => {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+        line.setAttribute('x1', ((x1 * scale) + x - hashWidth / 2).toString())
+        line.setAttribute('y1', ((y1 * scale) + y - hashHeight / 2).toString())
+        line.setAttribute('x2', ((x2 * scale) + x - hashWidth / 2).toString())
+        line.setAttribute('y2', ((y2 * scale) + y - hashHeight / 2).toString())
+        line.setAttribute('stroke', 'lightgray')
+        line.setAttribute('stroke-width', (scale * 20).toString())
+        svgRef.value?.appendChild(line)
+    })
+    }
 </script>
 
 <template>

@@ -6,7 +6,7 @@
 	import { useExerciseStore } from "@/stores/Exercise"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
-import CloseButton from "./CloseButton.vue"
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
