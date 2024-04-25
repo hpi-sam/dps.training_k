@@ -12,7 +12,7 @@ class ActionIDs:
 
 
 class MaterialIDs:
-    IV_ZUGANG = UUID("b6c90988-3c8c-4e0f-ab60-65679d30cfc3")
+    CONCENTRATED_RED_CELLS_0_POS = UUID("b6c90988-3c8c-4e0f-ab60-65679d30cfc3")
 
 
 class RoleIDs:

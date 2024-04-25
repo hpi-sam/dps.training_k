@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
-                    "material": {str(MaterialIDs.IV_ZUGANG): 1},
+                    "material": {str(MaterialIDs.CONCENTRATED_RED_CELLS_0_POS): 1},
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,

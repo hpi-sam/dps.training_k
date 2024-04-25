@@ -4,7 +4,7 @@ from template.constants import MaterialIDs
 
 
 class Command(BaseCommand):
-    help = "Populates the database with minimal action list"
+    help = "Populates the database with minimal resources list"
 
     def handle(self, *args, **kwargs):
         self.create_resources()
@@ -15,5 +15,7 @@ class Command(BaseCommand):
     @staticmethod
     def create_resources():
         Resource.objects.update_or_create(
-            name="i.V. Zugang", is_returnable=False, uuid=MaterialIDs.IV_ZUGANG
+            name="Enthrozytenkonzentrat 0 pos.",
+            is_returnable=False,
+            uuid=MaterialIDs.CONCENTRATED_RED_CELLS_0_POS,
         )
