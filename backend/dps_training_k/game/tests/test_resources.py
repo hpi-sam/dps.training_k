@@ -44,6 +44,7 @@ class TestResourcesTestCase(TestCase):
 
         self.action_template.category = Action.Category.LAB
         self.action_template.save(update_fields=["category"])
+        self.inventory = self.action_instance.place_of_application().consuming_inventory
         initial_amount = self.inventory.resource_stock(self.resource)
         self.action_instance._consume_resources()
         self.assertEqual(
