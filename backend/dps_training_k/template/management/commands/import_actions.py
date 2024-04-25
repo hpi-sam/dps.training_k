@@ -12,6 +12,21 @@ class Command(BaseCommand):
 
     @staticmethod
     def create_actions():
+        """
+        "category": "TR", // category as defined in Action, short form
+        "application_duration": 60, // application duration in seconds
+        "effect_duration": 60,  // effect duration in seconds; None means permanent
+        "conditions": {
+            "required_actions": ["A1uuid", "A2uuid", ["A3uuid", "A4uuid"]], // this means action1 AND action2 AND (action3 OR action4); can be None
+            "prohibitive_actions": ["A1uuid", "A2uuid", ["A3uuid", "A4uuid"]], // this means action1 AND action2 AND (action3 OR action4); can be None
+            "material": ["M1uuid", "M2uuid", ["M3uuid", "M4uuid"]], // material1 AND material2 AND (material3 OR material4); can be None
+            "num_personnel": 3, // number of personnel required, must be specified -> CANNOT be None
+            "lab_devices": ["L1uuid", "L2uuid", ["L3uuid", "L4uuid"]], // labdev1 AND labdev2 AND (labdev3 OR labdev4); can be None
+            "area": "ZNA", // area patient has to be in for action to be applicable; can be None
+            "role": [{"Pflegefachkraft": 1}, [{"Arzt": 1}, {"Laborassistent": 1}]] // this means 1 Pflegefachkraft AND (1 Arzt OR 1 Laborassistent); CANNOT be None
+        }
+        """
+
         Action.objects.update_or_create(
             name="Beatmung",
             uuid=ActionIDs.BEATMUNG,
