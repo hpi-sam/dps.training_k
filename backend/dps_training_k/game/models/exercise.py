@@ -24,7 +24,6 @@ class Exercise(NonEventable, models.Model):
     exercise_frontend_id = models.CharField(
         unique=True,
         editable=settings.DEBUG,
-        max_length=settings.INVITATION_LOGIC.code_length,
     )
     state = models.CharField(
         choices=ExerciseStateTypes.choices,
@@ -36,7 +35,7 @@ class Exercise(NonEventable, models.Model):
         new_Exercise = cls.objects.create(
             # config=settings.DEFAULT_EXCERCISE_CONFIG,
             # trainer=trainer
-            exercise_frontend_id=settings.INVITATION_LOGIC.get_exercise_frontend_id(),
+            exercise_frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )
         return new_Exercise

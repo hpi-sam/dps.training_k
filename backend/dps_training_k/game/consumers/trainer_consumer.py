@@ -1,3 +1,4 @@
+from configuration import settings
 from game.models import Area
 from game.models import Exercise, Personnel, PatientInstance
 from template.models import PatientInformation
@@ -166,6 +167,7 @@ class TrainerConsumer(AbstractConsumer):
                 static_information=patient_information,
                 exercise=area.exercise,
                 area=area,
+                patient_frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
             )
         except Area.DoesNotExist:
             self.send_failure(

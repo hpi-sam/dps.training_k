@@ -1,7 +1,8 @@
-from helpers.invitation_logic import LevenshteinCode
 from django.utils import timezone
 
+from helpers.id_generator import LevenshteinCode
+
 CODE_LENGTH = 6
-INVITATION_LOGIC = LevenshteinCode(CODE_LENGTH)
+ID_GENERATOR = LevenshteinCode(CODE_LENGTH)
 CURRENT_TIME = lambda: timezone.now()
 DEFAULT_STATE_ID = 101

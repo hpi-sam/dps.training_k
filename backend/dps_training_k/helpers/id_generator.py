@@ -10,13 +10,19 @@ class LevenshteinCode:
         self.codes_taken = []
 
     def get_exercise_frontend_id(self):
+        return self.get_frontend_id(string.ascii_lowercase)
+
+    def get_patient_frontend_id(self):
+        return self.get_frontend_id(string.digits)
+
+    def get_frontend_id(self, letters):
         """
         Generates a unique alphabetic exercise_frontend_id of length self.code_length,
         that is also distinctive from other non-finished exercises (levenshtein distance >= 3).
-        :return: a string, the exercise_frontend_id
+        :param: letters: the characters the id should be composed of
+        :return: a string, the frontend_id
         """
         new_code = None
-        letters = string.ascii_lowercase
         while not new_code:
             new_code = "".join(random.choice(letters) for _ in range(self.code_length))
             for code_taken in self.codes_taken:

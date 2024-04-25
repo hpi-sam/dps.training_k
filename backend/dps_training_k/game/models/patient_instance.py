@@ -1,5 +1,3 @@
-import secrets
-
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
@@ -8,13 +6,6 @@ from helpers.eventable import Eventable
 from helpers.triage import Triage
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
-
-
-def generate_secure_random_id():
-    while True:
-        frontend_id = secrets.randbelow(99999 - 10000) + 10000
-        if not PatientInstance.objects.filter(patient_frontend_id=frontend_id).exists():
-            return frontend_id
 
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
@@ -41,7 +32,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     patient_frontend_id = models.IntegerField(
         unique=True,
         help_text="patient_frontend_id used to log into patient - therefore part of authentication",
-        default=generate_secure_random_id,
     )
     triage = models.CharField(
         choices=Triage.choices,

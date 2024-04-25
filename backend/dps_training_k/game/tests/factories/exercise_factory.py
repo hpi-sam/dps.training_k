@@ -20,5 +20,5 @@ class ExerciseFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("config", "exercise_frontend_id", "state")
 
     config = factory.SubFactory(SavedExerciseFactory)
-    exercise_frontend_id = "a" * settings.INVITATION_LOGIC.code_length
+    exercise_frontend_id = "a" * settings.ID_GENERATOR.code_length
     state = Exercise.ExerciseStateTypes.CONFIGURATION
