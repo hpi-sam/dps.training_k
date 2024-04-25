@@ -19,6 +19,9 @@ export const useExerciseStore = defineStore('exercise', {
 				) ?? null
 			}
 		},
+		getAreaNames: (state) => {
+			return state.areas?.map(area => area.areaName) ?? []
+		},
 		getPatient: (state) => {
 			return (patientId: number): Patient | null => {
 				return state.areas?.find(area =>

@@ -2,17 +2,21 @@
 	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient'
 	import TriagePopup from '@/components/widgets/TriagePopup.vue'
+	import MovePatientPopup from '@/components/widgets/MovePatientPopup.vue'
 	import PatientStatus from '@/components/widgets/PatientStatus.vue'
 	import { triageToColor } from '@/utils'
 	import PatientModel from '../widgets/PatientModel.vue'
 
 	const patientStore = usePatientStore()
 
-	const showPopup = ref(false)
+	const showTriagePopup = ref(false)
+
+	const showMovePatientPopup = ref(false)
 </script>
 
 <template>
-	<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
+	<TriagePopup v-if="showTriagePopup" @close-popup="showTriagePopup=false" />
+	<MovePatientPopup v-if="showMovePatientPopup" :current-area="patientStore.areaName" @close-popup="showMovePatientPopup=false" />
 	<div class="flex-container">
 		<nav>
 			<button id="nav-trainer">
@@ -21,11 +25,14 @@
 			<button
 				id="nav-triage"
 				:style="{backgroundColor: triageToColor(patientStore.triage)}"
-				@click="showPopup = true"
+				@click="showTriagePopup = true"
 			>
 				{{ patientStore.triage }}
 			</button>
-			<button id="nav-exercise-code">
+			<button
+				id="nav-area-name"
+				@click="showMovePatientPopup = true"
+			>
 				{{ patientStore.areaName }}
 			</button>
 		</nav>
@@ -66,7 +73,7 @@
 		color: white;
 	}
 
-	#nav-exercise-code {
+	#nav-area-name {
 		width: 40%;
 	}
 
