@@ -8,13 +8,14 @@ from game.models import (
 )
 from game.tasks import check_for_updates
 from .factories import PatientFactory, ActionInstanceFactory
+from .setups import ResourcesDeactivateable
 from template.tests.factories import ActionFactory
 from unittest.mock import patch
 from django.utils import timezone
 import datetime
 
 
-class ActionInstanceTestCase(TestCase):
+class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
     def setUp(self):
         self.application_status_patch = patch(
             "template.models.Action.application_status"
@@ -24,10 +25,12 @@ class ActionInstanceTestCase(TestCase):
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
         self.application_status.return_value = True, None
+        self.deactivate_resources()
 
     def tearDown(self):
         self.application_status_patch.stop()
         self.get_local_time_patch.stop()
+        self.activate_resources()
 
     def test_action_creation(self):
         """
@@ -74,7 +77,7 @@ class ActionInstanceTestCase(TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
 
-class ActionInstanceScheduledTestCase(TestCase):
+class ActionInstanceScheduledTestCase(ResourcesDeactivateable, TestCase):
     def timezoneFromTimestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
@@ -82,9 +85,11 @@ class ActionInstanceScheduledTestCase(TestCase):
         self.action_instance = ActionInstanceFactory()
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
+        self.deactivate_resources()
 
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
+        self.activate_resources()
 
     def test_action_is_scheduled(self):
         """
