@@ -4,6 +4,7 @@
 	import TriagePopup from '@/components/widgets/TriagePopup.vue'
 	import PatientStatus from '@/components/widgets/PatientStatus.vue'
 	import { triageToColor } from '@/utils'
+	import PatientModel from '../widgets/PatientModel.vue'
 
 	const patientStore = usePatientStore()
 
@@ -11,6 +12,7 @@
 </script>
 
 <template>
+	<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
 	<div class="flex-container">
 		<nav>
 			<button id="nav-trainer">
@@ -28,7 +30,9 @@
 			</button>
 		</nav>
 		<div class="scroll">
-			<TriagePopup v-if="showPopup" @close-popup="showPopup=false" />
+			<div class="overview">
+				<PatientModel />
+			</div>
 			<PatientStatus />
 		</div>
 	</div>
@@ -64,5 +68,13 @@
 
 	#nav-exercise-code {
 		width: 40%;
+	}
+
+	.overview {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-top: 30px;
 	}
 </style>

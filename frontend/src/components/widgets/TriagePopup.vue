@@ -23,7 +23,6 @@
 	function getTriageColor(color: string) {
 		return "var(--"+color+")"
 	}
-
 </script>
 
 <template>
