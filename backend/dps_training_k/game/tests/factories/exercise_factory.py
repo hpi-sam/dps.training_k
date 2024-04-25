@@ -1,6 +1,7 @@
 import factory
 from django.conf import settings
 from game.models import Exercise, SavedExercise
+import game.tests.factories as factories
 
 
 class SavedExerciseFactory(factory.django.DjangoModelFactory):
@@ -21,3 +22,9 @@ class ExerciseFactory(factory.django.DjangoModelFactory):
     config = factory.SubFactory(SavedExerciseFactory)
     exerciseId = "a" * settings.INVITATION_LOGIC.code_length
     state = Exercise.ExerciseStateTypes.CONFIGURATION
+
+    @factory.post_generation
+    def create_lab(self, create, extracted, **kwargs):
+        if not create:
+            return
+        factories.LabFactory(exercise=self)

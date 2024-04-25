@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import CheckConstraint, Q
 
 
 class InventoryEntry(models.Model):
@@ -25,8 +26,27 @@ class InventoryEntry(models.Model):
 
 
 class Inventory(models.Model):
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                check=Q(area__isnull=False) | Q(lab__isnull=False),
+                name="at_least_one_field_not_null",
+            ),
+        ]
+
     area = models.OneToOneField(
-        "Area", on_delete=models.CASCADE, related_name="consuming_inventory"
+        "Area",
+        on_delete=models.CASCADE,
+        related_name="consuming_inventory",
+        blank=True,
+        null=True,
+    )
+    lab = models.OneToOneField(
+        "Lab",
+        on_delete=models.CASCADE,
+        related_name="consuming_inventory",
+        blank=True,
+        null=True,
     )
 
     def resource_stock(self, resource):

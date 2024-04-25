@@ -18,18 +18,19 @@ class InventoryEntryFactory(factory.django.DjangoModelFactory):
 class EmptyInventoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Inventory
-        django_get_or_create = ("area",)
+        django_get_or_create = ("area", "lab")
 
     area = factory.SubFactory("game.tests.factories.AreaFactory")
+    lab = None
 
 
 class FilledInventoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Inventory
-        django_get_or_create = ("area",)
+        django_get_or_create = ("area", "lab")
 
     area = factory.SubFactory("game.tests.factories.AreaFactory")
-
+    lab = None
     # @factory.post_generation
     # def generate_inventory_entries(self, create, extracted, **kwargs):
     #    if not create:

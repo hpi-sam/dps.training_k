@@ -185,6 +185,8 @@ class ActionInstance(LocalTimeable, models.Model):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def place_of_application(self):
         if self.action_template.category == Action.Category.LAB:
+            return self.patient_instance.area.exercise.lab
+        if self.action_template.category == Action.Category.OTHER:
             return self.patient_instance.area
         return self.patient_instance
 
