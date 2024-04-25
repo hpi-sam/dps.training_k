@@ -18,7 +18,7 @@ class InventoryEntryFactory(factory.django.DjangoModelFactory):
 class EmptyInventoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Inventory
-        django_get_or_create = "area"
+        django_get_or_create = ("area",)
 
     area = factory.SubFactory("game.tests.factories.AreaFactory")
 
@@ -26,7 +26,7 @@ class EmptyInventoryFactory(factory.django.DjangoModelFactory):
 class FilledInventoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Inventory
-        django_get_or_create = "area"
+        django_get_or_create = ("area",)
 
     area = factory.SubFactory("game.tests.factories.AreaFactory")
 
