@@ -822,7 +822,7 @@ class Command(BaseCommand):
                         [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
                     ],
                     "prohibitive_actions": None,
-                    "material": str(MaterialIDs.DEFIBRILATOR),
+                    "material": [str(MaterialIDs.DEFIBRILATOR)],
                     "num_personnel": 2,
                     "lab_devices": None,
                     "area": None,
@@ -1427,7 +1427,7 @@ class Command(BaseCommand):
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": {
-                    "required_actions": None, # "Laboranalyse"???
+                    "required_actions": None,  # "Laboranalyse"???
                     "prohibitive_actions": None,
                     "material": None,
                     "num_personnel": 1,
@@ -1505,7 +1505,7 @@ class Command(BaseCommand):
             defaults={
                 "category": "TR",
                 "application_duration": 0,
-                "effect_duration": 120, # depends on type of "Zugang"
+                "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
                     "prohibitive_actions": None,
@@ -1525,7 +1525,7 @@ class Command(BaseCommand):
             defaults={
                 "category": "TR",
                 "application_duration": 0,
-                "effect_duration": 120, # depends on type of "Zugang"
+                "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
                     "prohibitive_actions": None,
