@@ -14,7 +14,7 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_CREATE = "exercise-create"
         TEST_PASSTHROUGH = "test-passthrough"
         EXERCISE_START = "exercise-start"
-        EXERCISE_STOP = "exercise-stop"
+        EXERCISE_STOP = "exercise-end"
         EXERCISE_PAUSE = "exercise-pause"
         EXERCISE_RESUME = "exercise-resume"
         AREA_ADD = "area-add"
@@ -25,14 +25,14 @@ class TrainerConsumer(AbstractConsumer):
 
     class TrainerOutgoingMessageTypes:
         RESPONSE = "response"
-        EXERCISE_CREATED = "trainer-exercise-create"
+        EXERCISE_CREATED = "trainer-exercise-created"
         TEST_PASSTHROUGH = "test-passthrough"
-        EXERCISE_STARTED = "exercise-start"
-        EXERCISE_STOPED = "exercise-stop"
-        EXERCISE_PAUSED = "exercise-pause"
-        EXERCISE_RESUMED = "exercise-resume"
-        AREA_ADD = "area-add"
-        AREA_DELETE = "area-delete"
+        EXERCISE_STARTED = "exercise-started"
+        EXERCISE_END = "exercise-ended"
+        EXERCISE_PAUSED = "exercise-paused"
+        EXERCISE_RESUMED = "exercise-resumed"
+        AREA_ADD = "area-added"
+        AREA_DELETE = "area-deleted"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
