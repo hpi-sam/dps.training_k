@@ -13,6 +13,12 @@ class ActionIDs:
 
 class MaterialIDs:
     CONCENTRATED_RED_CELLS_0_POS = UUID("b6c90988-3c8c-4e0f-ab60-65679d30cfc3")
+    VENTILATOR = UUID("2d4a1eb3-a9ee-4e26-936d-1d5d4dcedd75")
+    PERFUSOR = UUID("dc493c50-8641-43c6-992e-baaadbb3a7b5")
+    MONITOR = UUID("5a674ed4-d7e1-4ad1-9eeb-5ed4e2528de6")
+    OXYGEN = UUID("3f9fcee8-db83-4945-8a25-e6c6ce4c9449")
+    DEFIBRILLATOR = UUID("9ed747be-354d-4aa2-ad12-277051a08754")
+    PACEMAKER = UUID("bbbfc5e5-3f89-4fef-a784-b4a1b0f22713")
 
 
 class RoleIDs:
