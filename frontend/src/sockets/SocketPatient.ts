@@ -180,6 +180,13 @@ class SocketPatient {
 			'actionId': actionId,
 		}))
 	}
+
+	movePatient(areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'patient-move',
+			'areaName': areaName,
+		}))
+	}
 }
 
 const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
