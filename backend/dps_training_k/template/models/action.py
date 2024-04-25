@@ -24,15 +24,24 @@ class Action(UUIDable, models.Model):
         help_text="Effect duration in seconds in realtime. Might be scaled by external factors.",
     )
     conditions = models.JSONField(null=True, blank=True, default=None)
-    # success_result = models.JSONField(null=True, blank=True, default=None)
+    success_result = models.JSONField(null=True, blank=True, default=None)
 
-    def get_resources(self):
+    def consumed_resources(self):
         resources = json.loads(self.conditions)["material"]
         resources = {
             Resource.objects.get(uuid=uuid.UUID(key)): amount
             for key, amount in resources.items()
         }
         return resources
+
+    def produced_resources(self):
+        if not "material" in json.loads(self.success_result):
+            return None
+        resources = json.loads(self.success_result)["material"]
+        resources = {
+            Resource.objects.get(uuid=uuid.UUID(key)): amount
+            for key, amount in resources.items()
+        }
 
     def get_result(self, patient_state=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:

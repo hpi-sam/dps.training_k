@@ -165,6 +165,7 @@ class ActionInstance(LocalTimeable, models.Model):
             ),
         )
         self._return_applicable_resources()
+        self._produce_resources()
         self.place_of_application().remove_from_queue(self)
 
         if self.action_template.effect_duration != None:
@@ -189,14 +190,22 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def _consume_resources(self):
         inventory = self.place_of_application().consuming_inventory
-        resource_recipe = self.action_template.get_resources()
+        resource_recipe = self.action_template.consumed_resources()
         for resource, amount in resource_recipe.items():
             inventory.change_resource(resource, -amount)
 
     def _return_applicable_resources(self):
         inventory = self.place_of_application().consuming_inventory
-        resource_recipe = self.action_template.get_resources()
+        resource_recipe = self.action_template.consumed_resources()
 
         for resource, amount in resource_recipe.items():
             if resource.is_returnable:
                 inventory.change_resource(resource, amount)
+
+    def _produce_resources(self):
+        inventory = self.place_of_application().consuming_inventory
+        resource_recipe = self.action_template.produced_resources()
+        if resource_recipe == None:
+            return
+        for resource, amount in resource_recipe.items():
+            inventory.change_resource(resource, amount)
