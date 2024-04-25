@@ -17,6 +17,7 @@ class ActionFactory(factory.django.DjangoModelFactory):
             "uuid",
         )
 
+    uuid = ActionIDs.STABILE_SEITENLAGE
     name = "Recovery Position"
     category = Action.Category.TREATMENT
     application_duration = 10
@@ -25,14 +26,14 @@ class ActionFactory(factory.django.DjangoModelFactory):
         {
             "required_actions": None,
             "prohibitive_actions": None,
-            "material": {str(MaterialIDs.IV_ZUGANG): 1},
+            "material": {str(MaterialIDs.CONCENTRATED_RED_CELLS_0_POS): 1},
             "num_personnel": 1,
             "lab_devices": None,
             "area": None,
             "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
         }
     )
-    uuid = ActionIDs.STABILE_SEITENLAGE
+    success_result = json.dumps({"message": "This is an example result"})
 
 
 class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
@@ -47,6 +48,7 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
             "uuid",
         )
 
+    uuid = ActionIDs.STABILE_SEITENLAGE
     name = "Recovery Position"
     category = Action.Category.TREATMENT
     application_duration = 10
@@ -55,11 +57,11 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
         {
             "required_actions": None,
             "prohibitive_actions": None,
-            "material": {str(MaterialIDs.IV_ZUGANG): 1},
+            "material": {str(MaterialIDs.CONCENTRATED_RED_CELLS_0_POS): 1},
             "num_personnel": 1,
             "lab_devices": None,
             "area": None,
             "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
         }
     )
-    uuid = ActionIDs.IV_Zugang
+    success_result = json.dumps({"message": "This is an example result"})
