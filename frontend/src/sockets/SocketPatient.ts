@@ -8,6 +8,7 @@ import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import { useActionOverviewStore } from "@/stores/ActionOverview"
 import { useVisibleInjuriesStore } from "@/stores/VisibleInjuries"
+import { commonMockEvents } from "./commonMockEvents"
 
 class SocketPatient {
 	private readonly url: string
@@ -74,11 +75,18 @@ class SocketPatient {
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
 					break
-				case 'exercise-start':
+				case 'exercise-started':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-stop':
+				case 'exercise-paused':
+					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+					break
+				case 'exercise-resumed':
+					setScreen(Screens.STATUS, ScreenPosition.LEFT)
+					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
+					break
+				case 'exercise-ended':
 					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
 				case 'delete':
@@ -186,47 +194,10 @@ const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token='
 export default socketPatient
 
 export const serverMockEvents = [
-	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
-	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: 'state',
 		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
 			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
-	},
-	{
-		id: "available-patients",
-		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":[' +
-			'{"patientCode":1,' +
-			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},' +
-			'{"patientCode":2,' +
-			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",' +
-			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},' +
-			'{"patientCode":3,' +
-			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",' +
-			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},' +
-			'{"patientCode":4,' +
-			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},' +
-			'{"patientCode":5,' +
-			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},' +
-			'{"patientCode":6,' +
-			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",' +
-			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},' +
-			'{"patientCode":7,' +
-			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},' +
-			'{"patientCode":8,' +
-			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",' +
-			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},' +
-			'{"patientCode":9,' +
-			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",' +
-			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},' +
-			'{"patientCode":10,' +
-			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",' +
-			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}' +
-			']}}'
 	},
 	{
 		id: 'available-actions',
@@ -251,84 +222,6 @@ export const serverMockEvents = [
 			'{"actionName":"Schienung anlegen","actionType":"treatment"},{"actionName":"Vitalwerte messen","actionType":"treatment"}' +
 			']}}'
 	},
-	{
-		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Intensiv",' +
-			'"patients":[' +
-			'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},' +
-			'{"patientId":3,"patientName":"Frank Huber","patientCode":2,"triage":"G"}' +
-			'],' +
-			'"personnel":[' +
-			'{"personnelId":10,"personnelName":"Sebastian Lieb"},' +
-			'{"personnelId":1,"personnelName":"Albert Spahn"}' +
-			'],' +
-			'"material":[' +
-			'{"materialId":1,"materialName":"Beatmungsgerät"},' +
-			'{"materialId":2,"materialName":"Defibrillator"}' +
-			']' +
-			'},' +
-			'{"areaName":"ZNA",' +
-			'"patients":[' +
-			'{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' +
-			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}' +
-			'],' +
-			'"personnel":[' +
-			'{"personnelId":11,"personnelName":"Hannah Mayer"},' +
-			'{"personnelId":3,"personnelName":"Jens Schweizer"},' +
-			'{"personnelId":2,"personnelName":"Lena Schulze"},' +
-			'{"personnelId":7,"personnelName":"Günther Beutle"},' +
-			'{"personnelId":8,"personnelName":"Julian Mohn"},' +
-			'{"personnelId":9,"personnelName":"Elisabeth Bauer"},' +
-			'{"personnelId":12,"personnelName":"Hans Schmidt"},' +
-			'{"personnelId":13,"personnelName":"Johannes Müller"},' +
-			'{"personnelId":14,"personnelName":"Sophie Schneider"},' +
-			'{"personnelId":15,"personnelName":"Lisa Fischer"},' +
-			'{"personnelId":16,"personnelName":"Julia Meyer"},' +
-			'{"personnelId":17,"personnelName":"Max Weber"},' +
-			'{"personnelId":18,"personnelName":"Lukas Wagner"},' +
-			'{"personnelId":19,"personnelName":"Laura Becker"},' +
-			'{"personnelId":20,"personnelName":"Anna Schäfer"},' +
-			'{"personnelId":21,"personnelName":"David Hoffmann"},' +
-			'{"personnelId":22,"personnelName":"Sarah Bauer"}' +
-			'],' +
-			'"material":[' +
-			'{"materialId":3,"materialName":"Defibrillator1"},' +
-			'{"materialId":10,"materialName":"Defibrillator2"},' +
-			'{"materialId":11,"materialName":"Defibrillator3"},' +
-			'{"materialId":12,"materialName":"Defibrillator4"},' +
-			'{"materialId":13,"materialName":"Defibrillator5"},' +
-			'{"materialId":14,"materialName":"Defibrillator6"},' +
-			'{"materialId":15,"materialName":"Defibrillator7"},' +
-			'{"materialId":16,"materialName":"Defibrillator8"},' +
-			'{"materialId":17,"materialName":"Defibrillator9"},' +
-			'{"materialId":18,"materialName":"Defibrillator10"},' +
-			'{"materialId":19,"materialName":"Defibrillator11"},' +
-			'{"materialId":20,"materialName":"Defibrillator12"},' +
-			'{"materialId":4,"materialName":"EKG-Monitor"},' +
-			'{"materialId":7,"materialName":"Pulsoximeter"},' +
-			'{"materialId":8,"materialName":"EEG"},' +
-			'{"materialId":9,"materialName":"Narkosegerät"}' +
-			']' +
-			'},' +
-			'{"areaName":"Wagenhalle",' +
-			'"patients":[' +
-			'{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
-			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}' +
-			'],' +
-			'"personnel":[' +
-			'{"personnelId":5,"personnelName":"Finn Heizmann"},' +
-			'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
-			'],' +
-			'"material":[' +
-			'{"materialId":5,"materialName":"EKG-Gerät"},' +
-			'{"materialId":6,"materialName":"Blutdruckmessgerät"},' +
-			'{"materialId":10,"materialName":"Beatmungsgerät"}' +
-			']' +
-			'}]}}'
-	},
-	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
-	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
 	{id: 'delete', data: '{"messageType":"delete"}'},
 	{
 		id: 'information',
@@ -405,5 +298,6 @@ export const serverMockEvents = [
 			'{ "injuryId": 4, "injuryType": "fracture", "position": "right collarbone" },' +
 			'{ "injuryId": 5, "injuryType": "blood", "position": "left rip" }' +
 			']}'
-	}
+	},
+	...commonMockEvents
 ]

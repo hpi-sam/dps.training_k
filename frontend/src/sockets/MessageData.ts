@@ -29,6 +29,7 @@ interface MessageData {
 
 interface Exercise {
 	exerciseId: string
+	status: string
 	areas: Area[]
 }
 
