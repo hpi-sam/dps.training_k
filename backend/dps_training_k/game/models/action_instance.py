@@ -72,6 +72,12 @@ class ActionInstance(LocalTimeable, models.Model):
 
     class Meta:
         ordering = ["order_id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order_id", "patient_instance"],
+                name="unique_order_id_for_patient",
+            )
+        ]
 
     @property
     def name(self):
@@ -115,7 +121,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None, order_id=None):
+    def create(cls, action_template, patient_instance=None, area=None):
         if not patient_instance and not area:
             raise ValueError(
                 "Either patient_instance or area must be provided - an action instance always need a context"
@@ -128,7 +134,7 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance=patient_instance,
             area=area,
             action_template=action_template,
-            order_id=order_id,
+            order_id=ActionInstance.generate_order_id(patient_instance),
         )
         if is_applicable:
             action_instance.current_state = ActionInstanceState.objects.create(
@@ -147,6 +153,19 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         action_instance.save(update_fields=["current_state"])
         return action_instance
+
+    @classmethod
+    def generate_order_id(self, patient_instance):
+        # Use aggregate to find the maximum order_id for the specified patient_instance
+        result = ActionInstance.objects.filter(
+            patient_instance=patient_instance
+        ).aggregate(max_order_id=models.Max("order_id"))
+        max_order_id = result["max_order_id"]
+        if max_order_id is None:
+            new_order_id = 0
+        else:
+            new_order_id = max_order_id + 1
+        return new_order_id
 
     def try_application(self):
         if self.state_name == ActionInstanceStateNames.DECLINED:

@@ -46,8 +46,7 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
-                "action_id",
-                "order_id",
+                "actionId",
             ),
         }
 
@@ -117,9 +116,11 @@ class PatientConsumer(AbstractConsumer):
         patient_instance.triage = triage
         patient_instance.save(update_fields=["triage"])
 
-    def handle_action_add(self, action_id, order_id):
+    def handle_action_add(self, action_id):
         action = Action.objects.get(pk=action_id)
-        action_instance = ActionInstance.create(self.patient_instance, action, order_id=order_id)
+        action_instance = ActionInstance.create(
+            action_template=action, patient_instance=self.patient_instance
+        )
         action_instance.try_application()
 
     def handle_action_check(self, action_id):
