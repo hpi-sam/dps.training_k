@@ -15,7 +15,8 @@ class Command(BaseCommand):
     @staticmethod
     def create_resources():
         Resource.objects.update_or_create(
-            name="Enthrozytenkonzentrat 0 pos.",
-            is_returnable=False,
             uuid=MaterialIDs.CONCENTRATED_RED_CELLS_0_POS,
+            name="Enthrozytenkonzentrat 0 pos.",
+            category=Resource.Category.BLOOD,
+            is_returnable=False,
         )
