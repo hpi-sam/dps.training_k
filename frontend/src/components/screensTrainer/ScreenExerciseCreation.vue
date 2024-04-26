@@ -81,14 +81,7 @@
 		margin-left: auto;
 	}
 
-	@-moz-document url-prefix() { /* for Firefox */
-		.scroll {
-			margin-bottom: 50px;
-		}
-	}
-
-	.main-button {
-		background-color: var(--green);
-		color: white;
+	.scroll {
+		margin-bottom: 50px;
 	}
 </style>

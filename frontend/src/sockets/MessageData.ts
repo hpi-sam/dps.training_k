@@ -30,6 +30,7 @@ interface MessageData {
 interface Exercise {
 	exerciseId: string
 	status: string
+	speed: number
 	areas: Area[]
 }
 

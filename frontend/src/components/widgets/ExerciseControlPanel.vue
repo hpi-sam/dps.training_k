@@ -7,12 +7,10 @@
 	const exerciseStore = useExerciseStore()
 
 	const status = ref('')
-
-	watch(() => exerciseStore.status, () => {
-		status.value = exerciseStore.status
-	})
+	const speed = ref(1)
 
 	status.value = exerciseStore.status
+	speed.value = exerciseStore.speed
 
 	const info = computed(() => {
 		switch (status.value) {
@@ -52,6 +50,9 @@
 			</div>
 		</div>
 		<div class="rightButtons">
+			<button v-if="status != 'ended'" class="speedButton" @click="runExercise">
+				{{ speed }}x
+			</button>
 			<button v-if="status == 'not-started' || status == 'paused'" class="playButton" @click="runExercise">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -106,9 +107,10 @@
 
 	.rightButtons {
 		margin-left: auto;
+		display: flex;
 	}
 
-	.playButton, .pauseButton, .endButton {
+	.speedButton, .playButton, .pauseButton, .endButton {
 		height: 58px;
 		width: 60px;
 		border: none;
