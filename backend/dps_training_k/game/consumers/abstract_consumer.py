@@ -1,5 +1,4 @@
 import traceback
-import json
 from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
@@ -180,14 +179,12 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def send_available_actions(self):
         actions = Action.objects.all()
         actions = [
-            json.dumps(
                 {
                     "actionId": action.id,
                     "actionName": action.name,
                     "actionCategory": action.category,
                 }
-            )
             for action in actions
         ]
-        actions = json.dumps({"actions": actions})
+        actions = {"actions": actions}
         self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions)

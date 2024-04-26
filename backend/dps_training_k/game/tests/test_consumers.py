@@ -1,4 +1,3 @@
-import json
 import asyncio
 
 from channels.testing import WebsocketCommunicator
@@ -88,11 +87,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
         # receive available actions
         available_actions = await communicator.receive_json_from()
         # extract first available actions' id
-        availableActions = available_actions["availableActions"]
-        actions_json = json.loads(availableActions)
-        first_action = actions_json["actions"][0]
-        first_action_json = json.loads(first_action)
-        action_id = first_action_json["actionId"]
+        action_id = available_actions["availableActions"]["actions"][0]["actionId"]
 
         await communicator.send_json_to(
             {
