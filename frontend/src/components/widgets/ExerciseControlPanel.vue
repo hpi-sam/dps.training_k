@@ -4,6 +4,7 @@
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import { useExerciseStore } from "@/stores/Exercise"
 	import ButtonPopup from "./ButtonPopup.vue"
+	import SpeedSelectorPopup from "./SpeedSelectorPopup.vue"
 
 	const exerciseStore = useExerciseStore()
 
@@ -52,12 +53,17 @@
 		socketTrainer.endExercise()
 	}
 
+	const showSpeedPopup = ref(false)
 	const showStartPopup = ref(false)
 	const showPausePopup = ref(false)
 	const showResumePopup = ref(false)
 	const showEndPopup = ref(false)
 </script>
 <template>
+	<SpeedSelectorPopup
+		v-if="showSpeedPopup"
+		@close-popup="showSpeedPopup = false"
+	/>
 	<ButtonPopup
 		v-if="showStartPopup"
 		title="Möchten Sie die Übung starten?"
@@ -101,7 +107,11 @@
 			</div>
 		</div>
 		<div class="rightButtons">
-			<button v-if="status != 'ended'" class="speedButton">
+			<button
+				v-if="status != 'ended'"
+				class="speedButton"
+				@click="showSpeedPopup = true"
+			>
 				{{ speed }}x
 			</button>
 			<button

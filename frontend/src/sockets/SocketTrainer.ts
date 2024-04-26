@@ -84,6 +84,9 @@ class SocketTrainer {
 					useLogStore().addLogEntries(data.logEntries as LogEntry[])
 					console.log('Socket Log ', data)
 					break
+				case 'set-speed':
+					useExerciseStore().speed = data.speed
+					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten: ' + data.messageType)
 					console.error('Trainer received unknown message type:', data.messageType, 'with data:', data)
@@ -191,6 +194,13 @@ class SocketTrainer {
 			'materialName': materialName
 		}))
 	}
+
+	setSpeed(speed: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'set-speed',
+			'speed': speed
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
@@ -246,6 +256,10 @@ export const serverMockEvents = [
 			'Der Patient benötigt eine Bluttransfusion, um seinen Zustand zu stabilisieren.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 32, 8, 0) +
 			',"areaName":"Intensiv","patientId":"123","personnelId":"456","materialId":"123"}]}'
+	},
+	{
+		id: 'set-speed',
+		data: '{"messageType":"set-speed","speed":2.5}'
 	},
 	...commonMockEvents
 ]

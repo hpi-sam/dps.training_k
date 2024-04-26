@@ -25,7 +25,7 @@
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
-		<div class="popup">
+		<div class="popup" @click.stop="">
 			<CloseButton @close="emit('close-popup')" />
 			<h2>{{ props.title }}</h2>
 			<button

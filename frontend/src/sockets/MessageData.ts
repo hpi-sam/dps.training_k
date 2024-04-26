@@ -25,6 +25,7 @@ interface MessageData {
 	ressourceAssignments: RessourceAssignments
 	actions: Action[]
 	injuries: Injury[]
+	speed: number
 }
 
 interface Exercise {
