@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from template.models import Action
-from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
+from template.constants import ActionIDs, MaterialIDs, RoleIDs, ActionResultIDs, role_map
 
 
 class Command(BaseCommand):
@@ -70,6 +70,11 @@ class Command(BaseCommand):
                         ]
                     ],
                 },
-                "results": ["Hb"],
+                "results": {
+                    "Hb": [
+                        {ActionResultIDs.HB420: "Ergebnis1"},
+                        {ActionResultIDs.HB430: "Ergebnis2"},
+                    ]
+                },
             },
         )

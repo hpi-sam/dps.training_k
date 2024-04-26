@@ -1,6 +1,5 @@
 from django.db import models
 from helpers.models import UUIDable
-from django.contrib.postgres.fields import ArrayField
 import json
 
 class Action(UUIDable, models.Model):
@@ -22,7 +21,7 @@ class Action(UUIDable, models.Model):
         help_text="Effect duration in seconds in realtime. Might be scaled by external factors.",
     )
     conditions = models.JSONField(null=True, blank=True, default=None)
-    results = ArrayField(models.CharField(max_length=10), null=True, blank=True, default=None)
+    results = models.JSONField(null=True, blank=True, default=None)
 
     def get_result(self, patient_state_data=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:
@@ -37,8 +36,15 @@ class Action(UUIDable, models.Model):
 
     def examination_result(self, patient_state_data):
         result_string = f"{self.name} Ergebnis:"
-        for key in self.results:
-            result_string += f" {key}: {json.loads(patient_state_data)[key]}"
+        # iterate through result map
+        for key, values in self.results.items():
+            # find correct result code for this patient
+            result_code = json.loads(patient_state_data)[key]
+            # find string value corresponding to result code
+            for value in values:
+                if result_code in value:
+                    result_string += f" {key}: {value[result_code]}"
+
         return result_string
 
     def lab_result(self, area_materials):

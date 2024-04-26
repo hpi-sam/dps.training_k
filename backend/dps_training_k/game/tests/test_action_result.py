@@ -26,5 +26,5 @@ class ActionResultTestCase(TestCase):
         check_for_updates()
         action_instance.refresh_from_db()
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
-        self.assertEqual(action_instance.result, "Recovery Position Ergebnis: Hb: 420")
+        self.assertEqual(action_instance.result, "Recovery Position Ergebnis: BZ: Ergebnis2 Hb: Ergebnis1")
         

@@ -1,5 +1,5 @@
 from .JSON_factory import JSONFactory
-
+from template.constants import ActionResultIDs
 
 class StateDataFactory(JSONFactory):
     def __new__(cls):
@@ -13,6 +13,7 @@ class StateDataFactory(JSONFactory):
             "pupils": None,
             "psyche": None,
             "skin": None,
-            "Hb": 420,
+            "Hb": ActionResultIDs.HB420,
+            "BZ": ActionResultIDs.BZ930,
         }
         return super().__new__(cls, state_data_dict)
