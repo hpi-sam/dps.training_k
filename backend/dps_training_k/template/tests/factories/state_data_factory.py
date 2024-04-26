@@ -13,5 +13,6 @@ class StateDataFactory(JSONFactory):
             "pupils": None,
             "psyche": None,
             "skin": None,
+            "Hb": 420,
         }
         return super().__new__(cls, state_data_dict)

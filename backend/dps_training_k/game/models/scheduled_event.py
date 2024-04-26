@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from datetime import timedelta
 from helpers.one_field_not_null import OneFieldNotNull
+import json
 
 
 class ScheduledEvent(models.Model):
@@ -15,6 +16,7 @@ class ScheduledEvent(models.Model):
     )
     end_date = models.DateTimeField()
     method_name = models.CharField(max_length=100)
+    kwargs = models.TextField(blank=True, null=True)
 
     @classmethod
     def create_event(
@@ -25,13 +27,19 @@ class ScheduledEvent(models.Model):
         patient=None,
         area=None,
         action_instance=None,
+        **kwargs,
     ):
-        scheduled_event = ScheduledEvent(
-            exercise=exercise,
-            end_date=cls.calculate_finish_time(t_sim_delta, exercise),
-            method_name=method_name,
-        )
-        scheduled_event.save()
+        try:
+            scheduled_event = ScheduledEvent(
+                exercise=exercise,
+                end_date=cls.calculate_finish_time(t_sim_delta, exercise),
+                method_name=method_name,
+                kwargs=json.dumps(kwargs),
+            )
+            scheduled_event.save()
+        except TypeError as e:
+            raise ValueError("kwargs passed to create_event must be JSON serializable") from e
+
         Owner.create_owner(
             scheduled_event,
             exercise=exercise,
@@ -48,7 +56,11 @@ class ScheduledEvent(models.Model):
     def action(self):
         owner_instance = self.owner.owner_instance()
         method = getattr(owner_instance, self.method_name)
-        method()
+        if self.kwargs:
+            kwargs = json.loads(self.kwargs)
+            method(**kwargs) 
+        else:
+            method()
         self.delete()
 
     def __str__(self):

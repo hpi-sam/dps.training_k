@@ -14,14 +14,16 @@ class ActionFactory(factory.django.DjangoModelFactory):
             "effect_duration",
             "conditions",
             "uuid",
+            "results",
         )
 
     name = "Recovery Position"
-    category = Action.Category.TREATMENT
+    category = Action.Category.EXAMINATION
     application_duration = 10
     effect_duration = None
     conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
     uuid = ActionIDs.STABILE_SEITENLAGE
+    results = ["Hb"]
 
 
 class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
@@ -34,6 +36,7 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
             "effect_duration",
             "conditions",
             "uuid",
+            "results",
         )
 
     name = "Recovery Position"
@@ -42,3 +45,4 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
     effect_duration = 10
     conditions = JSONFactory({"to_be_replaced_after_actual_condition_checking": None})
     uuid = ActionIDs.IV_Zugang
+    results = None

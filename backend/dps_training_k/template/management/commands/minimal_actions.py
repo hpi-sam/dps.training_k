@@ -28,6 +28,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
+                "results": None,
             },
         )
         Action.objects.update_or_create(
@@ -45,6 +46,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
+                "results": None,
             },
         )
         # Examinations
@@ -68,5 +70,6 @@ class Command(BaseCommand):
                         ]
                     ],
                 },
+                "results": ["Hb"],
             },
         )
