@@ -44,6 +44,8 @@ class Action(UUIDable, models.Model):
             for value in values:
                 if result_code in value:
                     result_string += f" {key}: {value[result_code]}"
+                else:
+                    raise ValueError("Examination result: no value for result code found.")
 
         return result_string
 
