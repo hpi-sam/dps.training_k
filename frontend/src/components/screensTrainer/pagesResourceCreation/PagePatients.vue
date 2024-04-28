@@ -48,7 +48,7 @@
 			>
 				<button class="listItemButton" @click="editPatient(patient.patientId)">
 					<div class="listItemId">
-						{{ patient.patientId.toString().padStart(3, '0') }}
+						{{ patient.patientId.toString().padStart(6, '0') }}
 					</div>
 					<TriageForListItems :patient-code="patient.code" />
 					<div class="listItemName">

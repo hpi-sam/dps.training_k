@@ -15,7 +15,7 @@
 		if (code === Number.NEGATIVE_INFINITY) {
 			return ""
 		}
-		return code.toString().padStart(3, '0')
+		return code.toString().padStart(4, '0')
 	}
 </script>
 
