@@ -27,8 +27,6 @@
 		showEditPatientPopup.value = true
 	}
 
-	const newPatientName = ref('No Name')
-
 	function addPatient() {
 		showAddPatientPopup.value = true
 	}
@@ -36,7 +34,7 @@
 
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
-	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" :patient-name="newPatientName" @close-popup="showAddPatientPopup=false" />
+	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" @close-popup="showAddPatientPopup=false" />
 	<div class="scroll">
 		<h1>Patienten</h1>
 		<div class="list">
