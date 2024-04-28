@@ -10,4 +10,5 @@ class ResourceFactory(factory.django.DjangoModelFactory):
 
     uuid = MaterialIDs.CONCENTRATED_RED_CELLS_0_POS
     name = "Enthrozytenkonzentrat 0 pos."
+    category = Resource.Category.BLOOD
     is_returnable = False

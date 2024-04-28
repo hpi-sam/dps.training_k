@@ -1,13 +1,8 @@
 from urllib.parse import parse_qs
 
-from game.models import (
-    PatientInstance,
-    Exercise,
-    ActionInstanceStateNames,
-    ActionInstance,
-)
+from game.models import PatientInstance, Exercise, ActionInstance, InventoryEntry
 from template.models import Action
-from template.serializer.state_serialize import StateSerializer
+from backend.dps_training_k.template.serializers.state_serializer import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
 
@@ -90,6 +85,7 @@ class PatientConsumer(AbstractConsumer):
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
+            self.send_available_material()
 
     def disconnect(self, code):
         # example patient_instance deletion - see #connect
@@ -142,6 +138,12 @@ class PatientConsumer(AbstractConsumer):
             time=stub_time,
             requirements=stub_requirements,
         )
+
+    def handle_material_release(self, material_id):
+        inventoryEntry = InventoryEntry.objects.get(id=material_id)
+        material = inventoryEntry.resource
+        inventory = inventoryEntry.inventory
+        inventory.change_resource(material, -1)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications

@@ -70,3 +70,11 @@ class Inventory(models.Model):
             inventory=self, resource=resource
         )
         return entry.change(net_change)
+
+    def transition_resource_to(self, Inventory, resource, net_change):
+        if net_change < 0:
+            raise ValueError(
+                "Transitioning resources to another inventory requires a positive net change"
+            )
+        self.change_resource(resource, -net_change)
+        Inventory.change_resource(resource, net_change)
