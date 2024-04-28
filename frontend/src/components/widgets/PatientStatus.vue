@@ -59,52 +59,63 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<p class="key">
 					Verletzungen
 				</p>{{ patientStore.injury }}
 			</td>
-			<td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Vorerkrankungen
 				</p>{{ patientStore.preexistingIllnesses }}
-				<br>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Dauer-Medikation
 				</p>{{ patientStore.permanentMedication }}
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<p class="key">
 					Aktuelle Anamnese / Rettungsdienst-Übergabe
 				</p>{{ patientStore.currentCaseHistory }}
 			</td>
-			<td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Vorbehandlung
 				</p>{{ patientStore.pretreatment }}
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<p class="key">
 					Personalien
 				</p>{{ patientStore.personalDetails }}
 			</td>
-			<td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Biometrie
 				</p>{{ patientStore.biometrics }}
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<p class="key">
 					Mobilität
 				</p>{{ patientStore.mobility }}
 			</td>
-			<td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Fortlaufende Eineindeutige Nummer
 				</p>{{ patientStore.consecutiveUniqueNumber }}
