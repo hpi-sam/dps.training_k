@@ -3,6 +3,7 @@ from game.models import ScheduledEvent
 from template.models import Action
 from game.channel_notifications import ActionInstanceDispatcher
 from helpers.local_timable import LocalTimeable
+from helpers.x_fields_not_null import x_fields_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -57,6 +58,9 @@ class ActionInstanceState(models.Model):
 
 
 class ActionInstance(LocalTimeable, models.Model):
+    class Meta:
+        constraints = [x_fields_not_null(1, ["patient_instance", "area", "lab"])]
+
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )

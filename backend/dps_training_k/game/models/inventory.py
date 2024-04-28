@@ -31,13 +31,9 @@ class InventoryEntry(models.Model):
 
 
 class Inventory(models.Model):
+
     class Meta:
-        constraints = [
-            CheckConstraint(
-                check=Q(area__isnull=False) | Q(lab__isnull=False),
-                name="at_least_one_field_not_null",
-            ),
-        ]
+        constraints = [x_fields_not_null(1, ["area", "lab", "patient"])]
 
     area = models.OneToOneField(
         "Area",
@@ -50,6 +46,13 @@ class Inventory(models.Model):
         "Lab",
         on_delete=models.CASCADE,
         related_name="consuming_inventory",
+        blank=True,
+        null=True,
+    )
+    patient = models.OneToOneField(
+        "Patient",
+        on_delete=models.CASCADE,
+        related_name="consumning_inventory",
         blank=True,
         null=True,
     )

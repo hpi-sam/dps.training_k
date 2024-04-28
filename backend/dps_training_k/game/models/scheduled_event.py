@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import timedelta
-from helpers.one_field_not_null import OneFieldNotNull
+from backend.dps_training_k.helpers.x_fields_not_null import x_fields_not_null
 
 
 class ScheduledEvent(models.Model):
@@ -56,9 +56,22 @@ class ScheduledEvent(models.Model):
         return f"ScheduledEvent #{self.id}, model name {owner_instance.__class__.__name__}, instance #{owner_instance}, exercise #{self.exercise}, trigger on: {self.end_date}"
 
 
-class Owner(OneFieldNotNull, models.Model):
+class Owner(models.Model):
     """Wrapper model to avoid using GenericForeignKeys as recommended here:
     https://lukeplant.me.uk/blog/posts/avoid-django-genericforeignkey/"""
+
+    class Meta:
+        constraints = [
+            x_fields_not_null(
+                1,
+                [
+                    "patient_owner",
+                    "exercise_owner",
+                    "area_owner",
+                    "action_instance_owner",
+                ],
+            )
+        ]
 
     event = models.OneToOneField(
         "ScheduledEvent",
