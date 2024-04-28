@@ -41,11 +41,15 @@ class Action(UUIDable, models.Model):
             # find correct result code for this patient
             result_code = json.loads(patient_state_data)[key]
             # find string value corresponding to result code
+            found = False
             for value in values:
                 if result_code in value:
                     result_string += f" {key}: {value[result_code]}"
-                else:
-                    raise ValueError("Examination result: no value for result code found.")
+                    found = True
+            if not found:
+                raise ValueError("Examination result: Couldn't find corresponding value for result code")
+                    
+            
 
         return result_string
 
