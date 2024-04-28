@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import CheckConstraint, Q
+from helpers.x_fields_not_null import x_fields_not_null
+from game.channel_notifications import InventoryEntryDispatcher
 
 
 class InventoryEntry(models.Model):
@@ -13,6 +14,10 @@ class InventoryEntry(models.Model):
         related_name="entries",
     )
     amount = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        changes = kwargs.get("update_fields", None)
+        InventoryEntryDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def change(self, net_change):
         # ToDo: Uncomment once condition checks are implemented

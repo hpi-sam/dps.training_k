@@ -1,7 +1,8 @@
 from game.models import Area
-from game.models import Exercise, Personnel, PatientInstance
+from game.models import Exercise, Personnel, PatientInstance, InventoryEntry
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
+from template.models import Resource
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -22,6 +23,8 @@ class TrainerConsumer(AbstractConsumer):
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_UPDATE = "personnel-update"
+        MATERIAL_ADD = "material-add"
+        MATERIAL_DELETE = "material-delete"
 
     class TrainerOutgoingMessageTypes:
         RESPONSE = "response"
@@ -78,6 +81,15 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_update_personnel,
                 "personnelId",
                 "personnelName",
+            ),
+            self.TrainerIncomingMessageTypes.MATERIAL_ADD: (
+                self.handle_add_material,
+                "areaName",
+                "materialName",
+            ),
+            self.TrainerIncomingMessageTypes.MATERIAL_DELETE: (
+                self.handle_delete_material,
+                "materialId",
             ),
         }
 
@@ -155,3 +167,14 @@ class TrainerConsumer(AbstractConsumer):
         personnel.name = personnelName
         personnel.save()
         self._send_exercise(self.exercise)
+
+    def handle_add_material(self, areaName, materialName):
+        area = Area.objects.get(name=areaName, exercise=self.exercise)
+        material = Resource.objects.get(name=materialName)
+        area.consuming_inventory.change_resource(material, 1)
+
+    def handle_delete_material(self, materialId):
+        inventoryEntry = InventoryEntry.objects.get(id=materialId)
+        material = inventoryEntry.resource
+        inventory = inventoryEntry.inventory
+        inventory.change_resource(material, -1)

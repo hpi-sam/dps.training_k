@@ -17,6 +17,7 @@ class ChannelEventTypes:
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_DECLINATION_EVENT = "action.declination.event"
     ACTION_RESULT_EVENT = "action.result.event"
+    MATERIAL_CHANGE_EVENT = "material.change.event"
 
 
 class ChannelNotifier:
@@ -112,5 +113,20 @@ class ActionInstanceDispatcher(ChannelNotifier):
         event = {
             "type": event_type,
             "action_instance_pk": applied_action.id,
+        }
+        cls._notify_group(channel, event)
+
+
+class InventoryEntryDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, obj, changes):
+        cls.notify_material_change_event(obj)
+
+    @classmethod
+    def notify_material_change_event(cls, inventory_entry):
+        channel = cls.get_group_name(inventory_entry.inventory)
+        event = {
+            "type": ChannelEventTypes.MATERIAL_CHANGE_EVENT,
+            "inventory_entry_pk": inventory_entry.id,
         }
         cls._notify_group(channel, event)

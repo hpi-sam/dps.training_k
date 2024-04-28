@@ -61,6 +61,7 @@ class ActionInstance(LocalTimeable, models.Model):
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, blank=True, null=True)
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True

@@ -5,7 +5,7 @@ from game.channel_notifications import AreaDispatcher
 
 
 class Area(ActionsQueueable, models.Model):
-    name = models.CharField(unique=True, max_length=30)
+    name = models.CharField(max_length=30)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     isPaused = models.BooleanField()
     # labID = models.ForeignKey("Lab")

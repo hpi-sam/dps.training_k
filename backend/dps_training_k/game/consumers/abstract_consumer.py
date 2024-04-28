@@ -7,7 +7,8 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
 from game.models import PatientInstance, Exercise
-from template.models import Action
+from template.models import Action, Resource
+from template.serializers import ResourceSerializer
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -24,6 +25,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         SUCCESS = "success"
         EXERCISE = "exercise"
         AVAILABLE_ACTIONS = "available-actions"
+        AVAILABLE_MATERIAL = "available-material"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -180,14 +182,25 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def send_available_actions(self):
         actions = Action.objects.all()
         actions = [
-            json.dumps(
-                {
-                    "actionId": action.id,
-                    "actionName": action.name,
-                    "actionCategory": action.category,
-                }
-            )
+            {
+                "actionName": action.name,
+                "actionCategory": action.category,
+            }
             for action in actions
         ]
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
+        )
+
         actions = json.dumps({"actions": actions})
+        self.send_event(self.OutgoingMessageTypes.AVAILABLE_MATERIAL, availableMaterial=materials
+        )
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # Events triggered internally by channel notifications
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+
+    def material_change_event(self, event):
+        self._send_exercise(self.exercise)
+
         self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions)
