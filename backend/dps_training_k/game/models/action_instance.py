@@ -3,7 +3,7 @@ from game.models import ScheduledEvent
 from template.models import Action
 from game.channel_notifications import ActionInstanceDispatcher
 from helpers.local_timable import LocalTimeable
-from helpers.x_fields_not_null import x_fields_not_null
+from helpers.one_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -59,7 +59,11 @@ class ActionInstanceState(models.Model):
 
 class ActionInstance(LocalTimeable, models.Model):
     class Meta:
-        constraints = [x_fields_not_null(1, ["patient_instance", "area", "lab"])]
+        constraints = [
+            one_or_more_field_not_null(
+                ["patient_instance", "area", "lab"], "action_instance"
+            )
+        ]
 
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
@@ -199,7 +203,7 @@ class ActionInstance(LocalTimeable, models.Model):
         inventory = self.place_of_application().consuming_inventory
         resource_recipe = self.action_template.consumed_resources()
         for resource, amount in resource_recipe.items():
-            inventory.change_resource(resource, -amount)
+            pass  # ToDo: continue working from here
 
     def _return_applicable_resources(self):
         inventory = self.place_of_application().consuming_inventory

@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import timedelta
-from backend.dps_training_k.helpers.x_fields_not_null import x_fields_not_null
+from helpers.one_field_not_null import one_or_more_field_not_null
 
 
 class ScheduledEvent(models.Model):
@@ -62,14 +62,14 @@ class Owner(models.Model):
 
     class Meta:
         constraints = [
-            x_fields_not_null(
-                1,
+            one_or_more_field_not_null(
                 [
                     "patient_owner",
                     "exercise_owner",
                     "area_owner",
                     "action_instance_owner",
                 ],
+                "owner",
             )
         ]
 

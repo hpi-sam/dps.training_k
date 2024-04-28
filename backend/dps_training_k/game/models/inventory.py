@@ -1,5 +1,5 @@
 from django.db import models
-from helpers.x_fields_not_null import x_fields_not_null
+from helpers.one_field_not_null import one_or_more_field_not_null
 from game.channel_notifications import InventoryEntryDispatcher
 
 
@@ -33,7 +33,9 @@ class InventoryEntry(models.Model):
 class Inventory(models.Model):
 
     class Meta:
-        constraints = [x_fields_not_null(1, ["area", "lab", "patient"])]
+        constraints = [
+            one_or_more_field_not_null(["area", "lab", "patient"], "inventory"),
+        ]
 
     area = models.OneToOneField(
         "Area",
@@ -50,7 +52,7 @@ class Inventory(models.Model):
         null=True,
     )
     patient = models.OneToOneField(
-        "Patient",
+        "PatientInstance",
         on_delete=models.CASCADE,
         related_name="consumning_inventory",
         blank=True,
