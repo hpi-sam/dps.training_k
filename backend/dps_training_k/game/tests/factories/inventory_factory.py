@@ -31,8 +31,9 @@ class FilledInventoryFactory(factory.django.DjangoModelFactory):
 
     area = factory.SubFactory("game.tests.factories.AreaFactory")
     lab = None
-    # @factory.post_generation
-    # def generate_inventory_entries(self, create, extracted, **kwargs):
-    #    if not create:
-    #        return
-    #    InventoryEntryFactory(inventory=self, resource=ResourceFactory(), amount=1)
+
+    @factory.post_generation
+    def generate_inventory_entries(self, create, extracted, **kwargs):
+        if not create:
+            return
+        InventoryEntryFactory(inventory=self, resource=ResourceFactory(), amount=1)
