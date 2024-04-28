@@ -192,8 +192,17 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
         )
 
-        actions = json.dumps({"actions": actions})
-        self.send_event(self.OutgoingMessageTypes.AVAILABLE_MATERIAL, availableMaterial=materials
+    def send_available_material(self):
+        materials = Resource.objects.all()
+        materials = [
+            {
+                "materialName": material.name,
+                "materialCategory": material.category,
+            }
+            for material in materials
+        ]
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_MATERIAL, availableMaterial=materials
         )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,4 +212,13 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def material_change_event(self, event):
         self._send_exercise(self.exercise)
 
-        self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions)
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # Helper functions
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+
+    def related_materials_list(self, area):
+        entries = area.inventory.entries.all()
+        materials = []
+        for entry in entries:
+            for _ in range(entry.amount):
+                materials.append(ResourceSerializer(entry.resource).to_json())

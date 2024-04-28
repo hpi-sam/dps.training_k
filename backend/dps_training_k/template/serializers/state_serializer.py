@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from template.models import PatientState
+from helpers.serialize_jsonable import SerializeJSONAble
 
 
-class StateSerializer(serializers.Serializer):
+class StateSerializer(SerializeJSONAble, serializers.Serializer):
     phaseNumber = serializers.IntegerField(source="current_phase", read_only=True)
     airway = serializers.CharField(source="data.airway", read_only=True)
     breathing = serializers.CharField(source="data.breathing", read_only=True)
