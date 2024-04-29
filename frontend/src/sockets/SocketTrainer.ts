@@ -61,10 +61,12 @@ class SocketTrainer {
 					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatients)
 					break
 				case 'exercise':
-					exerciseStore.status = 'not-started'
+					if (exerciseStore.status == '') {
+						exerciseStore.status = 'not-started'
+						moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
+						moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
+					}
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
-					moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
 					break
 				case 'exercise-started':
 					exerciseStore.status = 'running'
@@ -73,12 +75,18 @@ class SocketTrainer {
 					break
 				case 'exercise-paused':
 					exerciseStore.status = 'paused'
+					moduleTrainerSetLeftScreen(Screens.LOG)
+					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
 				case 'exercise-resumed':
 					exerciseStore.status = 'running'
+					moduleTrainerSetLeftScreen(Screens.LOG)
+					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
 				case 'exercise-ended':
 					exerciseStore.status = 'ended'
+					moduleTrainerSetLeftScreen(Screens.LOG)
+					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
 				case 'log-update':
 					useLogStore().addLogEntries(data.logEntries as LogEntry[])
@@ -114,19 +122,19 @@ class SocketTrainer {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-create'}))
 	}
 
-	startExercise() {
+	exerciseStart() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-start'}))
 	}
 
-	pauseExercise() {
+	exercisePause() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-pause'}))
 	}
 
-	resumeExercise() {
+	exerciseResume() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-resume'}))
 	}
 
-	endExercise() {
+	exerciseEnd() {
 		this.#sendMessage(JSON.stringify({'messageType': 'exercise-end'}))
 	}
 

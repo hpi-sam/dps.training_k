@@ -52,6 +52,6 @@ export const useExerciseStore = defineStore('exercise', {
 		createFromJSON(json: Exercise) {
 			this.exerciseId = json.exerciseId
 			this.areas = json.areas
-		}
+		},
 	}
 })

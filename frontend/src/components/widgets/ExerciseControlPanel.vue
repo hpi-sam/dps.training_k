@@ -5,6 +5,9 @@
 	import { useExerciseStore } from "@/stores/Exercise"
 	import ButtonPopup from "./ButtonPopup.vue"
 	import SpeedSelectorPopup from "./SpeedSelectorPopup.vue"
+	import { useAvailablesStore } from "@/stores/Availables"
+	import { useLogStore } from "@/stores/Log"
+	import {Screens, setLeftScreen, setRightScreen} from "@/components/ModuleTrainer.vue"
 
 	const exerciseStore = useExerciseStore()
 
@@ -37,22 +40,31 @@
 		}
 	})
 
+	function leaveExercise() {
+		useAvailablesStore().$reset()
+		useExerciseStore().$reset()
+		useLogStore().$reset()
+		setLeftScreen(Screens.CREATE_EXERCISE)
+		setRightScreen(Screens.JOIN_EXERCISE)
+	}
+
 	function startExercise() {
-		socketTrainer.startExercise()
+		socketTrainer.exerciseStart()
 	}
 
 	function resumeExercise() {
-		socketTrainer.resumeExercise()
+		socketTrainer.exerciseResume()
 	}
 
 	function pauseExercise() {
-		socketTrainer.pauseExercise()
+		socketTrainer.exercisePause()
 	}
 
 	function endExercise() {
-		socketTrainer.endExercise()
+		socketTrainer.exerciseEnd()
 	}
 
+	const showLeavePopup = ref(false)
 	const showSpeedPopup = ref(false)
 	const showStartPopup = ref(false)
 	const showPausePopup = ref(false)
@@ -100,7 +112,30 @@
 		@button-click="endExercise"
 		@close-popup="showEndPopup = false"
 	/>
+	<ButtonPopup
+		v-if="showLeavePopup"
+		title="Möchten Sie die Übung verlassen?"
+		button-text="Verlassen"
+		button-color="var(--red)"
+		button-text-color="white"
+		@button-click="leaveExercise"
+		@close-popup="showEndPopup = false"
+	/>
 	<div class="panel">
+		<button
+			class="leaveButton"
+			@click="showLeavePopup = true"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				height="24"
+				viewBox="0 -960 960 960"
+				width="24"
+				fill="white"
+			>
+				<path :d="svg.arrowBackIcon" />
+			</svg>
+		</button>
 		<div class="listItemButton">
 			<div class="listItemName">
 				{{ info }}
@@ -193,12 +228,16 @@
 		height: 100%;
 	}
 
+	.leaveButton {
+		background-color: var(--red);
+	}
+
 	.rightButtons {
 		margin-left: auto;
 		display: flex;
 	}
 
-	.speedButton, .startButton, .pauseButton, .endButton {
+	.leaveButton, .speedButton, .startButton, .pauseButton, .endButton {
 		height: 58px;
 		width: 60px;
 		border: none;
