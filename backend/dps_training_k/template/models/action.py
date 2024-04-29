@@ -1,5 +1,6 @@
 from django.db import models
 from helpers.models import UUIDable
+import json
 
 class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
@@ -20,21 +21,37 @@ class Action(UUIDable, models.Model):
         help_text="Effect duration in seconds in realtime. Might be scaled by external factors.",
     )
     conditions = models.JSONField(null=True, blank=True, default=None)
-    # results = models.JSONField(null=True, blank=True, default=None)
+    results = models.JSONField(null=True, blank=True, default=None)
 
-    def get_result(self, patient_state=None, area_materials=None):
+    def get_result(self, patient_state_data=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:
-            return self.treatment_result(patient_state)
+            return self.treatment_result(patient_state_data)
         elif self.category == Action.Category.EXAMINATION:
-            return self.examination_result(patient_state)
+            return self.examination_result(patient_state_data)
         elif self.category == Action.Category.LAB:
             return self.lab_result(area_materials)
 
     def treatment_result(self, patient_state):
         return f"Behandlung {self.name} wurde durchgeführt"
 
-    def examination_result(self, patient_state):
-        return "This is an examination result"
+    def examination_result(self, patient_state_data):
+        result_string = f"{self.name} Ergebnis:"
+        # iterate through result map
+        for key, values in self.results.items():
+            # find correct result code for this patient
+            result_code = json.loads(patient_state_data)[key]
+            # find string value corresponding to result code
+            found = False
+            for value in values:
+                if result_code in value:
+                    result_string += f" {key}: {value[result_code]}"
+                    found = True
+            if not found:
+                raise ValueError("Examination result: Couldn't find corresponding value for result code")
+                    
+            
+
+        return result_string
 
     def lab_result(self, area_materials):
         return "This is a lab result"

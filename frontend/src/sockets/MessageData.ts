@@ -25,10 +25,13 @@ interface MessageData {
 	ressourceAssignments: RessourceAssignments
 	actions: Action[]
 	injuries: Injury[]
+	speed: number
 }
 
 interface Exercise {
 	exerciseId: string
+	status: string
+	speed: number
 	areas: Area[]
 }
 

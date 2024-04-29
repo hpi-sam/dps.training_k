@@ -6,12 +6,9 @@
 	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
+	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
 
 	const exerciseStore = useExerciseStore()
-
-	function exerciseStart() {
-		socketTrainer.exerciseStart()
-	}
 
 	const areas = computed(() => exerciseStore.areas)
 
@@ -71,10 +68,7 @@
 				</div>
 			</div>
 		</div>
-		<br><br>
-		<button class="main-button" @click="exerciseStart">
-			Übung starten
-		</button>
+		<ExerciseControlPanel />
 	</div>
 </template>
 
@@ -84,16 +78,10 @@
 		width: 50px;
 		border: none;
 		background-color: rgb(243, 244, 246);
+		margin-left: auto;
 	}
 
-	@-moz-document url-prefix() { /* for Firefox */
-		.scroll {
-			margin-bottom: 50px;
-		}
-	}
-
-	.main-button {
-		background-color: var(--green);
-		color: white;
+	.scroll {
+		margin-bottom: 50px;
 	}
 </style>
