@@ -6,7 +6,9 @@ from helpers.actions_queueable import ActionsQueueable
 
 class Area(ActionsQueueable, models.Model):
     name = models.CharField(unique=True, max_length=30)
-    exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
+    exercise = models.ForeignKey(
+        "Exercise", on_delete=models.CASCADE, related_name="areas"
+    )
     isPaused = models.BooleanField()
     # labID = models.ForeignKey("Lab")
 
@@ -30,20 +32,3 @@ class Area(ActionsQueueable, models.Model):
 
     def delete(self, using=None, keep_parents=False):
         AreaDispatcher.delete_and_notify(self)
-
-    def serialize(self):
-        from game.models import Personnel
-        from game.models import PatientInstance
-
-        return {
-            "areaName": self.name,
-            "patients": [
-                patient.serialize()
-                for patient in PatientInstance.objects.filter(area=self)
-            ],
-            "personnel": [
-                personnel.serialize()
-                for personnel in Personnel.objects.filter(area=self)
-            ],
-            "material": [],  # TODO: implement material
-        }

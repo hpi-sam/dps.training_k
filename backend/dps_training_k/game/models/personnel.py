@@ -5,7 +5,7 @@ from game.channel_notifications import PersonnelDispatcher
 
 class Personnel(models.Model):
     name = models.CharField(max_length=100, blank=True)
-    area = models.ForeignKey("Area", on_delete=models.CASCADE)
+    area = models.ForeignKey("Area", on_delete=models.CASCADE, related_name="personnel")
     assigned_patient = models.ForeignKey(
         "PatientInstance", on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -22,9 +22,3 @@ class Personnel(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         PersonnelDispatcher.delete_and_notify(self)
-
-    def serialize(self):
-        return {
-            "personnelId": self.pk,
-            "personnelName": self.name,
-        }

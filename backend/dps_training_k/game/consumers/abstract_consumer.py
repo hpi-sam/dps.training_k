@@ -6,6 +6,7 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
 from game.models import Exercise
+from game.serializers.exercise_serializer import ExerciseSerializer
 from template.models import Action, PatientInformation
 
 
@@ -153,7 +154,8 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def _send_exercise(self, exercise):
         self.send_event(
-            self.OutgoingMessageTypes.EXERCISE, exercise=exercise.serialize()
+            self.OutgoingMessageTypes.EXERCISE,
+            exercise=ExerciseSerializer(exercise).data,
         )
 
     def send_available_actions(self):

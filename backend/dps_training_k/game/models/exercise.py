@@ -44,11 +44,3 @@ class Exercise(NonEventable, models.Model):
         if self.config is None:
             return 1
         return 1 / self.config.time_speed_up
-
-    def serialize(self):
-        from game.models import Area
-
-        return {
-            "exerciseId": self.exercise_frontend_id,
-            "areas": [area.serialize() for area in Area.objects.filter(exercise=self)],
-        }

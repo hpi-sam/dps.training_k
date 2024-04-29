@@ -22,6 +22,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         on_delete=models.CASCADE,
         null=True,  # for debugging purposes
         blank=True,  # for debugging purposes
+        related_name="patients",
     )
     patient_state = models.ForeignKey(
         PatientState,
@@ -44,14 +45,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def delete(self, using=None, keep_parents=False):
         PatientInstanceDispatcher.delete_and_notify(self)
-
-    def serialize(self):
-        return {
-            "patientId": self.patient_frontend_id,
-            "patientName": self.name,
-            "code": self.static_information.code,
-            "triage": self.triage,
-        }
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"
