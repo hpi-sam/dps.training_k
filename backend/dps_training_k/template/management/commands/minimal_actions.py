@@ -15,6 +15,7 @@ class Command(BaseCommand):
         # Treatments
         Action.objects.update_or_create(
             name="i.V. Zugang",
+            uuid=ActionIDs.IV_ZUGANG,
             defaults={
                 "category": "TR",
                 "application_duration": 60,
@@ -22,7 +23,7 @@ class Command(BaseCommand):
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
-                    "material": {str(MaterialIDs.IV_ZUGANG): 1},
+                    "material": None,
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,
@@ -32,13 +33,14 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Vollelektrolyt 1000ml",
+            name="Vollelektrolyt",
+            uuid=ActionIDs.VOLLELEKTROLYT,
             defaults={
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": {
-                    "required_actions": [str(ActionIDs.IV_Zugang)],
+                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
                     "prohibitive_actions": None,
                     "material": None,
                     "num_personnel": 1,
@@ -52,6 +54,7 @@ class Command(BaseCommand):
         # Examinations
         Action.objects.update_or_create(
             name="Hämoglobinanalyse",
+            uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
                 "category": "EX",
                 "application_duration": 120,
