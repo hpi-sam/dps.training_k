@@ -62,7 +62,8 @@ class ActionInstanceTestCase(TestCase):
         self.application_status.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()
-        self.assertEqual(_notify_action_event.call_count, 1)
+        # send action-list twice, send confirmation event once = 3
+        self.assertEqual(_notify_action_event.call_count, 3)
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
@@ -70,7 +71,8 @@ class ActionInstanceTestCase(TestCase):
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.application_status.return_value = False, "Not applicable"
         action_instance.try_application()
-        self.assertEqual(_notify_action_event.call_count, 2)
+        # send action-list 4 times, send confirmation event twice = 6
+        self.assertEqual(_notify_action_event.call_count, 6)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
 

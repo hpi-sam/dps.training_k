@@ -95,14 +95,15 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 "There has to be a state change or order id change whenever updating an ActionInstance."
             )
         # state change events
-        if changes and "current_state" in changes:
-            if applied_action.state_name == models.ActionInstanceStateNames.DECLINED:
-                cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_DECLINATION_EVENT)
-            elif applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
-                cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT)
-        
-        # always send action list event 
-        cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_LIST_EVENT)
+        if changes:
+            if "current_state" in changes:
+                if applied_action.state_name == models.ActionInstanceStateNames.DECLINED:
+                    cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_DECLINATION_EVENT)
+                elif applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
+                    cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT)
+            
+            # always send action list event 
+            cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_LIST_EVENT)
 
     @classmethod
     def _notify_action_event(cls, applied_action, event_type):
