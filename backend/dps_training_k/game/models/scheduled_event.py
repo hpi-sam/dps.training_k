@@ -59,13 +59,13 @@ class ScheduledEvent(models.Model):
         try:
             # Get the related Owner instance
             if isinstance(object, PatientInstance):
-                owner_instance = Owner.objects.get(patient_owner=object)
+                owner_instance = Owner.objects.filter(patient_owner=object).latest('id')
             elif isinstance(object, ActionInstance):
-                owner_instance = Owner.objects.get(action_instance_owner=object)
+                owner_instance = Owner.objects.filter(action_instance_owner=object).latest('id')
             elif isinstance(object, Exercise):
-                owner_instance = Owner.objects.get(exercise_owner=object)
+                owner_instance = Owner.objects.filter(exercise_owner=object).latest('id')
             elif isinstance(object, Area):
-                owner_instance = Owner.objects.get(area_owner=object)
+                owner_instance = Owner.objects.filter(area_owner=object).latest('id')
             # Retrieve ScheduledEvent associated with the Owner instance and calculate remaining time
             time_until_event = owner_instance.event.end_date - settings.CURRENT_TIME()
             return int(time_until_event.total_seconds()) # would return float if not casted, float isn't necessary here
