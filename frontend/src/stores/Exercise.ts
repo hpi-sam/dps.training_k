@@ -3,6 +3,8 @@ import {defineStore} from 'pinia'
 export const useExerciseStore = defineStore('exercise', {
 	state: (): Exercise => ({
 		exerciseId: "",
+		status: "",
+		speed: 1,
 		areas: [],
 	}),
 	getters: {
@@ -53,6 +55,6 @@ export const useExerciseStore = defineStore('exercise', {
 		createFromJSON(json: Exercise) {
 			this.exerciseId = json.exerciseId
 			this.areas = json.areas
-		}
+		},
 	}
 })
