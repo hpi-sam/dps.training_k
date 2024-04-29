@@ -119,7 +119,7 @@
 		button-color="var(--red)"
 		button-text-color="white"
 		@button-click="leaveExercise"
-		@close-popup="showEndPopup = false"
+		@close-popup="showLeavePopup = false"
 	/>
 	<div class="panel">
 		<button
