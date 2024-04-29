@@ -6,7 +6,7 @@
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
-import CloseButton from "./CloseButton.vue"
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 

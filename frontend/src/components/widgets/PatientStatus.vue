@@ -96,7 +96,7 @@
 		width: 90%;
 		max-width: calc(100% - 60px);
 		table-layout: fixed;
-		margin: 90px auto 30px auto;
+		margin: 30px auto;
 	}
 
 	td {

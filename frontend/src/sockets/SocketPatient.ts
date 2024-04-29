@@ -6,7 +6,8 @@ import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
-import {useActionOverviewStore} from "@/stores/ActionOverview"
+import { useActionOverviewStore } from "@/stores/ActionOverview"
+import { useVisibleInjuriesStore } from "@/stores/VisibleInjuries"
 
 class SocketPatient {
 	private readonly url: string
@@ -22,6 +23,7 @@ class SocketPatient {
 		const availablesStore = useAvailablesStore()
 		const ressourceAssignmentsStore = useRessourceAssignmentsStore()
 		const actionOverview = useActionOverviewStore()
+		const visibleInjuriesStore = useVisibleInjuriesStore()
 
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
@@ -101,9 +103,11 @@ class SocketPatient {
 					ressourceAssignmentsStore.setRessourceAssignments(data.ressourceAssignments as RessourceAssignments)
 					break
 				case 'action-list':
-					console.log('Socket: Action list:', data)
 					actionOverview.loadActions(data.actions as Action[])
 					actionOverview.startUpdating()
+					break
+				case 'visible-injuries':
+					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -174,6 +178,13 @@ class SocketPatient {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'action-delete',
 			'actionId': actionId,
+		}))
+	}
+
+	movePatient(areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'patient-move',
+			'areaName': areaName,
 		}))
 	}
 }
@@ -390,6 +401,16 @@ export const serverMockEvents = [
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
 			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			']}'
+	},
+	{
+		id: 'visible-injuries',
+		data: '{"messageType":"visible-injuries","injuries":[' +
+			'{ "injuryId": 1, "injuryType": "fracture", "position": "left hand" },' +
+			'{ "injuryId": 2, "injuryType": "blood", "position": "right lower leg" },' +
+			'{ "injuryId": 3, "injuryType": "blood", "position": "head" },' +
+			'{ "injuryId": 4, "injuryType": "fracture", "position": "right collarbone" },' +
+			'{ "injuryId": 5, "injuryType": "blood", "position": "left rip" }' +
 			']}'
 	}
 ]
