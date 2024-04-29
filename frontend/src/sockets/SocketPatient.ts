@@ -620,14 +620,14 @@ export const serverMockEvents = [
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
-			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":' +
+			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"IP","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"PL","timeUntilCompletion":320,"actionResult":' +
 			'null},' +
-			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":' +
+			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
-			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
+			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"OH","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
 	},
 	{

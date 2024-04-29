@@ -11,7 +11,7 @@ export const useActionOverviewStore = defineStore('actionOverview', {
 		},
 		decreaseTimeForRunningActions() {
 			this.actions = this.actions.map(action => {
-				if (action.actionStatus === 'running' && action.timeUntilCompletion > 0) {
+				if (action.actionStatus === 'IP' && action.timeUntilCompletion > 0) {
 					return {...action, timeUntilCompletion: action.timeUntilCompletion - 1}
 				}
 				return action
