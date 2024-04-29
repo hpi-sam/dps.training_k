@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from template.models import Action
-from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
+from template.constants import ActionIDs, MaterialIDs, RoleIDs, ActionResultIDs, role_map
 
 
 class Command(BaseCommand):
@@ -28,6 +28,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
+                "results": None,
             },
         )
         Action.objects.update_or_create(
@@ -45,6 +46,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
+                "results": None,
             },
         )
         # Examinations
@@ -67,6 +69,12 @@ class Command(BaseCommand):
                             {role_map[RoleIDs.ARZT]: 1},
                         ]
                     ],
+                },
+                "results": {
+                    "Hb": [
+                        {ActionResultIDs.HB420: "Ergebnis1"},
+                        {ActionResultIDs.HB430: "Ergebnis2"},
+                    ]
                 },
             },
         )

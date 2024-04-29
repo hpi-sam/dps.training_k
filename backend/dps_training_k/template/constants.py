@@ -27,3 +27,9 @@ role_map = {
     RoleIDs.ARZT: "Arzt",
     RoleIDs.LABORASSISTENT: "Laborassistent",
 }
+
+class ActionResultIDs:
+    HB420 = "9f878489-07fc-41a4-8979-f3e9c8e7e9b7"
+    HB430 = "4a76bb8d-ccd2-4f27-9e08-3131ed3c0178"
+    BZ920 = "3ddade44-701a-43b9-9670-a8e346a45048"
+    BZ930 = "c30d670e-c072-4263-9f6a-895d00ef7368"
