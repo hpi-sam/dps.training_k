@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import { useActionOverviewStore } from '@/stores/ActionOverview'
-	import { ref, computed } from 'vue'
-	import { svg } from '@/assets/Svg'
+	import {useActionOverviewStore} from '@/stores/ActionOverview'
+	import {computed, ref} from 'vue'
+	import {svg} from '@/assets/Svg'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketPatient from '@/sockets/SocketPatient'
 	import ResultPopup from '@/components/widgets/ResultPopup.vue'
@@ -12,19 +12,19 @@
 
 	const actions = computed(() => actionOverviewStore.actions)
 
-	const actionsFinished = computed(() => actions.value.filter(action => action.actionStatus === 'finished'))
+	const actionsFinished = computed(() => actions.value.filter(action => action.actionStatus === 'FI'))
 
-	const actionsNotFinished = computed(() => actions.value.filter(action => action.actionStatus !== 'finished'))
+	const actionsNotFinished = computed(() => actions.value.filter(action => action.actionStatus !== 'FI'))
 
 	const getIconPath = (status: string) => {
 		switch (status) {
-			case 'running':
+			case 'IP':
 				return svg.playIcon
-			case 'finished':
+			case 'FI':
 				return svg.checkIcon
-			case 'waiting':
+			case 'PL':
 				return svg.waitingIcon
-			case 'blocked':
+			case 'OH':
 				return svg.blockIcon
 		}
 	}

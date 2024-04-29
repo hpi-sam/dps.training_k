@@ -1,13 +1,13 @@
 import traceback
-import json
 from abc import ABC, abstractmethod
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
-from game.models import PatientInstance, Exercise
-from template.models import Action
+from game.models import Exercise
+from game.serializers.exercise_serializer import ExerciseSerializer
+from template.models import Action, PatientInformation
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -24,6 +24,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         SUCCESS = "success"
         EXERCISE = "exercise"
         AVAILABLE_ACTIONS = "available-actions"
+        AVAILABLE_PATIENTS = "available-patients"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -31,7 +32,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.exercise_code = ""
+        self.exercise_frontend_id = ""
         self.exercise = None
         self.REQUESTS_MAP = {}
         self.user = None
@@ -152,42 +153,43 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         self._send_exercise(exercise=exercise)
 
     def _send_exercise(self, exercise):
-        patient, _ = PatientInstance.objects.get_or_create(
-            name="Max Mustermann", exercise=self.exercise, patient_id=2
+        self.send_event(
+            self.OutgoingMessageTypes.EXERCISE,
+            exercise=ExerciseSerializer(exercise).data,
         )
-        exercise_object = {
-            "exercise": {
-                "exerciseId": exercise.exerciseId,
-                "areas": [
-                    {
-                        "areaName": "X",
-                        "patients": [
-                            {
-                                "patientId": patient.patient_id,
-                                "patientName": patient.name,
-                                "patientCode": 0,
-                                "triage": patient.triage,
-                            }
-                        ],
-                        "personnel": [{"personnelId": 0, "personnelName": "X"}],
-                        "material": [{"materialId": 0, "materialName": "X"}],
-                    }
-                ],
-            }
-        }
-        self.send_event(self.OutgoingMessageTypes.EXERCISE, exercise=exercise_object)
 
     def send_available_actions(self):
         actions = Action.objects.all()
         actions = [
-            json.dumps(
-                {
-                    "actionId": action.id,
-                    "actionName": action.name,
-                    "actionCategory": action.category,
-                }
-            )
+            {
+                "actionName": action.name,
+                "actionCategory": action.category,
+            }
             for action in actions
         ]
-        actions = json.dumps({"actions": actions})
-        self.send_event(self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions)
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
+        )
+
+    def send_available_patients(self):
+        patientsInformation = PatientInformation.objects.all()
+        availablePatients = [
+            {
+                "code": patient.code,
+                "personalDetails": patient.personal_details,
+                "injury": patient.injury,
+                "biometrics": patient.biometrics,
+                "triage": patient.triage,
+                "consecutiveUniqueNumber": patient.consecutive_unique_number,
+                "mobility": patient.mobility,
+                "preexistingIllnesses": patient.preexisting_illnesses,
+                "permanentMedication": patient.permanent_medication,
+                "currentCaseHistory": patient.current_case_history,
+                "pretreatment": patient.pretreatment,
+            }
+            for patient in patientsInformation
+        ]
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_PATIENTS,
+            availablePatients=availablePatients,
+        )

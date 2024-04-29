@@ -32,7 +32,7 @@ class Action(UUIDable, models.Model):
             return self.lab_result(area_materials)
 
     def treatment_result(self, patient_state):
-        return "This is a treatment result"
+        return f"Behandlung {self.name} wurde durchgeführt"
 
     def examination_result(self, patient_state_data):
         result_string = f"{self.name} Ergebnis:"

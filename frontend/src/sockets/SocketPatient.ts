@@ -6,8 +6,8 @@ import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
 import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
-import { useActionOverviewStore } from "@/stores/ActionOverview"
-import { useVisibleInjuriesStore } from "@/stores/VisibleInjuries"
+import {useActionOverviewStore} from "@/stores/ActionOverview"
+import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
 import { commonMockEvents } from "./commonMockEvents"
 
 class SocketPatient {
@@ -63,13 +63,11 @@ class SocketPatient {
 					patientStore.loadStatusFromJSON(data.state as State)
 					break
 				case 'available-patients':
-					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
+					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'available-actions':
-					console.log('Socket: Available actions:', data.availableActions)
-					if (data.availableActions === undefined) showErrorToast('Fehler: Keine verfügbaren Aktionen erhalten')
-					else availablesStore.loadAvailableActions(data.availableActions as AvailableActions)
+					availablesStore.loadAvailableActions(data.availableActions as AvailableAction[])
 					break
 				case 'exercise':
 					exerciseStore.createFromJSON(data.exercise as Exercise)
@@ -208,33 +206,28 @@ export const serverMockEvents = [
 	},
 	{
 		id: 'available-actions',
-		data: '{"messageType":"available-actions","availableActions":{"availableActions":[' +
-			'{"actionName":"Blutdruck messen","actionType":"treatment"},{"actionName":"Blutprobe untersuchen","actionType":"lab"},' +
-			'{"actionName":"Beatmungsmaske anlegen","actionType":"treatment"},' +
-			'{"actionName":"Infusion anlegen","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen1","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen2","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen3","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen4","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen5","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen6","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen7","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen8","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen9","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen10","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen11","actionType":"treatment"},' +
-			'{"actionName":"Medikament verabreichen","actionType":"treatment"},' +
-			'{"actionName":"Ruheposition einnehmen","actionType":"treatment"},{"actionName":"Röntgen","actionType":"lab"},' +
-			'{"actionName":"Wundversorgung","actionType":"treatment"},{"actionName":"Stabile Seitenlage","actionType":"treatment"},' +
-			'{"actionName":"Schienung anlegen","actionType":"treatment"},{"actionName":"Vitalwerte messen","actionType":"treatment"}' +
-			']}}'
+		data: '{"messageType":"available-actions","availableActions":[' +
+			'{"actionName":"Blutdruck messen","actionCategory":"TR"},{"actionName":"Blutprobe untersuchen","actionCategory":"LA"},' +
+			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen1","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen2","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen3","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen4","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen5","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen6","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen7","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen8","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen9","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen10","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen11","actionCategory":"TR"},' +
+			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
+			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
+			'{"actionName":"Wundversorgung","actionCategory":"TR"},{"actionName":"Stabile Seitenlage","actionCategory":"TR"},' +
+			'{"actionName":"Schienung anlegen","actionCategory":"TR"},{"actionName":"Vitalwerte messen","actionCategory":"EX"}' +
+			']}'
 	},
 	{id: 'delete', data: '{"messageType":"delete"}'},
-	{
-		id: 'information',
-		data: '{"messageType":"information","patientInjury":"Fractured limb","patientHistory":"No known allergies",' +
-			'"patientPersonalDetails":"John Doe, Male, 30 years old","patientBiometrics":"Height: 180cm, Weight: 75kg"}'
-	},
 	{
 		id: 'action-confirmation',
 		data: '{"messageType":"action-confirmation","actionName":"Stabile Seitenlage","actionId":"123"}'
@@ -286,14 +279,14 @@ export const serverMockEvents = [
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
-			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":' +
+			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"IP","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"PL","timeUntilCompletion":320,"actionResult":' +
 			'null},' +
-			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":' +
+			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
-			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
+			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"OH","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
 	},
 	{

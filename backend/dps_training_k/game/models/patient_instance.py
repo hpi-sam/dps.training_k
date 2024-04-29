@@ -1,28 +1,21 @@
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
-from helpers.eventable import Eventable
 from helpers.actions_queueable import ActionsQueueable
+from helpers.eventable import Eventable
+from helpers.triage import Triage
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
-    class Triage(models.TextChoices):
-        UNDEFINED = "-", "undefined"
-        RED = "R", "red"
-        YELLOW = "Y", "yellow"
-        GREEN = "G", "green"
-        Airway = "A", "airway"
-        BREATHING = "B", "breathing"
-        CIRCULATION = "C", "circulation"
-        DISABILITY = "D", "disability"
-        EXPOSURE = "E", "exposure"
 
-    name = models.CharField(
-        max_length=100, default="Max Mustermann"
-    )  # technically patientData but kept here for simplicity for now
-    # patientCode = models.ForeignKey()  # currently called "SensenID"
+    name = models.CharField(max_length=100, default="Max Mustermann")
+    static_information = models.ForeignKey(
+        "template.PatientInformation",
+        on_delete=models.CASCADE,
+        null=True,  # for migration purposes
+    )  # via Sensen ID
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     area = models.ForeignKey(
         "Area",
@@ -36,9 +29,9 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         null=True,  # for debugging purposes
         default=None,  # for debugging purposes
     )
-    patient_id = models.IntegerField(
+    patient_frontend_id = models.IntegerField(
         unique=True,
-        help_text="patient_id used to log into patient - therefore part of authentication",
+        help_text="patient_frontend_id used to log into patient - therefore part of authentication",
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -49,8 +42,11 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         changes = kwargs.get("update_fields", None)
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
+    def delete(self, using=None, keep_parents=False):
+        PatientInstanceDispatcher.delete_and_notify(self)
+
     def __str__(self):
-        return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
+        return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"
 
     # ToDo: remove after actual method is implemented
     def schedule_temporary_event(self):

@@ -1,12 +1,12 @@
 import {defineStore} from "pinia"
 import {useExerciseStore} from "@/stores/Exercise"
-import { useAvailablesStore } from "./Availables"
+import {useAvailablesStore} from "./Availables"
 
 export const usePatientStore = defineStore('patient', {
 	state: () => ({
 		token: '',
 		patientId: Number.NEGATIVE_INFINITY,
-		patientCode: Number.NEGATIVE_INFINITY,
+		code: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',
 		areaName: '',
@@ -18,10 +18,15 @@ export const usePatientStore = defineStore('patient', {
 		psyche: '',
 		pupils: '',
 		skin: '',
-		injury: '',
-		history: '',
 		personalDetails: '',
-		biometrics: ''
+		injury: '',
+		biometrics: '',
+		consecutiveUniqueNumber: -1,
+		mobility: '',
+		preexistingIllnesses: '',
+		permanentMedication: '',
+		currentCaseHistory: '',
+		pretreatment: '',
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
@@ -37,16 +42,23 @@ export const usePatientStore = defineStore('patient', {
 		initializePatientFromExercise() {
 			const exerciseStore = useExerciseStore()
 			this.patientName = exerciseStore.getPatient(this.patientId)?.patientName || ''
-			this.patientCode = exerciseStore.getPatient(this.patientId)?.patientCode || Number.NEGATIVE_INFINITY
+			this.code = exerciseStore.getPatient(this.patientId)?.code || Number.NEGATIVE_INFINITY
 			this.areaName = exerciseStore.getAreaOfPatient(this.patientId)?.areaName || ''
 			this.triage = exerciseStore.getPatient(this.patientId)?.triage || '-'
+
+			if (useAvailablesStore().getPatient(this.code)) this.initializePatientFromAvailablePatients()
 		},
 		initializePatientFromAvailablePatients() {
 			const availablesStore = useAvailablesStore()
-			this.injury = availablesStore.getPatient(this.patientCode)?.patientInjury || ''
-			this.history = availablesStore.getPatient(this.patientCode)?.patientHistory || ''
-			this.personalDetails = availablesStore.getPatient(this.patientCode)?.patientPersonalDetails || ''
-			this.biometrics = availablesStore.getPatient(this.patientCode)?.patientBiometrics || ''
+			this.personalDetails = availablesStore.getPatient(this.code)?.personalDetails || ''
+			this.injury = availablesStore.getPatient(this.code)?.injury || ''
+			this.biometrics = availablesStore.getPatient(this.code)?.biometrics || ''
+			this.consecutiveUniqueNumber = availablesStore.getPatient(this.code)?.consecutiveUniqueNumber || -1
+			this.mobility = availablesStore.getPatient(this.code)?.mobility || ''
+			this.preexistingIllnesses = availablesStore.getPatient(this.code)?.preexistingIllnesses || ''
+			this.permanentMedication = availablesStore.getPatient(this.code)?.permanentMedication || ''
+			this.currentCaseHistory = availablesStore.getPatient(this.code)?.currentCaseHistory || ''
+			this.pretreatment = availablesStore.getPatient(this.code)?.pretreatment || ''
 		}
 	}
 })

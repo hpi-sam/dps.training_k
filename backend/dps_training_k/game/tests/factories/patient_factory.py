@@ -9,11 +9,11 @@ from .exercise_factory import ExerciseFactory
 class PatientFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PatientInstance
-        django_get_or_create = ("name", "exercise", "patient_id")
+        django_get_or_create = ("name", "exercise", "patient_frontend_id")
 
     name = "Max Mustermann"
     exercise = factory.SubFactory(ExerciseFactory)
-    patient_id = 123456
+    patient_frontend_id = 123456
     triage = "R"
     area = factory.SubFactory(AreaFactory)
     patient_state = factory.SubFactory(EmptyPatientStateFactory)

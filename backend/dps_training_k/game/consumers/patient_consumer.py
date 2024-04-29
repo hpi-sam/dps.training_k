@@ -3,8 +3,8 @@ from urllib.parse import parse_qs
 from game.models import (
     PatientInstance,
     Exercise,
-    ActionInstanceStateNames,
     ActionInstance,
+    ScheduledEvent,
 )
 from template.models import Action
 from template.serializer.state_serialize import StateSerializer
@@ -30,17 +30,17 @@ class PatientConsumer(AbstractConsumer):
         STATE_CHANGE = "state-change"
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
-        ACTION_RESULT = "action-result"
+        ACTION_LIST = "action-list"
         ACTION_CHECK = "action-check"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.patient_id = ""
+        self.patient_patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
-                "exercise_code",
-                "patient_code",
+                "exerciseId",
+                "patientId",
             ),
             self.PatientIncomingMessageTypes.TEST_PASSTHROUGH: (
                 self.handle_test_passthrough,
@@ -51,16 +51,16 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
-                "action_id",
+                "actionName",
             ),
         }
 
     @property
     def patient_instance(self):
-        if not self.patient_id:
+        if not self.patient_frontend_id:
             return None
         return PatientInstance.objects.get(
-            patient_id=self.patient_id
+            patient_frontend_id=self.patient_frontend_id
         )  # This enforces patient_instance to always work with valid data
 
     def connect(self):
@@ -73,16 +73,16 @@ class PatientConsumer(AbstractConsumer):
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
-            patient_id=2,  # has to be the same as the username in views.py#post
+            patient_frontend_id=2,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
             patient_state=self.temp_state,
         )
 
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
-        success, patient_id = self.authenticate(token)
+        success, patient_frontend_id = self.authenticate(token)
         if success:
-            self.patient_id = patient_id
+            self.patient_frontend_id = patient_frontend_id
 
             self.exercise = self.patient_instance.exercise
             self.accept()
@@ -90,6 +90,7 @@ class PatientConsumer(AbstractConsumer):
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
+            self.send_available_patients()
 
     def disconnect(self, code):
         # example patient_instance deletion - see #connect
@@ -102,12 +103,12 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_code, patient_code):
-        self.exercise_code = exercise_code
-        self.patient_id = patient_code
+    def handle_example(self, exercise_frontend_id, patient_frontend_id):
+        self.exercise_frontend_id = exercise_frontend_id
+        self.patient_frontend_id = patient_frontend_id
         self.send_event(
             self.PatientOutgoingMessageTypes.RESPONSE,
-            content=f"exercise_code {self.exercise_code} & patient_code {self.patient_id}",
+            content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
         )
 
     def handle_test_passthrough(self):
@@ -121,9 +122,11 @@ class PatientConsumer(AbstractConsumer):
         patient_instance.triage = triage
         patient_instance.save(update_fields=["triage"])
 
-    def handle_action_add(self, action_id):
-        action = Action.objects.get(pk=action_id)
-        action_instance = ActionInstance.create(self.patient_instance, action)
+    def handle_action_add(self, action_name):
+        action = Action.objects.get(name=action_name)
+        action_instance = ActionInstance.create(
+            action_template=action, patient_instance=self.patient_instance
+        )
         action_instance.try_application()
 
     def handle_action_check(self, action_id):
@@ -170,10 +173,26 @@ class PatientConsumer(AbstractConsumer):
             actionDeclinationReason=action_instance.current_state.info_text,
         )
 
-    def action_result_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+    def action_list_event(self, event):
+        actions = []
+        for action_instance in ActionInstance.objects.filter(
+            patient_instance=self.patient_instance
+        ):
+            action_data = {
+                "actionId": action_instance.id,
+                "orderId": action_instance.order_id,
+                "actionName": action_instance.name,
+                "actionStatus": action_instance.state_name,
+                "timeUntilCompletion": (
+                    ScheduledEvent.get_time_until_completion(action_instance)
+                    if not action_instance.completed
+                    else None
+                ),
+                "actionResult": action_instance.result,
+            }
+
+            actions.append(action_data)
         self.send_event(
-            self.PatientOutgoingMessageTypes.ACTION_RESULT,
-            actionId=action_instance.id,
-            actionResult=action_instance.result,
+            self.PatientOutgoingMessageTypes.ACTION_LIST,
+            actions=actions,
         )

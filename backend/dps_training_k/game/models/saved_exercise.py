@@ -1,8 +1,8 @@
 from django.db import models
 
+from helpers.name_generator import NameGenerator
 from .exercise import Exercise
-from helpers.name_generator import NameGenerator, DateTimeNameGenerator
-from helpers.exercise_serializer import ExerciseSerializer
+from ..serializers.exercise_serializer import ExerciseSerializer
 
 
 class SavedExercise(models.Model):
@@ -23,7 +23,7 @@ class SavedExerciseFactory:
         self.name_generator = name_generator
 
     def snapshot_exercise(self):
-        serialized_exercise = self.exercise_serializer.serialize(self.exercise)
+        serialized_exercise = ExerciseSerializer(self.exercise).data
         name = self.name_generator.generate_name()
         return SavedExercise.objects.create(
             saved_exercise=serialized_exercise, name=name

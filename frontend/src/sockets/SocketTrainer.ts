@@ -3,8 +3,8 @@ import {useTrainerStore} from "@/stores/Trainer"
 import {useExerciseStore} from "@/stores/Exercise"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
-import { useAvailablesStore } from "@/stores/Availables"
-import { useLogStore } from "@/stores/Log"
+import {useAvailablesStore} from "@/stores/Availables"
+import {useLogStore} from "@/stores/Log"
 import { commonMockEvents } from "./commonMockEvents"
 
 class SocketTrainer {
@@ -52,13 +52,13 @@ class SocketTrainer {
 					showWarningToast(data.message || '')
 					break
 				case 'available-actions':
-					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableActions)
+					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableAction[])
 					break
 				case 'available-material':
 					useAvailablesStore().loadAvailableMaterial(data.availableMaterialList as unknown as AvailableMaterialList)
 					break
 				case 'available-patients':
-					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatients)
+					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					break
 				case 'exercise':
 					if (exerciseStore.status == '') {
@@ -149,21 +149,21 @@ class SocketTrainer {
 		}))
 	}
 
-	patientAdd(areaName: string, patientName: string, patientCode: number) {
+	patientAdd(areaName: string, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-add',
 			'areaName': areaName,
 			'patientName': patientName,
-			'patientCode': patientCode
+			'code': code
 		}))
 	}
 
-	patientUpdate(patientId: number, patientName: string, patientCode: number) {
+	patientUpdate(patientId: number, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-update',
 			'patientId': patientId,
 			'patientName': patientName,
-			'patientCode': patientCode
+			'code': code
 		}))
 	}
 
@@ -217,26 +217,26 @@ export default socketTrainer
 export const serverMockEvents = [
 	{
 		id: "available-material",
-		data: '{"messageType":"available-material","availableMaterialList":{"availableMaterialList":['+
-			'{"materialName":"Beatmungsgerät","materialType":"device"},'+
-			'{"materialName":"Blutdruckmessgerät","materialType":"device"},'+
-			'{"materialName":"Defibrillator","materialType":"device"},'+
-			'{"materialName":"Endoskop","materialType":"device"},'+
-			'{"materialName":"Herz-Lungen-Maschine","materialType":"device"},'+
-			'{"materialName":"Blut 0 negativ","materialType":"blood"},'+
-			'{"materialName":"Blut 0 positiv","materialType":"blood"},'+
-			'{"materialName":"Blut A negativ","materialType":"blood"},'+
-			'{"materialName":"Blut A positiv","materialType":"blood"},'+
-			'{"materialName":"Blut B negativ","materialType":"blood"},'+
-			'{"materialName":"Blut B positiv","materialType":"blood"},'+
-			'{"materialName":"Blut AB negativ","materialType":"blood"},'+
-			'{"materialName":"Blut AB positiv","materialType":"blood"}'+
+		data: '{"messageType":"available-material","availableMaterialList":{"availableMaterialList":[' +
+			'{"materialName":"Beatmungsgerät","materialType":"device"},' +
+			'{"materialName":"Blutdruckmessgerät","materialType":"device"},' +
+			'{"materialName":"Defibrillator","materialType":"device"},' +
+			'{"materialName":"Endoskop","materialType":"device"},' +
+			'{"materialName":"Herz-Lungen-Maschine","materialType":"device"},' +
+			'{"materialName":"Blut 0 negativ","materialType":"blood"},' +
+			'{"materialName":"Blut 0 positiv","materialType":"blood"},' +
+			'{"materialName":"Blut A negativ","materialType":"blood"},' +
+			'{"materialName":"Blut A positiv","materialType":"blood"},' +
+			'{"materialName":"Blut B negativ","materialType":"blood"},' +
+			'{"materialName":"Blut B positiv","materialType":"blood"},' +
+			'{"materialName":"Blut AB negativ","materialType":"blood"},' +
+			'{"materialName":"Blut AB positiv","materialType":"blood"}' +
 			']}}'
 	},
 	{
 		id: 'log-update-1',
 		data: '{"messageType":"log-update","logEntries":[' +
-			'{"logId":"0","logMessage":"Patient wurde ins Krankenhaus eingeliefert. ' + 
+			'{"logId":"0","logMessage":"Patient wurde ins Krankenhaus eingeliefert. ' +
 			'Der Patient befindet sich in einem kritischen Zustand und benötigt sofortige Aufmerksamkeit.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
 			',"areaName":"ZNA","patientId":"123","personnelId":"456","materialId":"123"},' +

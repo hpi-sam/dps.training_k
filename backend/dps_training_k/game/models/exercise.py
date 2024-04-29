@@ -1,5 +1,6 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+
 from helpers.eventable import NonEventable
 
 
@@ -20,10 +21,9 @@ class Exercise(NonEventable, models.Model):
         to="Trainer",
         on_delete=models.CASCADE,
     ) """
-    exerciseId = models.CharField(
+    exercise_frontend_id = models.CharField(
         unique=True,
         editable=settings.DEBUG,
-        max_length=settings.INVITATION_LOGIC.code_length,
     )
     state = models.CharField(
         choices=ExerciseStateTypes.choices,
@@ -35,7 +35,7 @@ class Exercise(NonEventable, models.Model):
         new_Exercise = cls.objects.create(
             # config=settings.DEFAULT_EXCERCISE_CONFIG,
             # trainer=trainer
-            exerciseId=settings.INVITATION_LOGIC.get_exerciseId(),
+            exercise_frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )
         return new_Exercise

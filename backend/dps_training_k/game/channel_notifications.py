@@ -1,7 +1,9 @@
+import logging
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
 import game.models as models  # needed to avoid circular imports
-import logging
 
 """
 This package is responsible to decide when to notify which consumers.
@@ -16,7 +18,7 @@ class ChannelEventTypes:
     EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_DECLINATION_EVENT = "action.declination.event"
-    ACTION_RESULT_EVENT = "action.result.event"
+    ACTION_LIST_EVENT = "action.list.event"
 
 
 class ChannelNotifier:
@@ -31,6 +33,12 @@ class ChannelNotifier:
 
         super(obj.__class__, obj).save(*args, **kwargs)
         cls.dispatch_event(obj, changes)
+
+    @classmethod
+    def delete_and_notify(cls, obj, changes):
+        raise NotImplementedError(
+            "Method delete_and_notify must be implemented by subclass"
+        )
 
     @classmethod
     def _notify_group(cls, group_channel_name, event):
@@ -51,31 +59,6 @@ class ChannelNotifier:
             "Method dispatch_event must be implemented by subclass"
         )
 
-
-class PatientInstanceDispatcher(ChannelNotifier):
-
-    @classmethod
-    def dispatch_event(cls, patient_instance, changes):
-        if not changes:
-            return
-        if "patient_state" in changes:
-            cls._notify_patient_state_change(patient_instance)
-
-    @classmethod
-    def _notify_patient_state_change(cls, patient_instance):
-        channel = cls.get_group_name(patient_instance)
-        event = {
-            "type": ChannelEventTypes.STATE_CHANGE_EVENT,
-            "patient_instance_pk": patient_instance.id,
-        }
-        cls._notify_group(channel, event)
-
-
-class AreaDispatcher(ChannelNotifier):
-    @classmethod
-    def dispatch_event(cls, area, changes):
-        cls._notify_exercise_update(area.exercise)
-
     @classmethod
     def _notify_exercise_update(cls, exercise):
         channel = cls.get_group_name(exercise)
@@ -86,25 +69,85 @@ class AreaDispatcher(ChannelNotifier):
         cls._notify_group(channel, event)
 
 
+class PatientInstanceDispatcher(ChannelNotifier):
+
+    @classmethod
+    def dispatch_event(cls, patient_instance, changes):
+        if changes is not None and "patient_state" in changes:
+            cls._notify_patient_state_change(patient_instance)
+
+        if not (changes is not None and len(changes) == 1 and "patient_state"):
+            cls._notify_exercise_update(patient_instance.exercise)
+
+    @classmethod
+    def _notify_patient_state_change(cls, patient_instance):
+        channel = cls.get_group_name(patient_instance)
+        event = {
+            "type": ChannelEventTypes.STATE_CHANGE_EVENT,
+            "patient_instance_pk": patient_instance.id,
+        }
+        cls._notify_group(channel, event)
+
+    @classmethod
+    def delete_and_notify(cls, patient, *args, **kwargs):
+        exercise = patient.exercise
+        super(patient.__class__, patient).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
+class AreaDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, area, changes):
+        cls._notify_exercise_update(area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, area, *args, **kwargs):
+        exercise = area.exercise
+        super(area.__class__, area).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
+class PersonnelDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, personnel, changes):
+        cls._notify_exercise_update(personnel.area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, personnel, *args, **kwargs):
+        exercise = personnel.area.exercise
+        super(personnel.__class__, personnel).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes):
         applied_action = obj
-        if changes and not "current_state" in changes:
+        if changes and not ("current_state" in changes or "order_id" in changes):
             raise ValueError(
-                "There has to be a state change whenever updating an ActionInstance."
+                "There has to be a state change or order id change whenever updating an ActionInstance."
             )
-        event_type = {
-            models.ActionInstanceStateNames.DECLINED: ChannelEventTypes.ACTION_DECLINATION_EVENT,
-            models.ActionInstanceStateNames.PLANNED: ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
-            models.ActionInstanceStateNames.FINISHED: ChannelEventTypes.ACTION_RESULT_EVENT,
-        }.get(applied_action.state_name)
-        if event_type is None:
-            logging.warning(
-                f"No front end update for state {applied_action.state_name} send"
+        # state change events
+        if changes:
+            if "current_state" in changes:
+                if (
+                    applied_action.state_name
+                    == models.ActionInstanceStateNames.DECLINED
+                ):
+                    cls._notify_action_event(
+                        applied_action, ChannelEventTypes.ACTION_DECLINATION_EVENT
+                    )
+                elif (
+                    applied_action.state_name == models.ActionInstanceStateNames.PLANNED
+                ):
+                    cls._notify_action_event(
+                        applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
+                    )
+
+            # always send action list event
+            cls._notify_action_event(
+                applied_action, ChannelEventTypes.ACTION_LIST_EVENT
             )
-            return
-        cls._notify_action_event(applied_action, event_type)
 
     @classmethod
     def _notify_action_event(cls, applied_action, event_type):
