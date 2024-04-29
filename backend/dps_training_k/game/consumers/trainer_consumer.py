@@ -151,7 +151,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_delete_area(self, areaName):
         try:
-            area = Area.objects.get(name=areaName)
+            area = Area.objects.get(exercise=self.exercise, name=areaName)
             area.delete()
         except Area.DoesNotExist:
             self.send_failure(
