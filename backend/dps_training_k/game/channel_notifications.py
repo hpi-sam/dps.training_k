@@ -76,7 +76,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
         if changes is not None and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (changes is not None and len(changes) is 1 and "patient_state"):
+        if not (changes is not None and len(changes) == 1 and "patient_state"):
             cls._notify_exercise_update(patient_instance.exercise)
 
     @classmethod
@@ -130,13 +130,24 @@ class ActionInstanceDispatcher(ChannelNotifier):
         # state change events
         if changes:
             if "current_state" in changes:
-                if applied_action.state_name == models.ActionInstanceStateNames.DECLINED:
-                    cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_DECLINATION_EVENT)
-                elif applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
-                    cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT)
-            
-            # always send action list event 
-            cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_LIST_EVENT)
+                if (
+                    applied_action.state_name
+                    == models.ActionInstanceStateNames.DECLINED
+                ):
+                    cls._notify_action_event(
+                        applied_action, ChannelEventTypes.ACTION_DECLINATION_EVENT
+                    )
+                elif (
+                    applied_action.state_name == models.ActionInstanceStateNames.PLANNED
+                ):
+                    cls._notify_action_event(
+                        applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
+                    )
+
+            # always send action list event
+            cls._notify_action_event(
+                applied_action, ChannelEventTypes.ACTION_LIST_EVENT
+            )
 
     @classmethod
     def _notify_action_event(cls, applied_action, event_type):
