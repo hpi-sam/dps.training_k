@@ -29,8 +29,10 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
 class AreaSerializer(serializers.ModelSerializer):
     areaName = serializers.CharField(source="name", read_only=True)
-    patients = PatientInstanceSerializer(many=True, read_only=True)
-    personnel = PersonnelSerializer(many=True, read_only=True)
+    patients = PatientInstanceSerializer(
+        source="patientinstance_set", many=True, read_only=True
+    )
+    personnel = PersonnelSerializer(source="personnel_set", many=True, read_only=True)
     material = serializers.SerializerMethodField()  # TODO: implement material
 
     class Meta:
@@ -43,7 +45,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
 class ExerciseSerializer(serializers.ModelSerializer):
     exerciseId = serializers.CharField(source="exercise_frontend_id", read_only=True)
-    areas = AreaSerializer(many=True, read_only=True)
+    areas = AreaSerializer(source="area_set", many=True, read_only=True)
 
     class Meta:
         model = e.Exercise

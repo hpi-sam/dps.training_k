@@ -22,7 +22,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         on_delete=models.CASCADE,
         null=True,  # for debugging purposes
         blank=True,  # for debugging purposes
-        related_name="patients",
     )
     patient_state = models.ForeignKey(
         PatientState,

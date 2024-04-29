@@ -6,9 +6,7 @@ from helpers.actions_queueable import ActionsQueueable
 
 class Area(ActionsQueueable, models.Model):
     name = models.CharField(unique=True, max_length=30)
-    exercise = models.ForeignKey(
-        "Exercise", on_delete=models.CASCADE, related_name="areas"
-    )
+    exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     isPaused = models.BooleanField()
     # labID = models.ForeignKey("Lab")
 
