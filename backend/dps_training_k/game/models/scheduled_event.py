@@ -47,14 +47,17 @@ class ScheduledEvent(models.Model):
 
     @classmethod
     def get_time_until_completion(cls, object):
+        from game.models import PatientInstance, ActionInstance, Area, Exercise
         try:
             # Get the related Owner instance
-            owner_instance = Owner.objects.get(
-                models.Q(patient_owner=object) |
-                models.Q(action_instance_owner=object) |
-                models.Q(exercise_owner=object) |
-                models.Q(area_owner=object)
-            )
+            if isinstance(object, PatientInstance):
+                owner_instance = Owner.objects.get(patient_owner=object)
+            elif isinstance(object, ActionInstance):
+                owner_instance = Owner.objects.get(action_instance_owner=object)
+            elif isinstance(object, Exercise):
+                owner_instance = Owner.objects.get(exercise_owner=object)
+            elif isinstance(object, Area):
+                owner_instance = Owner.objects.get(area_owner=object)
             # Retrieve ScheduledEvent associated with the Owner instance and calculate remaining time
             time_until_event = owner_instance.event.end_date - settings.CURRENT_TIME()
             return int(time_until_event.total_seconds()) # would return float if not casted, float isn't necessary here

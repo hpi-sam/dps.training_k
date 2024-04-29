@@ -174,7 +174,7 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_list_event(self, event):
-        actions = {}
+        actions = []
         for action_instance in ActionInstance.objects.filter(
             patient_instance=self.patient_instance
         ):
