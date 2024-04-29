@@ -52,10 +52,10 @@ class ActionInstanceState(models.Model):
         self.info_text = self.info_text + info_text
         self.save(update_fields=["info_text"])
 
-    def success_states():
+    def success_states(self):
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
 
-    def completion_states():
+    def completion_states(self):
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
 
 
