@@ -52,8 +52,11 @@ class ActionInstanceState(models.Model):
         self.info_text = self.info_text + info_text
         self.save(update_fields=["info_text"])
 
-    def success_states():
+    def success_states(self):
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
+
+    def completion_states(self):
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
 
 
 class ActionInstance(LocalTimeable, models.Model):
@@ -65,6 +68,16 @@ class ActionInstance(LocalTimeable, models.Model):
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
+    order_id = models.IntegerField(null=True)
+
+    class Meta:
+        ordering = ["order_id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order_id", "patient_instance"],
+                name="unique_order_id_for_patient",
+            )
+        ]
 
     @property
     def name(self):
@@ -86,6 +99,13 @@ class ActionInstance(LocalTimeable, models.Model):
             return self.states.get(name=ActionInstanceStateNames.FINISHED).info_text
         else:
             return None
+
+    @property
+    def completed(self):
+        if self.current_state in ActionInstanceState.completion_states():
+            return True
+        else:
+            return False
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
@@ -114,6 +134,7 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance=patient_instance,
             area=area,
             action_template=action_template,
+            order_id=ActionInstance.generate_order_id(patient_instance),
         )
         if is_applicable:
             action_instance.current_state = ActionInstanceState.objects.create(
@@ -132,6 +153,19 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         action_instance.save(update_fields=["current_state"])
         return action_instance
+
+    @classmethod
+    def generate_order_id(self, patient_instance):
+        # Use aggregate to find the maximum order_id for the specified patient_instance
+        result = ActionInstance.objects.filter(
+            patient_instance=patient_instance
+        ).aggregate(max_order_id=models.Max("order_id"))
+        max_order_id = result["max_order_id"]
+        if max_order_id is None:
+            new_order_id = 0
+        else:
+            new_order_id = max_order_id + 1
+        return new_order_id
 
     def try_application(self):
         if self.state_name == ActionInstanceStateNames.DECLINED:
@@ -177,6 +211,6 @@ class ActionInstance(LocalTimeable, models.Model):
                 action_instance=self,
             )
             self._update_state(ActionInstanceStateNames.ACTIVE)
-    
+
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)

@@ -1,8 +1,12 @@
 import factory
-from template.tests.factories.action_factory import ActionFactory, ActionFactoryWithEffectDuration
+from template.tests.factories.action_factory import (
+    ActionFactory,
+    ActionFactoryWithEffectDuration,
+)
 from .area_factory import AreaFactory
 from .patient_factory import PatientFactory
 from game.models import ActionInstance, ActionInstanceState, ActionInstanceStateNames
+from django.db.models import Max
 
 
 class ActionInstanceStateFactory(factory.django.DjangoModelFactory):
@@ -29,12 +33,24 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
             "area",
             "action_template",
             "current_state",
+            "order_id",
         )
 
     patient_instance = factory.SubFactory(PatientFactory)
     area = factory.SubFactory(AreaFactory)
     action_template = factory.SubFactory(ActionFactory)
     current_state = None
+    # gets maximum order id for the associated patient_instance, then adds 1 
+    # or sets to 1 if no order_id was found for this patient_instance
+    order_id = factory.LazyAttribute(
+        lambda o: (
+            ActionInstance.objects.filter(
+                patient_instance=o.patient_instance
+            ).aggregate(Max("order_id"))["order_id__max"]
+            or 0
+        )
+        + 1
+    )
 
     @factory.post_generation
     def set_current_state(self, create, extracted, **kwargs):

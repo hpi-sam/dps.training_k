@@ -1,7 +1,12 @@
+import asyncio
+
 from channels.testing import WebsocketCommunicator
 from django.test import TransactionTestCase
-
+from game.models import ActionInstance
+from channels.db import database_sync_to_async
 from configuration.asgi import application
+from django.core.management import call_command
+from .mixin import TestUtilsMixin
 
 
 class TrainerConsumerTestCase(TransactionTestCase):
@@ -65,4 +70,41 @@ class TrainerConsumerTestCase(TransactionTestCase):
         )
 
         # Close the connection
+        await communicator.disconnect()
+
+
+class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
+    maxDiff = None
+
+    def setUp(self):
+        call_command("minimal_actions")
+
+    @database_sync_to_async
+    def action_instance_exists(self, action_id):
+        return ActionInstance.objects.filter(action_template__id=action_id).exists()
+
+    async def test_patient_consumer_add_action(self):
+        communicator = await self.create_patient_communicator_and_authenticate()
+
+        # receive exercise object
+        exercise = await communicator.receive_json_from()
+        # receive available actions
+        available_actions = await communicator.receive_json_from()
+        # extract first available actions' id
+        action_id = available_actions["availableActions"]["actions"][0]["actionId"]
+
+        await communicator.send_json_to(
+            {
+                "messageType": "action-add",
+                "actionId": action_id,
+            }
+        )
+        # it needs some time for processing, will hang otherwise (assuming it deadlocks)
+        await asyncio.sleep(1)
+
+        exists = await self.action_instance_exists(action_id)
+        self.assertTrue(
+            exists, "ActionInstance was not created with the given action_template ID."
+        )
+
         await communicator.disconnect()

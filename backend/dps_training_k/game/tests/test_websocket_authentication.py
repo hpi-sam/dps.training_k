@@ -1,27 +1,11 @@
-from channels.testing import WebsocketCommunicator
 from django.test import TransactionTestCase
-from rest_framework.authtoken.models import Token
-
-from configuration.asgi import application
-from game.models import User
-from .factories import PatientFactory
+from .mixin import TestUtilsMixin
 
 
-class PatientWebSocketTest(TransactionTestCase):
-    def setUp(self):
-        super().setUp()
-        # Create a user and token for testing
-        self.user = User.objects.create_user(username="2", password="abcdef")
-        self.token, _ = Token.objects.get_or_create(user=self.user)
-        self.patient = PatientFactory()
+class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
 
     async def test_authenticated_websocket_connection(self):
-        # Connect to the WebSocket
-        communicator = WebsocketCommunicator(
-            application=application, path=f"/ws/patient/?token={self.token.key}"
-        )
-        connected, _ = await communicator.connect()
-        self.assertTrue(connected, "Failed to connect to WebSocket")
+        communicator = await self.create_patient_communicator_and_authenticate()
 
         await communicator.receive_json_from()  # catch exercise object
 

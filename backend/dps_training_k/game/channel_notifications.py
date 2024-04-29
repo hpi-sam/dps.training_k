@@ -18,7 +18,7 @@ class ChannelEventTypes:
     EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_DECLINATION_EVENT = "action.declination.event"
-    ACTION_RESULT_EVENT = "action.result.event"
+    ACTION_LIST_EVENT = "action.list.event"
 
 
 class ChannelNotifier:
@@ -130,7 +130,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
         event_type = {
             models.ActionInstanceStateNames.DECLINED: ChannelEventTypes.ACTION_DECLINATION_EVENT,
             models.ActionInstanceStateNames.PLANNED: ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
-            models.ActionInstanceStateNames.FINISHED: ChannelEventTypes.ACTION_RESULT_EVENT,
+            models.ActionInstanceStateNames.FINISHED: ChannelEventTypes.ACTION_LIST_EVENT,
         }.get(applied_action.state_name)
         if event_type is None:
             logging.warning(

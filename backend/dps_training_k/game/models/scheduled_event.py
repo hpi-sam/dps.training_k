@@ -45,6 +45,23 @@ class ScheduledEvent(models.Model):
         deltatime = timedelta(seconds=t_sim_delta * exercise.time_factor())
         return settings.CURRENT_TIME() + deltatime
 
+    @classmethod
+    def get_time_until_completion(cls, object):
+        try:
+            # Get the related Owner instance
+            owner_instance = Owner.objects.get(
+                models.Q(patient_owner=object) |
+                models.Q(action_instance_owner=object) |
+                models.Q(exercise_owner=object) |
+                models.Q(area_owner=object)
+            )
+            # Retrieve ScheduledEvent associated with the Owner instance and calculate remaining time
+            time_until_event = owner_instance.event.end_date - settings.CURRENT_TIME()
+            return int(time_until_event.total_seconds()) # would return float if not casted, float isn't necessary here
+        except Owner.DoesNotExist:
+            # Handle the case where no Owner is associated with the related object, aka there is no scheduled event
+            return None
+
     def action(self):
         owner_instance = self.owner.owner_instance()
         method = getattr(owner_instance, self.method_name)
@@ -123,4 +140,4 @@ class Owner(OneFieldNotNull, models.Model):
         elif self.action_instance_owner:
             return self.action_instance_owner
         else:
-            raise Exception("This owner instance was created  without and actual owner")
+            raise Exception("This owner instance was created without an actual owner")

@@ -29,7 +29,7 @@ class PatientConsumer(AbstractConsumer):
         STATE_CHANGE = "state-change"
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
-        ACTION_RESULT = "action-result"
+        ACTION_LIST = "action-list"
         ACTION_CHECK = "action-check"
 
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
-                "action_id",
+                "actionId",
             ),
         }
 
@@ -123,7 +123,9 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_action_add(self, action_id):
         action = Action.objects.get(pk=action_id)
-        action_instance = ActionInstance.create(self.patient_instance, action)
+        action_instance = ActionInstance.create(
+            action_template=action, patient_instance=self.patient_instance
+        )
         action_instance.try_application()
 
     def handle_action_check(self, action_id):
@@ -170,10 +172,26 @@ class PatientConsumer(AbstractConsumer):
             actionDeclinationReason=action_instance.current_state.info_text,
         )
 
-    def action_result_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+    def action_list_event(self, event):
+        actions = {}
+        for action_instance in ActionInstance.objects.filter(
+            patient_instance=self.patient_instance
+        ):
+            action_data = {
+                "actionId": action_instance.id,
+                "orderId": action_instance.order_id,
+                "actionName": action_instance.name,
+                "actionStatus": action_instance.state_name,
+                "timeUntilCompletion": (
+                    ScheduledEvent.get_time_until_completion(action_instance)
+                    if not action_instance.completed
+                    else None
+                ),
+                "actionResult": action_instance.result,
+            }
+
+            actions.append(action_data)
         self.send_event(
-            self.PatientOutgoingMessageTypes.ACTION_RESULT,
-            actionId=action_instance.id,
-            actionResult=action_instance.result,
+            self.PatientOutgoingMessageTypes.ACTION_LIST,
+            actions=actions,
         )
