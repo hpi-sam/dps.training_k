@@ -37,7 +37,7 @@ class ChannelNotifier:
     @classmethod
     def delete_and_notify(cls, obj, changes):
         raise NotImplementedError(
-            "Method dispatch_event must be implemented by subclass"
+            "Method delete_and_notify must be implemented by subclass"
         )
 
     @classmethod

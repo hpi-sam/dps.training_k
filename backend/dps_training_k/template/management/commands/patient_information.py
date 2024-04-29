@@ -19,7 +19,8 @@ def import_patients(file_path):
             triage = get_triage_from_string(row["PAK Info"].split(";")[0].strip())
             consecutiveUniqueNumber = int(
                 re.sub("[^0-9]", "", row["PAK Info"].split(";")[1]) or -1
-            )
+            )  # first half is interpreted as boolean and if it's false / undefined / not valid, -1 is saved as default value. Otherwise,
+            # the number is extracted from the string
 
             biometrics = (
                 row["Geschlecht"].strip()

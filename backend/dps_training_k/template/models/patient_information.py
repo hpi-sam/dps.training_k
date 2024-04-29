@@ -35,3 +35,4 @@ class PatientInformation(models.Model):
     start_status = models.IntegerField(default=-1)  # Start-Status
     start_location = models.CharField(max_length=100, default="-")  # Start-Ort
     op = models.CharField(max_length=300, default="-")  # OP / Interventions-Verlauf
+    """Step by step description of the operation/intervention process. Each step is separated by a | symbol."""
