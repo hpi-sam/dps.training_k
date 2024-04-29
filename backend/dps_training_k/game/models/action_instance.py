@@ -1,8 +1,9 @@
 from django.db import models
-from game.models import ScheduledEvent
-from template.models import Action
+
 from game.channel_notifications import ActionInstanceDispatcher
+from game.models import ScheduledEvent
 from helpers.local_timable import LocalTimeable
+from template.models import Action
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -52,10 +53,10 @@ class ActionInstanceState(models.Model):
         self.info_text = self.info_text + info_text
         self.save(update_fields=["info_text"])
 
-    def success_states(self):
+    def success_states():
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
 
-    def completion_states(self):
+    def completion_states():
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
 
 

@@ -1,11 +1,12 @@
 import asyncio
 
-from channels.testing import WebsocketCommunicator
-from django.test import TransactionTestCase
-from game.models import ActionInstance
 from channels.db import database_sync_to_async
-from configuration.asgi import application
+from channels.testing import WebsocketCommunicator
 from django.core.management import call_command
+from django.test import TransactionTestCase
+
+from configuration.asgi import application
+from game.models import ActionInstance
 from .mixin import TestUtilsMixin
 
 
@@ -80,8 +81,8 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
         call_command("minimal_actions")
 
     @database_sync_to_async
-    def action_instance_exists(self, action_id):
-        return ActionInstance.objects.filter(action_template__id=action_id).exists()
+    def action_instance_exists(self, action_name):
+        return ActionInstance.objects.filter(action_template__name=action_name).exists()
 
     async def test_patient_consumer_add_action(self):
         communicator = await self.create_patient_communicator_and_authenticate()
@@ -91,18 +92,18 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
         # receive available actions
         available_actions = await communicator.receive_json_from()
         # extract first available actions' id
-        action_id = available_actions["availableActions"]["actions"][0]["actionId"]
+        action_name = available_actions["availableActions"][0]["actionName"]
 
         await communicator.send_json_to(
             {
                 "messageType": "action-add",
-                "actionId": action_id,
+                "actionName": action_name,
             }
         )
         # it needs some time for processing, will hang otherwise (assuming it deadlocks)
         await asyncio.sleep(1)
 
-        exists = await self.action_instance_exists(action_id)
+        exists = await self.action_instance_exists(action_name)
         self.assertTrue(
             exists, "ActionInstance was not created with the given action_template ID."
         )

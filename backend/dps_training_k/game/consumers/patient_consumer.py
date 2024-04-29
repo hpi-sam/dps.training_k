@@ -4,6 +4,7 @@ from game.models import (
     PatientInstance,
     Exercise,
     ActionInstance,
+    ScheduledEvent,
 )
 from template.models import Action
 from template.serializer.state_serialize import StateSerializer
@@ -50,7 +51,7 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
-                "actionId",
+                "actionName",
             ),
         }
 
@@ -121,8 +122,8 @@ class PatientConsumer(AbstractConsumer):
         patient_instance.triage = triage
         patient_instance.save(update_fields=["triage"])
 
-    def handle_action_add(self, action_id):
-        action = Action.objects.get(pk=action_id)
+    def handle_action_add(self, action_name):
+        action = Action.objects.get(name=action_name)
         action_instance = ActionInstance.create(
             action_template=action, patient_instance=self.patient_instance
         )
