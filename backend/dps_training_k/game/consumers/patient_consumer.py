@@ -2,7 +2,7 @@ from urllib.parse import parse_qs
 
 from game.models import PatientInstance, Exercise, ActionInstance, InventoryEntry
 from template.models import Action
-from backend.dps_training_k.template.serializers.state_serializer import StateSerializer
+from template.serializers.state_serializer import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
 
@@ -113,9 +113,8 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_triage(self, triage):
-        patient_instance = self.patient_instance
-        patient_instance.triage = triage
-        patient_instance.save(update_fields=["triage"])
+        self.patient_instance.triage = triage
+        self.patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, action_id):
         action = Action.objects.get(pk=action_id)

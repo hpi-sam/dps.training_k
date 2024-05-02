@@ -157,6 +157,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         patient, _ = PatientInstance.objects.get_or_create(
             name="Max Mustermann", exercise=self.exercise, patient_id=2
         )
+
         exercise_object = {
             "exercise": {
                 "exerciseId": exercise.exerciseId,
@@ -221,4 +222,4 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         materials = []
         for entry in entries:
             for _ in range(entry.amount):
-                materials.append(ResourceSerializer(entry.resource).to_json())
+                materials.append(ResourceSerializer(entry.resource).data())
