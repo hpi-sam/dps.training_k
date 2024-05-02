@@ -17,7 +17,6 @@ class ChannelEventTypes:
     STATE_CHANGE_EVENT = "state.change.event"
     EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
-    ACTION_DECLINATION_EVENT = "action.declination.event"
     ACTION_LIST_EVENT = "action.list.event"
 
 
@@ -131,13 +130,6 @@ class ActionInstanceDispatcher(ChannelNotifier):
         if changes:
             if "current_state" in changes:
                 if (
-                    applied_action.state_name
-                    == models.ActionInstanceStateNames.DECLINED
-                ):
-                    cls._notify_action_event(
-                        applied_action, ChannelEventTypes.ACTION_DECLINATION_EVENT
-                    )
-                elif (
                     applied_action.state_name == models.ActionInstanceStateNames.PLANNED
                 ):
                     cls._notify_action_event(

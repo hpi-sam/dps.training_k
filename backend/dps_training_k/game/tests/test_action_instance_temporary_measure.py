@@ -10,24 +10,25 @@ from game.tasks import check_for_updates
 class ActionInstanceTemporaryMeasureTestCase(TestCase):
     def timezoneFromTimestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
-    
+
     def setUp(self):
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
-    
+
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
-    
+
     def test_action_instance_temporary_measure(self):
         action_instance = ActionInstanceFactoryWithEffectDuration()
         action_instance._start_application()
-        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS)
+        self.assertEqual(
+            action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
+        )
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
         check_for_updates()
         action_instance.refresh_from_db()
-        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ACTIVE)
+        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.IN_EFFECT)
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(20)
         check_for_updates()
         action_instance.refresh_from_db()
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.EXPIRED)
-        
