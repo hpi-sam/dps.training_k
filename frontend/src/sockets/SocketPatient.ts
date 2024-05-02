@@ -9,6 +9,7 @@ import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import {useActionOverviewStore} from "@/stores/ActionOverview"
 import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
 import { commonMockEvents } from "./commonMockEvents"
+import { useActionCheckStore } from "@/stores/ActionCheck"
 
 class SocketPatient {
 	private readonly url: string
@@ -25,6 +26,7 @@ class SocketPatient {
 		const ressourceAssignmentsStore = useRessourceAssignmentsStore()
 		const actionOverview = useActionOverviewStore()
 		const visibleInjuriesStore = useVisibleInjuriesStore()
+		const actionCheckStore = useActionCheckStore()
 
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
@@ -114,6 +116,10 @@ class SocketPatient {
 					break
 				case 'visible-injuries':
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
+					break
+				case 'action-check':
+					console.log('Patient received action-check:', data.actionCheck)
+					actionCheckStore.loadActionCheck(data.actionCheck as ActionCheck)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -298,6 +304,65 @@ export const serverMockEvents = [
 			'{ "injuryId": 4, "injuryType": "fracture", "position": "right collarbone" },' +
 			'{ "injuryId": 5, "injuryType": "blood", "position": "left rip" }' +
 			']}'
+	},
+	{
+		id: 'actionCheck',
+		data: `{
+			"messageType": "action-check",
+			"actionCheck": {
+				"actionName": "X",
+				"applicationDuration": 4,
+				"effectDuration": 3,
+				"personnel": [
+				{
+					"name": "X",
+					"available": 1,
+					"assigned": 1,
+					"needed": 1
+				}
+				],
+				"material": [
+				{
+					"name": "X",
+					"available": 1,
+					"assigned": 1,
+					"needed": 1
+				}
+				],
+				"labDevices": [
+				{
+					"name": "X",
+					"available": 1,
+					"needed": 1
+				}
+				],
+				"requiredActions": {
+				"single_actions": [
+					{
+					"name": "A1"
+					}
+				],
+				"actionGroups": [
+					{
+					"groupName": "Tubusse",
+					"actions": [
+						{
+						"name": "A3"
+						},
+						{
+						"name": "A4"
+						}
+					]
+					}
+				]
+				},
+				"prohibitiveActions": [
+				{
+					"name": "A1"
+				}
+				]
+			}
+		}`
 	},
 	...commonMockEvents
 ]

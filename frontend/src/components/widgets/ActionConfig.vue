@@ -2,6 +2,7 @@
 	import socketPatient from '@/sockets/SocketPatient'
 	import { ref } from 'vue'
 	import CloseButton from './CloseButton.vue'
+	import { useActionCheckStore } from '@/stores/ActionCheck'
 
 	const emit = defineEmits(['close-action'])
 
@@ -18,6 +19,8 @@
 		emit('close-action')
 	}
 
+	const actionCheckStore = useActionCheckStore()
+
 </script>
 <script lang="ts">
 	const newActionsAllowed = ref(true)
@@ -32,6 +35,9 @@
 		<div>
 			<CloseButton @close="emit('close-action')" />
 			<h1>{{ props.currentAction }}</h1>
+		</div>
+		<div>
+			{{ actionCheckStore }}
 		</div>
 		<div>
 			<h3 v-if="!newActionsAllowed" class="waiting-text">

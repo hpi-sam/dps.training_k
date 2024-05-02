@@ -26,6 +26,7 @@ interface MessageData {
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
+	actionCheck: ActionCheck
 }
 
 interface Exercise {
@@ -162,4 +163,25 @@ interface Injury {
 	injuryId: string
 	injuryType: string
 	position: string
+}
+
+interface ActionCheck {
+	actionName: string
+	applicationDuration: number
+	effectDuration: number
+	personnel: Personnel[]
+	material: Material[]
+	labDevices: Material[]
+	requiredActions: RequiredActions
+	prohibitedActions: Action[]
+}
+
+interface RequiredActions {
+	singleActions: String[]
+	actionGroups: ActionGroup[]
+}
+
+interface ActionGroup {
+	groupName: string
+	actions: String[]
 }
