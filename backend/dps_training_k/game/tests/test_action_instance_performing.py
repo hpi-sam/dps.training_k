@@ -7,7 +7,8 @@ from game.models import (
     ActionInstanceState,
 )
 from game.tasks import check_for_updates
-from .factories import PatientFactory, ActionInstanceFactory
+from game.models import PatientActionInstance
+from .factories import PatientFactory, PatientActionInstanceFactory
 from .setups import ResourcesDeactivateable
 from template.tests.factories import ActionFactory
 from unittest.mock import patch
@@ -63,7 +64,12 @@ class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
         Once an action instance is started, the dispatcher detects it and detecs the actual state.
         """
         self.application_status.return_value = True, None
-        action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
+        action_template = ActionFactory()
+        patient_instance = PatientFactory()
+        area = patient_instance.area
+        action_instance = PatientActionInstance.create(
+            action_template, patient_instance, area
+        )
         action_instance.try_application()
         self.assertEqual(_notify_action_event.call_count, 1)
         self.assertEqual(
@@ -82,7 +88,12 @@ class ActionInstanceScheduledTestCase(ResourcesDeactivateable, TestCase):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
     def setUp(self):
-        self.action_instance = ActionInstanceFactory()
+        action_template = ActionFactory()
+        patient_instance = PatientFactory()
+        area = patient_instance.area
+        self.action_instance = PatientActionInstance.create(
+            action_template, patient_instance, area
+        )
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
         self.deactivate_resources()

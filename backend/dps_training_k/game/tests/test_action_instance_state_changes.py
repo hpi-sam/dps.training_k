@@ -1,7 +1,7 @@
 from django.test import TestCase
 from game.models import ActionInstanceStateNames, ActionInstance, ActionInstanceState
 from .factories.action_instance_factory import (
-    ActionInstanceFactory,
+    PatientActionInstanceFactory,
     ActionInstanceFactoryFailedState,
 )
 from unittest.mock import patch
@@ -21,7 +21,7 @@ class ActionInstanceStateChangeTestCase(TestCase):
         ActionInstanceState always create a new state object when the state name is changed.
         Two follow up states are gap free in time - one starts exactly when the other ends.
         """
-        action_instance = ActionInstanceFactory()
+        action_instance = PatientActionInstanceFactory()
         number_of_states = ActionInstance.objects.count()
         action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.assertEqual(ActionInstanceState.objects.count(), number_of_states + 1)

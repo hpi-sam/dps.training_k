@@ -1,8 +1,15 @@
 import factory
-from template.tests.factories.action_factory import ActionFactory, ActionFactoryWithEffectDuration
+from template.tests.factories.action_factory import (
+    ActionFactory,
+    ActionFactoryWithEffectDuration,
+)
 from .area_factory import AreaFactory
 from .patient_factory import PatientFactory
-from game.models import ActionInstance, ActionInstanceState, ActionInstanceStateNames
+from game.models import (
+    PatientActionInstance,
+    ActionInstanceState,
+    ActionInstanceStateNames,
+)
 
 
 class ActionInstanceStateFactory(factory.django.DjangoModelFactory):
@@ -21,9 +28,9 @@ class ActionInstanceStateFactory(factory.django.DjangoModelFactory):
     t_local_end = None
 
 
-class ActionInstanceFactory(factory.django.DjangoModelFactory):
+class PatientActionInstanceFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = ActionInstance
+        model = PatientActionInstance
         django_get_or_create = (
             "patient_instance",
             "area",
@@ -64,7 +71,7 @@ class FailedActionInstanceStateFactory(factory.django.DjangoModelFactory):
 
 class ActionInstanceFactoryFailedState(factory.django.DjangoModelFactory):
     class Meta:
-        model = ActionInstance
+        model = PatientActionInstance
         django_get_or_create = (
             "patient_instance",
             "area",
@@ -86,7 +93,7 @@ class ActionInstanceFactoryFailedState(factory.django.DjangoModelFactory):
 
 class ActionInstanceFactoryWithEffectDuration(factory.django.DjangoModelFactory):
     class Meta:
-        model = ActionInstance
+        model = PatientActionInstance
         django_get_or_create = (
             "patient_instance",
             "area",

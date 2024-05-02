@@ -13,8 +13,8 @@ class AreaFactory(factory.django.DjangoModelFactory):
     exercise = factory.SubFactory(ExerciseFactory)
     isPaused = False
 
-    @factory.post_generation
-    def generate_inventory(self, create, extracted, **kwargs):
-        if not create:
-            return
-        FilledInventoryFactory(area=self)
+    # @factory.post_generation
+    # def generate_inventory(self, create, extracted, **kwargs):
+    #    if not create:
+    #        return
+    #    FilledInventoryFactory(area=self)

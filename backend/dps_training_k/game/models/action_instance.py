@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from django.db import models
 from game.models import ScheduledEvent
 from template.models import Action
@@ -19,6 +20,10 @@ class ActionInstanceStateNames(models.TextChoices):
 
 
 class ActionInstanceState(models.Model):
+    """
+    State switching & information logic for ActionInstance
+    """
+
     action_instance = models.ForeignKey(
         "ActionInstance",
         on_delete=models.CASCADE,
@@ -58,6 +63,10 @@ class ActionInstanceState(models.Model):
 
 
 class ActionInstance(LocalTimeable, models.Model):
+    """
+    Behaviour Strategy for ActionInstances. Should be expanded by subclasses. Triggers State changes.
+    """
+
     class Meta:
         constraints = [
             one_or_more_field_not_null(
@@ -185,7 +194,11 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         self._application_finished_strategy()
 
+    @abstractmethod
     def _consume_resources(self):
+        raise NotImplementedError("Subclasses must implement this method")
+
+    def _application_finished_strategy(self):
         raise NotImplementedError("Subclasses must implement this method")
 
 
@@ -238,7 +251,7 @@ class PatientActionInstance(ActionInstance):
         proxy = True
 
     @classmethod
-    def create(cls, action_template, patient_instance, area=None):
+    def create(cls, action_template, patient_instance, area):
         return super().create(
             action_template,
             place_of_application=patient_instance,

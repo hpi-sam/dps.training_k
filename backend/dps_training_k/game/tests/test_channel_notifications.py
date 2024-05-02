@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .factories import (
-    ActionInstanceFactory,
+    PatientActionInstanceFactory,
     ActionInstanceStateFactory,
     PatientFactory,
 )
@@ -12,7 +12,7 @@ from unittest.mock import patch
 class ChannelNotifierTestCase(TestCase):
     @patch.object(cn.ChannelNotifier, "_notify_group")
     def test_action_dispatcher(self, notify_group_mock):
-        action_instance = ActionInstanceFactory()
+        action_instance = PatientActionInstanceFactory()
         action_instance.current_state = ActionInstanceStateFactory(
             name=ActionInstanceStateNames.FINISHED
         )

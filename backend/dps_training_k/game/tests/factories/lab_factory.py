@@ -11,8 +11,8 @@ class LabFactory(factory.django.DjangoModelFactory):
     name = "TestLab"
     exercise = factory.SubFactory(ExerciseFactory)
 
-    @factory.post_generation
-    def generate_inventory(self, create, extracted, **kwargs):
-        if not create:
-            return
-        FilledInventoryFactory(area=None, lab=self)
+    # @factory.post_generation
+    # def generate_inventory(self, create, extracted, **kwargs):
+    #    if not create:
+    #        return
+    #    FilledInventoryFactory(area=None, lab=self)

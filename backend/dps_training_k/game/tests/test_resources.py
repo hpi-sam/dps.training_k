@@ -1,7 +1,7 @@
 import json
 from django.test import TestCase
 from unittest.mock import patch
-from .factories import ActionInstanceFactory
+from .factories import PatientActionInstanceFactory
 from template.models import Resource, Action
 from template.tests.factories import ConditionFactory, ActionFactory
 from template.constants import MaterialIDs
@@ -23,7 +23,7 @@ class TestResourcesTestCase(TestCase):
         self.action_template = ActionFactory(
             conditions=self.conditions, success_result=self.success_result
         )
-        self.action_instance = ActionInstanceFactory(
+        self.action_instance = PatientActionInstanceFactory(
             action_template=self.action_template
         )
         self.resource = Resource.objects.get(
