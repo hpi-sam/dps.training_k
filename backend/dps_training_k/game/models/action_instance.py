@@ -98,7 +98,9 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        ActionInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
@@ -110,7 +112,14 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None):
+    def create(
+        cls,
+        action_template,
+        place_of_application,
+        patient_instance=None,
+        area=None,
+        lab=None,
+    ):
         if not patient_instance and not area:
             raise ValueError(
                 "Either patient_instance or area must be provided - an action instance always need a context"
@@ -120,9 +129,10 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance, patient_instance.area
         )
         action_instance = ActionInstance.objects.create(
+            action_template=action_template,
             patient_instance=patient_instance,
             area=area,
-            action_template=action_template,
+            lab=lab,
         )
         if is_applicable:
             action_instance.current_state = ActionInstanceState.objects.create(
@@ -131,7 +141,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 t_local_begin=action_instance.get_local_time(),
             )
             action_instance.save(update_fields=["current_state"])
-            action_instance.place_of_application().register_to_queue(action_instance)
+            place_of_application.register_to_queue(action_instance)
             return action_instance
         action_instance.current_state = ActionInstanceState.objects.create(
             action_instance=action_instance,
@@ -173,9 +183,84 @@ class ActionInstance(LocalTimeable, models.Model):
                 self.patient_instance.patient_state
             ),
         )
+        self._application_finished_strategy()
+
+    def _consume_resources(self):
+        raise NotImplementedError("Subclasses must implement this method")
+
+
+class LabActionInstance(ActionInstance):
+    class Meta:
+        proxy = True
+
+    @classmethod
+    def create(cls, action_template, lab, area=None, patient_instance=None):
+        return super().create(
+            action_template,
+            place_of_application=lab,
+            lab=lab,
+            area=area,
+            patient_instance=patient_instance,
+        )
+
+    def _consume_resources(self):
+        resource_recipe = self.action_template.consumed_resources()
+        inventory = self.lab.consuming_inventory
+        for resource, amount in resource_recipe.items():
+            inventory.change_resource(resource, -amount)
+
+    def _application_finished_strategy(self):
+        self.lab.remove_from_queue(self)
         self._return_applicable_resources()
-        self._produce_resources()
-        self.place_of_application().remove_from_queue(self)
+        if self.action_template.produced_resources():
+            self._produce_resources()
+
+    def _return_applicable_resources(self):
+        inventory = self.lab.consuming_inventory
+        resource_recipe = self.action_template.consumed_resources()
+
+        for resource, amount in resource_recipe.items():
+            if resource.is_returnable:
+                inventory.change_resource(resource, amount)
+
+    def _produce_resources(self, resource_recipe):
+        if not resource_recipe:
+            raise Exception(
+                "Resource production was called without resources to produce"
+            )
+        inventory = self.lab.consuming_inventory
+        for resource, amount in resource_recipe.items():
+            inventory.change_resource(resource, amount)
+
+
+class PatientActionInstance(ActionInstance):
+    class Meta:
+        proxy = True
+
+    @classmethod
+    def create(cls, action_template, patient_instance, area=None):
+        return super().create(
+            action_template,
+            place_of_application=patient_instance,
+            area=area,
+            patient_instance=patient_instance,
+        )
+
+    def _consume_resources(self):
+        resource_recipe = self.action_template.consumed_resources()
+        patient_inventory = self.patient_instance.consuming_inventory
+        area_inventory = self.patient_instance.area.consuming_inventory
+        for resource, amount in resource_recipe.items():
+            pulled_resources = patient_inventory.resource_stock(resource) - amount
+            if pulled_resources < 0:
+                area_inventory.transition_resource_to(
+                    patient_inventory, resource, pulled_resources
+                )
+            if not resource.is_returnable:
+                patient_inventory.change_resource(resource, -amount)
+
+    def _application_finished_strategy(self):
+        self.patient_instance.remove_from_queue(self)
 
         if self.action_template.effect_duration != None:
             ScheduledEvent.create_event(
@@ -188,35 +273,3 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
-
-    # ------------------------------------------------------------------------------------------------------------------------------------------------
-    # Helper functions
-    # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def place_of_application(self):
-        if self.action_template.category == Action.Category.LAB:
-            return self.lab
-        if self.action_template.category == Action.Category.OTHER:
-            return self.area
-        return self.patient_instance
-
-    def _consume_resources(self):
-        inventory = self.place_of_application().consuming_inventory
-        resource_recipe = self.action_template.consumed_resources()
-        for resource, amount in resource_recipe.items():
-            pass  # ToDo: continue working from here
-
-    def _return_applicable_resources(self):
-        inventory = self.place_of_application().consuming_inventory
-        resource_recipe = self.action_template.consumed_resources()
-
-        for resource, amount in resource_recipe.items():
-            if resource.is_returnable:
-                inventory.change_resource(resource, amount)
-
-    def _produce_resources(self):
-        inventory = self.place_of_application().consuming_inventory
-        resource_recipe = self.action_template.produced_resources()
-        if resource_recipe == None:
-            return
-        for resource, amount in resource_recipe.items():
-            inventory.change_resource(resource, amount)

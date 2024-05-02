@@ -26,4 +26,4 @@ class Area(ActionsQueueable, models.Model):
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields", None)
-        AreaDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
+        AreaDispatcher.save_and_notify(self, update_fields, super(), *args, **kwargs)

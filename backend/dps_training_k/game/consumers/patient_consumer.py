@@ -118,8 +118,17 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_action_add(self, action_id):
         action = Action.objects.get(pk=action_id)
-        action_instance = ActionInstance.create(self.patient_instance, action)
-        action_instance.try_application()
+
+        if action.category in [Action.Category.TREATMENT, Action.Category.EXAMINATION]:
+            self.patient_instance.start_action(action)
+        if action.category == Action.Category.LAB:
+            lab = self.patient_instance.exercise.lab
+            self.patient_instance.exercise.lab.start_examination(
+                action, self.patient_instance
+            )
+        if action.category == Action.Category.OTHER:  # our current resource production
+            lab = self.patient_instance.exercise.lab
+            lab.start_production(action, self.patient_instance.area)
 
     def handle_action_check(self, action_id):
         stub_action_name = "Recovery Position"

@@ -51,23 +51,9 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
-
-    def __str__(self):
-        return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
-
-    # ToDo: remove after actual method is implemented
-    def schedule_temporary_event(self):
-        ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "temporary_event_test",
-            patient=self,
+        PatientInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
         )
-
-    def temporary_event_test(self):
-        print("temporary_event_test called")
-        return True
 
     def schedule_state_change(self):
         from game.models import ScheduledEvent
@@ -97,7 +83,33 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         self.schedule_state_change()
         return True
 
+    def start_action(self, action_template):
+        from game.models import PatientActionInstance
+
+        action_instance = PatientActionInstance.create(
+            action_template=action_template,
+            patient_instance=self,
+        )
+        action_instance.try_application()
+        return action_instance
+
     def is_dead(self):
         if self.patient_state.is_dead:
             return True
         return False
+
+    def __str__(self):
+        return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
+
+    # ToDo: remove after actual method is implemented
+    def schedule_temporary_event(self):
+        ScheduledEvent.create_event(
+            self.exercise,
+            10,
+            "temporary_event_test",
+            patient=self,
+        )
+
+    def temporary_event_test(self):
+        print("temporary_event_test called")
+        return True

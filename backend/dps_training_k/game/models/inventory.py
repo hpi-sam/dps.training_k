@@ -17,7 +17,9 @@ class InventoryEntry(models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        InventoryEntryDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        InventoryEntryDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def change(self, net_change):
         # ToDo: Uncomment once condition checks are implemented
