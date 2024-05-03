@@ -64,11 +64,13 @@ class PatientConsumer(AbstractConsumer):
         self.tempExercise = Exercise.createExercise()
         # example patient creation for testing purposes as long as the actual patient flow is not implemented
         from template.tests.factories.patient_state_factory import PatientStateFactory
+        from game.models import Inventory
 
         self.temp_state = PatientStateFactory(10, 2)
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
+            inventory=Inventory.objects.create(),
             patient_id=2,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
             patient_state=self.temp_state,

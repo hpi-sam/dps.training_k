@@ -299,7 +299,7 @@ def get_action_instance_class_from_string(action_instance_str):
 
 class LabActionInstance(ActionInstance):
     constraints = [one_or_more_field_not_null(["area", "lab"], "lab_action_instance")]
-    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True)
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)

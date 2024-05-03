@@ -1,5 +1,7 @@
 from django.db import models
 
+from .inventory import Inventory
+
 
 class Lab(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -7,9 +9,12 @@ class Lab(models.Model):
         "Exercise",
         on_delete=models.CASCADE,
     )
-    inventory = models.OneToOneField(
-        "Inventory", on_delete=models.CASCADE, null=True, blank=True
-    )
+    inventory = models.OneToOneField("Inventory", on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.inventory = Inventory.objects.create()
+        super().save(*args, **kwargs)
 
     def start_examination(self, action_template, patient_instance):
         from game.models import LabActionInstance

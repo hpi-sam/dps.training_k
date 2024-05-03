@@ -6,6 +6,8 @@ from helpers.actions_queueable import ActionsQueueable
 from template.models.patient_state import PatientState
 from .scheduled_event import ScheduledEvent
 
+from .inventory import Inventory
+
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
     class Triage(models.TextChoices):
@@ -30,9 +32,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         null=True,  # for debugging purposes
         blank=True,  # for debugging purposes
     )
-    inventory = models.OneToOneField(
-        "Inventory", on_delete=models.CASCADE, null=True, blank=True
-    )
+    inventory = models.OneToOneField("Inventory", on_delete=models.CASCADE)
     patient_state = models.ForeignKey(
         PatientState,
         on_delete=models.SET_NULL,
@@ -49,6 +49,8 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     )
 
     def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.inventory = Inventory.objects.create()
         changes = kwargs.get("update_fields", None)
         PatientInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs

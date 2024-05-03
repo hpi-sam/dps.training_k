@@ -3,13 +3,13 @@ from django.db import models
 from helpers.actions_queueable import ActionsQueueable
 from game.channel_notifications import AreaDispatcher
 
+from .inventory import Inventory
+
 
 class Area(ActionsQueueable, models.Model):
     name = models.CharField(max_length=30)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
-    inventory = models.OneToOneField(
-        "Inventory", on_delete=models.CASCADE, null=True, blank=True
-    )
+    inventory = models.OneToOneField("Inventory", on_delete=models.CASCADE)
     isPaused = models.BooleanField()
 
     @classmethod
@@ -27,5 +27,7 @@ class Area(ActionsQueueable, models.Model):
         )
 
     def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.inventory = Inventory.objects.create()
         update_fields = kwargs.get("update_fields", None)
         AreaDispatcher.save_and_notify(self, update_fields, super(), *args, **kwargs)
