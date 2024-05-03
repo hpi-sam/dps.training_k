@@ -108,13 +108,27 @@ class ActionInstanceDispatcher(ChannelNotifier):
             return
         cls._notify_action_event(applied_action, event_type)
 
+
+class PatientActionInstanceDispatcher(ActionInstanceDispatcher):
     @classmethod
-    def _notify_action_event(cls, applied_action, event_type):
-        channel = cls.get_group_name(applied_action.patient_instance)
+    def _notify_action_event(cls, action_instance, event_type):
+        channel = cls.get_group_name(action_instance.patient_instance)
         event = {
             "type": event_type,
-            "action_instance_pk": applied_action.id,
-            "action_instance_class": applied_action.__class__.__name__,
+            "action_instance_pk": action_instance.id,
+            "action_instance_class": "PatientActionInstance",
+        }
+        cls._notify_group(channel, event)
+
+
+class LabActionInstanceDispatcher(ActionInstanceDispatcher):
+    @classmethod
+    def _notify_action_event(cls, action_instance, event_type):
+        channel = cls.get_group_name(action_instance.lab)
+        event = {
+            "type": event_type,
+            "action_instance_pk": action_instance.id,
+            "action_instance_class": "LabActionInstance",
         }
         cls._notify_group(channel, event)
 

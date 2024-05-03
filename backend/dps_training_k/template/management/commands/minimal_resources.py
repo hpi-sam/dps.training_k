@@ -20,3 +20,9 @@ class Command(BaseCommand):
             category=Resource.Category.BLOOD,
             is_returnable=False,
         )
+        Resource.objects.update_or_create(
+            uuid=MaterialIDs.BLOOD_DEFROSTING_SLOT,
+            name="Blutauftau-Slot",
+            category=Resource.Category.DEVICE,
+            is_returnable=True,
+        )

@@ -2,7 +2,10 @@ from abc import abstractmethod
 from django.db import models
 from game.models import ScheduledEvent
 from template.models import Action
-from game.channel_notifications import ActionInstanceDispatcher
+from game.channel_notifications import (
+    PatientActionInstanceDispatcher,
+    LabActionInstanceDispatcher,
+)
 from helpers.local_timable import LocalTimeable
 from helpers.one_field_not_null import one_or_more_field_not_null
 
@@ -127,12 +130,6 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             return None
 
-    def save(self, *args, **kwargs):
-        changes = kwargs.get("update_fields", None)
-        ActionInstanceDispatcher.save_and_notify(
-            self, changes, super(), *args, **kwargs
-        )
-
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
             state_name, self.get_local_time(), info_text
@@ -233,6 +230,12 @@ class PatientActionInstance(ActionInstance):
         "PatientInstance", on_delete=models.CASCADE, null=True
     )
 
+    def save(self, *args, **kwargs):
+        changes = kwargs.get("update_fields", None)
+        PatientActionInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
+
     @classmethod
     def create(cls, action_template, patient_instance, area=None):
         obj = super().create(
@@ -298,6 +301,12 @@ class LabActionInstance(ActionInstance):
     constraints = [one_or_more_field_not_null(["area", "lab"], "lab_action_instance")]
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True)
 
+    def save(self, *args, **kwargs):
+        changes = kwargs.get("update_fields", None)
+        LabActionInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
+
     @classmethod
     def create(cls, action_template, lab, area=None, patient_instance=None):
         obj = super().create(
@@ -331,7 +340,7 @@ class LabActionInstance(ActionInstance):
         self.lab.remove_from_queue(self)
         self._return_applicable_resources()
         if self.action_template.produced_resources():
-            self._produce_resources()
+            self._produce_resources(self.action_template.produced_resources())
 
     def _return_applicable_resources(self):
         inventory = self.lab.inventory
@@ -348,4 +357,4 @@ class LabActionInstance(ActionInstance):
             )
         inventory = self.lab.inventory
         for resource, amount in resource_recipe.items():
-            inventory.change_resource(resource, amount)
+            self.area.inventory.change_resource(resource, amount)

@@ -64,7 +64,9 @@ class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
         self.assertFalse(action_instance.try_application())
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
-    @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
+    @patch(
+        "game.channel_notifications.PatientActionInstanceDispatcher._notify_action_event"
+    )
     def test_channel_notifications_being_send(self, _notify_action_event):
         """
         Once an action instance is started, the dispatcher detects it and detecs the actual state.

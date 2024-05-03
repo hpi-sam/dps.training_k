@@ -24,9 +24,7 @@ class ActionInstanceStateFactory(factory.django.DjangoModelFactory):
             "t_local_end",
         )
 
-    patient_action_instance = factory.SubFactory(
-        "game.tests.factories.PatientActionInstanceFactory"
-    )
+    patient_action_instance = None
     lab_action_instance = None
     name = ActionInstanceStateNames.PLANNED
     t_local_begin = 0

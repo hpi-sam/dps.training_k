@@ -171,7 +171,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_add_material(self, areaName, materialName):
         area = Area.objects.get(name=areaName, exercise=self.exercise)
         material = Resource.objects.get(name=materialName)
-        area.consuming_inventory.change_resource(material, 1)
+        area.inventory.change_resource(material, 1)
 
     def handle_delete_material(self, materialId):
         inventoryEntry = InventoryEntry.objects.get(id=materialId)

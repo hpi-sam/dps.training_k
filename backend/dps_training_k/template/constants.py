@@ -19,6 +19,7 @@ class MaterialIDs:
     OXYGEN = UUID("3f9fcee8-db83-4945-8a25-e6c6ce4c9449")
     DEFIBRILLATOR = UUID("9ed747be-354d-4aa2-ad12-277051a08754")
     PACEMAKER = UUID("bbbfc5e5-3f89-4fef-a784-b4a1b0f22713")
+    BLOOD_DEFROSTING_SLOT = UUID("b9720e3c-446e-45af-ae9b-21b7aa95578b")
 
 
 class RoleIDs:
