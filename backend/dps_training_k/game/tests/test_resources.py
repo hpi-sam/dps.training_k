@@ -27,7 +27,7 @@ class TestResourcesPatientTestCase(TestCase):
         self.patient_inventory = self.action_instance.patient_instance.inventory
 
     def test_resources_inventories_synchronized(self):
-        "When patient actions need resources, they get transfered from the areas inventory"
+        "When patient actions need resources that are insufficient inside the patient inventory, they get transfered from the areas inventory"
         self.area_inventory.change_resource(self.resource, 1)
         self.patient_inventory.change_resource(self.resource, 1)
         self.resource.is_returnable = True
@@ -39,7 +39,7 @@ class TestResourcesPatientTestCase(TestCase):
         self.resource.save(update_fields=["is_returnable"])
 
     def test_resources_get_destroyed(self):
-        "When actions need destroyable resources, they get destroyed on start of application"
+        "When patient actions need destroyable resources, they get destroyed on start of application"
         self.resource.is_returnable = False
         self.resource.save(update_fields=["is_returnable"])
         self.patient_inventory.change_resource(self.resource, 2)
@@ -70,13 +70,13 @@ class TestResourcesLabTestCase(TestCase):
         self.area_inventory = self.action_instance.area.inventory
 
     def test_resources_consumed(self):
-        "When lab action is applied, resources get consumed from it's own inventory"
+        "When lab actions are applied, resources get consumed from their own inventory"
         self.lab_inventory.change_resource(self.resource, 1)
         self.action_instance._consume_resources()
         self.assertEqual(self.lab_inventory.resource_stock(self.resource), 0)
 
     def test_resources_returned_after_application(self):
-        "When a resource is returnable it gets returned after it left InProgress State"
+        "When a resource is returnable it gets returned when it leaves InProgress State"
         self.resource.is_returnable = False
         self.resource.save(update_fields=["is_returnable"])
         initial_amount = self.lab_inventory.resource_stock(self.resource)

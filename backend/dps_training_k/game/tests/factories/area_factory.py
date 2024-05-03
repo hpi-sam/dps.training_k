@@ -11,10 +11,5 @@ class AreaFactory(factory.django.DjangoModelFactory):
 
     name = "TestArea"
     exercise = factory.SubFactory(ExerciseFactory)
+    inventory = factory.SubFactory(EmptyInventoryFactory)
     isPaused = False
-
-    @factory.post_generation
-    def generate_inventory(self, create, extracted, **kwargs):
-        if not create:
-            return
-        EmptyInventoryFactory(area=self)

@@ -30,6 +30,9 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         null=True,  # for debugging purposes
         blank=True,  # for debugging purposes
     )
+    inventory = models.OneToOneField(
+        "Inventory", on_delete=models.CASCADE, null=True, blank=True
+    )
     patient_state = models.ForeignKey(
         PatientState,
         on_delete=models.SET_NULL,

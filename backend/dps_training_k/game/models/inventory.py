@@ -25,7 +25,7 @@ class InventoryEntry(models.Model):
         # ToDo: Uncomment once condition checks are implemented
         # if -net_change > self.amount:
         #    raise ValueError(
-        #        "Not enough resources - might have happened because of a race condition"
+        #        f"Not enough resources {self.resource.name} to perform this action- might have happened because of a race condition"
         #    )
         self.amount += net_change
         self.save(update_fields=["amount"])
@@ -33,32 +33,16 @@ class InventoryEntry(models.Model):
 
 
 class Inventory(models.Model):
+    def get_owner(self):
+        from game.models import Area, Lab, PatientInstance
 
-    class Meta:
-        constraints = [
-            one_or_more_field_not_null(
-                ["area", "lab", "patient_instance"], "inventory"
-            ),
-        ]
-
-    area = models.OneToOneField(
-        "Area",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    lab = models.OneToOneField(
-        "Lab",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    patient_instance = models.OneToOneField(
-        "PatientInstance",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
+        if PatientInstance.objects.filter(inventory=self):
+            return PatientInstance.objects.get(inventory=self)
+        elif Lab.objects.filter(inventory=self):
+            return Lab.objects.get(inventory=self)
+        elif Area.objects.filter(inventory=self):
+            return Area.objects.get(inventory=self)
+        raise ValueError("Inventory does not have an owner")
 
     def resource_stock(self, resource):
         try:

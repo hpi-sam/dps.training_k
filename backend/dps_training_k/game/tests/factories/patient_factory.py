@@ -14,13 +14,8 @@ class PatientFactory(factory.django.DjangoModelFactory):
 
     name = "Max Mustermann"
     exercise = factory.SubFactory(ExerciseFactory)
+    inventory = factory.SubFactory(EmptyInventoryFactory)
     patient_id = 123456
     triage = "R"
     area = factory.SubFactory(AreaFactory)
     patient_state = factory.SubFactory(EmptyPatientStateFactory)
-
-    @factory.post_generation
-    def generate_inventory(self, create, extracted, **kwargs):
-        if not create:
-            return
-        EmptyInventoryFactory(patient_instance=self)

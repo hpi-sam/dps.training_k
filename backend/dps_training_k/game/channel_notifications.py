@@ -140,7 +140,7 @@ class InventoryEntryDispatcher(ChannelNotifier):
 
     @classmethod
     def notify_material_change_event(cls, inventory_entry):
-        channel = cls.get_group_name(inventory_entry.inventory)
+        channel = cls.get_group_name(inventory_entry.inventory.get_owner())
         event = {
             "type": ChannelEventTypes.MATERIAL_CHANGE_EVENT,
             "inventory_entry_pk": inventory_entry.id,

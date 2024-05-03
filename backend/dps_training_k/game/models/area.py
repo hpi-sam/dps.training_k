@@ -7,8 +7,10 @@ from game.channel_notifications import AreaDispatcher
 class Area(ActionsQueueable, models.Model):
     name = models.CharField(max_length=30)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
+    inventory = models.OneToOneField(
+        "Inventory", on_delete=models.CASCADE, null=True, blank=True
+    )
     isPaused = models.BooleanField()
-    # labID = models.ForeignKey("Lab")
 
     @classmethod
     def create_area(cls, name, exercise, isPaused=False):

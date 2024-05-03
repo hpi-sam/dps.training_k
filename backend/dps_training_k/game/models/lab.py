@@ -7,6 +7,9 @@ class Lab(models.Model):
         "Exercise",
         on_delete=models.CASCADE,
     )
+    inventory = models.OneToOneField(
+        "Inventory", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     def start_examination(self, action_template, patient_instance):
         from game.models import LabActionInstance
