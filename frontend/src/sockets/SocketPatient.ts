@@ -324,7 +324,7 @@ export const serverMockEvents = [
 					"name": "Ärzte",
 					"available": 1,
 					"assigned": 2,
-					"needed": 1
+					"needed": 2
 				}
 				],
 				"material": [

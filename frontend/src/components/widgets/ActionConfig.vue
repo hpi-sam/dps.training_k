@@ -3,6 +3,7 @@
 	import { computed, ref } from 'vue'
 	import CloseButton from './CloseButton.vue'
 	import { useActionCheckStore } from '@/stores/ActionCheck'
+	import { svg } from '@/assets/Svg'	
 
 	const emit = defineEmits(['close-action'])
 
@@ -28,9 +29,9 @@
 			return "Eine durchgeführte Aktion verhindert die Anordnung."
 		} else if (actionCheckStore.requiredActions.singleActions.length > 0 || actionCheckStore.requiredActions.actionGroups.length > 0) {
 			return "Es müssen zuerst andere Aktionen durchgeführt werden."
-		} else if (actionCheckStore.personnel.some(personnel => personnel.needed > personnel.available)) {
+		} else if (actionCheckStore.personnel.some(personnel => personnel.needed > personnel.assigned)) {
 			return "Es ist nicht genügend Personal verfügbar."
-		} else if (actionCheckStore.material.some(material => material.needed > material.available)) {
+		} else if (actionCheckStore.material.some(material => material.needed > material.assigned)) {
 			return "Es ist nicht genügend Material verfügbar."
 		} else if (actionCheckStore.labDevices.some(labDevice => labDevice.needed > labDevice.available)) {
 			return "Es sind nicht genügend Laborgeräte verfügbar."
@@ -41,6 +42,15 @@
 		}
 	}))
 
+	function getIconPath(available: number, assigned: number, needed: number) {
+		if (assigned < needed) {
+			return svg.blockIcon
+		} else if (available < needed) {
+			return svg.waitingIcon
+		} else {
+			return svg.playIcon
+		}
+	}
 </script>
 <script lang="ts">
 	const newActionsAllowed = ref(true)
@@ -58,12 +68,24 @@
 		<div class="scroll">
 			<h1>{{ props.currentAction }}</h1>
 			<div class="list">
+				<p>
+					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore.applicationDuration)).toISOString().substring(14, 19) }}
+				</p>
+				<p v-if="actionCheckStore.effectDuration > 0">
+					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore.effectDuration)).toISOString().substring(14, 19) }}
+				</p>
+				<br>
 				Personal
 				<div
 					v-for="personnel in actionCheckStore.personnel"
 					:key="personnel.name"
 					class="listItem"
 				>
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="getIconPath(personnel.available, personnel.assigned, personnel.needed)" />
+						</svg>
+					</div>
 					<div class="listItemButton">
 						<div class="listItemName">
 							{{ personnel.name }}
@@ -73,12 +95,17 @@
 						</div>
 					</div>
 				</div>
-				<p><br>Material</p>
+				<br>Material
 				<div
 					v-for="material in actionCheckStore.material"
 					:key="material.name"
 					class="listItem"
 				>
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="getIconPath(material.available, material.assigned, material.needed)" />
+						</svg>
+					</div>
 					<div class="listItemButton">
 						<div class="listItemName">
 							{{ material.name }}
@@ -88,12 +115,17 @@
 						</div>
 					</div>
 				</div>
-				<p><br>Laborgeräte</p>
+				<br>Laborgeräte
 				<div
 					v-for="labDevice in actionCheckStore.labDevices"
 					:key="labDevice.name"
 					class="listItem"
 				>
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="getIconPath(labDevice.available, labDevice.available, labDevice.needed)" />
+						</svg>
+					</div>
 					<div class="listItemButton">
 						<div class="listItemName">
 							{{ labDevice.name }}
@@ -103,12 +135,17 @@
 						</div>
 					</div>
 				</div>
-				<p><br>Folgende Aktionen müssen zuvor durchgeführt werden</p>
+				<br>Folgende Aktionen müssen zuvor durchgeführt werden
 				<div
 					v-for="(action, index) in actionCheckStore.requiredActions.singleActions"
 					:key="index"
 					class="listItem"
 				>
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="svg.blockIcon" />
+						</svg>
+					</div>
 					<div class="listItemButton">
 						<div class="listItemName">
 							{{ action }}
@@ -120,18 +157,28 @@
 					:key="index"
 					class="listItem"
 				>
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="svg.blockIcon" />
+						</svg>
+					</div>
 					<div class="listItemButton">
 						<div class="listItemName">
 							{{ actionGroup.groupName }}
 						</div>
 					</div>
 				</div>
-				<p><br>Folgende durchgeführte Aktionen verhindern die Anordnung</p>
+				<br>Folgende durchgeführte Aktionen verhindern die Anordnung
 				<div
 					v-for="(action, index) in actionCheckStore.prohibitedActions"
 					:key="index"
 					class="listItem"
 				>
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="svg.blockIcon" />
+						</svg>
+					</div>
 					<div class="listItemButton">
 						<div class="listItemName">
 							{{ action }}
@@ -143,7 +190,7 @@
 		<div>
 			<button class="main-button" :disabled="errorMessage.length > 0" @click="addAction()">
 				Aktion anordnen
-				<p v-if="errorMessage">
+				<p v-if="errorMessage" class="error-message">
 					{{ errorMessage }}
 				</p>
 			</button>
@@ -152,12 +199,6 @@
 </template>
 
 <style scoped>
-	.waiting-text {
-		text-align: center;
-		margin-top: 10px;
-		margin-bottom: 70px;
-	}
-
 	.main-button {
 		background-color: var(--green);
 		color: white;
@@ -176,7 +217,7 @@
 		display: flex;
 	}
 
-	p {
+	.error-message {
 		font-size: 12px;
 	}
 </style>

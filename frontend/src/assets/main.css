@@ -186,6 +186,12 @@ button:active {
   margin-top: -1px;
 }
 
+.listItemIcon {
+  margin-left: 16px;
+  display: flex;
+  justify-content: center;
+}
+
 .listItemId {
   padding: .75rem 1rem;
   width: fit-content;

@@ -79,7 +79,7 @@
 				class="listItem"
 			>
 				<button class="listItemButton" @click="openDeletePopup(action.actionName)">
-					<div class="icon">
+					<div class="listItemIcon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 							<path :d="getIconPath(action.actionStatus)" />
 						</svg>
@@ -101,7 +101,7 @@
 				class="listItem"
 			>
 				<button class="listItemButton" @click="openResultPopup(action.actionName, action.actionResult)">
-					<div class="icon">
+					<div class="listItemIcon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 							<path :d="getIconPath(action.actionStatus)" />
 						</svg>
@@ -121,12 +121,6 @@
 </template>
 
 <style scoped>
-	.icon {
-		margin-left: 16px;
-		display: flex;
-		justify-content: center;
-	}
-
 	.time {
 		margin-left: auto;
 		margin-right: 16px;
