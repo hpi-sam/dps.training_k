@@ -1,7 +1,7 @@
 import factory
 from game.models import Area
 from .exercise_factory import ExerciseFactory
-from .inventory_factory import FilledInventoryFactory
+from .inventory_factory import EmptyInventoryFactory
 
 
 class AreaFactory(factory.django.DjangoModelFactory):
@@ -13,8 +13,8 @@ class AreaFactory(factory.django.DjangoModelFactory):
     exercise = factory.SubFactory(ExerciseFactory)
     isPaused = False
 
-    # @factory.post_generation
-    # def generate_inventory(self, create, extracted, **kwargs):
-    #    if not create:
-    #        return
-    #    FilledInventoryFactory(area=self)
+    @factory.post_generation
+    def generate_inventory(self, create, extracted, **kwargs):
+        if not create:
+            return
+        EmptyInventoryFactory(area=self)

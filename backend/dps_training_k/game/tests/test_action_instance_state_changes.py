@@ -1,5 +1,9 @@
 from django.test import TestCase
-from game.models import ActionInstanceStateNames, ActionInstance, ActionInstanceState
+from game.models import (
+    ActionInstanceStateNames,
+    PatientActionInstance,
+    ActionInstanceState,
+)
 from .factories.action_instance_factory import (
     PatientActionInstanceFactory,
     ActionInstanceFactoryFailedState,
@@ -22,7 +26,7 @@ class ActionInstanceStateChangeTestCase(TestCase):
         Two follow up states are gap free in time - one starts exactly when the other ends.
         """
         action_instance = PatientActionInstanceFactory()
-        number_of_states = ActionInstance.objects.count()
+        number_of_states = PatientActionInstance.objects.count()
         action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.assertEqual(ActionInstanceState.objects.count(), number_of_states + 1)
         self.assertEqual(
