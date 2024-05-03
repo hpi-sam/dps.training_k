@@ -118,7 +118,6 @@ class SocketPatient {
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				case 'action-check':
-					console.log('Patient received action-check:', data.actionCheck)
 					actionCheckStore.loadActionCheck(data.actionCheck as ActionCheck)
 					break
 				default:
@@ -197,6 +196,13 @@ class SocketPatient {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'patient-move',
 			'areaName': areaName,
+		}))
+	}
+
+	actionCheck(actionName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'action-check',
+			'actionName': actionName,
 		}))
 	}
 }
@@ -306,60 +312,52 @@ export const serverMockEvents = [
 			']}'
 	},
 	{
-		id: 'actionCheck',
+		id: 'action-check',
 		data: `{
 			"messageType": "action-check",
 			"actionCheck": {
-				"actionName": "X",
+				"actionName": "Beatmungsmaske anlegen",
 				"applicationDuration": 4,
 				"effectDuration": 3,
 				"personnel": [
 				{
-					"name": "X",
+					"name": "Ärzte",
 					"available": 1,
-					"assigned": 1,
+					"assigned": 2,
 					"needed": 1
 				}
 				],
 				"material": [
 				{
-					"name": "X",
-					"available": 1,
-					"assigned": 1,
+					"name": "Beatmungsmaske",
+					"available": 0,
+					"assigned": 0,
 					"needed": 1
 				}
 				],
 				"labDevices": [
 				{
-					"name": "X",
-					"available": 1,
+					"name": "EKG",
+					"available": 4,
 					"needed": 1
 				}
 				],
 				"requiredActions": {
-				"single_actions": [
-					{
-					"name": "A1"
-					}
+				"singleActions": [
+					"Stabile Seitenlage"
 				],
 				"actionGroups": [
 					{
-					"groupName": "Tubusse",
+					"groupName": "Tubus angelegt",
 					"actions": [
-						{
-						"name": "A3"
-						},
-						{
-						"name": "A4"
-						}
+						"Güdeltubus angelet",
+						"Endotrachealtubus angelegt"
 					]
 					}
 				]
 				},
-				"prohibitiveActions": [
-				{
-					"name": "A1"
-				}
+				"prohibitedActions": [
+					"Blut abnehmen"
 				]
 			}
 		}`

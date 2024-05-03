@@ -3,6 +3,7 @@
 	import {useAvailablesStore} from '@/stores/Availables'
 	import ActionConfig from '@/components/widgets/ActionConfig.vue'
 	import CloseButton from '@/components/widgets/CloseButton.vue'
+	import socketPatient from '@/sockets/SocketPatient'
 
 	const emit = defineEmits(['close-action-selection'])
 
@@ -29,6 +30,7 @@
 	}
 
 	function openAction(actionName: string) {
+		socketPatient.actionCheck(actionName)
 		currentAction.value = actionName
 		showAction.value = true
 	}

@@ -5,16 +5,14 @@ export const useActionCheckStore = defineStore('actionCheck', {
         actionName: "",
 		applicationDuration: 0,
         effectDuration: 0,
-        personnel: [],
-        material: [],
-        labDevices: [],
+        personnel: [] as CheckPersonnel[],
+        material: [] as CheckMaterial[],
+        labDevices: [] as CheckLabDevice[],
         requiredActions: {} as RequiredActions,
-        prohibitedActions: [],
+        prohibitedActions: [] as string[],
 	}),
 	actions: {
         loadActionCheck(actionCheck: ActionCheck) {
-            console.log("1: "+actionCheck)
-            console.log("2: "+actionCheck.applicationDuration)
             this.actionName = actionCheck.actionName
             this.applicationDuration = actionCheck.applicationDuration
             this.effectDuration = actionCheck.effectDuration

@@ -169,19 +169,39 @@ interface ActionCheck {
 	actionName: string
 	applicationDuration: number
 	effectDuration: number
-	personnel: Personnel[]
-	material: Material[]
-	labDevices: Material[]
+	personnel: CheckPersonnel[]
+	material: CheckMaterial[]
+	labDevices: CheckLabDevice[]
 	requiredActions: RequiredActions
-	prohibitedActions: Action[]
+	prohibitedActions: string[]
 }
 
 interface RequiredActions {
-	singleActions: String[]
+	singleActions: string[]
 	actionGroups: ActionGroup[]
 }
 
 interface ActionGroup {
 	groupName: string
-	actions: String[]
+	actions: string[]
+}
+
+interface CheckPersonnel {
+	name: string
+	available: number
+	assigned: number
+	needed: number
+}
+
+interface CheckMaterial {
+	name: string
+	available: number
+	assigned: number
+	needed: number
+}
+
+interface CheckLabDevice {
+	name: string
+	available: number
+	needed: number
 }
