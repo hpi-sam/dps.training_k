@@ -79,6 +79,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
 
     def setUp(self):
         call_command("minimal_actions")
+        call_command("patient_information")
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):

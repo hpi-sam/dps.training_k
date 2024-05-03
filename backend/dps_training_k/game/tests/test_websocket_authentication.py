@@ -1,8 +1,12 @@
+from django.core.management import call_command
 from django.test import TransactionTestCase
+
 from .mixin import TestUtilsMixin
 
 
 class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
+    def setUp(self):
+        call_command("patient_information")
 
     async def test_authenticated_websocket_connection(self):
         communicator = await self.create_patient_communicator_and_authenticate()
@@ -13,8 +17,8 @@ class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
         await communicator.send_json_to(
             {
                 "messageType": "example",
-                "exerciseId": "abcdef",
-                "patientId": "2",
+                "exerciseId": self.exercise.exercise_frontend_id,
+                "patientId": self.patient.patient_frontend_id,
             }
         )
 
@@ -26,7 +30,10 @@ class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
             response,
             {
                 "messageType": "response",
-                "content": "exerciseId abcdef & patientId 2",
+                "content": "exerciseId "
+                + self.exercise.exercise_frontend_id
+                + " & patientId "
+                + self.patient.patient_frontend_id,
             },
             "Unexpected response from WebSocket",
         )

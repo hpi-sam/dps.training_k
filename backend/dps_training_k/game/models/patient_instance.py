@@ -1,5 +1,6 @@
 from django.db import models
 
+import game.models.user as u
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
@@ -37,12 +38,29 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         choices=Triage.choices,
         default=Triage.UNDEFINED,
     )
+    user = models.OneToOneField(
+        u.User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user, _ = u.User.objects.get_or_create(
+            username=self.patient_frontend_id, user_type=u.User.UserType.PATIENT
+        )
+        self.user.set_password(
+            self.exercise.exercise_frontend_id
+        )  # Properly hash the password
+        self.user.save()
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
+        self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 
     def __str__(self):
