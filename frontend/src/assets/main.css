@@ -152,6 +152,8 @@ button:active {
   align-items: center;
   text-align: left;
   margin-top: -1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .listItemButton {

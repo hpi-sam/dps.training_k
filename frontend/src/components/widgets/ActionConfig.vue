@@ -4,6 +4,7 @@
 	import CloseButton from './CloseButton.vue'
 	import { useActionCheckStore } from '@/stores/ActionCheck'
 	import { svg } from '@/assets/Svg'	
+	import ActionGroupPopup from './ActionGroupPopup.vue'
 
 	const emit = defineEmits(['close-action'])
 
@@ -22,19 +23,11 @@
 
 	const actionCheckStore = useActionCheckStore()
 
-
-
 	const errorMessage = ref(computed(() => {
 		if (actionCheckStore.prohibitedActions.length > 0) {
 			return "Eine durchgeführte Aktion verhindert die Anordnung."
 		} else if (actionCheckStore.requiredActions.singleActions.length > 0 || actionCheckStore.requiredActions.actionGroups.length > 0) {
 			return "Es müssen zuerst andere Aktionen durchgeführt werden."
-		} else if (actionCheckStore.personnel.some(personnel => personnel.needed > personnel.assigned)) {
-			return "Es ist nicht genügend Personal verfügbar."
-		} else if (actionCheckStore.material.some(material => material.needed > material.assigned)) {
-			return "Es ist nicht genügend Material verfügbar."
-		} else if (actionCheckStore.labDevices.some(labDevice => labDevice.needed > labDevice.available)) {
-			return "Es sind nicht genügend Laborgeräte verfügbar."
 		} else if (!newActionsAllowed.value) {
 			return "Warte, bis wieder neue Aktionen angeordnet werden können."
 		} else {
@@ -51,6 +44,14 @@
 			return svg.playIcon
 		}
 	}
+
+	function openActionGroupPopup(actions: string[]) {
+		actionsOfGroup.value = actions
+		showActionGroupPopup.value = true
+	}
+
+	const showActionGroupPopup = ref(false)
+	const actionsOfGroup = ref([] as string[])
 </script>
 <script lang="ts">
 	const newActionsAllowed = ref(true)
@@ -61,6 +62,11 @@
 </script>
 
 <template>
+	<ActionGroupPopup
+		v-if="showActionGroupPopup"
+		:actions="actionsOfGroup"
+		@close-popup="showActionGroupPopup=false"
+	/>
 	<div class="flex-container">
 		<div>
 			<CloseButton @close="emit('close-action')" />
@@ -90,7 +96,7 @@
 						<div class="listItemName">
 							{{ personnel.name }}
 						</div>
-						<div class="listItemName right">
+						<div class="rightText">
 							{{ personnel.available }} / {{ personnel.assigned }} / {{ personnel.needed }}
 						</div>
 					</div>
@@ -110,7 +116,7 @@
 						<div class="listItemName">
 							{{ material.name }}
 						</div>
-						<div class="listItemName right">
+						<div class="rightText">
 							{{ material.available }} / {{ material.assigned }} / {{ material.needed }}
 						</div>
 					</div>
@@ -130,7 +136,7 @@
 						<div class="listItemName">
 							{{ labDevice.name }}
 						</div>
-						<div class="listItemName right">
+						<div class="rightText">
 							{{ labDevice.available }} / {{ labDevice.needed }}
 						</div>
 					</div>
@@ -143,7 +149,7 @@
 				>
 					<div class="listItemIcon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.blockIcon" />
+							<path :d="svg.closeIcon" />
 						</svg>
 					</div>
 					<div class="listItemButton">
@@ -159,12 +165,12 @@
 				>
 					<div class="listItemIcon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.blockIcon" />
+							<path :d="svg.closeIcon" />
 						</svg>
 					</div>
-					<div class="listItemButton">
+					<div class="listItemButton" @click="openActionGroupPopup(actionGroup.actions)">
 						<div class="listItemName">
-							{{ actionGroup.groupName }}
+							{{ actionGroup.groupName ? actionGroup.groupName : actionGroup.actions.join(' / ') }}
 						</div>
 					</div>
 				</div>
@@ -176,7 +182,7 @@
 				>
 					<div class="listItemIcon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.blockIcon" />
+							<path :d="svg.closeIcon" />
 						</svg>
 					</div>
 					<div class="listItemButton">
@@ -212,9 +218,10 @@
 		margin-bottom: 80px;
 	}
 
-	.right {
+	.rightText {
 		margin-left: auto;
-		display: flex;
+		margin-right: 16px;
+		min-width: fit-content
 	}
 
 	.error-message {

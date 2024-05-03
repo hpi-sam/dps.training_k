@@ -222,17 +222,7 @@ export const serverMockEvents = [
 			'{"actionName":"Blutdruck messen","actionCategory":"TR"},{"actionName":"Blutprobe untersuchen","actionCategory":"LA"},' +
 			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen1","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen2","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen3","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen4","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen5","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen6","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen7","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen8","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen9","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen10","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen11","actionCategory":"TR"},' +
+			'{"actionName":"Güdeltubus anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
 			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
 			'{"actionName":"Wundversorgung","actionCategory":"TR"},{"actionName":"Stabile Seitenlage","actionCategory":"TR"},' +
@@ -348,11 +338,18 @@ export const serverMockEvents = [
 				],
 				"actionGroups": [
 					{
-					"groupName": "Tubus angelegt",
+					"groupName": "Tubus anlegen",
 					"actions": [
-						"Güdeltubus angelet",
-						"Endotrachealtubus angelegt"
+						"Güdeltubus anlegen",
+						"Endotrachealtubus anlegen"
 					]
+					},
+					{
+						"groupName": "",
+						"actions": [
+							"Blutdruck messen",
+							"Infusion anlegen"
+						]
 					}
 				]
 				},
