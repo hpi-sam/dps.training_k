@@ -23,10 +23,10 @@ class InventoryEntry(models.Model):
 
     def change(self, net_change):
         # ToDo: Uncomment once condition checks are implemented
-        # if -net_change > self.amount:
-        #    raise ValueError(
-        #        f"Not enough resources {self.resource.name} to perform this action- might have happened because of a race condition"
-        #    )
+        if -net_change > self.amount:
+            raise ValueError(
+                f"Not enough resources {self.resource.name} to perform this action- might have happened because of a race condition"
+            )
         self.amount += net_change
         self.save(update_fields=["amount"])
         return self.amount

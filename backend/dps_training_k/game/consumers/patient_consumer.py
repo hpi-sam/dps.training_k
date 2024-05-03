@@ -18,6 +18,8 @@ class PatientConsumer(AbstractConsumer):
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
         ACTION_ADD = "action-add"
+        MATERIAL_RELEASE = "material-release"
+        MATERIAL_ASSIGN = "material-assign"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
@@ -48,6 +50,14 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
                 "action_id",
+            ),
+            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
+                self.handle_material_release,
+                "material_id",
+            ),
+            self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
+                self.handle_material_assign,
+                "material_id",
             ),
         }
 
@@ -87,7 +97,7 @@ class PatientConsumer(AbstractConsumer):
             self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             # self.subscribe(ChannelNotifier.get_group_name(self.exercise.lab)) #ToDo: Uncomment once exercise are guaranteed to be created
-            # self.subscribe(ChannelNotifier.get_group_name(self.patient_instance.area)) #ToDo: Uncomment once exercise are guaranteed to be created
+            # self.subscribe(ChannelNotifier.get_group_name(self.patient_instance.area)) #ToDo: Uncomment once areas are guaranteed to be created
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_material()
@@ -126,12 +136,12 @@ class PatientConsumer(AbstractConsumer):
 
         if action.category in [Action.Category.TREATMENT, Action.Category.EXAMINATION]:
             self.patient_instance.start_action(action)
-        if action.category == Action.Category.LAB:
+        elif action.category == Action.Category.LAB:
             lab = self.patient_instance.exercise.lab
-            self.patient_instance.exercise.lab.start_examination(
-                action, self.patient_instance
-            )
-        if action.category == Action.Category.OTHER:  # our current resource production
+            lab.start_examination(action, self.patient_instance)
+        elif (
+            action.category == Action.Category.OTHER
+        ):  # our current resource production
             lab = self.patient_instance.exercise.lab
             lab.start_production(action, self.patient_instance.area)
 
@@ -153,10 +163,10 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_material_release(self, material_id):
-        inventoryEntry = InventoryEntry.objects.get(id=material_id)
-        material = inventoryEntry.resource
-        inventory = inventoryEntry.inventory
-        inventory.change_resource(material, -1)
+        self.patient_instance.return_resource(material_id, 1)
+
+    def handle_material_assign(self, material_id):
+        self.patient_instance.take_resource(material_id, 1)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications

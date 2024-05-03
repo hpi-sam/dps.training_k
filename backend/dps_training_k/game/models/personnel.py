@@ -12,8 +12,6 @@ class Personnel(models.Model):
         return f"Personnel #{self.id} called {self.name} in area {self.area.name}"
 
     def save(self, *args, **kwargs):
-        creating = not self.pk
-        super().save(*args, **kwargs)
-        if creating:
+        if self._state.adding:
             self.name = f"Personnel {self.id}"
-            super().save(update_fields=["name"])
+        super().save(*args, **kwargs)

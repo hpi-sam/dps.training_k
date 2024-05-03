@@ -94,6 +94,22 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         action_instance.try_application()
         return action_instance
 
+    def take_resource(self, resource, amount):
+        area_inventory = self.area.inventory
+        if area_inventory.resource_stock(resource) < amount:
+            raise ValueError(
+                f"Area does not have enough resources {resource.name} to take"
+            )
+        area_inventory.transition_resource_to(self.inventory, resource, amount)
+
+    def return_resource(self, resource, amount):
+        if self.inventory.resource_stock(resource) < amount:
+            raise ValueError(
+                f"Patient does not have enough resources {resource.name} to return"
+            )
+        area_inventory = self.area.inventory
+        self.inventory.transition_resource_to(area_inventory, resource, amount)
+
     def is_dead(self):
         if self.patient_state.is_dead:
             return True
@@ -101,16 +117,3 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def __str__(self):
         return f"Patient #{self.id} called {self.name} with ID {self.patient_id}"
-
-    # ToDo: remove after actual method is implemented
-    def schedule_temporary_event(self):
-        ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "temporary_event_test",
-            patient=self,
-        )
-
-    def temporary_event_test(self):
-        print("temporary_event_test called")
-        return True
