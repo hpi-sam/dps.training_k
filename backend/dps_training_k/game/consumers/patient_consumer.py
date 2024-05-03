@@ -123,11 +123,14 @@ class PatientConsumer(AbstractConsumer):
         patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, action_name):
-        action = Action.objects.get(name=action_name)
-        action_instance = ActionInstance.create(
-            action_template=action, patient_instance=self.patient_instance
-        )
-        action_instance.try_application()
+        try:
+            action = Action.objects.get(name=action_name)
+            action_instance = ActionInstance.create(
+                action_template=action, patient_instance=self.patient_instance
+            )
+            action_instance.try_application()
+        except:
+            self._send_action_declination(action_instance=action_instance)
 
     def handle_action_check(self, action_id):
         stub_action_name = "Recovery Position"
@@ -147,6 +150,18 @@ class PatientConsumer(AbstractConsumer):
         )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # methods used internally
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    def _send_action_declination(self, action_instance):
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
+            actionName=action_instance.name,
+            actionDeclinationReason=action_instance.current_state.info_text,
+        )
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -163,14 +178,6 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             actionId=action_instance.id,
             actionName=action_instance.name,
-        )
-
-    def action_declination_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
-        self.send_event(
-            self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
-            actionName=action_instance.name,
-            actionDeclinationReason=action_instance.current_state.info_text,
         )
 
     def action_list_event(self, event):

@@ -36,10 +36,6 @@ class ActionInstanceTestCase(TestCase):
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.PLANNED)
 
-        self.application_status.return_value = False, "Not applicable"
-        action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.DECLINED)
-
     def test_action_starting(self):
         """
         An action instance that was planned in the beginning enters on-hold state when the application cannot be started at the moment.

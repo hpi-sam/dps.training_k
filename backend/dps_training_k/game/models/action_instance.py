@@ -11,10 +11,8 @@ class ActionInstanceStateNames(models.TextChoices):
     IN_PROGRESS = "IP", "in_progress"
     ON_HOLD = "OH", "on_hold"
     FINISHED = "FI", "finished"
-    ACTIVE = "AC", "active"
+    IN_EFFECT = "IE", "in effect"
     EXPIRED = "EX", "expired"
-
-    DECLINED = "DE", "declined"
     CANCELED = "CA", "canceled"
 
 
@@ -33,8 +31,6 @@ class ActionInstanceState(models.Model):
     info_text = models.CharField(null=True, blank=True, default=None)
 
     def update(self, state_name, time, info_text=None):
-        if self.name == ActionInstanceStateNames.DECLINED:
-            raise ValueError("Once Declined, states cannot be changed")
         if state_name == self.name and not info_text:
             return None
         if state_name == self.name and info_text:
@@ -54,7 +50,7 @@ class ActionInstanceState(models.Model):
         self.save(update_fields=["info_text"])
 
     def success_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
 
     def completion_states():
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
@@ -128,31 +124,19 @@ class ActionInstance(LocalTimeable, models.Model):
                 "Either patient_instance or area must be provided - an action instance always need a context"
             )
 
-        is_applicable, context = action_template.application_status(
-            patient_instance, patient_instance.area
-        )
         action_instance = ActionInstance.objects.create(
             patient_instance=patient_instance,
             area=area,
             action_template=action_template,
             order_id=ActionInstance.generate_order_id(patient_instance),
         )
-        if is_applicable:
-            action_instance.current_state = ActionInstanceState.objects.create(
-                action_instance=action_instance,
-                name=ActionInstanceStateNames.PLANNED,
-                t_local_begin=action_instance.get_local_time(),
-            )
-            action_instance.save(update_fields=["current_state"])
-            action_instance.place_of_application().register_to_queue(action_instance)
-            return action_instance
         action_instance.current_state = ActionInstanceState.objects.create(
             action_instance=action_instance,
-            name=ActionInstanceStateNames.DECLINED,
+            name=ActionInstanceStateNames.PLANNED,
             t_local_begin=action_instance.get_local_time(),
-            info_text=context,
         )
         action_instance.save(update_fields=["current_state"])
+        action_instance.place_of_application().register_to_queue(action_instance)
         return action_instance
 
     @classmethod
@@ -169,9 +153,6 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        if self.state_name == ActionInstanceStateNames.DECLINED:
-            raise ValueError("Cannot start a declined action")
-
         is_applicable, context = self.action_template.application_status(
             self.patient_instance, self.patient_instance.area
         )
@@ -210,7 +191,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 "_effect_expired",
                 action_instance=self,
             )
-            self._update_state(ActionInstanceStateNames.ACTIVE)
+            self._update_state(ActionInstanceStateNames.IN_EFFECT)
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
