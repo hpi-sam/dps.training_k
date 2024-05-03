@@ -24,11 +24,25 @@ class ActionInstanceState(models.Model):
     State switching & information logic for ActionInstance
     """
 
-    action_instance = models.ForeignKey(
-        "ActionInstance",
+    patient_action_instance = models.ForeignKey(
+        "PatientActionInstance",
         on_delete=models.CASCADE,
         related_name="states",
+        null=True,
     )
+    lab_action_instance = models.ForeignKey(
+        "LabActionInstance",
+        on_delete=models.CASCADE,
+        related_name="states",
+        null=True,
+    )
+
+    @property
+    def action_instance(self):
+        if self.patient_action_instance:
+            return self.patient_action_instance
+        return self.lab_action_instance
+
     name = models.CharField(choices=ActionInstanceStateNames.choices, max_length=2)
     t_local_begin = models.IntegerField()
     t_local_end = models.IntegerField(
@@ -47,12 +61,13 @@ class ActionInstanceState(models.Model):
             return None
         self.t_local_end = time
         self.save(update_fields=["t_local_end"])
-        return ActionInstanceState.objects.create(
-            action_instance=self.action_instance,
+        new_state = ActionInstanceState.objects.create(
             name=state_name,
             t_local_begin=time,
             info_text=info_text,
         )
+        new_state.set_action_instance_type(self.action_instance)
+        return new_state
 
     def add_info(self, info_text):
         self.info_text = self.info_text + info_text
@@ -61,6 +76,17 @@ class ActionInstanceState(models.Model):
     def success_states():
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
 
+    def set_action_instance_type(self, action_instance):
+        if isinstance(action_instance, PatientActionInstance):
+            self.patient_action_instance = action_instance
+            self.save(update_fields=["patient_action_instance"])
+
+        elif isinstance(action_instance, LabActionInstance):
+            self.lab_action_instance = action_instance
+            self.save(update_fields=["lab_action_instance"])
+        else:
+            raise ValueError("ActionInstance type not recognized")
+
 
 class ActionInstance(LocalTimeable, models.Model):
     """
@@ -68,11 +94,7 @@ class ActionInstance(LocalTimeable, models.Model):
     """
 
     class Meta:
-        constraints = [
-            one_or_more_field_not_null(
-                ["patient_instance", "area", "lab"], "action_instance"
-            )
-        ]
+        abstract = True
 
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
@@ -137,7 +159,7 @@ class ActionInstance(LocalTimeable, models.Model):
         is_applicable, context = action_template.application_status(
             patient_instance, patient_instance.area
         )
-        action_instance = ActionInstance.objects.create(
+        action_instance = cls.objects.create(
             action_template=action_template,
             patient_instance=patient_instance,
             area=area,
@@ -145,19 +167,19 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         if is_applicable:
             action_instance.current_state = ActionInstanceState.objects.create(
-                action_instance=action_instance,
                 name=ActionInstanceStateNames.PLANNED,
                 t_local_begin=action_instance.get_local_time(),
             )
+            action_instance.current_state.set_action_instance_type(action_instance)
             action_instance.save(update_fields=["current_state"])
             place_of_application.register_to_queue(action_instance)
             return action_instance
         action_instance.current_state = ActionInstanceState.objects.create(
-            action_instance=action_instance,
             name=ActionInstanceStateNames.DECLINED,
             t_local_begin=action_instance.get_local_time(),
             info_text=context,
         )
+        action_instance.current_state.set_action_instance_type(action_instance)
         action_instance.save(update_fields=["current_state"])
         return action_instance
 
@@ -165,9 +187,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.state_name == ActionInstanceStateNames.DECLINED:
             raise ValueError("Cannot start a declined action")
 
-        is_applicable, context = self.action_template.application_status(
-            self.patient_instance, self.patient_instance.area
-        )
+        is_applicable, context = self._check_application_status()
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False
@@ -176,11 +196,8 @@ class ActionInstance(LocalTimeable, models.Model):
         return True
 
     def _start_application(self):
-        ScheduledEvent.create_event(
-            self.patient_instance.exercise,
-            self.action_template.application_duration,  # ToDo: Replace with scalable local time system
-            "_application_finished",
-            action_instance=self,
+        self._create_scheduled_event(
+            self.action_template.application_duration, "_application_finished"
         )
         self._consume_resources()
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
@@ -198,76 +215,56 @@ class ActionInstance(LocalTimeable, models.Model):
     def _consume_resources(self):
         raise NotImplementedError("Subclasses must implement this method")
 
+    @abstractmethod
     def _application_finished_strategy(self):
         raise NotImplementedError("Subclasses must implement this method")
 
+    @abstractmethod
+    def _create_scheduled_event(self, duration, scheduled_method):
+        raise NotImplementedError("Subclasses must implement this method")
 
-class LabActionInstance(ActionInstance):
-    class Meta:
-        proxy = True
-
-    @classmethod
-    def create(cls, action_template, lab, area=None, patient_instance=None):
-        return super().create(
-            action_template,
-            place_of_application=lab,
-            lab=lab,
-            area=area,
-            patient_instance=patient_instance,
-        )
-
-    def _consume_resources(self):
-        resource_recipe = self.action_template.consumed_resources()
-        inventory = self.lab.consuming_inventory
-        for resource, amount in resource_recipe.items():
-            inventory.change_resource(resource, -amount)
-
-    def _application_finished_strategy(self):
-        self.lab.remove_from_queue(self)
-        self._return_applicable_resources()
-        if self.action_template.produced_resources():
-            self._produce_resources()
-
-    def _return_applicable_resources(self):
-        inventory = self.lab.consuming_inventory
-        resource_recipe = self.action_template.consumed_resources()
-
-        for resource, amount in resource_recipe.items():
-            if resource.is_returnable:
-                inventory.change_resource(resource, amount)
-
-    def _produce_resources(self, resource_recipe):
-        if not resource_recipe:
-            raise Exception(
-                "Resource production was called without resources to produce"
-            )
-        inventory = self.lab.consuming_inventory
-        for resource, amount in resource_recipe.items():
-            inventory.change_resource(resource, amount)
+    @abstractmethod
+    def _check_application_status(self):
+        raise NotImplementedError("Subclasses must implement this method")
 
 
 class PatientActionInstance(ActionInstance):
-    class Meta:
-        proxy = True
+    patient_instance = models.ForeignKey(
+        "PatientInstance", on_delete=models.CASCADE, null=True
+    )
 
     @classmethod
-    def create(cls, action_template, patient_instance, area):
-        return super().create(
+    def create(cls, action_template, patient_instance, area=None):
+        obj = super().create(
             action_template,
-            place_of_application=patient_instance,
+            place_of_application=patient_instance.area,
             area=area,
             patient_instance=patient_instance,
+        )
+        return obj
+
+    def _check_application_status(self):
+        return self.action_template.application_status(
+            self.patient_instance, self.patient_instance.area
+        )
+
+    def _create_scheduled_event(self, duration, scheduled_method):
+        return ScheduledEvent.create_event(
+            self.patient_instance.exercise,
+            duration,  # ToDo: Replace with scalable local time system
+            scheduled_method,
+            patient_action_instance=self,
         )
 
     def _consume_resources(self):
         resource_recipe = self.action_template.consumed_resources()
-        patient_inventory = self.patient_instance.consuming_inventory
-        area_inventory = self.patient_instance.area.consuming_inventory
+        patient_inventory = self.patient_instance.inventory
+        area_inventory = self.patient_instance.area.inventory
         for resource, amount in resource_recipe.items():
             pulled_resources = patient_inventory.resource_stock(resource) - amount
             if pulled_resources < 0:
                 area_inventory.transition_resource_to(
-                    patient_inventory, resource, pulled_resources
+                    patient_inventory, resource, -pulled_resources
                 )
             if not resource.is_returnable:
                 patient_inventory.change_resource(resource, -amount)
@@ -280,9 +277,75 @@ class PatientActionInstance(ActionInstance):
                 self.patient_instance.exercise,
                 self.action_template.effect_duration,  # ToDo: Replace with scalable local time system
                 "_effect_expired",
-                action_instance=self,
+                patient_action_instance=self,
             )
             self._update_state(ActionInstanceStateNames.ACTIVE)
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
+
+
+def get_action_instance_class_from_string(action_instance_str):
+    if action_instance_str == "patient_action_instance":
+        return PatientActionInstance
+    elif action_instance_str == "lab_action_instance":
+        return LabActionInstance
+    else:
+        raise ValueError("ActionInstance type not recognized")
+
+
+class LabActionInstance(ActionInstance):
+    constraints = [one_or_more_field_not_null(["area", "lab"], "lab_action_instance")]
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True)
+
+    @classmethod
+    def create(cls, action_template, lab, area=None, patient_instance=None):
+        obj = super().create(
+            action_template,
+            place_of_application=lab,
+            lab=lab,
+            area=area,
+            patient_instance=patient_instance,
+        )
+        return obj
+
+    def _check_application_status(self):
+        raise NotImplementedError("Should be available after condition checking")
+        # return self.action_template.application_status(self.lab, self.area)
+
+    def _create_scheduled_event(self, duration, scheduled_method):
+        return ScheduledEvent.create_event(
+            self.lab.exercise,
+            duration,  # ToDo: Replace with scalable local time system
+            scheduled_method,
+            lab_action_instance=self,
+        )
+
+    def _consume_resources(self):
+        resource_recipe = self.action_template.consumed_resources()
+        inventory = self.lab.inventory
+        for resource, amount in resource_recipe.items():
+            inventory.change_resource(resource, -amount)
+
+    def _application_finished_strategy(self):
+        self.lab.remove_from_queue(self)
+        self._return_applicable_resources()
+        if self.action_template.produced_resources():
+            self._produce_resources()
+
+    def _return_applicable_resources(self):
+        inventory = self.lab.inventory
+        resource_recipe = self.action_template.consumed_resources()
+
+        for resource, amount in resource_recipe.items():
+            if resource.is_returnable:
+                inventory.change_resource(resource, amount)
+
+    def _produce_resources(self, resource_recipe):
+        if not resource_recipe:
+            raise Exception(
+                "Resource production was called without resources to produce"
+            )
+        inventory = self.lab.inventory
+        for resource, amount in resource_recipe.items():
+            inventory.change_resource(resource, amount)

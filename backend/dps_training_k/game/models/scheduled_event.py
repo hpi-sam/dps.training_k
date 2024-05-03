@@ -24,7 +24,8 @@ class ScheduledEvent(models.Model):
         method_name,
         patient=None,
         area=None,
-        action_instance=None,
+        patient_action_instance=None,
+        lab_action_instance=None,
     ):
         scheduled_event = ScheduledEvent(
             exercise=exercise,
@@ -37,7 +38,8 @@ class ScheduledEvent(models.Model):
             exercise=exercise,
             patient=patient,
             area=area,
-            action_instance=action_instance,
+            patient_action_instance=patient_action_instance,
+            lab_action_instance=lab_action_instance,
         )
 
     @classmethod
@@ -67,7 +69,8 @@ class Owner(models.Model):
                     "patient_owner",
                     "exercise_owner",
                     "area_owner",
-                    "action_instance_owner",
+                    "patient_action_instance_owner",
+                    "lab_action_instance_owner",
                 ],
                 "owner",
             )
@@ -100,8 +103,16 @@ class Owner(models.Model):
         related_name="owned_events",
     )
 
-    action_instance_owner = models.ForeignKey(
-        "ActionInstance",
+    patient_action_instance_owner = models.ForeignKey(
+        "PatientActionInstance",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="owned_events",
+    )
+
+    lab_action_instance_owner = models.ForeignKey(
+        "LabActionInstance",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -110,21 +121,34 @@ class Owner(models.Model):
 
     @classmethod
     def create_owner(
-        cls, event, patient=None, exercise=None, area=None, action_instance=None
+        cls,
+        event,
+        patient=None,
+        exercise=None,
+        area=None,
+        patient_action_instance=None,
+        lab_action_instance=None,
     ):
-        # exercise needs to be checked last, as it is always passed to check for the time factor
-        if patient:
-            return cls.objects.create(event=event, patient_owner=patient)
-        elif area:
-            return cls.objects.create(event=event, area_owner=area)
-        elif action_instance:
-            return cls.objects.create(
-                event=event, action_instance_owner=action_instance
-            )
-        elif exercise:
-            return cls.objects.create(event=event, exercise_owner=exercise)
-        else:
-            raise ValueError("Owner must have a patient or exercise")
+        not_none_not_exercise_fields = [
+            patient,
+            area,
+            patient_action_instance,
+            lab_action_instance,
+        ]
+        if exercise and len(
+            not_none_not_exercise_fields
+        ) - not_none_not_exercise_fields.count(
+            None
+        ):  # remove default exercise when other owner is set
+            exercise = None
+        return cls.objects.create(
+            event=event,
+            patient_owner=patient,
+            exercise_owner=exercise,
+            area_owner=area,
+            patient_action_instance_owner=patient_action_instance,
+            lab_action_instance_owner=lab_action_instance,
+        )
 
     def owner_instance(self):
         if self.patient_owner:
@@ -133,7 +157,9 @@ class Owner(models.Model):
             return self.exercise_owner
         elif self.area_owner:
             return self.area_owner
-        elif self.action_instance_owner:
-            return self.action_instance_owner
+        elif self.patient_action_instance_owner:
+            return self.patient_action_instance_owner
+        elif self.lab_action_instance_owner:
+            return self.lab_action_instance_owner
         else:
             raise Exception("This owner instance was created  without and actual owner")

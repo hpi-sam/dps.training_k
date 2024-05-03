@@ -114,6 +114,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
         event = {
             "type": event_type,
             "action_instance_pk": applied_action.id,
+            "action_instance_class": applied_action.__class__.__name__,
         }
         cls._notify_group(channel, event)
 

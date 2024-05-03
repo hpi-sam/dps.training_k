@@ -1,6 +1,7 @@
 from urllib.parse import parse_qs
 
 from game.models import PatientInstance, Exercise, ActionInstance, InventoryEntry
+from game.models.action_instance import get_action_instance_class_from_string
 from template.models import Action
 from template.serializers.state_serializer import StateSerializer
 from .abstract_consumer import AbstractConsumer
@@ -165,7 +166,9 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_confirmation_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = get_action_instance_class_from_string(
+            event["action_instance_class"]
+        ).objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             actionId=action_instance.id,
@@ -173,7 +176,9 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_declination_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = get_action_instance_class_from_string(
+            event["action_instance_class"]
+        ).objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
             actionName=action_instance.name,
@@ -181,7 +186,9 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_result_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = get_action_instance_class_from_string(
+            event["action_instance_class"]
+        ).objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_RESULT,
             actionId=action_instance.id,
