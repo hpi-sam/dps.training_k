@@ -36,36 +36,36 @@ class Inventory(models.Model):
 
     class Meta:
         constraints = [
-            one_or_more_field_not_null(["area", "lab", "patient"], "inventory"),
+            one_or_more_field_not_null(
+                ["area", "lab", "patient_instance"], "inventory"
+            ),
         ]
 
     area = models.OneToOneField(
         "Area",
         on_delete=models.CASCADE,
-        related_name="consuming_inventory",
         blank=True,
         null=True,
     )
     lab = models.OneToOneField(
         "Lab",
         on_delete=models.CASCADE,
-        related_name="consuming_inventory",
         blank=True,
         null=True,
     )
-    patient = models.OneToOneField(
+    patient_instance = models.OneToOneField(
         "PatientInstance",
         on_delete=models.CASCADE,
-        related_name="consumning_inventory",
         blank=True,
         null=True,
     )
 
     def resource_stock(self, resource):
-        entry = self.entries.get(resource=resource)
-        if entry is None:
+        try:
+            entry = self.entries.get(resource=resource)
+            return entry.amount
+        except self.entries.model.DoesNotExist:
             return 0
-        return entry.amount
 
     def change_resource(self, resource, net_change):
         entry, _ = InventoryEntry.objects.get_or_create(
@@ -73,10 +73,10 @@ class Inventory(models.Model):
         )
         return entry.change(net_change)
 
-    def transition_resource_to(self, Inventory, resource, net_change):
+    def transition_resource_to(self, inventory, resource, net_change):
         if net_change < 0:
             raise ValueError(
                 "Transitioning resources to another inventory requires a positive net change"
             )
         self.change_resource(resource, -net_change)
-        Inventory.change_resource(resource, net_change)
+        inventory.change_resource(resource, net_change)
