@@ -6,7 +6,6 @@ from game.models import (
 )
 from .factories.action_instance_factory import (
     PatientActionInstanceFactory,
-    ActionInstanceFactoryFailedState,
 )
 from unittest.mock import patch
 
@@ -37,11 +36,3 @@ class ActionInstanceStateChangeTestCase(TestCase):
             name=ActionInstanceStateNames.PLANNED
         ).latest("t_local_begin")
         self.assertEqual(previous_state.t_local_end, 10)
-
-    def test_declined_action_instance_state_change(self):
-        """
-        ActionInstanceState does not allow to change the state of a declined action instance.
-        """
-        action_instance = ActionInstanceFactoryFailedState()
-        with self.assertRaises(ValueError):
-            action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)

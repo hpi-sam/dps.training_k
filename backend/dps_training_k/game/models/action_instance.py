@@ -1,11 +1,12 @@
 from abc import abstractmethod
+
 from django.db import models
-from game.models import ScheduledEvent
-from template.models import Action
+
 from game.channel_notifications import (
     PatientActionInstanceDispatcher,
     LabActionInstanceDispatcher,
 )
+from game.models import ScheduledEvent
 from helpers.local_timable import LocalTimeable
 from helpers.one_field_not_null import one_or_more_field_not_null
 
@@ -15,10 +16,8 @@ class ActionInstanceStateNames(models.TextChoices):
     IN_PROGRESS = "IP", "in_progress"
     ON_HOLD = "OH", "on_hold"
     FINISHED = "FI", "finished"
-    ACTIVE = "AC", "active"
+    IN_EFFECT = "IE", "in effect"
     EXPIRED = "EX", "expired"
-
-    DECLINED = "DE", "declined"
     CANCELED = "CA", "canceled"
 
 
@@ -55,8 +54,6 @@ class ActionInstanceState(models.Model):
     info_text = models.CharField(null=True, blank=True, default=None)
 
     def update(self, state_name, time, info_text=None):
-        if self.name == ActionInstanceStateNames.DECLINED:
-            raise ValueError("Once Declined, states cannot be changed")
         if state_name == self.name and not info_text:
             return None
         if state_name == self.name and info_text:
@@ -77,7 +74,10 @@ class ActionInstanceState(models.Model):
         self.save(update_fields=["info_text"])
 
     def success_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
+
+    def completion_states():
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
 
     def set_action_instance_type(self, action_instance):
         if isinstance(action_instance, PatientActionInstance):
@@ -97,6 +97,7 @@ class ActionInstance(LocalTimeable, models.Model):
     """
 
     class Meta:
+        ordering = ["order_id"]
         abstract = True
 
     patient_instance = models.ForeignKey(
@@ -108,6 +109,7 @@ class ActionInstance(LocalTimeable, models.Model):
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
+    order_id = models.IntegerField(null=True)
 
     @property
     def name(self):
@@ -129,6 +131,13 @@ class ActionInstance(LocalTimeable, models.Model):
             return self.states.get(name=ActionInstanceStateNames.FINISHED).info_text
         else:
             return None
+
+    @property
+    def completed(self):
+        if self.current_state in ActionInstanceState.completion_states():
+            return True
+        else:
+            return False
 
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
@@ -153,37 +162,36 @@ class ActionInstance(LocalTimeable, models.Model):
                 "Either patient_instance or area must be provided - an action instance always need a context"
             )
 
-        is_applicable, context = action_template.application_status(
-            patient_instance, patient_instance.area
-        )
         action_instance = cls.objects.create(
             action_template=action_template,
             patient_instance=patient_instance,
             area=area,
             lab=lab,
+            order_id=ActionInstance.generate_order_id(patient_instance),
         )
-        if is_applicable:
-            action_instance.current_state = ActionInstanceState.objects.create(
-                name=ActionInstanceStateNames.PLANNED,
-                t_local_begin=action_instance.get_local_time(),
-            )
-            action_instance.current_state.set_action_instance_type(action_instance)
-            action_instance.save(update_fields=["current_state"])
-            place_of_application.register_to_queue(action_instance)
-            return action_instance
         action_instance.current_state = ActionInstanceState.objects.create(
-            name=ActionInstanceStateNames.DECLINED,
+            name=ActionInstanceStateNames.PLANNED,
             t_local_begin=action_instance.get_local_time(),
-            info_text=context,
         )
+        action_instance.place_of_application().register_to_queue(action_instance)
         action_instance.current_state.set_action_instance_type(action_instance)
         action_instance.save(update_fields=["current_state"])
         return action_instance
 
-    def try_application(self):
-        if self.state_name == ActionInstanceStateNames.DECLINED:
-            raise ValueError("Cannot start a declined action")
+    @classmethod
+    def generate_order_id(self, patient_instance):
+        # Use aggregate to find the maximum order_id for the specified patient_instance
+        result = ActionInstance.objects.filter(
+            patient_instance=patient_instance
+        ).aggregate(max_order_id=models.Max("order_id"))
+        max_order_id = result["max_order_id"]
+        if max_order_id is None:
+            new_order_id = 0
+        else:
+            new_order_id = max_order_id + 1
+        return new_order_id
 
+    def try_application(self):
         is_applicable, context = self._check_application_status()
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
@@ -199,12 +207,10 @@ class ActionInstance(LocalTimeable, models.Model):
         self._consume_resources()
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
 
-    def _application_finished(self):
+    def _application_finished(self, patient_state):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.action_template.get_result(
-                self.patient_instance.patient_state
-            ),
+            info_text=self.action_template.get_result(patient_state),
         )
         self._application_finished_strategy()
 
@@ -226,6 +232,14 @@ class ActionInstance(LocalTimeable, models.Model):
 
 
 class PatientActionInstance(ActionInstance):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order_id", "patient_instance"],
+                name="unique_order_id_for_patient",
+            )
+        ]
+
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True
     )
@@ -282,7 +296,7 @@ class PatientActionInstance(ActionInstance):
                 "_effect_expired",
                 patient_action_instance=self,
             )
-            self._update_state(ActionInstanceStateNames.ACTIVE)
+            self._update_state(ActionInstanceStateNames.IN_EFFECT)
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)

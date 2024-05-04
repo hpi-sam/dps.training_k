@@ -42,12 +42,6 @@ class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
         )
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.PLANNED)
 
-        self.application_status.return_value = False, "Not applicable"
-        action_instance = PatientActionInstance.create(
-            ActionFactory(), PatientFactory()
-        )
-        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.DECLINED)
-
     def test_action_starting(self):
         """
         An action instance that was planned in the beginning enters on-hold state when the application cannot be started at the moment.
@@ -79,7 +73,8 @@ class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
             action_template, patient_instance, area
         )
         action_instance.try_application()
-        self.assertEqual(_notify_action_event.call_count, 1)
+        # send action-list twice, send confirmation event once = 3
+        self.assertEqual(_notify_action_event.call_count, 3)
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
@@ -89,7 +84,8 @@ class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
         )
         self.application_status.return_value = False, "Not applicable"
         action_instance.try_application()
-        self.assertEqual(_notify_action_event.call_count, 2)
+        # send action-list 4 times, send confirmation event twice = 6
+        self.assertEqual(_notify_action_event.call_count, 6)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
 

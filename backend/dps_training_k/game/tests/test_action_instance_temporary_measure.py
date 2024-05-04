@@ -31,7 +31,7 @@ class ActionInstanceTemporaryMeasureTestCase(ResourcesDeactivateable, TestCase):
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
         check_for_updates()
         action_instance.refresh_from_db()
-        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ACTIVE)
+        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.IN_EFFECT)
         settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(20)
         check_for_updates()
         action_instance.refresh_from_db()

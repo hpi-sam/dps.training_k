@@ -1,7 +1,7 @@
 from django.db import models
 
-from helpers.actions_queueable import ActionsQueueable
 from game.channel_notifications import AreaDispatcher
+from helpers.actions_queueable import ActionsQueueable
 
 from .inventory import Inventory
 
@@ -31,3 +31,6 @@ class Area(ActionsQueueable, models.Model):
             self.inventory = Inventory.objects.create()
         update_fields = kwargs.get("update_fields", None)
         AreaDispatcher.save_and_notify(self, update_fields, super(), *args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        AreaDispatcher.delete_and_notify(self)

@@ -11,15 +11,17 @@
 
 	const currentAction = ref('Keine Aktion ausgewählt')
 
-	function filteredActions(actionType: string) {
-		return availableActions.value.filter(action => action.actionType === actionType)
+	function filteredActions(actionCategory: string) {
+		return availableActions.value.filter(action => action.actionCategory === actionCategory)
 	}
 
-	function getTypeLabel(actionType: string) {
-		switch (actionType) {
-			case 'treatment':
+	function getTypeLabel(actionCategory: string) {
+		switch (actionCategory) {
+			case 'TR':
 				return 'Behandlung'
-			case 'lab':
+			case 'EX':
+				return 'Untersuchung'
+			case 'LA':
 				return 'Labor'
 			default:
 				return 'Sonstiges'
@@ -45,7 +47,7 @@
 			<h1>Wähle eine Aktion</h1>
 			<CloseButton @click="emit('close-action-selection')" />
 			<div
-				v-for="actionTyp in availablesStore.getActionTypes"
+				v-for="actionTyp in availablesStore.getActionCategories"
 				:key="actionTyp"
 				class="list"
 			>

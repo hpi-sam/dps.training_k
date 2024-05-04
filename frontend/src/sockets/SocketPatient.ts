@@ -7,6 +7,8 @@ import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue
 import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import {useActionOverviewStore} from "@/stores/ActionOverview"
+import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
+import { commonMockEvents } from "./commonMockEvents"
 
 class SocketPatient {
 	private readonly url: string
@@ -22,6 +24,7 @@ class SocketPatient {
 		const availablesStore = useAvailablesStore()
 		const ressourceAssignmentsStore = useRessourceAssignmentsStore()
 		const actionOverview = useActionOverviewStore()
+		const visibleInjuriesStore = useVisibleInjuriesStore()
 
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
@@ -60,23 +63,28 @@ class SocketPatient {
 					patientStore.loadStatusFromJSON(data.state as State)
 					break
 				case 'available-patients':
-					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatients)
+					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					patientStore.initializePatientFromAvailablePatients()
 					break
 				case 'available-actions':
-					console.log('Socket: Available actions:', data.availableActions)
-					if (data.availableActions === undefined) showErrorToast('Fehler: Keine verfügbaren Aktionen erhalten')
-					else availablesStore.loadAvailableActions(data.availableActions as AvailableActions)
+					availablesStore.loadAvailableActions(data.availableActions as AvailableAction[])
 					break
 				case 'exercise':
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
 					break
-				case 'exercise-start':
+				case 'exercise-started':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-stop':
+				case 'exercise-paused':
+					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+					break
+				case 'exercise-resumed':
+					setScreen(Screens.STATUS, ScreenPosition.LEFT)
+					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
+					break
+				case 'exercise-ended':
 					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
 				case 'delete':
@@ -101,9 +109,11 @@ class SocketPatient {
 					ressourceAssignmentsStore.setRessourceAssignments(data.ressourceAssignments as RessourceAssignments)
 					break
 				case 'action-list':
-					console.log('Socket: Action list:', data)
 					actionOverview.loadActions(data.actions as Action[])
 					actionOverview.startUpdating()
+					break
+				case 'visible-injuries':
+					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -176,161 +186,48 @@ class SocketPatient {
 			'actionId': actionId,
 		}))
 	}
+
+	movePatient(areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'patient-move',
+			'areaName': areaName,
+		}))
+	}
 }
 
 const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
 export default socketPatient
 
 export const serverMockEvents = [
-	{id: 'failure', data: '{"messageType":"failure","message":"Error encountered"}'},
-	{id: 'test-passthrough', data: '{"messageType":"test-passthrough","message":"received test-passthrough event"}'},
 	{
 		id: 'state',
 		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
 			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
 	},
 	{
-		id: "available-patients",
-		data: '{"messageType":"available-patients","availablePatients":{"availablePatients":[' +
-			'{"patientCode":1,' +
-			'"triage":"Y","patientInjury":"Gebrochener Arm","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 30 Jahre alt","patientBiometrics":"Größe: 196cm, Gewicht: 76kg"},' +
-			'{"patientCode":2,' +
-			'"triage":"G","patientInjury":"Verdrehter Knöchel","patientHistory":"Keine Allergien",' +
-			'"patientPersonalDetails":"männlich, 47 Jahre alt","patientBiometrics":"Größe: 164cm, Gewicht: 65kg"},' +
-			'{"patientCode":3,' +
-			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Diabetes",' +
-			'"patientPersonalDetails":"weiblich, 20 Jahre alt","patientBiometrics":"Größe: 192cm, Gewicht: 77kg"},' +
-			'{"patientCode":4,' +
-			'"triage":"Y","patientInjury":"Gebprelltes Bein","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"männlich, 13 Jahre alt","patientBiometrics":"Größe: 165cm, Gewicht: 54kg"},' +
-			'{"patientCode":5,' +
-			'"triage":"G","patientInjury":"Butender Arm","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 53 Jahre alt","patientBiometrics":"Größe: 180cm, Gewicht: 71kg"},' +
-			'{"patientCode":6,' +
-			'"triage":"Y","patientInjury":"Verschobene Schulter","patientHistory":"Gehbehindert",' +
-			'"patientPersonalDetails":"männlich, 49 Jahre alt","patientBiometrics":"Größe: 170cm, Gewicht: 67kg"},' +
-			'{"patientCode":7,' +
-			'"triage":"R","patientInjury":"Kopfverletzung","patientHistory":"Asthma",' +
-			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 162cm, Gewicht: 67kg"},' +
-			'{"patientCode":8,' +
-			'"triage":"Y","patientInjury":"Verlorener Finger","patientHistory":"Diabetes",' +
-			'"patientPersonalDetails":"männlich, 43 Jahre alt","patientBiometrics":"Größe: 161cm, Gewicht: 56kg"},' +
-			'{"patientCode":9,' +
-			'"triage":"G","patientInjury":"Aufgschürfter Ellenbogen","patientHistory":"Bluthochdruck",' +
-			'"patientPersonalDetails":"weiblich, 23 Jahre alt","patientBiometrics":"Größe: 182cm, Gewicht: 75kg"},' +
-			'{"patientCode":10,' +
-			'"triage":"Y","patientInjury":"Gebrochene Nase","patientHistory":"Grippe",' +
-			'"patientPersonalDetails":"männlich, 39 Jahre alt","patientBiometrics":"Größe: 173cm, Gewicht: 61kg"}' +
-			']}}'
-	},
-	{
 		id: 'available-actions',
-		data: '{"messageType":"available-actions","availableActions":{"availableActions":[' +
-			'{"actionName":"Blutdruck messen","actionType":"treatment"},{"actionName":"Blutprobe untersuchen","actionType":"lab"},' +
-			'{"actionName":"Beatmungsmaske anlegen","actionType":"treatment"},' +
-			'{"actionName":"Infusion anlegen","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen1","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen2","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen3","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen4","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen5","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen6","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen7","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen8","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen9","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen10","actionType":"treatment"},' +
-			'{"actionName":"Blut abnehmen11","actionType":"treatment"},' +
-			'{"actionName":"Medikament verabreichen","actionType":"treatment"},' +
-			'{"actionName":"Ruheposition einnehmen","actionType":"treatment"},{"actionName":"Röntgen","actionType":"lab"},' +
-			'{"actionName":"Wundversorgung","actionType":"treatment"},{"actionName":"Stabile Seitenlage","actionType":"treatment"},' +
-			'{"actionName":"Schienung anlegen","actionType":"treatment"},{"actionName":"Vitalwerte messen","actionType":"treatment"}' +
-			']}}'
+		data: '{"messageType":"available-actions","availableActions":[' +
+			'{"actionName":"Blutdruck messen","actionCategory":"TR"},{"actionName":"Blutprobe untersuchen","actionCategory":"LA"},' +
+			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen1","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen2","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen3","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen4","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen5","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen6","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen7","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen8","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen9","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen10","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen11","actionCategory":"TR"},' +
+			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
+			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
+			'{"actionName":"Wundversorgung","actionCategory":"TR"},{"actionName":"Stabile Seitenlage","actionCategory":"TR"},' +
+			'{"actionName":"Schienung anlegen","actionCategory":"TR"},{"actionName":"Vitalwerte messen","actionCategory":"EX"}' +
+			']}'
 	},
-	{
-		id: 'exercise',
-		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
-			'{"areaName":"Intensiv",' +
-			'"patients":[' +
-			'{"patientId":5,"patientName":"Anna Müller","patientCode":1,"triage":"Y"},' +
-			'{"patientId":3,"patientName":"Frank Huber","patientCode":2,"triage":"G"}' +
-			'],' +
-			'"personnel":[' +
-			'{"personnelId":10,"personnelName":"Sebastian Lieb"},' +
-			'{"personnelId":1,"personnelName":"Albert Spahn"}' +
-			'],' +
-			'"material":[' +
-			'{"materialId":1,"materialName":"Beatmungsgerät"},' +
-			'{"materialId":2,"materialName":"Defibrillator"}' +
-			']' +
-			'},' +
-			'{"areaName":"ZNA",' +
-			'"patients":[' +
-			'{"patientId":2,"patientName":"Luna Patel","patientCode":3,"triage":"R"},' +
-			'{"patientId":6,"patientName":"Friedrich Gerhard","patientCode":4,"triage":"Y"}' +
-			'],' +
-			'"personnel":[' +
-			'{"personnelId":11,"personnelName":"Hannah Mayer"},' +
-			'{"personnelId":3,"personnelName":"Jens Schweizer"},' +
-			'{"personnelId":2,"personnelName":"Lena Schulze"},' +
-			'{"personnelId":7,"personnelName":"Günther Beutle"},' +
-			'{"personnelId":8,"personnelName":"Julian Mohn"},' +
-			'{"personnelId":9,"personnelName":"Elisabeth Bauer"},' +
-			'{"personnelId":12,"personnelName":"Hans Schmidt"},' +
-			'{"personnelId":13,"personnelName":"Johannes Müller"},' +
-			'{"personnelId":14,"personnelName":"Sophie Schneider"},' +
-			'{"personnelId":15,"personnelName":"Lisa Fischer"},' +
-			'{"personnelId":16,"personnelName":"Julia Meyer"},' +
-			'{"personnelId":17,"personnelName":"Max Weber"},' +
-			'{"personnelId":18,"personnelName":"Lukas Wagner"},' +
-			'{"personnelId":19,"personnelName":"Laura Becker"},' +
-			'{"personnelId":20,"personnelName":"Anna Schäfer"},' +
-			'{"personnelId":21,"personnelName":"David Hoffmann"},' +
-			'{"personnelId":22,"personnelName":"Sarah Bauer"}' +
-			'],' +
-			'"material":[' +
-			'{"materialId":3,"materialName":"Defibrillator1"},' +
-			'{"materialId":10,"materialName":"Defibrillator2"},' +
-			'{"materialId":11,"materialName":"Defibrillator3"},' +
-			'{"materialId":12,"materialName":"Defibrillator4"},' +
-			'{"materialId":13,"materialName":"Defibrillator5"},' +
-			'{"materialId":14,"materialName":"Defibrillator6"},' +
-			'{"materialId":15,"materialName":"Defibrillator7"},' +
-			'{"materialId":16,"materialName":"Defibrillator8"},' +
-			'{"materialId":17,"materialName":"Defibrillator9"},' +
-			'{"materialId":18,"materialName":"Defibrillator10"},' +
-			'{"materialId":19,"materialName":"Defibrillator11"},' +
-			'{"materialId":20,"materialName":"Defibrillator12"},' +
-			'{"materialId":4,"materialName":"EKG-Monitor"},' +
-			'{"materialId":7,"materialName":"Pulsoximeter"},' +
-			'{"materialId":8,"materialName":"EEG"},' +
-			'{"materialId":9,"materialName":"Narkosegerät"}' +
-			']' +
-			'},' +
-			'{"areaName":"Wagenhalle",' +
-			'"patients":[' +
-			'{"patientId":1,"patientName":"Isabelle Busch","patientCode":5,"triage":"G"},' +
-			'{"patientId":4,"patientName":"Jasper Park","patientCode":6,"triage":"Y"}' +
-			'],' +
-			'"personnel":[' +
-			'{"personnelId":5,"personnelName":"Finn Heizmann"},' +
-			'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
-			'],' +
-			'"material":[' +
-			'{"materialId":5,"materialName":"EKG-Gerät"},' +
-			'{"materialId":6,"materialName":"Blutdruckmessgerät"},' +
-			'{"materialId":10,"materialName":"Beatmungsgerät"}' +
-			']' +
-			'}]}}'
-	},
-	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
-	{id: 'exercise-stop', data: '{"messageType":"exercise-stop"}'},
 	{id: 'delete', data: '{"messageType":"delete"}'},
-	{
-		id: 'information',
-		data: '{"messageType":"information","patientInjury":"Fractured limb","patientHistory":"No known allergies",' +
-			'"patientPersonalDetails":"John Doe, Male, 30 years old","patientBiometrics":"Height: 180cm, Weight: 75kg"}'
-	},
 	{
 		id: 'action-confirmation',
 		data: '{"messageType":"action-confirmation","actionName":"Stabile Seitenlage","actionId":"123"}'
@@ -382,14 +279,25 @@ export const serverMockEvents = [
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"running","timeUntilCompletion":20,"actionResult":null},' +
-			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"running","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"waiting","timeUntilCompletion":320,"actionResult":' +
+			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"IP","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"PL","timeUntilCompletion":320,"actionResult":' +
 			'null},' +
-			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":' +
+			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"finished","timeUntilCompletion":null,"actionResult":null},' +
-			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"blocked","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
+			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"OH","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
-	}
+	},
+	{
+		id: 'visible-injuries',
+		data: '{"messageType":"visible-injuries","injuries":[' +
+			'{ "injuryId": 1, "injuryType": "fracture", "position": "left hand" },' +
+			'{ "injuryId": 2, "injuryType": "blood", "position": "right lower leg" },' +
+			'{ "injuryId": 3, "injuryType": "blood", "position": "head" },' +
+			'{ "injuryId": 4, "injuryType": "fracture", "position": "right collarbone" },' +
+			'{ "injuryId": 5, "injuryType": "blood", "position": "left rip" }' +
+			']}'
+	},
+	...commonMockEvents
 ]

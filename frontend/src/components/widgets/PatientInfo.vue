@@ -1,21 +1,14 @@
 <script setup lang="ts">
 	const props = defineProps({
-		injury: {
-			type: String,
-			default: 'No Injury'
-		},
-		history: {
-			type: String,
-			default: 'No History'
-		},
-		personalDetails: {
-			type: String,
-			default: 'No Personal Details'
-		},
-		biometrics: {
-			type: String,
-			default: 'No Biometrics'
-		}
+		personalDetails: {type: String, default: '-'},
+		injury: {type: String, default: '-'},
+		biometrics: {type: String, default: '-'},
+		consecutiveUniqueNumber: {type: Number, default: 0},
+		mobility: {type: String, default: '-'},
+		preexistingIllnesses: {type: String, default: '-'},
+		permanentMedication: {type: String, default: '-'},
+		currentCaseHistory: {type: String, default: '-'},
+		pretreatment: {type: String, default: '-'},
 	})
 </script>
 
@@ -25,17 +18,36 @@
 	</p>{{ props.injury }}
 	<br>
 	<p class="key">
+		Biometrie
+	</p>{{ props.biometrics }}
+	<br>
+	<p class="key">
 		Vorerkrankungen
-	</p>{{ props.history }}
+	</p>{{ props.preexistingIllnesses }}
+	<br>
+	<p class="key">
+		Dauer-Medikation
+	</p>{{ props.permanentMedication }}
+	<br>
+	<p class="key">
+		Aktuelle Anamnese / Rettungsdienst-Übergabe
+	</p>{{ props.currentCaseHistory }}
+	<br>
+	<p class="key">
+		Vorbehandlung
+	</p>{{ props.pretreatment }}
+	<br>
+	<p class="key">
+		Mobilität
+	</p>{{ props.mobility }}
 	<br>
 	<p class="key">
 		Personalien
 	</p>{{ props.personalDetails }}
 	<br>
 	<p class="key">
-		Biometrie
-	</p>{{ props.biometrics }}
-	<br>
+		Fortlaufende Eineindeutige Nummer
+	</p>{{ props.consecutiveUniqueNumber }}
 </template>
 
 <style scoped>

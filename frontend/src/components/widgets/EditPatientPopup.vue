@@ -1,12 +1,12 @@
 <script setup lang="ts">
-	import { useAvailablesStore } from "@/stores/Availables"
+	import {useAvailablesStore} from "@/stores/Availables"
 	import PatientInfo from "./PatientInfo.vue"
-	import { computed, ref } from "vue"
+	import {computed, ref} from "vue"
 	import TriageForListItems from "./TriageForListItems.vue"
-	import { useExerciseStore } from "@/stores/Exercise"
+	import {useExerciseStore} from "@/stores/Exercise"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
-import CloseButton from "./CloseButton.vue"
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -17,17 +17,19 @@ import CloseButton from "./CloseButton.vue"
 		}
 	})
 
-	function deletePatient(patientId: number){
+	function deletePatient(patientId: number) {
 		socketTrainer.patientDelete(patientId)
+		emit('close-popup')
 	}
 
-	function updatePatient(patientId: number, patientName: string, patientCode: number){
+	function updatePatient(patientId: number, patientName: string, patientCode: number) {
 		socketTrainer.patientUpdate(patientId, patientName, patientCode)
+		emit('close-popup')
 	}
 
 	const exerciseStore = useExerciseStore()
 	const currentPatientName = computed(() => exerciseStore.getPatient(props.patientId)?.patientName)
-	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.patientCode)
+	const currentPatientCode = ref(exerciseStore.getPatient(props.patientId)?.code)
 
 	const availablesStore = useAvailablesStore()
 
@@ -37,8 +39,8 @@ import CloseButton from "./CloseButton.vue"
 		}
 		return null
 	})
-	
-	function changePatientCode(patientCode: number){
+
+	function changePatientCode(patientCode: number) {
 		currentPatientCode.value = patientCode
 	}
 
@@ -58,19 +60,24 @@ import CloseButton from "./CloseButton.vue"
 				<div class="flex-container">
 					<div class="listItem">
 						<div class="patientId">
-							{{ props.patientId.toString().padStart(3, '0') }}
+							{{ props.patientId.toString().padStart(5, '0') }}
 						</div>
-						<TriageForListItems :patient-code="currentPatient?.patientCode" />
+						<TriageForListItems :patient-code="currentPatient?.code" />
 						<div class="patientName">
 							{{ currentPatientName }}
 						</div>
 					</div>
 					<div class="scroll">
 						<PatientInfo
-							:injury="currentPatient?.patientInjury"
-							:history="currentPatient?.patientHistory"
-							:biometrics="currentPatient?.patientBiometrics"
-							:personal-details="currentPatient?.patientPersonalDetails"
+							:personal-details="currentPatient?.personalDetails"
+							:injury="currentPatient?.injury"
+							:biometrics="currentPatient?.biometrics"
+							:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
+							:mobility="currentPatient?.mobility"
+							:preexisting-illnesses="currentPatient?.preexistingIllnesses"
+							:permanent-medication="currentPatient?.permanentMedication"
+							:current-case-history="currentPatient?.currentCaseHistory"
+							:pretreatment="currentPatient?.pretreatment"
 						/>
 					</div>
 					<div id="buttonRow">
@@ -79,7 +86,7 @@ import CloseButton from "./CloseButton.vue"
 						</button>
 						<button
 							id="saveButton"
-							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.patientCode || Number.NEGATIVE_INFINITY)"
+							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.code || Number.NEGATIVE_INFINITY)"
 						>
 							Speichern
 						</button>

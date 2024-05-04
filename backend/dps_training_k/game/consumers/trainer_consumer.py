@@ -1,4 +1,7 @@
+from configuration import settings
 from game.models import Area
+from game.models import Exercise, Personnel, PatientInstance
+from template.models import PatientInformation
 from game.models import Exercise, Personnel, PatientInstance, InventoryEntry
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
@@ -20,6 +23,9 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_RESUME = "exercise-resume"
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        PATIENT_ADD = "patient-add"
+        PATIENT_UPDATE = "patient-update"
+        PATIENT_DELETE = "patient-delete"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_UPDATE = "personnel-update"
@@ -39,12 +45,12 @@ class TrainerConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.exercise_code = None
+        self.exercise_frontend_id = None
         self.exercise = None
         self.REQUESTS_MAP = {
             self.TrainerIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
-                "exercise_code",
+                "exerciseId",
             ),
             self.TrainerIncomingMessageTypes.EXERCISE_CREATE: (
                 self.handle_create_exercise,
@@ -68,6 +74,22 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.AREA_DELETE: (
                 self.handle_delete_area,
                 "areaName",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_ADD: (
+                self.handle_add_patient,
+                "areaName",
+                "patientName",
+                "code",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_UPDATE: (
+                self.handle_update_patient,
+                "patientId",
+                "patientName",
+                "code",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_DELETE: (
+                self.handle_delete_patient,
+                "patientId",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
@@ -95,15 +117,16 @@ class TrainerConsumer(AbstractConsumer):
 
     def connect(self):
         self.accept()
+        self.send_available_patients()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_code):
-        self.exercise_code = exercise_code
+    def handle_example(self, exercise_frontend_id):
+        self.exercise_frontend_id = exercise_frontend_id
         self.send_event(
             self.TrainerOutgoingMessageTypes.RESPONSE,
-            content=f"exercise_code {self.exercise_code}",
+            content=f"exerciseId {self.exercise_frontend_id}",
         )
 
     def handle_create_exercise(self):
@@ -138,17 +161,27 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_area(self):
         Area.create_area(name="Bereich", exercise=self.exercise, isPaused=False)
-        # TODO: send update to all subscribers
 
     def handle_delete_area(self, areaName):
-        Area.objects.filter(name=areaName).delete()
-        # TODO: send update to all subscribers
+        try:
+            area = Area.objects.get(exercise=self.exercise, name=areaName)
+            area.delete()
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the name '{areaName}'",
+            )
 
-    def handle_add_personnel(self, areaName):
+    def handle_add_patient(self, areaName, patientName, code):
         try:
             area = Area.objects.get(name=areaName)
-            Personnel.objects.create(area=area)
-            self._send_exercise(self.exercise)
+            patient_information = PatientInformation.objects.get(code=code)
+            PatientInstance.objects.create(
+                name=patientName,
+                static_information=patient_information,
+                exercise=area.exercise,
+                area=area,
+                patient_frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
+            )
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the name '{areaName}'",
@@ -158,15 +191,48 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the name '{areaName}'",
             )
 
-    def handle_delete_personnel(self, personnelId):
-        Personnel.objects.filter(id=personnelId).delete()
-        self._send_exercise(self.exercise)
+    def handle_update_patient(self, patientFrontendId, patientName, code):
+        patient = PatientInstance.objects.get(patient_frontend_id=patientFrontendId)
+        patient_information = PatientInformation.objects.get(code=code)
+        patient.name = patientName
+        patient.static_information = patient_information
+        patient.save()
+
+    def handle_delete_patient(self, patientFrontendId):
+        try:
+            patient = PatientInstance.objects.get(patient_frontend_id=patientFrontendId)
+            patient.delete()
+        except PatientInstance.DoesNotExist:
+            self.send_failure(
+                f"No patient found with the patientId '{patientFrontendId}'",
+            )
+
+    def handle_add_personnel(self, areaName):
+        try:
+            area = Area.objects.get(name=areaName)
+            Personnel.objects.create(area=area)
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the name '{areaName}'",
+            )
+        except Area.MultipleObjectsReturned:
+            self.send_failure(
+                f"Multiple areas found with the name '{areaName}'",
+            )
 
     def handle_update_personnel(self, personnelId, personnelName):
         personnel = Personnel.objects.get(id=personnelId)
         personnel.name = personnelName
         personnel.save()
-        self._send_exercise(self.exercise)
+
+    def handle_delete_personnel(self, personnel_id):
+        try:
+            personnel = Personnel.objects.get(id=personnel_id)
+            personnel.delete()
+        except Personnel.DoesNotExist:
+            self.send_failure(
+                f"No personnel found with the pk '{personnel_id}'",
+            )
 
     def handle_add_material(self, areaName, materialName):
         area = Area.objects.get(name=areaName, exercise=self.exercise)

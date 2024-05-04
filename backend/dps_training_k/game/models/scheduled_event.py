@@ -1,6 +1,9 @@
-from django.db import models
-from django.conf import settings
+import json
 from datetime import timedelta
+
+from django.conf import settings
+from django.db import models
+
 from helpers.one_field_not_null import one_or_more_field_not_null
 
 
@@ -15,6 +18,7 @@ class ScheduledEvent(models.Model):
     )
     end_date = models.DateTimeField()
     method_name = models.CharField(max_length=100)
+    kwargs = models.TextField(blank=True, null=True)
 
     @classmethod
     def create_event(
@@ -26,13 +30,21 @@ class ScheduledEvent(models.Model):
         area=None,
         patient_action_instance=None,
         lab_action_instance=None,
+        **kwargs,
     ):
-        scheduled_event = ScheduledEvent(
-            exercise=exercise,
-            end_date=cls.calculate_finish_time(t_sim_delta, exercise),
-            method_name=method_name,
-        )
-        scheduled_event.save()
+        try:
+            scheduled_event = ScheduledEvent(
+                exercise=exercise,
+                end_date=cls.calculate_finish_time(t_sim_delta, exercise),
+                method_name=method_name,
+                kwargs=json.dumps(kwargs),
+            )
+            scheduled_event.save()
+        except TypeError as e:
+            raise ValueError(
+                "kwargs passed to create_event must be JSON serializable"
+            ) from e
+
         Owner.create_owner(
             scheduled_event,
             exercise=exercise,
@@ -47,10 +59,45 @@ class ScheduledEvent(models.Model):
         deltatime = timedelta(seconds=t_sim_delta * exercise.time_factor())
         return settings.CURRENT_TIME() + deltatime
 
+    @classmethod
+    def get_time_until_completion(cls, object):
+        from game.models import PatientInstance, Area, Exercise
+
+        try:
+            # Get the related Owner instance
+            if isinstance(object, PatientInstance):
+                owner_instance = Owner.objects.filter(patient_owner=object).latest("id")
+            elif isinstance(object, PatientActionInstance):
+                owner_instance = Owner.objects.filter(
+                    patient_action_instance_owner=object
+                ).latest("id")
+            elif isinstance(object, LabActionInstance):
+                owner_instance = Owner.objects.filter(
+                    lab_action_instance_owner=object
+                ).latest("id")
+            elif isinstance(object, Exercise):
+                owner_instance = Owner.objects.filter(exercise_owner=object).latest(
+                    "id"
+                )
+            elif isinstance(object, Area):
+                owner_instance = Owner.objects.filter(area_owner=object).latest("id")
+            # Retrieve ScheduledEvent associated with the Owner instance and calculate remaining time
+            time_until_event = owner_instance.event.end_date - settings.CURRENT_TIME()
+            return int(
+                time_until_event.total_seconds()
+            )  # would return float if not casted, float isn't necessary here
+        except Owner.DoesNotExist:
+            # Handle the case where no Owner is associated with the related object, aka there is no scheduled event
+            return None
+
     def action(self):
         owner_instance = self.owner.owner_instance()
         method = getattr(owner_instance, self.method_name)
-        method()
+        if self.kwargs:
+            kwargs = json.loads(self.kwargs)
+            method(**kwargs)
+        else:
+            method()
         self.delete()
 
     def __str__(self):
@@ -162,4 +209,4 @@ class Owner(models.Model):
         elif self.lab_action_instance_owner:
             return self.lab_action_instance_owner
         else:
-            raise Exception("This owner instance was created  without and actual owner")
+            raise Exception("This owner instance was created without an actual owner")

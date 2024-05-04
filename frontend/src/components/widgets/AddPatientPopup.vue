@@ -1,12 +1,12 @@
 <script setup lang="ts">
-	import { useAvailablesStore } from "@/stores/Availables"
+	import {useAvailablesStore} from "@/stores/Availables"
 	import PatientInfo from "./PatientInfo.vue"
-	import { computed, ref } from "vue"
+	import {computed, ref} from "vue"
 	import TriageForListItems from "./TriageForListItems.vue"
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
-import CloseButton from "./CloseButton.vue"
+	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -15,18 +15,28 @@ import CloseButton from "./CloseButton.vue"
 			type: String,
 			default: 'No Area'
 		},
-		patientName: {
-			type: String,
-			default: 'No Name'
-		}
 	})
 
-	function addPatient(){
-		if(!patientCodeChanged) {
+	const firstNameList = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
+	const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
+
+	function generateName() {
+		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
+		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
+		return `${firstName} ${surname}`
+	}
+
+
+	const patientName = ref("")
+	patientName.value = generateName()
+
+	function addPatient() {
+		if (!patientCodeChanged) {
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
-		socketTrainer.patientAdd(props.areaName, props.patientName, currentPatientCode.value)
+		socketTrainer.patientAdd(props.areaName, patientName.value, currentPatientCode.value)
+		patientName.value = generateName()
 	}
 
 	const currentPatientCode = ref()
@@ -41,8 +51,8 @@ import CloseButton from "./CloseButton.vue"
 	})
 
 	let patientCodeChanged = false
-	
-	function changePatientCode(patientCode: number){
+
+	function changePatientCode(patientCode: number) {
 		currentPatientCode.value = patientCode
 		patientCodeChanged = true
 	}
@@ -61,17 +71,22 @@ import CloseButton from "./CloseButton.vue"
 			</div>
 			<div id="rightSide">
 				<div class="listItem">
-					<TriageForListItems :patient-code="currentPatient?.patientCode" />
+					<TriageForListItems :patient-code="currentPatient?.code" />
 					<div class="patientName">
-						{{ props.patientName }}
+						{{ patientName }}
 					</div>
 				</div>
 				<div class="scroll">
 					<PatientInfo
-						:injury="currentPatient?.patientInjury"
-						:history="currentPatient?.patientHistory"
-						:biometrics="currentPatient?.patientBiometrics"
-						:personal-details="currentPatient?.patientPersonalDetails"
+						:personal-details="currentPatient?.personalDetails"
+						:injury="currentPatient?.injury"
+						:biometrics="currentPatient?.biometrics"
+						:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
+						:mobility="currentPatient?.mobility"
+						:preexisting-illnesses="currentPatient?.preexistingIllnesses"
+						:permanent-medication="currentPatient?.permanentMedication"
+						:current-case-history="currentPatient?.currentCaseHistory"
+						:pretreatment="currentPatient?.pretreatment"
 					/>
 				</div>
 				<div id="buttonRow">

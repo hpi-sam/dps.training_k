@@ -23,12 +23,11 @@
 	function getTriageColor(color: string) {
 		return "var(--"+color+")"
 	}
-
 </script>
 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
-		<div class="popup">
+		<div class="popup" @click.stop="">
 			<CloseButton @close="emit('close-popup')" />
 			<h2>Sichtungsfarbe auswählen</h2>
 			<div class="button-container">

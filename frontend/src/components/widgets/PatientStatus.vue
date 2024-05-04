@@ -59,27 +59,66 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 				<p class="key">
 					Verletzungen
 				</p>{{ patientStore.injury }}
 			</td>
-			<td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Vorerkrankungen
-				</p>{{ patientStore.history }}
+				</p>{{ patientStore.preexistingIllnesses }}
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
+				<p class="key">
+					Dauer-Medikation
+				</p>{{ patientStore.permanentMedication }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p class="key">
+					Aktuelle Anamnese / Rettungsdienst-Übergabe
+				</p>{{ patientStore.currentCaseHistory }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p class="key">
+					Vorbehandlung
+				</p>{{ patientStore.pretreatment }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Personalien
 				</p>{{ patientStore.personalDetails }}
 			</td>
-			<td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<p class="key">
 					Biometrie
 				</p>{{ patientStore.biometrics }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p class="key">
+					Mobilität
+				</p>{{ patientStore.mobility }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p class="key">
+					Fortlaufende Eineindeutige Nummer
+				</p>{{ patientStore.consecutiveUniqueNumber }}
 			</td>
 		</tr>
 		<tr>
@@ -96,7 +135,7 @@
 		width: 90%;
 		max-width: calc(100% - 60px);
 		table-layout: fixed;
-		margin: 90px auto 30px auto;
+		margin: 30px auto;
 	}
 
 	td {

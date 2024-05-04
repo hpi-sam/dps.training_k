@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import {svg} from '@/assets/Svg'
+    import { svg } from '@/assets/Svg'
 
 	const emit = defineEmits(['close'])
 </script>
