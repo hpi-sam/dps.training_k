@@ -6,6 +6,7 @@ from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
 from template.models.patient_state import PatientState
+from template.tests.factories import PatientStateFactory
 from .scheduled_event import ScheduledEvent
 
 
@@ -54,6 +55,10 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             self.exercise.exercise_frontend_id
         )  # Properly hash the password
         self.user.save()
+
+        self.patient_state = PatientStateFactory(
+            10, 2
+        )  # temporary state for testing - should later take static_information into account
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)

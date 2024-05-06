@@ -23,6 +23,7 @@ class Command(BaseCommand):
             name="Bereich", exercise=self.exercise, isPaused=False
         )
         self.patient_information = PatientInformation.objects.get(code=1004)
+
         self.patient = PatientInstance.objects.create(
             name="Max Mustermann",
             static_information=self.patient_information,
