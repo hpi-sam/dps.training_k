@@ -6,8 +6,8 @@ from django.core.management import call_command
 from django.test import TransactionTestCase
 
 from configuration.asgi import application
-from game.models import ActionInstance
-from .mixin import TestUtilsMixin
+from game.models import LabActionInstance, PatientActionInstance
+from .setupable import TestSetupable
 
 
 class TrainerConsumerTestCase(TransactionTestCase):
@@ -74,7 +74,7 @@ class TrainerConsumerTestCase(TransactionTestCase):
         await communicator.disconnect()
 
 
-class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
+class PatientConsumerTestCase(TestSetupable, TransactionTestCase):
     maxDiff = None
 
     def setUp(self):
@@ -82,7 +82,12 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):
-        return ActionInstance.objects.filter(action_template__name=action_name).exists()
+        return (
+            LabActionInstance.objects.filter(action_template__name=action_name).exists()
+            or PatientActionInstance.objects.filter(
+                action_template__name=action_name
+            ).exists()
+        )
 
     async def test_patient_consumer_add_action(self):
         communicator = await self.create_patient_communicator_and_authenticate()

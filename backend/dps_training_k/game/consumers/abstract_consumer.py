@@ -197,9 +197,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.OutgoingMessageTypes.AVAILABLE_PATIENTS,
             availablePatients=availablePatients,
         )
-        self.send_event(
-            self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
-        )
 
     def send_available_material(self):
         materials = Resource.objects.all()

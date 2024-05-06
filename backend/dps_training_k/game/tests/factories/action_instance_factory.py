@@ -12,7 +12,7 @@ from game.models import (
     ActionInstanceState,
     ActionInstanceStateNames,
 )
-from game.models import ActionInstance, ActionInstanceState, ActionInstanceStateNames
+from game.models import Queue, ActionInstanceState, ActionInstanceStateNames
 from django.db.models import Max
 
 
@@ -54,9 +54,9 @@ class PatientActionInstanceFactory(factory.django.DjangoModelFactory):
     # or sets to 1 if no order_id was found for this patient_instance
     order_id = factory.LazyAttribute(
         lambda o: (
-            ActionInstance.objects.filter(
-                patient_instance=o.patient_instance
-            ).aggregate(Max("order_id"))["order_id__max"]
+            Queue.objects.filter(patient_instance=o.patient_instance).aggregate(
+                Max("order_id")
+            )["order_id__max"]
             or 0
         )
         + 1
@@ -85,6 +85,15 @@ class ActionInstanceFactoryWithEffectDuration(factory.django.DjangoModelFactory)
     lab = None
     action_template = factory.SubFactory(ActionFactoryWithEffectDuration)
     current_state = None
+    order_id = factory.LazyAttribute(
+        lambda o: (
+            Queue.objects.filter(patient_instance=o.patient_instance).aggregate(
+                Max("order_id")
+            )["order_id__max"]
+            or 0
+        )
+        + 1
+    )
 
     @factory.post_generation
     def set_current_state(self, create, extracted, **kwargs):
@@ -109,6 +118,15 @@ class LabActionInstanceFactory(factory.django.DjangoModelFactory):
     lab = factory.SubFactory(LabFactory)
     action_template = factory.SubFactory(ActionFactory)
     current_state = None
+    order_id = factory.LazyAttribute(
+        lambda o: (
+            Queue.objects.filter(patient_instance=o.patient_instance).aggregate(
+                Max("order_id")
+            )["order_id__max"]
+            or 0
+        )
+        + 1
+    )
 
     @factory.post_generation
     def set_current_state(self, create, extracted, **kwargs):

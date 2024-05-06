@@ -9,14 +9,14 @@ from game.models import (
 from game.tasks import check_for_updates
 from game.models import PatientActionInstance
 from .factories import PatientFactory, PatientActionInstanceFactory
-from .setups import ResourcesDeactivateable
+from .setupable import TestSetupable
 from template.tests.factories import ActionFactory
 from unittest.mock import patch
 from django.utils import timezone
 import datetime
 
 
-class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
+class ActionInstanceTestCase(TestSetupable, TestCase):
     def setUp(self):
         self.application_status_patch = patch(
             "template.models.Action.application_status"
@@ -89,7 +89,7 @@ class ActionInstanceTestCase(ResourcesDeactivateable, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
 
-class ActionInstanceScheduledTestCase(ResourcesDeactivateable, TestCase):
+class ActionInstanceScheduledTestCase(TestSetupable, TestCase):
     def timezoneFromTimestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 

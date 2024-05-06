@@ -17,6 +17,7 @@ class ChannelEventTypes:
     STATE_CHANGE_EVENT = "state.change.event"
     EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
+    ACTION_RESULT_EVENT = "action.result.event"
     ACTION_LIST_EVENT = "action.list.event"
     MATERIAL_CHANGE_EVENT = "material.change.event"
 
@@ -119,28 +120,42 @@ class PersonnelDispatcher(ChannelNotifier):
         cls._notify_exercise_update(exercise)
 
 
+class QueueDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, obj, changes):
+        cls._notify_queue_change(obj)
+
+    @classmethod
+    def _notify_queue_change(cls, obj):
+        for entity in [obj.get_action_instance.patient_instance, obj.get_action_instance.lab, obj.]:#hier blöd weil mehrfachbenachrichtigung durch produktionsaktionen
+        channel = cls.get_group_name(obj.get_)
+        event = {
+            "type": ChannelEventTypes.ACTION_LIST_EVENT,
+            "queue_entry": obj.id,
+        }
+        cls._notify_group(channel, event)
+
+
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes):
         applied_action = obj
-        if changes and not ("current_state" in changes or "order_id" in changes):
+        if changes and not ("current_state" in changes):
             raise ValueError(
                 "There has to be a state change or order id change whenever updating an ActionInstance."
             )
         # state change events
-        if changes:
-            if "current_state" in changes:
-                if (
-                    applied_action.state_name == models.ActionInstanceStateNames.PLANNED
-                ):
-                    cls._notify_action_event(
-                        applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
-                    )
 
-            # always send action list event
-            cls._notify_action_event(
-                applied_action, ChannelEventTypes.ACTION_LIST_EVENT
-            )
+        event_type = {
+            models.ActionInstanceStateNames.PLANNED: ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
+            models.ActionInstanceStateNames.FINISHED: ChannelEventTypes.ACTION_RESULT_EVENT,
+        }.get(applied_action.state_name)
+        cls._notify_action_event(
+            event_type, applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
+        )
+
+        # always send action list event
+        cls._notify_action_event(applied_action, ChannelEventTypes.ACTION_LIST_EVENT)
 
 
 class PatientActionInstanceDispatcher(ActionInstanceDispatcher):

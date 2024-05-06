@@ -73,12 +73,6 @@ class ActionInstanceState(models.Model):
         self.info_text = self.info_text + info_text
         self.save(update_fields=["info_text"])
 
-    def success_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
-
-    def completion_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
-
     def set_action_instance_type(self, action_instance):
         if isinstance(action_instance, PatientActionInstance):
             self.patient_action_instance = action_instance
@@ -90,6 +84,52 @@ class ActionInstanceState(models.Model):
         else:
             raise ValueError("ActionInstance type not recognized")
 
+    @classmethod
+    def success_states():
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
+
+    @classmethod
+    def completion_states():
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
+
+
+class Queue(models.Model):
+    class Meta:
+        ordering = ["order_id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order_id", "patient_instance"],
+                name="unique_order_id_for_patient",
+            )
+        ]
+
+    order_id = models.IntegerField()
+    patient_instance = models.ForeignKey("PatientInstance", on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if self.order_id is None:
+            self.order_id = self._generate_order_id(self.patient_instance)
+        super().save(*args, **kwargs)
+
+    def _generate_order_id(self, patient_instance):
+        # Use aggregate to find the maximum order_id for the specified patient_instance
+        result = Queue.objects.filter(patient_instance=patient_instance).aggregate(
+            max_order_id=models.Max("order_id")
+        )
+        max_order_id = result["max_order_id"]
+        if max_order_id is None:
+            new_order_id = 0
+        else:
+            new_order_id = max_order_id + 1
+        return new_order_id
+
+    def get_action_instance(self):
+        if LabActionInstance.objects.filter(queue=self).exists():
+            return self.lab_action_instance
+        if PatientActionInstance.objects.filter(queue=self).exists():
+            return self.patient_action_instance
+        raise ValueError("No ActionInstance found for queue Entry")
+
 
 class ActionInstance(LocalTimeable, models.Model):
     """
@@ -97,7 +137,6 @@ class ActionInstance(LocalTimeable, models.Model):
     """
 
     class Meta:
-        ordering = ["order_id"]
         abstract = True
 
     patient_instance = models.ForeignKey(
@@ -109,7 +148,9 @@ class ActionInstance(LocalTimeable, models.Model):
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
-    order_id = models.IntegerField(null=True)
+    queue = models.OneToOneField(
+        "Queue", on_delete=models.CASCADE, blank=True, null=True
+    )
 
     @property
     def name(self):
@@ -159,7 +200,7 @@ class ActionInstance(LocalTimeable, models.Model):
     ):
         if not patient_instance and not area:
             raise ValueError(
-                "Either patient_instance or area must be provided - an action instance always need a context"
+                "Either patient_instance, area or lab must be provided - an action instance always need a context"
             )
 
         action_instance = cls.objects.create(
@@ -167,29 +208,16 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance=patient_instance,
             area=area,
             lab=lab,
-            order_id=ActionInstance.generate_order_id(patient_instance),
+            queue=Queue.objects.create(patient_instance=patient_instance),
         )
         action_instance.current_state = ActionInstanceState.objects.create(
             name=ActionInstanceStateNames.PLANNED,
             t_local_begin=action_instance.get_local_time(),
         )
-        action_instance.place_of_application().register_to_queue(action_instance)
+        place_of_application.register_to_queue(action_instance)
         action_instance.current_state.set_action_instance_type(action_instance)
         action_instance.save(update_fields=["current_state"])
         return action_instance
-
-    @classmethod
-    def generate_order_id(self, patient_instance):
-        # Use aggregate to find the maximum order_id for the specified patient_instance
-        result = ActionInstance.objects.filter(
-            patient_instance=patient_instance
-        ).aggregate(max_order_id=models.Max("order_id"))
-        max_order_id = result["max_order_id"]
-        if max_order_id is None:
-            new_order_id = 0
-        else:
-            new_order_id = max_order_id + 1
-        return new_order_id
 
     def try_application(self):
         is_applicable, context = self._check_application_status()
@@ -222,23 +250,13 @@ class ActionInstance(LocalTimeable, models.Model):
     def _application_finished_strategy(self):
         raise NotImplementedError("Subclasses must implement this method")
 
-    @abstractmethod
-    def _create_scheduled_event(self, duration, scheduled_method):
-        raise NotImplementedError("Subclasses must implement this method")
-
+    @abstractmethodLabActionInstance
     @abstractmethod
     def _check_application_status(self):
         raise NotImplementedError("Subclasses must implement this method")
 
 
 class PatientActionInstance(ActionInstance):
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["order_id", "patient_instance"],
-                name="unique_order_id_for_patient",
-            )
-        ]
 
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True
@@ -369,6 +387,5 @@ class LabActionInstance(ActionInstance):
             raise Exception(
                 "Resource production was called without resources to produce"
             )
-        inventory = self.lab.inventory
         for resource, amount in resource_recipe.items():
             self.area.inventory.change_resource(resource, amount)

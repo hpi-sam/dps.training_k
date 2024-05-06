@@ -1,1 +1,1 @@
-from .setups import *
+from .setupable import *

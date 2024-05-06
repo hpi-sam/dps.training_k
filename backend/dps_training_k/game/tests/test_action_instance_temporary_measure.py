@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .setups import ResourcesDeactivateable
+from .setupable import TestSetupable
 from .factories.action_instance_factory import ActionInstanceFactoryWithEffectDuration
 from game.models import ActionInstanceStateNames
 from django.utils import timezone
@@ -9,7 +9,7 @@ from unittest.mock import patch
 from game.tasks import check_for_updates
 
 
-class ActionInstanceTemporaryMeasureTestCase(ResourcesDeactivateable, TestCase):
+class ActionInstanceTemporaryMeasureTestCase(TestSetupable, TestCase):
     def timezoneFromTimestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 

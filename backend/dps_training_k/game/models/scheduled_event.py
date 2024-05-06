@@ -61,7 +61,12 @@ class ScheduledEvent(models.Model):
 
     @classmethod
     def get_time_until_completion(cls, object):
-        from game.models import PatientInstance, Area, Exercise
+        from game.models import (
+            PatientInstance,
+            PatientActionInstance,
+            LabActionInstanceArea,
+            Exercise,
+        )
 
         try:
             # Get the related Owner instance
@@ -91,7 +96,7 @@ class ScheduledEvent(models.Model):
             return None
 
     def action(self):
-        owner_instance = self.owner.owner_instance()
+        owner_instance = self.owner.get()
         method = getattr(owner_instance, self.method_name)
         if self.kwargs:
             kwargs = json.loads(self.kwargs)
@@ -101,7 +106,7 @@ class ScheduledEvent(models.Model):
         self.delete()
 
     def __str__(self):
-        owner_instance = self.owner.owner_instance()
+        owner_instance = self.owner.get()
         return f"ScheduledEvent #{self.id}, model name {owner_instance.__class__.__name__}, instance #{owner_instance}, exercise #{self.exercise}, trigger on: {self.end_date}"
 
 
@@ -197,7 +202,7 @@ class Owner(models.Model):
             lab_action_instance_owner=lab_action_instance,
         )
 
-    def owner_instance(self):
+    def get(self):
         if self.patient_owner:
             return self.patient_owner
         elif self.exercise_owner:

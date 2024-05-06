@@ -4,7 +4,7 @@ from game.models.action_instance import get_action_instance_class_from_string
 from game.models import (
     PatientInstance,
     Exercise,
-    ActionInstance,
+    Queue,
     ScheduledEvent,
     InventoryEntry,
 )
@@ -102,7 +102,7 @@ class PatientConsumer(AbstractConsumer):
             self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
             # self.subscribe(ChannelNotifier.get_group_name(self.exercise.lab)) #ToDo: Uncomment once exercise are guaranteed to be created
-            self.subscribe(ChannelNotifier.get_group_name(self.patient_instance.area))
+            # self.subscribe(ChannelNotifier.get_group_name(self.patient_instance.area))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_material()
@@ -141,18 +141,25 @@ class PatientConsumer(AbstractConsumer):
         try:
             action = Action.objects.get(name=action_name)
 
-            if action.category in [Action.Category.TREATMENT, Action.Category.EXAMINATION]:
-                self.patient_instance.start_action(action)
+            if action.category in [
+                Action.Category.TREATMENT,
+                Action.Category.EXAMINATION,
+            ]:
+                action_instance = self.patient_instance.start_action(action)
             elif action.category == Action.Category.LAB:
                 lab = self.patient_instance.exercise.lab
-                lab.start_examination(action, self.patient_instance)
+                action_instance = lab.start_examination(action, self.patient_instance)
             elif (
-                    action.category == Action.Category.OTHER
+                action.category == Action.Category.OTHER
             ):  # our current resource production
                 lab = self.patient_instance.exercise.lab
-                lab.start_production(action, self.patient_instance.area)
+                action_instance = lab.start_production(
+                    action, self.patient_instance.area
+                )
         except:
-            self._send_action_declination(action_instance=action_instance) # ToDo: fix (create method needs to return action_instance)
+            self._send_action_declination(
+                action_instance=action_instance
+            )  # ToDo: fix (create method needs to return action_instance)
 
     def handle_action_check(self, action_id):
         stub_action_name = "Recovery Position"
@@ -180,7 +187,6 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-
 
     def _send_action_declination(self, action_instance):
         self.send_event(
@@ -212,12 +218,11 @@ class PatientConsumer(AbstractConsumer):
 
     def action_list_event(self, event):
         actions = []
-        for action_instance in ActionInstance.objects.filter(
-            patient_instance=self.patient_instance
-        ):
+        for queue_entry in Queue.objects.filter(patient_instance=self.patient_instance):
+            action_instance = queue_entry.get_action_instance()
             action_data = {
                 "actionId": action_instance.id,
-                "orderId": action_instance.order_id,
+                "orderId": queue_entry.order_id,
                 "actionName": action_instance.name,
                 "actionStatus": action_instance.state_name,
                 "timeUntilCompletion": (
