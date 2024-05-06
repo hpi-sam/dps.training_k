@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0033_alter_actioninstancestate_name'),
-        ('game', '0034_alter_patientinstance_user'),
+        ("game", "0033_alter_actioninstancestate_name"),
+        ("game", "0033_patientinstance_user"),
     ]
 
-    operations = [
-    ]
+    operations = []
