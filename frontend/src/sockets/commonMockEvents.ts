@@ -66,7 +66,7 @@ export const commonMockEvents = [
 			'},' +
 			'{"areaName":"ZNA",' +
 				'"patients":[' +
-					'{"patientId":2,"patientName":"Luna Patel","code":1004,"triage":"R"},' +
+					'{"patientId":123456,"patientName":"Luna Patel","code":1004,"triage":"R"},' +
 					'{"patientId":6,"patientName":"Friedrich Gerhard","code":4,"triage":"Y"},' +
 					'{"patientId":7,"patientName":"Hans Schmidt","code":4,"triage":"Y"},' +
 					'{"patientId":8,"patientName":"Johannes Müller","code":4,"triage":"Y"},' +

@@ -2,7 +2,6 @@ from urllib.parse import parse_qs
 
 from game.models import (
     PatientInstance,
-    Exercise,
     ActionInstance,
     ScheduledEvent,
 )
@@ -35,7 +34,7 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.patient_patient_frontend_id = ""
+        self.patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -64,20 +63,6 @@ class PatientConsumer(AbstractConsumer):
         )  # This enforces patient_instance to always work with valid data
 
     def connect(self):
-        # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
-        self.tempExercise = Exercise.createExercise()
-        # example patient creation for testing purposes as long as the actual patient flow is not implemented
-        from template.tests.factories.patient_state_factory import PatientStateFactory
-
-        self.temp_state = PatientStateFactory(10, 2)
-        PatientInstance.objects.create(
-            name="Max Mustermann",
-            exercise=self.exercise,
-            patient_frontend_id=2,  # has to be the same as the username in views.py#post
-            exercise_id=self.tempExercise.id,
-            patient_state=self.temp_state,
-        )
-
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
         success, patient_frontend_id = self.authenticate(token)
@@ -91,14 +76,7 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-
-    def disconnect(self, code):
-        # example patient_instance deletion - see #connect
-        self.patient_instance.delete()
-        # example trainer deletion - see #connect
-        self.tempExercise.delete()
-        self.temp_state.delete()
-        super().disconnect(code)
+            self.action_list_event(None)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -152,7 +130,6 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-
 
     def _send_action_declination(self, action_instance):
         self.send_event(

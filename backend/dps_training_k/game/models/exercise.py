@@ -33,8 +33,6 @@ class Exercise(NonEventable, models.Model):
     @classmethod
     def createExercise(cls):
         new_Exercise = cls.objects.create(
-            # config=settings.DEFAULT_EXCERCISE_CONFIG,
-            # trainer=trainer
             exercise_frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )

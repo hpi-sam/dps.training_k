@@ -38,7 +38,7 @@
 	<div class="scroll">
 		<h1>Patienten</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
+			<button v-if="currentAreaData" id="create-patient-button" class="listItemAddButton" @click="addPatient()">
 				Patient hinzufügen
 			</button>
 			<div
