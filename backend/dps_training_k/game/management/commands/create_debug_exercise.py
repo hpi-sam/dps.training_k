@@ -19,7 +19,6 @@ class Command(BaseCommand):
             exercise_frontend_id="abcdef",
             state=Exercise.ExerciseStateTypes.CONFIGURATION,
         )
-        self.exercise.exercise_frontend_id = "abcdef"
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
         )

@@ -1,5 +1,6 @@
 from asgiref.sync import sync_to_async
 from channels.testing import WebsocketCommunicator
+from django.core.management import call_command
 from rest_framework.authtoken.models import Token
 
 from configuration import settings
@@ -10,7 +11,8 @@ from ..models import PatientInstance, Exercise
 
 class TestUtilsMixin:
     async def create_patient_communicator_and_authenticate(self):
-        """Needs the patient_information management command to be run before."""
+        await sync_to_async(call_command)("patient_information")
+
         self.exercise = await sync_to_async(Exercise.createExercise)()
         self.patient_information = await sync_to_async(PatientInformation.objects.get)(
             code=1004

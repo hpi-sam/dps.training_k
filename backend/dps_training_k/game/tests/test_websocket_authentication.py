@@ -1,12 +1,9 @@
-from django.core.management import call_command
 from django.test import TransactionTestCase
 
 from .mixin import TestUtilsMixin
 
 
 class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
-    def setUp(self):
-        call_command("patient_information")
 
     async def test_authenticated_websocket_connection(self):
         communicator = await self.create_patient_communicator_and_authenticate()
