@@ -76,10 +76,7 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-
-    def disconnect(self, code):
-        self.patient_instance.delete()
-        super().disconnect(code)
+            self.action_list_event(None)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -133,7 +130,6 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-
 
     def _send_action_declination(self, action_instance):
         self.send_event(
