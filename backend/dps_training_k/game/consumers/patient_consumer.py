@@ -2,7 +2,9 @@ from urllib.parse import parse_qs
 
 from game.models import (
     PatientInstance,
+    MaterialInstance,
     Exercise,
+    Area,
     ActionInstance,
     ScheduledEvent,
 )
@@ -22,6 +24,8 @@ class PatientConsumer(AbstractConsumer):
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
         ACTION_ADD = "action-add"
+        MATERIAL_RELEASE = "material-release"
+        MATERIAL_ASSIGN = "material-assign"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
@@ -52,6 +56,14 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
                 "actionName",
+            ),
+            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
+                self.handle_material_release,
+                "material_id",
+            ),
+            self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
+                self.handle_material_assign,
+                "material_id",
             ),
         }
 
@@ -118,9 +130,8 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_triage(self, triage):
-        patient_instance = self.patient_instance
-        patient_instance.triage = triage
-        patient_instance.save(update_fields=["triage"])
+        self.patient_instance.triage = triage
+        self.patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, action_name):
         try:
@@ -149,10 +160,26 @@ class PatientConsumer(AbstractConsumer):
             requirements=stub_requirements,
         )
 
+    def handle_material_release(self, material_id):
+        material_instance = MaterialInstance.objects.get(pk=material_id)
+        area = self.patient_instance.area
+        succeeded = material_instance.try_moving_to(area)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
+    def handle_material_assign(self, material_id):
+        material_instance = MaterialInstance.objects.get(pk=material_id)
+        succeeded = material_instance.try_moving_to(self.patient_instance)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-
 
     def _send_action_declination(self, action_instance):
         self.send_event(

@@ -97,6 +97,8 @@ class ActionIDs:
 
 class MaterialIDs:
     # TODO: add UUIDable mixin to Material models once it exists
+    ENTHROZYTENKONZENTRAT_0_POS = UUID("f6576558-c1d3-4548-823b-2c1e2b0636d7")
+    BLUTAUFTAU_SLOT = UUID("d8d0a768-c7de-40bb-94d2-2d495e911aec")
     BEATMUNGSGERAET = UUID("bd466499-6aeb-4a36-8687-04711b001139")
     BEATMUNGSBEUTEL = UUID("9ddcbe2f-0c95-4562-8dc9-3e9ab990a526")
     SPRITZENPUMPE = UUID("4f452e8b-ceaf-423d-9a14-04c08217fe99")
@@ -118,8 +120,9 @@ role_map = {
     RoleIDs.ARZT: "Arzt",
     RoleIDs.LABORASSISTENT: "Laborassistent",
     RoleIDs.HILFSKRAFT: "Hilfskraft",
-    RoleIDs.MTRA: "Medizinisch Technische Röntgen Assistentin"
+    RoleIDs.MTRA: "Medizinisch Technische Röntgen Assistentin",
 }
+
 
 class ActionResultIDs:
     HB420 = "9f878489-07fc-41a4-8979-f3e9c8e7e9b7"
