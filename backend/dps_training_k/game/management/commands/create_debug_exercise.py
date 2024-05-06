@@ -31,3 +31,6 @@ class Command(BaseCommand):
             area=self.area,
             patient_frontend_id=123456,
         )
+        self.stdout.write(
+            self.style.SUCCESS("Successfully added debug_exercise to the database")
+        )

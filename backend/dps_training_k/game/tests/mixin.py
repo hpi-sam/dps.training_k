@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from configuration import settings
 from configuration.asgi import application
 from template.models import PatientInformation
-from ..models import PatientInstance, Exercise
+from ..models import PatientInstance, Exercise, Area
 
 
 class TestUtilsMixin:
@@ -17,10 +17,14 @@ class TestUtilsMixin:
         self.patient_information = await sync_to_async(PatientInformation.objects.get)(
             code=1004
         )
+        area = await sync_to_async(Area.create_area)(
+            name="Test Bereich", exercise=self.exercise, isPaused=False
+        )
         self.patient = await sync_to_async(PatientInstance.objects.create)(
             name="Max Mustermann",
             static_information=self.patient_information,
             exercise=self.exercise,
+            area=area,
             patient_frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
         )
         self.token, _ = await sync_to_async(Token.objects.get_or_create)(
