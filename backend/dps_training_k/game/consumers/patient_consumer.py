@@ -78,6 +78,7 @@ class PatientConsumer(AbstractConsumer):
     def connect(self):
         # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
         self.tempExercise = Exercise.createExercise()
+        self.tempArea = Area.create_area("Test Area", self.tempExercise)
         # example patient creation for testing purposes as long as the actual patient flow is not implemented
         from template.tests.factories.patient_state_factory import PatientStateFactory
 
@@ -85,6 +86,7 @@ class PatientConsumer(AbstractConsumer):
         PatientInstance.objects.create(
             name="Max Mustermann",
             exercise=self.exercise,
+            area=self.tempArea,
             patient_frontend_id=2,  # has to be the same as the username in views.py#post
             exercise_id=self.tempExercise.id,
             patient_state=self.temp_state,
