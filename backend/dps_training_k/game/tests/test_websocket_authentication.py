@@ -1,4 +1,5 @@
 from django.test import TransactionTestCase
+
 from .mixin import TestUtilsMixin
 
 
@@ -13,20 +14,24 @@ class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
         await communicator.send_json_to(
             {
                 "messageType": "example",
-                "exerciseId": "abcdef",
-                "patientId": "2",
+                "exerciseId": self.exercise.exercise_frontend_id,
+                "patientId": self.patient.patient_frontend_id,
             }
         )
 
         await communicator.receive_json_from()  # Catch available actions
         await communicator.receive_json_from()  # Catch available patients
+        await communicator.receive_json_from()  # Catch action list
 
         response = await communicator.receive_json_from()
         self.assertEqual(
             response,
             {
                 "messageType": "response",
-                "content": "exerciseId abcdef & patientId 2",
+                "content": "exerciseId "
+                + self.exercise.exercise_frontend_id
+                + " & patientId "
+                + self.patient.patient_frontend_id,
             },
             "Unexpected response from WebSocket",
         )

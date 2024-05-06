@@ -4,7 +4,7 @@ from game.channel_notifications import PatientInstanceDispatcher
 from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
-from template.models.patient_state import PatientState
+from template.tests.factories import PatientStateFactory
 from .scheduled_event import ScheduledEvent
 
 
@@ -22,7 +22,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         on_delete=models.CASCADE,
     )
     patient_state = models.ForeignKey(
-        PatientState,
+        "template.PatientState",
         on_delete=models.SET_NULL,
         null=True,  # for debugging purposes
         default=None,  # for debugging purposes
@@ -35,12 +35,34 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         choices=Triage.choices,
         default=Triage.UNDEFINED,
     )
+    user = models.OneToOneField(
+        "User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def save(self, *args, **kwargs):
+        from . import User
+
+        if not self.pk:
+            self.user, _ = User.objects.get_or_create(
+                username=self.patient_frontend_id, user_type=User.UserType.PATIENT
+            )
+            self.user.set_password(
+                self.exercise.exercise_frontend_id
+            )  # Properly hash the password
+            self.user.save()
+
+            self.patient_state = PatientStateFactory(
+                10, 2
+            )  # temporary state for testing - should later take static_information into account
+
         changes = kwargs.get("update_fields", None)
         PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
+        self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 
     def __str__(self):

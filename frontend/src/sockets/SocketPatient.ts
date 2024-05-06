@@ -8,7 +8,7 @@ import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import {useActionOverviewStore} from "@/stores/ActionOverview"
 import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
-import { commonMockEvents } from "./commonMockEvents"
+import {commonMockEvents} from "./commonMockEvents"
 
 class SocketPatient {
 	private readonly url: string
@@ -255,14 +255,14 @@ export const serverMockEvents = [
 			']},' +
 			'{"areaName":"ZNA",' +
 			'"personnel":[' +
-			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":2},' +
+			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":123456},' +
 			'{"personnelId":4,"personnelName":"Lena Schulze","patientId":6},' +
-			'{"personnelId":8,"personnelName":"Julian Mohn","patientId":2},' +
+			'{"personnelId":8,"personnelName":"Julian Mohn","patientId":123456},' +
 			'{"personnelId":9,"personnelName":"Elisabeth Bauer","patientId":8}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":3,"materialName":"Defibrillator","patientId":2},' +
-			'{"materialId":4,"materialName":"EKG-Monitor","patientId":2},' +
+			'{"materialId":3,"materialName":"Defibrillator","patientId":123456},' +
+			'{"materialId":4,"materialName":"EKG-Monitor","patientId":123456},' +
 			'{"materialId":9,"materialName":"Narkosegerät","patientId":9}' +
 			']},' +
 			'{"areaName":"Wagenhalle",' +
