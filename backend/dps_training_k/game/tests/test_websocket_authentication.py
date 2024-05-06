@@ -21,6 +21,7 @@ class PatientWebSocketTest(TestUtilsMixin, TransactionTestCase):
 
         await communicator.receive_json_from()  # Catch available actions
         await communicator.receive_json_from()  # Catch available patients
+        await communicator.receive_json_from()  # Catch action list
 
         response = await communicator.receive_json_from()
         self.assertEqual(
