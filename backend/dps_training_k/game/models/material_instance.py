@@ -1,4 +1,6 @@
 from django.db import models
+from game.channel_notifications import MaterialInstanceDispatcher
+from template.models.material import Material
 
 
 class MaterialInstance(models.Model):
@@ -9,6 +11,12 @@ class MaterialInstance(models.Model):
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True)
     is_blocked = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        changes = kwargs.get("update_fields", None)
+        MaterialInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def try_moving_to(self, obj):
         if self.is_blocked:
@@ -31,3 +39,10 @@ class MaterialInstance(models.Model):
             update_fields=["patient_instance", "area", "lab"]
         )  # ToDo: Reduce to two fields
         return True
+    def block(self):
+        self.is_blocked = True
+        self.save(update_fields=["is_blocked"])
+
+    def release(self):
+        self.is_blocked = False
+        self.save(update_fields=["is_blocked"])

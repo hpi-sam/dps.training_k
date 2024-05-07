@@ -23,14 +23,14 @@ class ChannelEventTypes:
 class ChannelNotifier:
     @classmethod
     # If used in overwritten save method, it must be called before any calls to super().save
-    def save_and_notify(cls, obj, changes, *args, **kwargs):
+    def save_and_notify(cls, obj, changes, save_origin, *args, **kwargs):
         is_updated = not obj._state.adding
         if is_updated and not changes:
             message = f"""{obj.__class__.__name__} have to be saved with save(update_fields=[...]) after initial creation.
            This is to ensure that the frontend is notified of changes."""
             logging.warning(message)
 
-        super(obj.__class__, obj).save(*args, **kwargs)
+        save_origin.save(*args, **kwargs)
         cls.dispatch_event(obj, changes)
 
     @classmethod

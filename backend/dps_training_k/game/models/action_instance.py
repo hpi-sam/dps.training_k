@@ -106,7 +106,9 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        ActionInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(

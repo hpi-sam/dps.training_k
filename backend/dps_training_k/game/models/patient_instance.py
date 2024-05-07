@@ -59,7 +59,9 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             )  # temporary state for testing - should later take static_information into account
 
         changes = kwargs.get("update_fields", None)
-        PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        PatientInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def delete(self, using=None, keep_parents=False):
         self.user.delete()
