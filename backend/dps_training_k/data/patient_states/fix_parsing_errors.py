@@ -1,6 +1,6 @@
 import csv
 
-for i in range(1001, 1041):
+for i in range(1001, 1042):
     filename = str(i) + "_tables.csv"
     data = []
     with open(filename, newline="", encoding="utf-8") as csvfile:
@@ -34,7 +34,7 @@ for i in range(1001, 1041):
                 row[21] = ""
             row = [field.replace("feucht|blass|", "feucht|blass") for field in row]
             # find dead tables (result of parsing errors) -> should no longer return anything
-            if int(row[0]) % 10 == 0:
+            if row[0] != "Status" and int(row[0]) % 10 == 0:
                 if row[24] != "":
                     end_state_table_ids.add(row[24])
             else:
@@ -49,35 +49,36 @@ for i in range(1001, 1041):
                 print(f"table {table} not used")
     with open(filename, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(
-            [
-                "Status",
-                "Airway",
-                "Breathing",
-                "Circulation",
-                "Bewusstsein",
-                "Pupillen",
-                "Psyche",
-                "Haut",
-                "BGA-Oxy",
-                "BGA_SBH",
-                "Hb",
-                "BZ",
-                "Gerinnung",
-                "Leber",
-                "Niere",
-                "Infarkt",
-                "Lactat",
-                "Rö-Extremitäten",
-                "Rö-Thorax",
-                "Trauma-CT",
-                "Ultraschall",
-                "EKG",
-                "ZVD",
-                "Beschreibung",
-                "Übergangstabelle",
-            ]
-        )
+        if data[0][0] != "Status":
+            writer.writerow(
+                [
+                    "Status",
+                    "Airway",
+                    "Breathing",
+                    "Circulation",
+                    "Bewusstsein",
+                    "Pupillen",
+                    "Psyche",
+                    "Haut",
+                    "BGA-Oxy",
+                    "BGA_SBH",
+                    "Hb",
+                    "BZ",
+                    "Gerinnung",
+                    "Leber",
+                    "Niere",
+                    "Infarkt",
+                    "Lactat",
+                    "Rö-Extremitäten",
+                    "Rö-Thorax",
+                    "Trauma-CT",
+                    "Ultraschall",
+                    "EKG",
+                    "ZVD",
+                    "Beschreibung",
+                    "Übergangstabelle",
+                ]
+            )
         writer.writerows(data)
 
 # TODO: in 1005 ask Frank where state 551 should lead. State 2 doesn't exist, assumption is 502
