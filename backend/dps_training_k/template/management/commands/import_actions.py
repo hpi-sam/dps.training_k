@@ -8,7 +8,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.create_actions()
-        self.stdout.write(self.style.SUCCESS("Successfully added actions to the database"))
+        self.stdout.write(
+            self.style.SUCCESS("Successfully added actions to the database")
+        )
 
     @staticmethod
     def create_actions():
@@ -1108,7 +1110,7 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Fresh Frozen Plasma (jegliche Blutgruppe) auftauen",
+            name="Fresh Frozen Plasma (0 positiv) auftauen",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
             defaults={
                 "category": "OT",
@@ -1125,11 +1127,14 @@ class Command(BaseCommand):
                         {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                     ],
                 },
+                "results": [
+                    {"produced_material": str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS)}
+                ],
             },
         )
         Action.objects.update_or_create(
-            name="Lyophilisiertes Frischplasma (jegliche Blutgruppe) auftauen",
-            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_AUFTAUEN,
+            name="Lyophilisiertes Frischplasma (jegliche Blutgruppe) auflösen",
+            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_AUFLOESEN,
             defaults={
                 "category": "OT",
                 "application_duration": 420,

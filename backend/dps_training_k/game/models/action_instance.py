@@ -1,9 +1,9 @@
+from collections import Counter
 from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
-from game.models import ScheduledEvent
+from game.models import ScheduledEvent, MaterialInstance
 from helpers.local_timable import LocalTimeable
-from template.models import Action
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -60,7 +60,10 @@ class ActionInstance(LocalTimeable, models.Model):
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )
-    area = models.ForeignKey("Area", on_delete=models.CASCADE, blank=True, null=True)
+    area = models.ForeignKey(
+        "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
+    )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
@@ -138,7 +141,6 @@ class ActionInstance(LocalTimeable, models.Model):
             t_local_begin=action_instance.get_local_time(),
         )
         action_instance.save(update_fields=["current_state"])
-        action_instance.place_of_application().register_to_queue(action_instance)
         return action_instance
 
     @classmethod
@@ -156,7 +158,9 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def try_application(self):
         is_applicable, context = self.action_template.application_status(
-            self.patient_instance, self.patient_instance.area
+            self.patient_instance,
+            self.patient_instance.area,
+            self._available_materials_count(),
         )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
@@ -196,6 +200,12 @@ class ActionInstance(LocalTimeable, models.Model):
             info_text=self.action_template.get_result(),
         )
         self._application_finished()
+
+    def _application_finished(self):
+        if self.action_template.produced_resources() != None:
+            MaterialInstance.generate_materials(
+                self.action_template.produced_resources(), self.area
+            )
         if self.action_template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
@@ -207,3 +217,14 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
+
+    def _available_materials_count(self):
+        material_types = [
+            material_instance.material_template
+            for material_instance in self._available_materials()
+        ]
+        material_type_occurences = dict(Counter(material_types))
+        return material_type_occurences
+
+    def _available_materials(self):
+        return self.patient_instance.materialinstance_set.filter(is_blocked=False)

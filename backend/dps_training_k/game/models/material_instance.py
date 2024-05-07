@@ -39,6 +39,14 @@ class MaterialInstance(models.Model):
             update_fields=["patient_instance", "area", "lab"]
         )  # ToDo: Reduce to two fields
         return True
+
+    @classmethod
+    def generate_materials(cls, materials_recipe, area):
+        for material_uuid, amount in materials_recipe.items():
+            for _ in range(amount):
+                material_template = Material.objects.get(uuid=material_uuid)
+                cls.objects.create(material_template=material_template, area=area)
+
     def block(self):
         self.is_blocked = True
         self.save(update_fields=["is_blocked"])
