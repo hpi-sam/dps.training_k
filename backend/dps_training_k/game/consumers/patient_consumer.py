@@ -84,6 +84,7 @@ class PatientConsumer(AbstractConsumer):
             self.accept()
             self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
+            self.subscribe(ChannelNotifier.get_group_name(self.exercise.lab))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()

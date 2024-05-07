@@ -161,31 +161,41 @@ class ActionInstance(LocalTimeable, models.Model):
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False
-
         self._start_application()
         return True
 
-    def place_of_application(self):
-        if self.action_template.category == Action.Category.LAB:
-            return self.patient_instance.area
-        return self.patient_instance
-
     def _start_application(self):
-        ScheduledEvent.create_event(
-            self.patient_instance.exercise,
-            self.action_template.application_duration,  # ToDo: Replace with scalable local time system
-            "_application_finished",
-            action_instance=self,
-            patient_state=self.patient_instance.patient_state.data,
-        )
+        if self.patient_instance:
+            ScheduledEvent.create_event(
+                self.patient_instance.exercise,
+                self.action_template.application_duration,  # ToDo: Replace with scalable local time system
+                "_patient_application_finished",
+                action_instance=self,
+                patient_state=self.patient_instance.patient_state.data,
+            )
+        if self.lab:
+            ScheduledEvent.create_event(
+                self.patient_instance.exercise,
+                self.action_template.application_duration,  # ToDo: Replace with scalable local time system
+                "_lab_application_finished",
+                action_instance=self,
+            )
+
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
 
-    def _application_finished(self, patient_state):
+    def _patient_application_finished(self, patient_state):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
             info_text=self.action_template.get_result(patient_state),
         )
-        self.place_of_application().remove_from_queue(self)
+        self._application_finished()
+
+    def _lab_application_finished(self):
+        self._update_state(
+            ActionInstanceStateNames.FINISHED,
+            info_text=self.action_template.get_result(),
+        )
+        self._application_finished()
         if self.action_template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,

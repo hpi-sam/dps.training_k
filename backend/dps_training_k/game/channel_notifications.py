@@ -129,9 +129,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
         # state change events
         if changes:
             if "current_state" in changes:
-                if (
-                    applied_action.state_name == models.ActionInstanceStateNames.PLANNED
-                ):
+                if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
                     cls._notify_action_event(
                         applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
                     )
@@ -143,9 +141,21 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def _notify_action_event(cls, applied_action, event_type):
-        channel = cls.get_group_name(applied_action.patient_instance)
+        if not applied_action.patient_instance and not applied_action.lab:
+            raise ValueError(
+                "ActionInstance must be associated with a patient_instance or lab."
+            )
+        if applied_action.patient_instance:
+            channel = cls.get_group_name(applied_action.patient_instance)
+        if applied_action.lab:
+            channel = cls.get_group_name(applied_action.lab)
+
         event = {
             "type": event_type,
             "action_instance_pk": applied_action.id,
         }
         cls._notify_group(channel, event)
+
+
+class MaterialInstanceDispatcher(ChannelNotifier):
+    pass

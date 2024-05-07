@@ -1,3 +1,4 @@
+from .material_instance import MaterialInstance
 from .exercise import Exercise
 from .saved_exercise import SavedExercise
 from .patient_instance import PatientInstance
@@ -11,4 +12,3 @@ from .action_instance import (
     ActionInstanceStateNames,
 )
 from .lab import Lab
-from .material_instance import MaterialInstance
