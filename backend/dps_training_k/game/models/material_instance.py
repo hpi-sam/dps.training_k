@@ -42,9 +42,8 @@ class MaterialInstance(models.Model):
 
     @classmethod
     def generate_materials(cls, materials_recipe, area):
-        for material_uuid, amount in materials_recipe.items():
+        for material_template, amount in materials_recipe.items():
             for _ in range(amount):
-                material_template = Material.objects.get(uuid=material_uuid)
                 cls.objects.create(material_template=material_template, area=area)
 
     def block(self):
