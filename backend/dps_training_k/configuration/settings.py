@@ -180,3 +180,5 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 1.0,
     },
 }
+
+DATA_ROOT = os.path.join(BASE_DIR, "data")

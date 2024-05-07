@@ -2,7 +2,7 @@ from django.db import models
 
 
 class PatientState(models.Model):
-    stateID = models.IntegerField(
+    state_id = models.IntegerField(
         help_text="For Debugging purposes! State number as it is used in original data set",
         default=0,
     )
