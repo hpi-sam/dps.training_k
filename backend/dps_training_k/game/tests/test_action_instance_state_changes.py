@@ -1,17 +1,20 @@
 from django.test import TestCase
 from game.models import ActionInstanceStateNames, ActionInstance, ActionInstanceState
 from .factories.action_instance_factory import ActionInstanceFactory
+from .mixin import TestUtilsMixin
 from unittest.mock import patch
 
 
-class ActionInstanceStateChangeTestCase(TestCase):
+class ActionInstanceStateChangeTestCase(TestUtilsMixin, TestCase):
     def setUp(self):
         self.get_local_time_patch = patch("game.models.ActionInstance.get_local_time")
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
+        self.deactivate_notifications()
 
     def tearDown(self):
         self.get_local_time_patch.stop()
+        self.activate_notifications()
 
     def test_action_instance_state_changed(self):
         """
