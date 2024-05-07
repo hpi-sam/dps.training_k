@@ -1,0 +1,26 @@
+Tabelle 0:
+O2 Inhalation,CPAP,Antiasthmatikum
+ja,nein,ja
+ja,nein,nein
+nein,ja,ja
+nein,ja,nein
+nein,nein,ja
+nein,nein,nein
+Tabelle 1:
+Antiasthmatikum
+ja
+nein
+Table-Id: 0 Immer: 102
+Table-Id: 1 Immer: 103
+Table-Id: 2 Immer: 104
+Table-Id: 3 Immer: 105
+"Table-Id: 4 'Nicht beatmet:', '255', '275', '295', '315', '335', '355', 'Beatmet:', '735', '755'"
+"Table-Id: 5 'Nicht beatmet:', '256', '276', '296', '316', '336', '356', 'Beatmet:', '736', '756'"
+"Table-Id: 6 'Nicht beatmet:', '257', '277', '297', '317', '337', '357', 'Beatmet:', '737', '757'"
+"Table-Id: 7 'Nicht beatmet:', '258', '278', '298', '318', '338', '358', 'Beatmet:', '738', '758'"
+"Table-Id: 8 'Nicht beatmet:', '259', '279', '299', '319', '339', '359', 'Beatmet:', '739', '759'"
+"Table-Id: 9 'Nicht beatmet:', '260', '280', '300', '320', '340', '360', 'Beatmet:', '740', '760'"
+Table-Id: 10 Immer: 552
+Table-Id: 11 Immer: 553
+Table-Id: 12 Immer: 554
+Table-Id: 13 Immer: 555
