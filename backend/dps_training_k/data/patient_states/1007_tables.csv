@@ -1,7 +1,5 @@
 Tabelle 0:
-O2,2l Infusion,4 EK´s,"OP läuft /
-ist
-gelaufen"
+O2,2l Infusion,4 EK´s,OP läuft / ist gelaufen
 ja,ja,ja,ja
 ja,ja,ja,nein
 ja,ja,nein,ja
@@ -19,9 +17,7 @@ nein,nein,ja,nein
 nein,nein,nein,ja
 nein,nein,nein,nein
 Tabelle 1:
-2l Infusion,4 EK´s,"OP läuft /
-ist
-gelaufen"
+2l Infusion,4 EK´s,OP läuft / ist gelaufen
 ja,ja,ja
 ja,ja,nein
 ja,nein,ja

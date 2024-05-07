@@ -1,3 +1,4 @@
+Status,Airway,Breathing,Circulation,Bewusstsein,Pupillen,Psyche,Haut,BGA-Oxy,BGA_SBH,Hb,BZ,Gerinnung,Leber,Niere,Infarkt,Lactat,Rö-Extremitäten,Rö-Thorax,Trauma-CT,Ultraschall,EKG,ZVD,Beschreibung,Übergangstabelle
 101,freie Atemwege,Atemfreq: 15 /min|SpO2: 95 %|normales AG hörbar,Herzfreq: 69 /min|peripher tastbar|RR: 125.063,"wach, orientiert",mittelweit,unauffällig,trocken|rosig,612,656,430,906,104,117,126,135,345,617,418,242,615,737,812,Pat. hat keine Schmerzen,0
 102,freie Atemwege,Atemfreq: 17 /min|SpO2: 96 %|normales AG hörbar,Herzfreq: 72 /min|peripher kräftig tastbar|RR: 131.067,"wach, orientiert",mittelweit,unauffällig,trocken|rosig,612,656,430,912,104,117,126,135,345,617,418,242,615,737,820,Pat. hat keine Schmerzen,1
 103,freie Atemwege,Atemfreq: 15 /min|SpO2: 95 %|normales AG hörbar,Herzfreq: 68 /min|peripher tastbar|RR: 126.064,"wach, orientiert",mittelweit,unauffällig,trocken|rosig,612,656,430,906,104,117,126,135,345,617,418,242,615,737,812,Pat. hat keine Schmerzen,2
@@ -54,8 +55,8 @@
 358,freie Atemwege,Atemfreq: 29 /min|SpO2: 96 %|vertiefte Atmung|normales AG hörbar,Herzfreq: 79 /min|peripher kräftig tastbar|RR: 154.091,"wach, orientiert",mittelweit,aufgeregt,trocken|rosig,612,656,430,919,104,117,126,135,345,617,418,242,615,737,824,Pat. klagt über sehr starke Schmerzen,8
 359,freie Atemwege,Atemfreq: 28 /min|SpO2: 94 %|vertiefte Atmung|normales AG hörbar,Herzfreq: 73 /min|peripher kräftig tastbar|RR: 147.085,"wach, orientiert",mittelweit,aufgeregt,trocken|rosig,612,656,430,912,104,117,126,135,345,617,418,242,615,737,833,Pat. klagt über sehr starke Schmerzen,9
 360,,,,,,,,,,,,,,,,,,,,,,,,
-,,Atemfrequenz: 0 /min|SpO2: n.m. %|Atemstillstand,Herzfreq: 0 /min|0|RR: 0,keine Reaktion,"weit, entrundet",,kalt|grau/marmoriert,,,,,,,,,,,,,,0,822,,
-502,künstlicher Atemweg,Atemfreq: 15 /min|SpO2: 0 % nicht messbar|Beatmung,Herzfreq: 0 /min|0|RR: 0,keine Reaktion,"weit, entrundet",,kalt|grau/mamorie,,,,,,,,,,,,,,Asystolie,Asystolie,0|sichere Todeszeichen,
+500,,Atemfrequenz: 0 /min|SpO2: n.m. %|Atemstillstand,Herzfreq: 0 /min|0|RR: 0,keine Reaktion,"weit, entrundet",,kalt|grau/marmoriert,,,,,,,,,,,,,,,,0|sichere Todeszeichen,
+502,künstlicher Atemweg,Atemfreq: 15 /min|SpO2: 0 % nicht messbar|Beatmung,Herzfreq: 0 /min|0|RR: 0,keine Reaktion,"weit, entrundet",,kalt|grau/marmoriert,,,,,,,,,,,,,,,,0|sichere Todeszeichen,
 551,künstlicher Atemweg,Atemfreq: 15 /min|SpO2: 95 %|Beatmung|normales AG hörbar,Herzfreq: 69 /min|peripher tastbar|RR: 120.063,narkotisiert,mittelweit,,trocken|rosig,612,656,430,906,104,117,126,135,345,617,418,242,615,737,801,,10
 552,künstlicher Atemweg,Atemfreq: 15 /min|SpO2: 96 %|Beatmung|normales AG hörbar,Herzfreq: 72 /min|peripher tastbar|RR: 126.067,narkotisiert,mittelweit,,trocken|rosig,612,656,430,912,104,117,126,135,345,617,418,242,615,737,803,,11
 553,künstlicher Atemweg,Atemfreq: 15 /min|SpO2: 95 %|Beatmung|normales AG hörbar,Herzfreq: 68 /min|peripher tastbar|RR: 121.064,narkotisiert,mittelweit,,trocken|rosig,612,656,430,906,104,117,126,135,345,617,418,242,615,737,801,,12

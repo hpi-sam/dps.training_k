@@ -1,6 +1,5 @@
 Tabelle 0:
-O2,Analgesie,"Thoraxdrainage/
-Pleurapunktion"
+O2,Analgesie,Thoraxdrainage/ Pleurapunktion
 ja,ja,ja
 ja,ja,nein
 ja,nein,ja
@@ -10,8 +9,7 @@ nein,ja,nein
 nein,nein,ja
 nein,nein,nein
 Tabelle 1:
-"Thoraxdrainage/
-Pleurapunktion"
+Thoraxdrainage/ Pleurapunktion
 ja
 nein
 Table-Id: 0 Immer: 102
