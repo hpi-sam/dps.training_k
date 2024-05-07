@@ -1,5 +1,6 @@
 from django.test import TestCase
 from .factories.action_instance_factory import ActionInstanceFactoryWithEffectDuration
+from .factories.patient_factory import PatientFactory
 from game.models import ActionInstanceStateNames
 from django.utils import timezone
 import datetime
@@ -19,7 +20,9 @@ class ActionInstanceTemporaryMeasureTestCase(TestCase):
         settings.CURRENT_TIME = self.variable_backup
 
     def test_action_instance_temporary_measure(self):
-        action_instance = ActionInstanceFactoryWithEffectDuration()
+        action_instance = ActionInstanceFactoryWithEffectDuration(
+            patient_instance=PatientFactory()
+        )
         action_instance._start_application()
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS

@@ -41,14 +41,15 @@ class TestUtilsMixin:
         return communicator
 
     def deactivate_notifications(self):
+        @classmethod
         def custom_save_and_notify(cls, obj, changes, save_origin, *args, **kwargs):
             save_origin.save(*args, **kwargs)
 
         self._deactivate_notifications_patch = patch(
-            "game.channel_notifications.ChannelNotifier.save_and_notify"
+            "game.channel_notifications.ChannelNotifier.save_and_notify",
+            new=custom_save_and_notify,
         )
         save_and_notify = self._deactivate_notifications_patch.start()
-        save_and_notify.side_effect = custom_save_and_notify
 
     def activate_notifications(self):
         self._deactivate_notifications_patch.stop()

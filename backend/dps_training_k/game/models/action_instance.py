@@ -169,6 +169,10 @@ class ActionInstance(LocalTimeable, models.Model):
         return True
 
     def _start_application(self):
+        if not self.patient_instance and not self.lab:
+            raise ValueError(
+                "An action instance always needs a patient instance or lab to be scheduled"
+            )
         if self.patient_instance:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
