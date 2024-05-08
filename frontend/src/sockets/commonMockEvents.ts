@@ -30,24 +30,6 @@ export const commonMockEvents = [
 			']}'
 	},
 	{
-		id: "available-material",
-		data: '{"messageType":"available-material","availableMaterialList":{"availableMaterialList":['+
-			'{"materialName":"Beatmungsgerät","materialType":"device"},'+
-			'{"materialName":"Blutdruckmessgerät","materialType":"device"},'+
-			'{"materialName":"Defibrillator","materialType":"device"},'+
-			'{"materialName":"Endoskop","materialType":"device"},'+
-			'{"materialName":"Herz-Lungen-Maschine","materialType":"device"},'+
-			'{"materialName":"Blut 0 negativ","materialType":"blood"},'+
-			'{"materialName":"Blut 0 positiv","materialType":"blood"},'+
-			'{"materialName":"Blut A negativ","materialType":"blood"},'+
-			'{"materialName":"Blut A positiv","materialType":"blood"},'+
-			'{"materialName":"Blut B negativ","materialType":"blood"},'+
-			'{"materialName":"Blut B positiv","materialType":"blood"},'+
-			'{"materialName":"Blut AB negativ","materialType":"blood"},'+
-			'{"materialName":"Blut AB positiv","materialType":"blood"}'+
-			']}}'
-	},
-	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":123456,"areas":[' +
 			'{"areaName":"Intensiv",' +
@@ -60,8 +42,8 @@ export const commonMockEvents = [
 					'{"personnelId":1,"personnelName":"Albert Spahn"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":1,"materialName":"Beatmungsgerät","materialType":"device"},' +
-					'{"materialId":2,"materialName":"Defibrillator","materialType":"device"}' +
+					'{"materialId":1,"materialName":"Beatmungsgerät","materialType":"DE"},' +
+					'{"materialId":2,"materialName":"Defibrillator","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"ZNA",' +
@@ -104,22 +86,22 @@ export const commonMockEvents = [
 					'{"personnelId":22,"personnelName":"Sarah Bauer"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":3,"materialName":"EKG-Maschine","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"},' +
-					'{"materialId":11,"materialName":"Defibrillator","materialType":"device"},' +
-					'{"materialId":12,"materialName":"Anästhesiegerät","materialType":"device"},' +
-					'{"materialId":13,"materialName":"Elektrochirurgiegerät","materialType":"device"},' +
-					'{"materialId":14,"materialName":"Herzschrittmacher","materialType":"device"},' +
-					'{"materialId":15,"materialName":"Infusionspumpe","materialType":"device"},' +
-					'{"materialId":16,"materialName":"Patientenmonitor","materialType":"device"},' +
-					'{"materialId":17,"materialName":"Ultraschallgerät","materialType":"device"},' +
-					'{"materialId":18,"materialName":"MRT-Gerät","materialType":"device"},' +
-					'{"materialId":19,"materialName":"Röntgengerät","materialType":"device"},' +
-					'{"materialId":20,"materialName":"CT-Scanner","materialType":"device"},' +
-					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"device"},' +
-					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"device"},' +
-					'{"materialId":8,"materialName":"EEG","materialType":"device"},' +
-					'{"materialId":9,"materialName":"Narkosegerät","materialType":"device"}' +
+					'{"materialId":3,"materialName":"EKG-Maschine","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"},' +
+					'{"materialId":11,"materialName":"Defibrillator","materialType":"DE"},' +
+					'{"materialId":12,"materialName":"Anästhesiegerät","materialType":"DE"},' +
+					'{"materialId":13,"materialName":"Elektrochirurgiegerät","materialType":"DE"},' +
+					'{"materialId":14,"materialName":"Herzschrittmacher","materialType":"DE"},' +
+					'{"materialId":15,"materialName":"Infusionspumpe","materialType":"DE"},' +
+					'{"materialId":16,"materialName":"Patientenmonitor","materialType":"DE"},' +
+					'{"materialId":17,"materialName":"Ultraschallgerät","materialType":"DE"},' +
+					'{"materialId":18,"materialName":"MRT-Gerät","materialType":"DE"},' +
+					'{"materialId":19,"materialName":"Röntgengerät","materialType":"DE"},' +
+					'{"materialId":20,"materialName":"CT-Scanner","materialType":"DE"},' +
+					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"DE"},' +
+					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"DE"},' +
+					'{"materialId":8,"materialName":"EEG","materialType":"DE"},' +
+					'{"materialId":9,"materialName":"Narkosegerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle",' +
@@ -132,9 +114,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle2",' +
@@ -147,9 +129,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle3",' +
@@ -162,9 +144,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle4",' +
@@ -177,9 +159,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle5",' +
@@ -192,9 +174,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle6",' +
@@ -207,9 +189,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle7",' +
@@ -222,9 +204,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle8",' +
@@ -237,9 +219,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle9",' +
@@ -252,9 +234,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle10",' +
@@ -267,9 +249,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle11",' +
@@ -282,9 +264,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle12",' +
@@ -297,9 +279,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle13",' +
@@ -312,9 +294,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle14",' +
@@ -327,9 +309,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle15",' +
@@ -342,9 +324,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle16",' +
@@ -357,9 +339,9 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"}' +
 				']' +
 			'}' +
 		']}}'

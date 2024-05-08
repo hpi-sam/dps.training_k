@@ -38,11 +38,11 @@
 	}
 
 	const devices = computed(() => {
-		return currentAreaData.value?.material.filter(material => material.materialType === 'device') || []
+		return currentAreaData.value?.material.filter(material => material.materialType === 'DE') || []
 	})
 
 	const bloodList = computed(() => {
-		return currentAreaData.value?.material.filter(material => material.materialType === 'blood') || []
+		return currentAreaData.value?.material.filter(material => material.materialType === 'BL') || []
 	})
 </script>
 
@@ -62,7 +62,7 @@
 	<div class="scroll">
 		<h1>Material</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('DE')">
 				Gerät hinzufügen
 			</button>
 			<div
@@ -79,7 +79,7 @@
 			</div>
 		</div>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('BL')">
 				Blut hinzufügen
 			</button>
 			<div
