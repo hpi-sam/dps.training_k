@@ -201,9 +201,10 @@ export default socketPatient
 export const serverMockEvents = [
 	{
 		id: 'state',
-		data: '{"messageType":"state","state":{"phaseNumber":"1","airway":"freie Atemwege",' +
-			'"breathing":"Atemfreq: 13 /min, SpO2: 98 %, normales AG hörbar","circulation":"Herzfreq: 72 /min, peripher tastbar, RR: 125.063",' +
-			'"consciousness":"wach, orientiert","pupils":"mittelweit","psyche":"unauffällig","skin":"trocken, rosig"}}'
+		data: '{"messageType":"state","state":{"phaseNumber":"1","airway":"künstlicher Atemweg",' +
+			'"breathing":"Atemfreq: 15 /min; SpO2: 99 %; Beatmung; normales AG hörbar",' +
+			'"circulation":"Herzfreq: 72 /min; peripher tastbar; RR: 120.063",' +
+			'"consciousness":"narkotisiert","pupils":"mittelweit","psyche":"","skin":"trocken, rosig"}}'
 	},
 	{
 		id: 'available-actions',
