@@ -20,6 +20,10 @@ class ActionInstanceTemporaryMeasureTestCase(TestCase):
         settings.CURRENT_TIME = self.variable_backup
 
     def test_action_instance_temporary_measure(self):
+        """
+        test whether action instance goes from IN_PROGESS to IN_EFFECT to EXPIRED state
+        in application_duration and effect_duration respectively.
+        """
         action_instance = ActionInstanceFactoryWithEffectDuration(
             patient_instance=PatientFactory()
         )

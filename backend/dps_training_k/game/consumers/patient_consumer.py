@@ -84,6 +84,7 @@ class PatientConsumer(AbstractConsumer):
             self.accept()
             self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
+            self.subscribe(ChannelNotifier.get_group_name(self.patient_instance.area))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise.lab))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
@@ -113,10 +114,18 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_action_add(self, action_name):
         try:
-            action = Action.objects.get(name=action_name)
-            action_instance = ActionInstance.create(
-                action_template=action, patient_instance=self.patient_instance
-            )
+            action_template = Action.objects.get(name=action_name)
+            if action_template.category is Action.Category.PRODUCTION:
+                action_instance = ActionInstance.create(
+                    action_template,
+                    lab=self.exercise.lab,
+                    area=self.patient_instance.area,
+                )
+            else:
+                action_instance = ActionInstance.create(
+                    action_template=action_template,
+                    patient_instance=self.patient_instance,
+                )
             action_instance.try_application()
         except:
             self._send_action_declination(action_instance=action_instance)

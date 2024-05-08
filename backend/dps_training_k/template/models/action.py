@@ -27,9 +27,9 @@ class Action(UUIDable, models.Model):
     results = models.JSONField(null=True, blank=True, default=None)
 
     def produced_resources(self):
-        if not "produced_materials" in json.loads(self.results):
+        if not "produced_material" in json.loads(self.results):
             return None
-        resources = json.loads(self.results)["produced_materials"]
+        resources = json.loads(self.results)["produced_material"]
         resources = {
             Material.objects.get(uuid=uuid.UUID(key)): amount
             for key, amount in resources.items()

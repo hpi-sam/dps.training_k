@@ -7,6 +7,10 @@ from template.management.commands.import_actions import (
 
 class TestPopulateActionsCommand(TestCase):
     def test_defaults_structure(self):
+        """
+        actions inside import_actions command according to comment in import_actions.create_action.
+        This is needed because actions were parsed with AI
+        """
         with patch(
             "template.models.Action.objects.update_or_create"
         ) as mocked_update_or_create:
@@ -99,7 +103,7 @@ class TestPopulateActionsCommand(TestCase):
                         num_personnel += value  # only add once cause a list means "or"
                     else:
                         raise Exception("role may only contain lists and dicts")
-                
+
                 self.assertEqual(
                     conditions["num_personnel"],
                     num_personnel,

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from template.models import Action
 from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
+import json
 
 
 class Command(BaseCommand):
@@ -1113,7 +1114,7 @@ class Command(BaseCommand):
             name="Fresh Frozen Plasma (0 positiv) auftauen",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
             defaults={
-                "category": "OT",
+                "category": "PR",
                 "application_duration": 420,
                 "effect_duration": None,
                 "conditions": {
@@ -1128,7 +1129,13 @@ class Command(BaseCommand):
                     ],
                 },
                 "results": [
-                    {"produced_material": str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS)}
+                    json.dumps(
+                        {
+                            "produced_material": {
+                                str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
+                            }
+                        }
+                    )
                 ],
             },
         )

@@ -40,6 +40,12 @@ class TestUtilsMixin:
 
         return communicator
 
+    async def skip_initial_fetching(self, communicator):
+        await communicator.receive_json_from()  # fetch exercise
+        await communicator.receive_json_from()  # fetch actions
+        await communicator.receive_json_from()  # fetch patients
+        await communicator.receive_json_from()  # fetch action list
+
     def deactivate_notifications(self):
         @classmethod
         def custom_save_and_notify(cls, obj, changes, save_origin, *args, **kwargs):

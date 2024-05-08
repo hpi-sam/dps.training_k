@@ -2,6 +2,7 @@ import factory, json
 from template.models import Action
 from .JSON_factory import JSONFactory
 from .condition_factory import ConditionFactory
+from template.constants import MaterialIDs
 from template.constants import ActionIDs, ActionResultIDs
 
 
@@ -73,16 +74,16 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
             "results",
         )
 
-    name = ("Fresh Frozen Plasma (0 positiv) auftauen",)
+    name = "Fresh Frozen Plasma (0 positiv) auftauen"
     category = Action.Category.PRODUCTION
     application_duration = 10
     effect_duration = None
     conditions = ConditionFactory()
-    uuid = ActionIDs.IV_ZUGANG
+    uuid = ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN
     results = json.dumps(
         {
-            "produced_materials": {
-                "f6576558-c1d3-4548-823b-2c1e2b0636d7": 1,
+            "produced_material": {
+                str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1,
             }
         }
     )
