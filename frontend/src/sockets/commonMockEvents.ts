@@ -21,7 +21,9 @@ export const commonMockEvents = [
 				'],' +
 				'"material":[' +
 					'{"materialId":1,"materialName":"Beatmungsgerät","materialType":"device"},' +
-					'{"materialId":2,"materialName":"Defibrillator","materialType":"device"}' +
+					'{"materialId":2,"materialName":"Defibrillator","materialType":"device"},' +
+					'{"materialId":2,"materialName":"Blut 0 negativ","materialType":"blood"},' +
+					'{"materialId":2,"materialName":"Blut B positiv","materialType":"blood"}' +
 				']' +
 			'},' +
 			'{"areaName":"ZNA",' +
@@ -66,7 +68,11 @@ export const commonMockEvents = [
 					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"device"},' +
 					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"device"},' +
 					'{"materialId":8,"materialName":"EEG","materialType":"device"},' +
-					'{"materialId":9,"materialName":"Narkosegerät","materialType":"device"}' +
+					'{"materialId":9,"materialName":"Narkosegerät","materialType":"device"},' +
+					'{"materialId":21,"materialName":"Blut AB positiv","materialType":"blood"},' +
+					'{"materialId":21,"materialName":"Blut A positiv","materialType":"blood"},' +
+					'{"materialId":21,"materialName":"Blut 0 positiv","materialType":"blood"},' +
+					'{"materialId":22,"materialName":"Blut 0 negativ","materialType":"blood"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle",' +
@@ -81,7 +87,9 @@ export const commonMockEvents = [
 				'"material":[' +
 					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
 					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"}' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"},' +
+					'{"materialId":23,"materialName":"Blut A negativ","materialType":"blood"},' +
+					'{"materialId":24,"materialName":"Blut A positiv","materialType":"blood"}' +
 				']' +
 			'}' +
 		']}}'
