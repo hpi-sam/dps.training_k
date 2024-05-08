@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
-	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import EditPatientPopup from '@/components/widgets/EditPatientPopup.vue'
 	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
 	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
@@ -55,7 +54,6 @@
 						{{ patient.patientName }}
 					</div>
 				</button>
-				<ToggleSwitchForListItems default="active" />
 			</div>
 		</div>
 	</div>

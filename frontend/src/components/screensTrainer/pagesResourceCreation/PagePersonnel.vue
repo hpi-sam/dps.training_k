@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
-	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 
@@ -57,7 +56,6 @@
 						{{ personnel.personnelName }}
 					</div>
 				</button>
-				<ToggleSwitchForListItems default="active" />
 			</div>
 		</div>
 	</div>
