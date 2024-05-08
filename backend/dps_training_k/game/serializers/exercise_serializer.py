@@ -45,7 +45,7 @@ class AreaSerializer(serializers.ModelSerializer):
     areaName = serializers.CharField(source="name")
     patients = PatientInstanceSerializer(source="patientinstance_set", many=True)
     personnel = PersonnelSerializer(source="personnel_set", many=True)
-    material = MaterialInstanceSerializer()  # TODO: implement material
+    material = MaterialInstanceSerializer(many=True)  # TODO: implement material
 
     class Meta:
         model = a.Area
