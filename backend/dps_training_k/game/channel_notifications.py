@@ -158,4 +158,6 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
 
 class MaterialInstanceDispatcher(ChannelNotifier):
-    pass
+    @classmethod
+    def dispatch_event(cls, obj, changes):
+        pass
