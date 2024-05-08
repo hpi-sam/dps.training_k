@@ -26,3 +26,9 @@ class Command(BaseCommand):
             category=Material.Category.DEVICE,
             is_reusable=True,
         )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.BEATMUNGSGERAET,
+            name="Beatmungsgerät",
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+        )
