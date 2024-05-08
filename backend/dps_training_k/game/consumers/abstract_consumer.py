@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from game.models import Exercise
 from game.serializers.exercise_serializer import ExerciseSerializer
 from template.models import Action, PatientInformation, Material
-from template.serializer import (
+from template.serializers import (
     MaterialSerializer,
     PatientInformationSerializer,
     ActionSerializer,

@@ -14,13 +14,13 @@ class ConditionFactory:
         role=None,
     ):
         default_conditions = {
-            "required_actions": None,
-            "prohibitive_actions": None,
-            "material": None,
-            "num_personnel": 1,
-            "lab_devices": None,
-            "area": None,
-            "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+            "required_actions": required_actions,
+            "prohibitive_actions": prohibitive_actions,
+            "material": material,
+            "num_personnel": num_personnel,
+            "lab_devices": lab_devices,
+            "area": area,
+            "role": role,
         }
         if required_actions:
             default_conditions["required_actions"] = required_actions

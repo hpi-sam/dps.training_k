@@ -1,9 +1,15 @@
 from django.db import models
 
 from game.channel_notifications import MaterialInstanceDispatcher
+from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class MaterialInstance(models.Model):
+    class Meta:
+        constraints = [
+            one_or_more_field_not_null(["patient_instance", "area", "lab"], "material")
+        ]
+
     material_template = models.ForeignKey("template.Material", on_delete=models.CASCADE)
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True

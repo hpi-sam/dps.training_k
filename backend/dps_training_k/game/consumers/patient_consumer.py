@@ -7,7 +7,7 @@ from game.models import (
     ScheduledEvent,
 )
 from template.models import Action
-from template.serializer.state_serialize import StateSerializer
+from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
 

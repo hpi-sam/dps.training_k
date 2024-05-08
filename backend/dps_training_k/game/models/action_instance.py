@@ -4,6 +4,7 @@ from django.db import models
 from game.channel_notifications import ActionInstanceDispatcher
 from game.models import ScheduledEvent, MaterialInstance
 from helpers.local_timable import LocalTimeable
+from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -57,6 +58,16 @@ class ActionInstanceState(models.Model):
 
 
 class ActionInstance(LocalTimeable, models.Model):
+    class Meta:
+        ordering = ["order_id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order_id", "patient_instance"],
+                name="unique_order_id_for_patient",
+            ),
+            one_or_more_field_not_null(["patient_instance", "lab"], "action"),
+        ]
+
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )
@@ -69,15 +80,6 @@ class ActionInstance(LocalTimeable, models.Model):
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
     order_id = models.IntegerField(null=True)
-
-    class Meta:
-        ordering = ["order_id"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["order_id", "patient_instance"],
-                name="unique_order_id_for_patient",
-            )
-        ]
 
     @property
     def name(self):
@@ -126,7 +128,7 @@ class ActionInstance(LocalTimeable, models.Model):
     def create(cls, action_template, patient_instance=None, area=None):
         if not patient_instance and not area:
             raise ValueError(
-                "Either patient_instance or area must be provided - an action instance always need a context"
+                "Either patient_instance or lab must be provided - an action instance always need a context"
             )
 
         action_instance = ActionInstance.objects.create(
