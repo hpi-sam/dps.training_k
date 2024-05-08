@@ -7,11 +7,13 @@ from game.tests.factories import (
 )
 from .mixin import TestUtilsMixin
 from template.tests.factories.action_factory import ActionFactoryWithProduction
-from game.models import ActionInstanceStateNames
+from game.models import ActionInstanceStateNames, MaterialInstance
 from django.utils import timezone
 import datetime
 from django.conf import settings
 from game.tasks import check_for_updates
+from template.models import Material
+from template.constants import MaterialIDs
 
 
 class ActionResultTestCase(TestUtilsMixin, TestCase):
@@ -47,4 +49,19 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         action_instance = ActionInstanceFactory(
             action_template=action, lab=LabFactory(), area=AreaFactory()
         )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            name="Enthrozytenkonzentrat 0 pos.",
+            category=Material.Category.BLOOD,
+            is_reusable=False,
+        )
+        count_before = MaterialInstance.objects.filter(
+            material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            area=action_instance.area,
+        ).count()
         action_instance._application_finished()
+        count_after = MaterialInstance.objects.filter(
+            material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            area=action_instance.area,
+        ).count()
+        self.assertEqual(count_before + 1, count_after)
