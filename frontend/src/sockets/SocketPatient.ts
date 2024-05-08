@@ -201,8 +201,10 @@ export default socketPatient
 export const serverMockEvents = [
 	{
 		id: 'state',
-		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
-			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
+		data: '{"messageType":"state","state":{"phaseNumber":"1","airway":"künstlicher Atemweg",' +
+			'"breathing":"Atemfreq: 15 /min; SpO2: 99 %; Beatmung; normales AG hörbar",' +
+			'"circulation":"Herzfreq: 72 /min; peripher tastbar; RR: 120.063",' +
+			'"consciousness":"narkotisiert","pupils":"mittelweit","psyche":"","skin":"trocken, rosig"}}'
 	},
 	{
 		id: 'available-actions',
@@ -210,17 +212,7 @@ export const serverMockEvents = [
 			'{"actionName":"Blutdruck messen","actionCategory":"TR"},{"actionName":"Blutprobe untersuchen","actionCategory":"LA"},' +
 			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen1","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen2","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen3","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen4","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen5","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen6","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen7","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen8","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen9","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen10","actionCategory":"TR"},' +
-			'{"actionName":"Blut abnehmen11","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen","actionCategory":"TR"},' +
 			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
 			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
 			'{"actionName":"Wundversorgung","actionCategory":"TR"},{"actionName":"Stabile Seitenlage","actionCategory":"TR"},' +
@@ -235,11 +227,6 @@ export const serverMockEvents = [
 	{
 		id: 'action-declination',
 		data: '{"messageType":"action-declination","actionName":"Stabile Seitenlage","actionDeclinationReason":"Es fehlen die nötigen Ressourcen."}'
-	},
-	{
-		id: 'action-result',
-		data: '{"messageType":"action-result","actionName":"Blutprobe untersuchen","actionId":"125",' +
-			'"actionResult":"Der Patient hat eine Blutgruppe von 0+."}'
 	},
 	{
 		id: 'ressource-assignments',
@@ -279,24 +266,23 @@ export const serverMockEvents = [
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"IP","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":1,"orderId":4,"actionName":"Stabile Seitenlage","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"PL","timeUntilCompletion":320,"actionResult":' +
+			'{"actionId":4,"orderId":2,"actionName":"Adrenalin","actionStatus":"OH","timeUntilCompletion":40,"actionResult":' +
 			'null},' +
-			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
+			'{"actionId":3,"orderId":5,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
-			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"OH","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":5,"orderId":3,"actionName":"Infusion anlegen","actionStatus":"PL","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
 	},
 	{
 		id: 'visible-injuries',
 		data: '{"messageType":"visible-injuries","injuries":[' +
-			'{ "injuryId": 1, "injuryType": "fracture", "position": "left hand" },' +
-			'{ "injuryId": 2, "injuryType": "blood", "position": "right lower leg" },' +
-			'{ "injuryId": 3, "injuryType": "blood", "position": "head" },' +
-			'{ "injuryId": 4, "injuryType": "fracture", "position": "right collarbone" },' +
-			'{ "injuryId": 5, "injuryType": "blood", "position": "left rip" }' +
+			'{ "injuryId": 1, "injuryType": "fracture", "position": "left collarbone" },' +
+			'{ "injuryId": 1, "injuryType": "blood", "position": "left collarbone" },' +
+			'{ "injuryId": 2, "injuryType": "fracture", "position": "left upper arm" },' +
+			'{ "injuryId": 3, "injuryType": "fracture", "position": "left thorax" },' +
+			'{ "injuryId": 3, "injuryType": "blood", "position": "left thorax" }' +
 			']}'
 	},
 	...commonMockEvents
