@@ -32,12 +32,16 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
 class MaterialInstanceSerializer(serializers.ModelSerializer):
     materialId = serializers.IntegerField(source="id")
-    materialName = serializers.CharField(source="material_template.name")
     materialType = serializers.CharField(source="material_template.category")
+    materialName = serializers.CharField(source="material_template.name")
 
     class Meta:
         model = m.MaterialInstance
-        fields = ["materialId", "materialName", "materialType"]
+        fields = [
+            "materialId",
+            "materialType",
+            "materialName",
+        ]
         read_only = fields
 
 
@@ -45,21 +49,12 @@ class AreaSerializer(serializers.ModelSerializer):
     areaName = serializers.CharField(source="name")
     patients = PatientInstanceSerializer(source="patientinstance_set", many=True)
     personnel = PersonnelSerializer(source="personnel_set", many=True)
-    material = MaterialInstanceSerializer(many=True)  # TODO: implement material
+    material = MaterialInstanceSerializer(source="materialinstance_set", many=True)
 
     class Meta:
         model = a.Area
         fields = ["areaName", "patients", "personnel", "material"]
         read_only = fields
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        filtered_materials = instance.materialinstance_set.filter(area=instance)
-        if filtered_materials:
-            representation["material"] = MaterialInstanceSerializer(
-                filtered_materials, many=True
-            ).data
-        return representation
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
