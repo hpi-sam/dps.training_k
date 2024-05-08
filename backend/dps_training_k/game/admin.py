@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import *
 
 # Register your models here.
@@ -11,3 +12,4 @@ admin.site.register(ScheduledEvent)
 admin.site.register(ActionInstance)
 admin.site.register(ActionInstanceState)
 admin.site.register(User)
+admin.site.register(MaterialInstance)
