@@ -1,6 +1,6 @@
 from django.db import models
+
 from game.channel_notifications import MaterialInstanceDispatcher
-from template.models.material import Material
 
 
 class MaterialInstance(models.Model):
@@ -17,6 +17,9 @@ class MaterialInstance(models.Model):
         MaterialInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
         )
+
+    def delete(self, using=None, keep_parents=False):
+        MaterialInstanceDispatcher.delete_and_notify(self)
 
     def try_moving_to(self, obj):
         if self.is_blocked:

@@ -19,12 +19,14 @@
 
 	const currentMaterialName = ref('No Material Name')
 	const currentMaterialType = ref('No Material Type')
+	const currentMaterialId = ref(Number.NEGATIVE_INFINITY)
 
 	const showDeletePopup = ref(false)
 	const showAddPopup = ref(false)
 
-	function openDeletePopup(materialName: string) {
+	function openDeletePopup(materialName: string, materialId: string) {
 		currentMaterialName.value = materialName
+		currentMaterialId.value = materialId
 		showDeletePopup.value = true
 	}
 
@@ -34,7 +36,7 @@
 	}
 
 	function deleteMaterial() {
-		socketTrainer.materialDelete(currentMaterialName.value)
+		socketTrainer.materialDelete(currentMaterialId.value)
 	}
 
 	const devices = computed(() => {
@@ -70,7 +72,7 @@
 				:key="device.materialName"
 				class="listItem"
 			>
-				<button class="listItemButton" @click="openDeletePopup(device.materialName)">
+				<button class="listItemButton" @click="openDeletePopup(device.materialName, device.materialId)">
 					<div class="listItemName">
 						{{ device.materialName }}
 					</div>
@@ -87,7 +89,7 @@
 				:key="blood.materialName"
 				class="listItem"
 			>
-				<button class="listItemButton" @click="openDeletePopup(blood.materialName)">
+				<button class="listItemButton" @click="openDeletePopup(blood.materialName, blood.materialId)">
 					<div class="listItemName">
 						{{ blood.materialName }}
 					</div>

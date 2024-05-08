@@ -196,10 +196,10 @@ class SocketTrainer {
 		}))
 	}
 
-	materialDelete(materialName: string) {
+	materialDelete(materialId: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'material-delete',
-			'materialName': materialName
+			'materialId': materialId
 		}))
 	}
 

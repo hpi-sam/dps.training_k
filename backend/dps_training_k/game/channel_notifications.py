@@ -159,5 +159,11 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
 class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, obj, changes):
-        pass
+    def dispatch_event(cls, material, changes):
+        cls._notify_exercise_update(material.area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, material, *args, **kwargs):
+        exercise = material.area.exercise
+        super(material.__class__, material).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
