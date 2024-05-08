@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from template.models import Action
+
 from template.constants import (
     ActionIDs,
     MaterialIDs,
@@ -7,6 +7,7 @@ from template.constants import (
     ActionResultIDs,
     role_map,
 )
+from template.models import Action
 
 
 class Command(BaseCommand):
@@ -87,5 +88,29 @@ class Command(BaseCommand):
                         {ActionResultIDs.HB430: "Ergebnis2"},
                     ]
                 },
+            },
+        )
+        # Produce Material
+        Action.objects.update_or_create(
+            name="Fresh Frozen Plasma (0 positiv) auftauen",
+            uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
+            defaults={
+                "category": "PR",
+                "application_duration": 10,
+                "effect_duration": None,
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    ],
+                },
+                "results": [
+                    {"produced_material": str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS)}
+                ],
             },
         )
