@@ -7,7 +7,12 @@ from rest_framework.authtoken.models import Token
 
 from game.models import Exercise
 from game.serializers.exercise_serializer import ExerciseSerializer
-from template.models import Action, PatientInformation
+from template.models import Action, PatientInformation, Material
+from template.serializer import (
+    MaterialSerializer,
+    PatientInformationSerializer,
+    ActionSerializer,
+)
 
 
 class AbstractConsumer(JsonWebsocketConsumer, ABC):
@@ -25,6 +30,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         EXERCISE = "exercise"
         AVAILABLE_ACTIONS = "available-actions"
         AVAILABLE_PATIENTS = "available-patients"
+        AVAILABLE_MATERIALS = "available-materials"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -160,13 +166,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def send_available_actions(self):
         actions = Action.objects.all()
-        actions = [
-            {
-                "actionName": action.name,
-                "actionCategory": action.category,
-            }
-            for action in actions
-        ]
+        actions = [ActionSerializer(action).data for action in actions]
         self.send_event(
             self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
         )
@@ -174,22 +174,20 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def send_available_patients(self):
         patientsInformation = PatientInformation.objects.all()
         availablePatients = [
-            {
-                "code": patient.code,
-                "personalDetails": patient.personal_details,
-                "injury": patient.injury,
-                "biometrics": patient.biometrics,
-                "triage": patient.triage,
-                "consecutiveUniqueNumber": patient.consecutive_unique_number,
-                "mobility": patient.mobility,
-                "preexistingIllnesses": patient.preexisting_illnesses,
-                "permanentMedication": patient.permanent_medication,
-                "currentCaseHistory": patient.current_case_history,
-                "pretreatment": patient.pretreatment,
-            }
-            for patient in patientsInformation
+            PatientInformationSerializer(patient_information).data
+            for patient_information in patientsInformation
         ]
         self.send_event(
             self.OutgoingMessageTypes.AVAILABLE_PATIENTS,
             availablePatients=availablePatients,
+        )
+
+    def send_available_materials(self):
+        materials = Material.objects.all()
+        availableMaterials = [
+            MaterialSerializer(material).data for material in materials
+        ]
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_MATERIALS,
+            availableMaterials=availableMaterials,
         )

@@ -3,14 +3,14 @@ from template.models import PatientState
 
 
 class StateSerializer(serializers.Serializer):
-    phaseNumber = serializers.IntegerField(source="current_phase", read_only=True)
-    airway = serializers.CharField(source="data.airway", read_only=True)
-    breathing = serializers.CharField(source="data.breathing", read_only=True)
-    circulation = serializers.CharField(source="data.circulation", read_only=True)
-    consciousness = serializers.CharField(source="data.consciousness", read_only=True)
-    pupils = serializers.CharField(source="data.pupils", read_only=True)
-    psyche = serializers.CharField(source="data.psyche", read_only=True)
-    skin = serializers.CharField(source="data.skin", read_only=True)
+    phaseNumber = serializers.IntegerField(source="current_phase")
+    airway = serializers.CharField(source="data.airway")
+    breathing = serializers.CharField(source="data.breathing")
+    circulation = serializers.CharField(source="data.circulation")
+    consciousness = serializers.CharField(source="data.consciousness")
+    pupils = serializers.CharField(source="data.pupils")
+    psyche = serializers.CharField(source="data.psyche")
+    skin = serializers.CharField(source="data.skin")
 
     class Meta:
         model = PatientState
@@ -24,3 +24,4 @@ class StateSerializer(serializers.Serializer):
             "psyche",
             "skin",
         ]
+        read_only = fields
