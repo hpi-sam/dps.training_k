@@ -14,12 +14,13 @@ class Personnel(models.Model):
         return f"Personnel #{self.id} called {self.name} in area {self.area.name}"
 
     def save(self, *args, **kwargs):
-        if self._state.adding and not self.name:
-            self.name = f"Personnel {self.id}"
         update_fields = kwargs.get("update_fields", None)
         PersonnelDispatcher.save_and_notify(
             self, update_fields, super(), *args, **kwargs
         )
+        if self.name == "":
+            self.name = f"Personnel {self.id}"
+            self.save(update_fields=["name"])
 
     def delete(self, using=None, keep_parents=False):
         PersonnelDispatcher.delete_and_notify(self)
