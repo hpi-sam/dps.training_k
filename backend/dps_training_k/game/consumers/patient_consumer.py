@@ -115,7 +115,7 @@ class PatientConsumer(AbstractConsumer):
     def handle_action_add(self, action_name):
         try:
             action_template = Action.objects.get(name=action_name)
-            if action_template.category is Action.Category.PRODUCTION:
+            if action_template.category == Action.Category.PRODUCTION:
                 action_instance = ActionInstance.create(
                     action_template,
                     lab=self.exercise.lab,

@@ -125,7 +125,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None):
+    def create(cls, action_template, patient_instance=None, area=None, lab=None):
         if not patient_instance and not area:
             raise ValueError(
                 "Either patient_instance or lab must be provided - an action instance always need a context"
@@ -134,6 +134,7 @@ class ActionInstance(LocalTimeable, models.Model):
         action_instance = ActionInstance.objects.create(
             patient_instance=patient_instance,
             area=area,
+            lab=lab,
             action_template=action_template,
             order_id=ActionInstance.generate_order_id(patient_instance),
         )
@@ -159,11 +160,18 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        is_applicable, context = self.action_template.application_status(
-            self.patient_instance,
-            self.patient_instance.area,
-            self._available_materials_count(),
-        )
+        if self.patient_instance:
+            is_applicable, context = self.action_template.application_status(
+                self._available_materials_count(),
+                patient_instance=self.patient_instance,
+                area=self.patient_instance.area,
+            )
+        elif self.lab:
+            is_applicable, context = self.action_template.application_status(
+                self._available_materials_count(),
+                lab=self.lab,
+                area=self.area,
+            )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False
@@ -185,7 +193,7 @@ class ActionInstance(LocalTimeable, models.Model):
             )
         if self.lab:
             ScheduledEvent.create_event(
-                self.patient_instance.exercise,
+                self.lab.exercise,
                 self.action_template.application_duration,  # ToDo: Replace with scalable local time system
                 "_lab_application_finished",
                 action_instance=self,
@@ -233,4 +241,6 @@ class ActionInstance(LocalTimeable, models.Model):
         return material_type_occurences
 
     def _available_materials(self):
-        return self.patient_instance.materialinstance_set.filter(is_blocked=False)
+        if self.patient_instance:
+            return self.patient_instance.materialinstance_set.filter(is_blocked=False)
+        return self.lab.materialinstance_set.filter(is_blocked=False)

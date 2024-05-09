@@ -8,6 +8,7 @@ from template.constants import (
     role_map,
 )
 from template.models import Action
+import json
 
 
 class Command(BaseCommand):
@@ -38,7 +39,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
-                "results": None,
+                "results": json.dumps({}),
             },
         )
         Action.objects.update_or_create(
@@ -57,7 +58,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
-                "results": None,
+                "results": json.dumps({}),
             },
         )
         # Examinations
@@ -82,12 +83,14 @@ class Command(BaseCommand):
                         ]
                     ],
                 },
-                "results": {
-                    "Hb": [
-                        {ActionResultIDs.HB420: "Ergebnis1"},
-                        {ActionResultIDs.HB430: "Ergebnis2"},
-                    ]
-                },
+                "results": json.dumps(
+                    {
+                        "Hb": [
+                            {ActionResultIDs.HB420: "Ergebnis1"},
+                            {ActionResultIDs.HB430: "Ergebnis2"},
+                        ]
+                    }
+                ),
             },
         )
         # Produce Material
@@ -96,7 +99,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
             defaults={
                 "category": "PR",
-                "application_duration": 10,
+                "application_duration": 20,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -109,8 +112,12 @@ class Command(BaseCommand):
                         {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                     ],
                 },
-                "results": [
-                    {"produced_material": str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS)}
-                ],
+                "results": json.dumps(
+                    {
+                        "produced_material": {
+                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
+                        }
+                    }
+                ),
             },
         )

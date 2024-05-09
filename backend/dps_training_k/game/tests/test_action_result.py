@@ -4,6 +4,7 @@ from game.tests.factories import (
     PatientFactory,
     LabFactory,
     AreaFactory,
+    ActionInstance,
 )
 from .mixin import TestUtilsMixin
 from template.tests.factories.action_factory import ActionFactoryWithProduction
@@ -11,8 +12,9 @@ from game.models import ActionInstanceStateNames, MaterialInstance
 from django.utils import timezone
 import datetime, unittest.mock as mock, asyncio
 from django.conf import settings
+from django.core.management import call_command
 from game.tasks import check_for_updates
-from template.models import Material
+from template.models import Material, Action
 from template.constants import MaterialIDs
 from asgiref.sync import sync_to_async
 
@@ -72,6 +74,38 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
             area=action_instance.area,
         ).count()
         self.assertEqual(count_before + 1, count_after)
+
+    def test_temp_ffp_creation(self):
+        """Integration test for regression testing.
+        Iff production action is finished, material instances are created according to the results.produced_material field.
+        """
+        call_command("minimal_actions")
+        call_command("minimal_material")
+        action_template = Action.objects.get(
+            name="Fresh Frozen Plasma (0 positiv) auftauen"
+        )
+        area = AreaFactory()
+        lab = LabFactory()
+        action_instance = ActionInstance.create(
+            action_template,
+            lab=lab,
+            area=area,
+        )
+        action_instance.try_application()
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
+        self.assertRaises(
+            MaterialInstance.DoesNotExist,
+            MaterialInstance.objects.get,
+            material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            area=area,
+        )
+        check_for_updates()
+        self.assertIsNotNone(
+            MaterialInstance.objects.get(
+                material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+                area=area,
+            )
+        )
 
 
 class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
