@@ -18,12 +18,12 @@ from asgiref.sync import sync_to_async
 
 
 class ActionResultTestCase(TestUtilsMixin, TestCase):
-    def timezoneFromTimestamp(self, timestamp):
+    def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
     def setUp(self):
         self.variable_backup = settings.CURRENT_TIME
-        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
 
     def tearDown(self):
@@ -39,7 +39,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
-        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(10)
         check_for_updates()
         action_instance.refresh_from_db()
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
