@@ -22,7 +22,7 @@ class Command(BaseCommand):
         )
         self.patient_information = PatientInformation.objects.get(code=1004)
 
-        self.patient = PatientInstance.objects.create(
+        self.patient, _ = PatientInstance.objects.update_or_create(
             name="Max Mustermann",
             static_information=self.patient_information,
             exercise=self.exercise,

@@ -185,41 +185,46 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def create_trainer_log(cls, applied_action, changes, is_updated):
-        if (
-            applied_action != models.ActionInstanceStateNames.PLANNED
-            and "current_state" in changes
-        ):
+        if applied_action != models.ActionInstanceStateNames.PLANNED:
+            message = None
             if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
-                message = f'"{applied_action.action.name}" wurde gestartet'
+                message = f'"{applied_action.action_template.name}" wurde gestartet'
             elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
-                message = f'"{applied_action.action.name}" wurde abgeschlossen'
-                # if applied_action.action_template.category == template.Action.Category.PRODUCTION:
-                #    named_produced_resources = {material.name:amount for material, amount in applied_action.action_template.produced_resources()}
-                #    message += f' und hat {named_produced_resources} produziert' ToDo: add once Category.Production is on main
+                message = f'"{applied_action.action_template.name}" wurde abgeschlossen'
+                if (
+                    applied_action.action_template.category
+                    == template.Action.Category.PRODUCTION
+                ):
+                    named_produced_resources = {
+                        material.name: amount
+                        for material, amount in applied_action.action_template.produced_resources().items()
+                    }
+                    message += f" und hat {named_produced_resources} produziert"
             elif (
                 applied_action.state_name == models.ActionInstanceStateNames.CANCELED
                 and applied_action.states.filter(
                     name=models.ActionInstanceStateNames.IN_PROGRESS
                 ).exists()
             ):
-                message = f'"{applied_action.action.name}" wurde abgebrochen'
+                message = f'"{applied_action.action_template.name}" wurde abgebrochen'
             elif applied_action.state_name == models.ActionInstanceStateNames.IN_EFFECT:
-                message = f'"{applied_action.action.name}" beginnt zu wirken'
+                message = f'"{applied_action.action_template.name}" beginnt zu wirken'
             elif applied_action.state_name == models.ActionInstanceStateNames.EXPIRED:
-                message = f'"{applied_action.action.name}" wirkt nicht mehr'
-            log_entry = models.LogEntry.objects.create(
-                exercise=applied_action.exercise,
-                message=message,
-                patient_instance=applied_action.patient_instance,
-                area=applied_action.area,
-                is_dirty=True,
-            )
-            personnel_list = models.Personnel.objects.filter(
-                action_instance=applied_action
-            )
-            log_entry.personnel.add(*personnel_list)
-            log_entry.is_dirty = False
-            log_entry.save()
+                message = f'"{applied_action.action_template.name}" wirkt nicht mehr'
+            if message:
+                log_entry = models.LogEntry.objects.create(
+                    exercise=applied_action.exercise,
+                    message=message,
+                    patient_instance=applied_action.patient_instance,
+                    area=applied_action.area,
+                    is_dirty=True,
+                )
+                personnel_list = models.Personnel.objects.filter(
+                    action_instance=applied_action
+                )
+                log_entry.personnel.add(*personnel_list)
+                log_entry.is_dirty = False
+                log_entry.save()
 
 
 class LogEntryDispatcher(ChannelNotifier):
@@ -244,7 +249,7 @@ class LogEntryDispatcher(ChannelNotifier):
 
 class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, material, changes):
+    def dispatch_event(cls, material, changes, is_updated):
         cls._notify_exercise_update(material.area.exercise)
 
     @classmethod

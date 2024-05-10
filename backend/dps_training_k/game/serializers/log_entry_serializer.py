@@ -2,7 +2,7 @@ from rest_framework import serializers
 import game.models.log_entry as le
 import game.models.patient_instance as pa
 
-# import game.models.lab as la ToDo: Uncomment once lab is on main
+import game.models.lab as la
 import game.models.personnel as pe
 from datetime import datetime
 import pytz
@@ -12,13 +12,20 @@ class LogEntrySerializer(serializers.ModelSerializer):
     logId = serializers.IntegerField(source="local_id")
     logMessage = serializers.CharField(source="message")
     logTime = serializers.SerializerMethodField()
-    areaName = serializers.CharField(source="area.name")
+    areaName = serializers.SerializerMethodField()
     patientId = serializers.PrimaryKeyRelatedField(
-        queryset=pa.PatientInstance.objects.all()
+        source="patient_instance",
+        queryset=pa.PatientInstance.objects.all(),
+        allow_null=True,
     )
-    # labId = serializers.PrimaryKeyRelatedField(queryset=la.Lab.objects.all())
+    labId = serializers.PrimaryKeyRelatedField(
+        source="lab", queryset=la.Lab.objects.all(), allow_null=True
+    )
     personnelIds = serializers.PrimaryKeyRelatedField(
-        queryset=pe.Personnel.objects.all(), many=True
+        source="personnel",
+        queryset=pe.Personnel.objects.all(),
+        many=True,
+        allow_null=True,
     )
 
     class Meta:
@@ -30,7 +37,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
             "areaName",
             "patientId",
             "labId",
-            "personnelId",
+            "personnelIds",
         ]
         read_only_fields = fields
 
@@ -38,3 +45,6 @@ class LogEntrySerializer(serializers.ModelSerializer):
         # Ensure the timestamp is timezone aware
         timestamp = obj.timestamp.replace(tzinfo=pytz.UTC)
         return int(timestamp.timestamp() * 1000)
+
+    def get_areaName(self, obj):
+        return obj.area.name if obj.area else None
