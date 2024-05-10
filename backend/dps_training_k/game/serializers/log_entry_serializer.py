@@ -1,5 +1,9 @@
 from rest_framework import serializers
 import game.models.log_entry as le
+import game.models.patient_instance as pa
+
+# import game.models.lab as la ToDo: Uncomment once lab is on main
+import game.models.personnel as pe
 from datetime import datetime
 import pytz
 
@@ -9,9 +13,13 @@ class LogEntrySerializer(serializers.ModelSerializer):
     logMessage = serializers.CharField(source="message")
     logTime = serializers.SerializerMethodField()
     areaName = serializers.CharField(source="area.name")
-    patientId = serializers.IntegerField(source="patient_instance.id")
-    labId = serializers.IntegerField(source="lab.id")
-    personnelId = serializers.IntegerField(source="personnel.id")
+    patientId = serializers.PrimaryKeyRelatedField(
+        queryset=pa.PatientInstance.objects.all()
+    )
+    # labId = serializers.PrimaryKeyRelatedField(queryset=la.Lab.objects.all())
+    personnelIds = serializers.PrimaryKeyRelatedField(
+        queryset=pe.Personnel.objects.all(), many=True
+    )
 
     class Meta:
         model = le.LogEntry

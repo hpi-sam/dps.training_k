@@ -11,24 +11,35 @@ class LogEntry(models.Model):
             )
         ]
 
-    local_id = models.IntegerField()
+    local_id = models.IntegerField(blank=True)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     timestamp = models.DateTimeField(
         null=True, blank=True, help_text="May only be set while exercise is running"
     )
     message = models.TextField()
+    is_dirty = models.BooleanField(
+        default=False,
+        help_text="Set to True if log_entry is missing Keys (e.g. personnel)",
+    )
+
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True, blank=True
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
-    personnel = models.ForeignKey(
-        "Personnel", on_delete=models.CASCADE, null=True, blank=True
-    )
+    personnel = models.ManyToManyField("Personnel", blank=True)
     # lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True) ToDo: Uncomment when Lab model is implemented
 
     def save(self, *args, **kwargs):
-        if self._state.adding and not self.exercise.is_running():
-            self.timestamp = None
+        if self._state.adding:
+            if self.exercise.is_running():
+                self.timestamp = datetime.datetime.now()
+            else:
+                self.timestamp = None
+
+            self.local_id = self.generate_local_id(
+                self.exercise
+            )  # prone to race conditions
+
         changes = kwargs.get("update_fields", None)
         LogEntryDispatcher.save_and_notify(self, changes, *args, **kwargs)
 
@@ -41,7 +52,10 @@ class LogEntry(models.Model):
             log_entry.save(update_fields=["timestamp"])
         return log_entries
 
+    def generate_local_id(self, exercise):
+        return LogEntry.objects.filter(exercise=exercise).count() + 1
+
     def is_valid(self):
-        if self.timestamp:
+        if self.timestamp and self.local_id and not self.is_dirty:
             return True
         return False

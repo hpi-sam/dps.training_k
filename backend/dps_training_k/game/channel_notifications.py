@@ -4,6 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 import game.models as models  # needed to avoid circular imports
+import template.models as template
 
 """
 This package is responsible to decide when to notify which consumers.
@@ -33,7 +34,7 @@ class ChannelNotifier:
 
         super(obj.__class__, obj).save(*args, **kwargs)
         cls.dispatch_event(obj, changes, is_updated)
-        cls.create_trainer_log_and_dispatch(obj, changes, is_updated)
+        cls.create_trainer_log(obj, changes, is_updated)
 
     @classmethod
     def delete_and_notify(cls, obj, changes):
@@ -67,10 +68,8 @@ class ChannelNotifier:
         )
 
     @classmethod
-    def create_trainer_log_and_dispatch(cls, obj, changes, is_updated):
-        raise NotImplementedError(
-            "Method create_trainer_log_and_dispatch must be implemented by subclass"
-        )
+    def create_trainer_log(cls, obj, changes, is_updated):
+        pass
 
     @classmethod
     def _notify_exercise_update(cls, exercise):
@@ -91,6 +90,20 @@ class PatientInstanceDispatcher(ChannelNotifier):
 
         if not (changes is not None and len(changes) == 1 and "patient_state"):
             cls._notify_exercise_update(patient_instance.exercise)
+
+    @classmethod
+    def create_trainer_log(cls, patient_instance, changes, is_updated):
+        message = None
+        if not is_updated:
+            message = f"Patient {patient_instance.name} wurde eingeliefert. Patient hat folgende Verletzungen: {patient_instance.static_information.injury}"
+        elif "triage" in changes:
+            message = f"Patient {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
+        if message:
+            models.LogEntry.objects.create(
+                exercise=patient_instance.exercise,
+                message=message,
+                patient_instance=patient_instance,
+            )
 
     @classmethod
     def _notify_patient_state_change(cls, patient_instance):
@@ -162,6 +175,44 @@ class ActionInstanceDispatcher(ChannelNotifier):
         }
         cls._notify_group(channel, event)
 
+    @classmethod
+    def create_trainer_log(cls, applied_action, changes, is_updated):
+        if (
+            applied_action != models.ActionInstanceStateNames.PLANNED
+            and "current_state" in changes
+        ):
+            if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
+                message = f'"{applied_action.action.name}" wurde gestartet'
+            elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
+                message = f'"{applied_action.action.name}" wurde abgeschlossen'
+                # if applied_action.action_template.category == template.Action.Category.PRODUCTION:
+                #    named_produced_resources = {material.name:amount for material, amount in applied_action.action_template.produced_resources()}
+                #    message += f' und hat {named_produced_resources} produziert' ToDo: add once Category.Production is on main
+            elif (
+                applied_action.state_name == models.ActionInstanceStateNames.CANCELED
+                and applied_action.states.filter(
+                    name=models.ActionInstanceStateNames.IN_PROGRESS
+                ).exists()
+            ):
+                message = f'"{applied_action.action.name}" wurde abgebrochen'
+            elif applied_action.state_name == models.ActionInstanceStateNames.IN_EFFECT:
+                message = f'"{applied_action.action.name}" beginnt zu wirken'
+            elif applied_action.state_name == models.ActionInstanceStateNames.EXPIRED:
+                message = f'"{applied_action.action.name}" wirkt nicht mehr'
+            log_entry = models.LogEntry.objects.create(
+                exercise=applied_action.exercise,
+                message=message,
+                patient_instance=applied_action.patient_instance,
+                area=applied_action.area,
+                is_dirty=True,
+            )
+            personnel_list = models.Personnel.objects.filter(
+                action_instance=applied_action
+            )
+            log_entry.personnel.add(*personnel_list)
+            log_entry.is_dirty = False
+            log_entry.save()
+
 
 class LogEntryDispatcher(ChannelNotifier):
     @classmethod
@@ -169,12 +220,15 @@ class LogEntryDispatcher(ChannelNotifier):
         return f"{exercise.__class__.__name__}_{exercise.id}_log"
 
     @classmethod
-    def dispatch_event(cls, obj, changes):
-        if obj.is_valid():
-            cls._notify_log_update_event(obj)
+    def dispatch_event(cls, log_entry, changes, is_updated):
+        if log_entry.is_valid():
+            cls._notify_log_update_event(log_entry)
 
     @classmethod
     def _notify_log_update_event(cls, log_entry):
-        channel = cls.get_log_group_name(log_entry.obj)
-        event = {"type": ChannelEventTypes.LOG_UPDATE_EVENT, "log_pk": log_entry.id}
+        channel = cls.get_group_name(log_entry.exercise)
+        event = {
+            "type": ChannelEventTypes.LOG_UPDATE_EVENT,
+            "log_entry_pk": log_entry.id,
+        }
         cls._notify_group(channel, event)

@@ -1,9 +1,10 @@
 from configuration import settings
 from game.models import Area
-from game.models import Exercise, Personnel, PatientInstance
+from game.models import Exercise, Personnel, PatientInstance, LogEntry
 from template.models import PatientInformation
 from .abstract_consumer import AbstractConsumer
-from ..channel_notifications import ChannelNotifier
+from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
+from ..serializers import LogEntrySerializer
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -38,6 +39,7 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_RESUMED = "exercise-resume"
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        LOG_UPDATE = "log-update"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,6 +107,7 @@ class TrainerConsumer(AbstractConsumer):
     def connect(self):
         self.accept()
         self.send_available_patients()
+        self.send_past_logs()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -120,6 +123,7 @@ class TrainerConsumer(AbstractConsumer):
         self.exercise = Exercise.createExercise()
         self._send_exercise(self.exercise)
         self.subscribe(ChannelNotifier.get_group_name(self.exercise))
+        self.subscribe(LogEntryDispatcher.get_group_name(self.exercise))
 
     def handle_test_passthrough(self):
         self.send_event(
@@ -130,7 +134,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_start_exercise(self):
         owned_patients = PatientInstance.objects.filter(exercise=self.exercise)
         [patient.schedule_state_change() for patient in owned_patients]
-        self.exercise.state = Exercise.StateTypes.RUNNING
+        self.exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_stop_exercise(self):
         # Stop Celery
@@ -221,3 +225,26 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No personnel found with the pk '{personnel_id}'",
             )
+
+    def send_past_logs(self):
+        log_entry_objects = LogEntry.objects.filter(exercise=self.exercise)
+        if not log_entry_objects:
+            return
+        log_entry_dicts = [
+            LogEntrySerializer(log_entry).data for log_entry in log_entry_objects
+        ]
+        self.send_event(
+            self.TrainerOutgoingMessageTypes.LOG_UPDATE, logEntries=log_entry_dicts
+        )
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # Events triggered internally by channel notifications
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    def log_update_event(self, event):
+        log_entry_objects = LogEntry.objects.filter(exercise=self.exercise)
+        log_entry_dicts = [
+            LogEntrySerializer(log_entry).data for log_entry in log_entry_objects
+        ]
+        self.send_event(
+            self.TrainerOutgoingMessageTypes.LOG_UPDATE, logEntries=log_entry_dicts
+        )

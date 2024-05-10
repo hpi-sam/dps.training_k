@@ -104,6 +104,13 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             return False
 
+    @property
+    def exercise(self):
+        if self.patient_instance:
+            return self.patient_instance.exercise
+        # if self.lab:
+        #    return self.lab.exercise ToDo: Uncomment once lab is on main
+
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)

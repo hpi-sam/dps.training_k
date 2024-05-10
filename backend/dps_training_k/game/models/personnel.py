@@ -9,6 +9,9 @@ class Personnel(models.Model):
     assigned_patient = models.ForeignKey(
         "PatientInstance", on_delete=models.SET_NULL, null=True, blank=True
     )
+    action_instance = models.ForeignKey(
+        "ActionInstance", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return f"Personnel #{self.id} called {self.name} in area {self.area.name}"

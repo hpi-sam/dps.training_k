@@ -1,6 +1,12 @@
 from django.core.management.base import BaseCommand
 from template.models import Action
-from template.constants import ActionIDs, MaterialIDs, RoleIDs, ActionResultIDs, role_map
+from template.constants import (
+    ActionIDs,
+    MaterialIDs,
+    RoleIDs,
+    ActionResultIDs,
+    role_map,
+)
 
 
 class Command(BaseCommand):
@@ -8,7 +14,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.create_actions()
-        self.stdout.write(self.style.SUCCESS("Successfully added data to the database"))
+        self.stdout.write(
+            self.style.SUCCESS("Successfully added minimal actions to the database")
+        )
 
     @staticmethod
     def create_actions():
