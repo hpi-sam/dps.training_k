@@ -4,10 +4,19 @@ import datetime
 
 
 class LogEntry(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["local_id", "exercise"], name="unique_local_id_for_entry"
+            )
+        ]
+
     local_id = models.IntegerField()
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(null=True, blank=True)
-
+    timestamp = models.DateTimeField(
+        null=True, blank=True, help_text="May only be set while exercise is running"
+    )
+    message = models.TextField()
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True, blank=True
     )
@@ -18,6 +27,8 @@ class LogEntry(models.Model):
     # lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True) ToDo: Uncomment when Lab model is implemented
 
     def save(self, *args, **kwargs):
+        if self._state.adding and not self.exercise.is_running():
+            self.timestamp = None
         changes = kwargs.get("update_fields", None)
         LogEntryDispatcher.save_and_notify(self, changes, *args, **kwargs)
 

@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
         self.exercise = Exercise.objects.create(
             exercise_frontend_id="abcdef",
-            state=Exercise.ExerciseStateTypes.CONFIGURATION,
+            state=Exercise.StateTypes.CONFIGURATION,
         )
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
