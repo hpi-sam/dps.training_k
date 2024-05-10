@@ -15,10 +15,8 @@ class Command(BaseCommand):
         else:
             Exercise.objects.get(exercise_frontend_id="abcdef").delete()
 
-        self.exercise = Exercise.objects.create(
-            exercise_frontend_id="abcdef",
-            state=Exercise.ExerciseStateTypes.CONFIGURATION,
-        )
+        self.exercise = Exercise.createExercise()
+        self.exercise.exercise_frontend_id = "abcdef"
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
         )
