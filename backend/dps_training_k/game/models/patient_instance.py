@@ -20,8 +20,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     area = models.ForeignKey(
         "Area",
         on_delete=models.CASCADE,
-        null=True,  # for debugging purposes
-        blank=True,  # for debugging purposes
     )
     patient_state = models.ForeignKey(
         "template.PatientState",
@@ -61,27 +59,13 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             )  # temporary state for testing - should later take static_information into account
 
         changes = kwargs.get("update_fields", None)
-        PatientInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        PatientInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def delete(self, using=None, keep_parents=False):
         self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
-
-    def __str__(self):
-        return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"
-
-    # ToDo: remove after actual method is implemented
-    def schedule_temporary_event(self):
-        ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "temporary_event_test",
-            patient=self,
-        )
-
-    def temporary_event_test(self):
-        print("temporary_event_test called")
-        return True
 
     def schedule_state_change(self):
         from game.models import ScheduledEvent
@@ -115,3 +99,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         if self.patient_state.is_dead:
             return True
         return False
+
+    def __str__(self):
+        return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"

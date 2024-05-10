@@ -8,6 +8,7 @@ from game.models import (
 )
 from game.tasks import check_for_updates
 from .factories import PatientFactory, ActionInstanceFactory
+from .mixin import TestUtilsMixin
 from template.tests.factories import ActionFactory
 from unittest.mock import patch
 from django.utils import timezone
@@ -72,17 +73,19 @@ class ActionInstanceTestCase(TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
 
-class ActionInstanceScheduledTestCase(TestCase):
-    def timezoneFromTimestamp(self, timestamp):
+class ActionInstanceScheduledTestCase(TestUtilsMixin, TestCase):
+    def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
     def setUp(self):
-        self.action_instance = ActionInstanceFactory()
+        self.action_instance = ActionInstanceFactory(patient_instance=PatientFactory())
         self.variable_backup = settings.CURRENT_TIME
-        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
+        self.deactivate_notifications()
 
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
+        self.activate_notifications()
 
     def test_action_is_scheduled(self):
         """
@@ -90,7 +93,7 @@ class ActionInstanceScheduledTestCase(TestCase):
         """
         self.action_instance._start_application()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
-        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(10)
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 0)
         self.action_instance.refresh_from_db()  # Necessary because the check_for_updates changes happen out of scope,

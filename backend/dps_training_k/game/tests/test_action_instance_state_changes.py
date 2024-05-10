@@ -1,24 +1,27 @@
 from django.test import TestCase
 from game.models import ActionInstanceStateNames, ActionInstance, ActionInstanceState
-from .factories.action_instance_factory import ActionInstanceFactory
+from .factories import ActionInstanceFactory, LabFactory
+from .mixin import TestUtilsMixin
 from unittest.mock import patch
 
 
-class ActionInstanceStateChangeTestCase(TestCase):
+class ActionInstanceStateChangeTestCase(TestUtilsMixin, TestCase):
     def setUp(self):
         self.get_local_time_patch = patch("game.models.ActionInstance.get_local_time")
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
+        self.deactivate_notifications()
 
     def tearDown(self):
         self.get_local_time_patch.stop()
+        self.activate_notifications()
 
     def test_action_instance_state_changed(self):
         """
         ActionInstanceState always create a new state object when the state name is changed.
         Two follow up states are gap free in time - one starts exactly when the other ends.
         """
-        action_instance = ActionInstanceFactory()
+        action_instance = ActionInstanceFactory(lab=LabFactory())
         number_of_states = ActionInstance.objects.count()
         action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.assertEqual(ActionInstanceState.objects.count(), number_of_states + 1)

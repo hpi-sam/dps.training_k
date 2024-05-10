@@ -20,7 +20,7 @@ interface MessageData {
 	logEntries?: LogEntry[]
 	availablePatients: AvailablePatient[]
 	availableActions: AvailableAction[]
-	availableMaterialList: AvailableMaterial
+	availableMaterials: AvailableMaterial[]
 	actionDeclinationReason?: string
 	ressourceAssignments: RessourceAssignments
 	actions: Action[]
@@ -94,10 +94,6 @@ interface AvailablePatient {
 	permanentMedication: string
 	currentCaseHistory: string
 	pretreatment: string
-}
-
-interface AvailableMaterialList {
-	availableMaterialList: AvailableMaterial[],
 }
 
 interface AvailableMaterial {

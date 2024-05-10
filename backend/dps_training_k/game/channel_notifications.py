@@ -23,14 +23,14 @@ class ChannelEventTypes:
 class ChannelNotifier:
     @classmethod
     # If used in overwritten save method, it must be called before any calls to super().save
-    def save_and_notify(cls, obj, changes, *args, **kwargs):
+    def save_and_notify(cls, obj, changes, save_origin, *args, **kwargs):
         is_updated = not obj._state.adding
         if is_updated and not changes:
             message = f"""{obj.__class__.__name__} have to be saved with save(update_fields=[...]) after initial creation.
            This is to ensure that the frontend is notified of changes."""
             logging.warning(message)
 
-        super(obj.__class__, obj).save(*args, **kwargs)
+        save_origin.save(*args, **kwargs)
         cls.dispatch_event(obj, changes)
 
     @classmethod
@@ -129,9 +129,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
         # state change events
         if changes:
             if "current_state" in changes:
-                if (
-                    applied_action.state_name == models.ActionInstanceStateNames.PLANNED
-                ):
+                if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
                     cls._notify_action_event(
                         applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
                     )
@@ -143,9 +141,29 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def _notify_action_event(cls, applied_action, event_type):
-        channel = cls.get_group_name(applied_action.patient_instance)
+        if not applied_action.patient_instance and not applied_action.lab:
+            raise ValueError(
+                "ActionInstance must be associated with a patient_instance or lab."
+            )
+        if applied_action.patient_instance:
+            channel = cls.get_group_name(applied_action.patient_instance)
+        if applied_action.lab:
+            channel = cls.get_group_name(applied_action.lab)
+
         event = {
             "type": event_type,
             "action_instance_pk": applied_action.id,
         }
         cls._notify_group(channel, event)
+
+
+class MaterialInstanceDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, material, changes):
+        cls._notify_exercise_update(material.area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, material, *args, **kwargs):
+        exercise = material.area.exercise
+        super(material.__class__, material).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)

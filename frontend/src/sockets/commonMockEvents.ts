@@ -515,10 +515,10 @@ export const commonMockEvents = [
 					'{"personnelId":1,"personnelName":"Albert Spahn"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":1,"materialName":"Beatmungsgerät","materialType":"device"},' +
-					'{"materialId":2,"materialName":"Defibrillator","materialType":"device"},' +
-					'{"materialId":2,"materialName":"Blut 0 negativ","materialType":"blood"},' +
-					'{"materialId":2,"materialName":"Blut B positiv","materialType":"blood"}' +
+					'{"materialId":1,"materialName":"Beatmungsgerät","materialType":"DE"},' +
+					'{"materialId":2,"materialName":"Defibrillator","materialType":"DE"},' +
+					'{"materialId":2,"materialName":"Blut 0 negativ","materialType":"BL"},' +
+					'{"materialId":2,"materialName":"Blut B positiv","materialType":"BL"}' +
 				']' +
 			'},' +
 			'{"areaName":"ZNA",' +
@@ -548,26 +548,26 @@ export const commonMockEvents = [
 					'{"personnelId":15,"personnelName":"Lisa Fischer"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":3,"materialName":"EKG-Maschine","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"},' +
-					'{"materialId":11,"materialName":"Defibrillator","materialType":"device"},' +
-					'{"materialId":12,"materialName":"Anästhesiegerät","materialType":"device"},' +
-					'{"materialId":13,"materialName":"Elektrochirurgiegerät","materialType":"device"},' +
-					'{"materialId":14,"materialName":"Herzschrittmacher","materialType":"device"},' +
-					'{"materialId":15,"materialName":"Infusionspumpe","materialType":"device"},' +
-					'{"materialId":16,"materialName":"Patientenmonitor","materialType":"device"},' +
-					'{"materialId":17,"materialName":"Ultraschallgerät","materialType":"device"},' +
-					'{"materialId":18,"materialName":"MRT-Gerät","materialType":"device"},' +
-					'{"materialId":19,"materialName":"Röntgengerät","materialType":"device"},' +
-					'{"materialId":20,"materialName":"CT-Scanner","materialType":"device"},' +
-					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"device"},' +
-					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"device"},' +
-					'{"materialId":8,"materialName":"EEG","materialType":"device"},' +
-					'{"materialId":9,"materialName":"Narkosegerät","materialType":"device"},' +
-					'{"materialId":21,"materialName":"Blut AB positiv","materialType":"blood"},' +
-					'{"materialId":21,"materialName":"Blut A positiv","materialType":"blood"},' +
-					'{"materialId":21,"materialName":"Blut 0 positiv","materialType":"blood"},' +
-					'{"materialId":22,"materialName":"Blut 0 negativ","materialType":"blood"}' +
+					'{"materialId":3,"materialName":"EKG-Maschine","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"},' +
+					'{"materialId":11,"materialName":"Defibrillator","materialType":"DE"},' +
+					'{"materialId":12,"materialName":"Anästhesiegerät","materialType":"DE"},' +
+					'{"materialId":13,"materialName":"Elektrochirurgiegerät","materialType":"DE"},' +
+					'{"materialId":14,"materialName":"Herzschrittmacher","materialType":"DE"},' +
+					'{"materialId":15,"materialName":"Infusionspumpe","materialType":"DE"},' +
+					'{"materialId":16,"materialName":"Patientenmonitor","materialType":"DE"},' +
+					'{"materialId":17,"materialName":"Ultraschallgerät","materialType":"DE"},' +
+					'{"materialId":18,"materialName":"MRT-Gerät","materialType":"DE"},' +
+					'{"materialId":19,"materialName":"Röntgengerät","materialType":"DE"},' +
+					'{"materialId":20,"materialName":"CT-Scanner","materialType":"DE"},' +
+					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"DE"},' +
+					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"DE"},' +
+					'{"materialId":8,"materialName":"EEG","materialType":"DE"},' +
+					'{"materialId":9,"materialName":"Narkosegerät","materialType":"DE"},' +
+					'{"materialId":21,"materialName":"Blut AB positiv","materialType":"BL"},' +
+					'{"materialId":21,"materialName":"Blut A positiv","materialType":"BL"},' +
+					'{"materialId":21,"materialName":"Blut 0 positiv","materialType":"BL"},' +
+					'{"materialId":22,"materialName":"Blut 0 negativ","materialType":"BL"}' +
 				']' +
 			'},' +
 			'{"areaName":"Wagenhalle",' +
@@ -580,11 +580,11 @@ export const commonMockEvents = [
 					'{"personnelId":6,"personnelName":"Ursula Seiler"}' +
 				'],' +
 				'"material":[' +
-					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"device"},' +
-					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"device"},' +
-					'{"materialId":23,"materialName":"Blut A negativ","materialType":"blood"},' +
-					'{"materialId":24,"materialName":"Blut A positiv","materialType":"blood"}' +
+					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
+					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"},' +
+					'{"materialId":23,"materialName":"Blut A negativ","materialType":"BL"},' +
+					'{"materialId":24,"materialName":"Blut A positiv","materialType":"BL"}' +
 				']' +
 			'}' +
 		']}}'

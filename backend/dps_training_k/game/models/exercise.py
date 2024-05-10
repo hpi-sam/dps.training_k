@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+from .lab import Lab
 from helpers.eventable import NonEventable
 
 
@@ -36,6 +37,7 @@ class Exercise(NonEventable, models.Model):
             exercise_frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.ExerciseStateTypes.CONFIGURATION,
         )
+        Lab.objects.create(exercise=new_Exercise)
         return new_Exercise
 
     def time_factor(self):

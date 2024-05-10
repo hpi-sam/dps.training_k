@@ -15,7 +15,9 @@ class Personnel(models.Model):
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields", None)
-        PersonnelDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
+        PersonnelDispatcher.save_and_notify(
+            self, update_fields, super(), *args, **kwargs
+        )
         if self.name == "":
             self.name = f"Personnel {self.id}"
             self.save(update_fields=["name"])
