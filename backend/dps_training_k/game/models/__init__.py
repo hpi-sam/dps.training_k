@@ -6,3 +6,4 @@ from .user import User
 from .scheduled_event import ScheduledEvent
 from .area import Area
 from .action_instance import *
+from .log_entry import LogEntry

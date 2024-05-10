@@ -42,3 +42,8 @@ class Exercise(NonEventable, models.Model):
         if self.config is None:
             return 1
         return 1 / self.config.time_speed_up
+
+    def is_running(self):
+        if self.state == self.ExerciseStateTypes.RUNNING:
+            return True
+        return False

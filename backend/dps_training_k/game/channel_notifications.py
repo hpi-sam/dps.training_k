@@ -18,6 +18,7 @@ class ChannelEventTypes:
     EXERCISE_UPDATE = "send.exercise.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_LIST_EVENT = "action.list.event"
+    LOG_UPDATE_EVENT = "log.update.event"
 
 
 class ChannelNotifier:
@@ -31,7 +32,8 @@ class ChannelNotifier:
             logging.warning(message)
 
         super(obj.__class__, obj).save(*args, **kwargs)
-        cls.dispatch_event(obj, changes)
+        cls.dispatch_event(obj, changes, is_updated)
+        cls.create_trainer_log_and_dispatch(obj, changes, is_updated)
 
     @classmethod
     def delete_and_notify(cls, obj, changes):
@@ -53,9 +55,21 @@ class ChannelNotifier:
         return f"{obj.__class__.__name__}_{obj.id}"
 
     @classmethod
+    def get_log_group_name(cls, obj):
+        raise NotImplementedError(
+            "Method get_log_group_name must be implemented by subclass"
+        )
+
+    @classmethod
     def dispatch_event(cls, obj, changes):
         raise NotImplementedError(
             "Method dispatch_event must be implemented by subclass"
+        )
+
+    @classmethod
+    def create_trainer_log_and_dispatch(cls, obj, changes, is_updated):
+        raise NotImplementedError(
+            "Method create_trainer_log_and_dispatch must be implemented by subclass"
         )
 
     @classmethod
@@ -71,7 +85,7 @@ class ChannelNotifier:
 class PatientInstanceDispatcher(ChannelNotifier):
 
     @classmethod
-    def dispatch_event(cls, patient_instance, changes):
+    def dispatch_event(cls, patient_instance, changes, is_updated):
         if changes is not None and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
@@ -96,7 +110,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
 
 class AreaDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, area, changes):
+    def dispatch_event(cls, area, changes, is_updated):
         cls._notify_exercise_update(area.exercise)
 
     @classmethod
@@ -108,7 +122,7 @@ class AreaDispatcher(ChannelNotifier):
 
 class PersonnelDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, personnel, changes):
+    def dispatch_event(cls, personnel, changes, is_updated):
         cls._notify_exercise_update(personnel.area.exercise)
 
     @classmethod
@@ -120,7 +134,7 @@ class PersonnelDispatcher(ChannelNotifier):
 
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, obj, changes):
+    def dispatch_event(cls, obj, changes, is_updated):
         applied_action = obj
         if changes and not ("current_state" in changes or "order_id" in changes):
             raise ValueError(
@@ -129,9 +143,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
         # state change events
         if changes:
             if "current_state" in changes:
-                if (
-                    applied_action.state_name == models.ActionInstanceStateNames.PLANNED
-                ):
+                if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
                     cls._notify_action_event(
                         applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
                     )
@@ -148,4 +160,21 @@ class ActionInstanceDispatcher(ChannelNotifier):
             "type": event_type,
             "action_instance_pk": applied_action.id,
         }
+        cls._notify_group(channel, event)
+
+
+class LogEntryDispatcher(ChannelNotifier):
+    @classmethod
+    def get_group_name(cls, exercise):
+        return f"{exercise.__class__.__name__}_{exercise.id}_log"
+
+    @classmethod
+    def dispatch_event(cls, obj, changes):
+        if obj.is_valid():
+            cls._notify_log_update_event(obj)
+
+    @classmethod
+    def _notify_log_update_event(cls, log_entry):
+        channel = cls.get_log_group_name(log_entry.obj)
+        event = {"type": ChannelEventTypes.LOG_UPDATE_EVENT, "log_pk": log_entry.id}
         cls._notify_group(channel, event)
