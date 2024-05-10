@@ -1,5 +1,7 @@
 from urllib.parse import parse_qs
 
+from django.db.models import Q
+
 from game.models import (
     PatientInstance,
     MaterialInstance,
@@ -117,7 +119,7 @@ class PatientConsumer(AbstractConsumer):
             action_template = Action.objects.get(name=action_name)
             if action_template.category == Action.Category.PRODUCTION:
                 action_instance = ActionInstance.create(
-                    action_template,
+                    action_template=action_template,
                     lab=self.exercise.lab,
                     area=self.patient_instance.area,
                 )
@@ -196,9 +198,18 @@ class PatientConsumer(AbstractConsumer):
 
     def action_list_event(self, event):
         actions = []
-        for action_instance in ActionInstance.objects.filter(
-            patient_instance=self.patient_instance
-        ):
+
+        """all action_instances where either the patient_instance is self.patient_instance or 
+        the category is production and the area is the same as the patient_instance.area"""
+        action_instances = ActionInstance.objects.filter(
+            Q(patient_instance=self.patient_instance)
+            | Q(
+                action_template__category=Action.Category.PRODUCTION,
+                area=self.patient_instance.area,
+            )
+        )
+
+        for action_instance in action_instances:
             action_data = {
                 "actionId": action_instance.id,
                 "orderId": action_instance.order_id,
@@ -213,6 +224,7 @@ class PatientConsumer(AbstractConsumer):
             }
 
             actions.append(action_data)
+
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_LIST,
             actions=actions,
