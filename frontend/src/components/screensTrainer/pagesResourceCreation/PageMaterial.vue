@@ -18,12 +18,14 @@
 
 	const currentMaterialName = ref('No Material Name')
 	const currentMaterialType = ref('No Material Type')
+	const currentMaterialId = ref(Number.NEGATIVE_INFINITY)
 
 	const showDeletePopup = ref(false)
 	const showAddPopup = ref(false)
 
-	function openDeletePopup(materialName: string) {
+	function openDeletePopup(materialName: string, materialId: string) {
 		currentMaterialName.value = materialName
+		currentMaterialId.value = materialId
 		showDeletePopup.value = true
 	}
 
@@ -33,15 +35,15 @@
 	}
 
 	function deleteMaterial() {
-		socketTrainer.materialDelete(currentMaterialName.value)
+		socketTrainer.materialDelete(currentMaterialId.value)
 	}
 
 	const devices = computed(() => {
-		return currentAreaData.value?.material.filter(material => material.materialType === 'device') || []
+		return currentAreaData.value?.material.filter(material => material.materialType === 'DE') || []
 	})
 
 	const bloodList = computed(() => {
-		return currentAreaData.value?.material.filter(material => material.materialType === 'blood') || []
+		return currentAreaData.value?.material.filter(material => material.materialType === 'BL') || []
 	})
 </script>
 
@@ -61,7 +63,7 @@
 	<div class="scroll">
 		<h1>Material</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('DE')">
 				Gerät hinzufügen
 			</button>
 			<div
@@ -69,7 +71,7 @@
 				:key="device.materialName"
 				class="listItem"
 			>
-				<button class="listItemButton" @click="openDeletePopup(device.materialName)">
+				<button class="listItemButton" @click="openDeletePopup(device.materialName, device.materialId)">
 					<div class="listItemName">
 						{{ device.materialName }}
 					</div>
@@ -77,7 +79,7 @@
 			</div>
 		</div>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
+			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('BL')">
 				Blut hinzufügen
 			</button>
 			<div
@@ -85,7 +87,7 @@
 				:key="blood.materialName"
 				class="listItem"
 			>
-				<button class="listItemButton" @click="openDeletePopup(blood.materialName)">
+				<button class="listItemButton" @click="openDeletePopup(blood.materialName, blood.materialId)">
 					<div class="listItemName">
 						{{ blood.materialName }}
 					</div>

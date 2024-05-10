@@ -1,7 +1,7 @@
 from configuration import settings
 from game.models import Area
-from game.models import Exercise, Personnel, PatientInstance, LogEntry
-from template.models import PatientInformation
+from game.models import Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry
+from template.models import PatientInformation, Material
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
@@ -28,6 +28,8 @@ class TrainerConsumer(AbstractConsumer):
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_UPDATE = "personnel-update"
+        MATERIAL_ADD = "material-add"
+        MATERIAL_DELETE = "material-delete"
 
     class TrainerOutgoingMessageTypes:
         RESPONSE = "response"
@@ -102,11 +104,21 @@ class TrainerConsumer(AbstractConsumer):
                 "personnelId",
                 "personnelName",
             ),
+            self.TrainerIncomingMessageTypes.MATERIAL_ADD: (
+                self.handle_add_material,
+                "areaName",
+                "materialName",
+            ),
+            self.TrainerIncomingMessageTypes.MATERIAL_DELETE: (
+                self.handle_delete_material,
+                "materialId",
+            ),
         }
 
     def connect(self):
         self.accept()
         self.send_available_patients()
+        self.send_available_materials()
         self.send_past_logs()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -224,6 +236,20 @@ class TrainerConsumer(AbstractConsumer):
         except Personnel.DoesNotExist:
             self.send_failure(
                 f"No personnel found with the pk '{personnel_id}'",
+            )
+
+    def handle_add_material(self, areaName, materialName):
+        area = Area.objects.get(name=areaName)
+        material_template = Material.objects.get(name=materialName)
+        MaterialInstance.objects.create(material_template=material_template, area=area)
+
+    def handle_delete_material(self, materialId):
+        try:
+            material = MaterialInstance.objects.get(id=materialId)
+            material.delete()
+        except MaterialInstance.DoesNotExist:
+            self.send_failure(
+                f"No material found with the pk '{materialId}'",
             )
 
     def send_past_logs(self):

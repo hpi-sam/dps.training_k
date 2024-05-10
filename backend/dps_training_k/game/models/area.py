@@ -5,9 +5,17 @@ from helpers.actions_queueable import ActionsQueueable
 
 
 class Area(ActionsQueueable, models.Model):
-    name = models.CharField(unique=True, max_length=30)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "exercise"],
+                name="unique_area_names_per_exercise",
+            )
+        ]
+
+    name = models.CharField(max_length=30)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
-    isPaused = models.BooleanField()
+    isPaused = models.BooleanField(default=False)
     # labID = models.ForeignKey("Lab")
 
     @classmethod
@@ -26,7 +34,7 @@ class Area(ActionsQueueable, models.Model):
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields", None)
-        AreaDispatcher.save_and_notify(self, update_fields, *args, **kwargs)
+        AreaDispatcher.save_and_notify(self, update_fields, super(), *args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
         AreaDispatcher.delete_and_notify(self)

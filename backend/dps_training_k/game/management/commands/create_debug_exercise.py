@@ -15,10 +15,8 @@ class Command(BaseCommand):
         else:
             Exercise.objects.get(exercise_frontend_id="abcdef").delete()
 
-        self.exercise = Exercise.objects.create(
-            exercise_frontend_id="abcdef",
-            state=Exercise.StateTypes.CONFIGURATION,
-        )
+        self.exercise = Exercise.createExercise()
+        self.exercise.exercise_frontend_id = "abcdef"
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
         )
@@ -30,4 +28,7 @@ class Command(BaseCommand):
             exercise=self.exercise,
             area=self.area,
             patient_frontend_id=123456,
+        )
+        self.stdout.write(
+            self.style.SUCCESS("Successfully added debug_exercise to the database")
         )

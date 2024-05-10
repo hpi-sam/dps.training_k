@@ -31,13 +31,15 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "patient_instance",
             "area",
+            "lab",
             "action_template",
             "current_state",
             "order_id",
         )
 
-    patient_instance = factory.SubFactory(PatientFactory)
-    area = factory.SubFactory(AreaFactory)
+    patient_instance = None
+    area = None
+    lab = None
     action_template = factory.SubFactory(ActionFactory)
     current_state = None
     # gets maximum order id for the associated patient_instance, then adds 1
@@ -65,12 +67,14 @@ class ActionInstanceFactoryWithEffectDuration(factory.django.DjangoModelFactory)
         django_get_or_create = (
             "patient_instance",
             "area",
+            "lab",
             "action_template",
             "current_state",
         )
 
-    patient_instance = factory.SubFactory(PatientFactory)
-    area = factory.SubFactory(AreaFactory)
+    patient_instance = None
+    area = None
+    lab = None
     action_template = factory.SubFactory(ActionFactoryWithEffectDuration)
     current_state = None
 

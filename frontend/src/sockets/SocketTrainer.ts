@@ -5,7 +5,7 @@ import {showErrorToast, showWarningToast} from "@/App.vue"
 import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
 import {useAvailablesStore} from "@/stores/Availables"
 import {useLogStore} from "@/stores/Log"
-import { commonMockEvents } from "./commonMockEvents"
+import {commonMockEvents} from "./commonMockEvents"
 
 class SocketTrainer {
 	private readonly url: string
@@ -54,8 +54,8 @@ class SocketTrainer {
 				case 'available-actions':
 					useAvailablesStore().loadAvailableActions(data.availableActions as AvailableAction[])
 					break
-				case 'available-material':
-					useAvailablesStore().loadAvailableMaterial(data.availableMaterialList as unknown as AvailableMaterialList)
+				case 'available-materials':
+					useAvailablesStore().loadAvailableMaterials(data.availableMaterials as AvailableMaterial[])
 					break
 				case 'available-patients':
 					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatient[])
@@ -196,10 +196,10 @@ class SocketTrainer {
 		}))
 	}
 
-	materialDelete(materialName: string) {
+	materialDelete(materialId: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'material-delete',
-			'materialName': materialName
+			'materialId': materialId
 		}))
 	}
 
@@ -217,21 +217,21 @@ export default socketTrainer
 export const serverMockEvents = [
 	{
 		id: "available-material",
-		data: '{"messageType":"available-material","availableMaterialList":{"availableMaterialList":[' +
-			'{"materialName":"Beatmungsgerät","materialType":"device"},' +
-			'{"materialName":"Blutdruckmessgerät","materialType":"device"},' +
-			'{"materialName":"Defibrillator","materialType":"device"},' +
-			'{"materialName":"Endoskop","materialType":"device"},' +
-			'{"materialName":"Herz-Lungen-Maschine","materialType":"device"},' +
-			'{"materialName":"Blut 0 negativ","materialType":"blood"},' +
-			'{"materialName":"Blut 0 positiv","materialType":"blood"},' +
-			'{"materialName":"Blut A negativ","materialType":"blood"},' +
-			'{"materialName":"Blut A positiv","materialType":"blood"},' +
-			'{"materialName":"Blut B negativ","materialType":"blood"},' +
-			'{"materialName":"Blut B positiv","materialType":"blood"},' +
-			'{"materialName":"Blut AB negativ","materialType":"blood"},' +
-			'{"materialName":"Blut AB positiv","materialType":"blood"}' +
-			']}}'
+		data: '{"messageType":"available-materials","availableMaterials":['+
+			'{"materialName":"Beatmungsgerät","materialType":"DE"},'+
+			'{"materialName":"Blutdruckmessgerät","materialType":"DE"},'+
+			'{"materialName":"Defibrillator","materialType":"DE"},'+
+			'{"materialName":"Endoskop","materialType":"DE"},'+
+			'{"materialName":"Herz-Lungen-Maschine","materialType":"DE"},'+
+			'{"materialName":"Blut 0 negativ","materialType":"BL"},'+
+			'{"materialName":"Blut 0 positiv","materialType":"BL"},'+
+			'{"materialName":"Blut A negativ","materialType":"BL"},'+
+			'{"materialName":"Blut A positiv","materialType":"BL"},'+
+			'{"materialName":"Blut B negativ","materialType":"BL"},'+
+			'{"materialName":"Blut B positiv","materialType":"BL"},'+
+			'{"materialName":"Blut AB negativ","materialType":"BL"},'+
+			'{"materialName":"Blut AB positiv","materialType":"BL"}'+
+			']}'
 	},
 	{
 		id: 'log-update-1',
