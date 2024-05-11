@@ -14,6 +14,7 @@
 		socketPatient.socket.onmessage({data: serverMockEventsPatient.find(e => e.id === 'exercise-started').data} as MessageEvent)
 		socketPatient.socket.onmessage({data: serverMockEventsPatient.find(e => e.id === 'state').data} as MessageEvent)
 		socketPatient.socket.onmessage({data: serverMockEventsPatient.find(e => e.id === 'ressource-assignments').data} as MessageEvent)
+		socketPatient.socket.onmessage({data: serverMockEventsPatient.find(e => e.id === 'action-list').data} as MessageEvent)
 		await new Promise(f => setTimeout(f, 100)) // bc visible-injuries is a bitch <3
 		socketPatient.socket.onmessage({data: serverMockEventsPatient.find(e => e.id === 'visible-injuries').data} as MessageEvent)
 	}
