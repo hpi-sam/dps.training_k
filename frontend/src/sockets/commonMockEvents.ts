@@ -507,8 +507,8 @@ export const commonMockEvents = [
 		data: '{"messageType":"exercise","exercise":{"exerciseId":"abcdef","areas":[' +
 			'{"areaName":"Intensiv",' +
 				'"patients":[' +
-					'{"patientId":145345,"patientName":"Anna Müller","code":1007,"triage":"R"},' +
-					'{"patientId":256443,"patientName":"Frank Huber","code":1008,"triage":"R"}' +
+					'{"patientId":"145345","patientName":"Anna Müller","code":1007,"triage":"R"},' +
+					'{"patientId":"256443","patientName":"Frank Huber","code":1008,"triage":"R"}' +
 				'],' +
 				'"personnel":[' +
 					'{"personnelId":10,"personnelName":"Sebastian Lieb"},' +
@@ -523,17 +523,17 @@ export const commonMockEvents = [
 			'},' +
 			'{"areaName":"ZNA",' +
 				'"patients":[' +
-					'{"patientId":123456,"patientName":"Ludger Göhlke","code":1009,"triage":"R"},' +
-					'{"patientId":623422,"patientName":"Friedrich Gerhard","code":1007,"triage":"R"},' +
-					'{"patientId":754262,"patientName":"Hans Schmidt","code":1017,"triage":"Y"},' +
-					'{"patientId":836545,"patientName":"Johannes Müller","code":1018,"triage":"Y"},' +
-					'{"patientId":963733,"patientName":"Sophie Schneider","code":1019,"triage":"Y"},' +
-					'{"patientId":105626,"patientName":"Lisa Fischer","code":1020,"triage":"Y"},' +
-					'{"patientId":126541,"patientName":"Julia Meyer","code":1004,"triage":"G"},' +
-					'{"patientId":526612,"patientName":"Max Weber","code":1012,"triage":"G"},' +
-					'{"patientId":256413,"patientName":"Lukas Wagner","code":1013,"triage":"G"},' +
-					'{"patientId":145664,"patientName":"Laura Becker","code":1014,"triage":"G"},' +
-					'{"patientId":157242,"patientName":"Anna Schäfer","code":1015,"triage":"G"}' +
+					'{"patientId":"123456","patientName":"Ludger Göhlke","code":1009,"triage":"R"},' +
+					'{"patientId":"623422","patientName":"Friedrich Gerhard","code":1007,"triage":"R"},' +
+					'{"patientId":"754262","patientName":"Hans Schmidt","code":1017,"triage":"Y"},' +
+					'{"patientId":"836545","patientName":"Johannes Müller","code":1018,"triage":"Y"},' +
+					'{"patientId":"963733","patientName":"Sophie Schneider","code":1019,"triage":"Y"},' +
+					'{"patientId":"105626","patientName":"Lisa Fischer","code":1020,"triage":"Y"},' +
+					'{"patientId":"126541","patientName":"Julia Meyer","code":1004,"triage":"G"},' +
+					'{"patientId":"526612","patientName":"Max Weber","code":1012,"triage":"G"},' +
+					'{"patientId":"256413","patientName":"Lukas Wagner","code":1013,"triage":"G"},' +
+					'{"patientId":"145664","patientName":"Laura Becker","code":1014,"triage":"G"},' +
+					'{"patientId":"157242","patientName":"Anna Schäfer","code":1015,"triage":"G"}' +
 				'],' +
 				'"personnel":[' +
 					'{"personnelId":11,"personnelName":"Hannah Mayer"},' +
@@ -572,8 +572,8 @@ export const commonMockEvents = [
 			'},' +
 			'{"areaName":"Wagenhalle",' +
 				'"patients":[' +
-					'{"patientId":126143,"patientName":"Isabelle Busch","code":1020,"triage":"G"},' +
-					'{"patientId":462455,"patientName":"Jasper Park","code":1016,"triage":"Y"}' +
+					'{"patientId":"126143","patientName":"Isabelle Busch","code":1020,"triage":"G"},' +
+					'{"patientId":"462455","patientName":"Jasper Park","code":1016,"triage":"Y"}' +
 				'],' +
 				'"personnel":[' +
 					'{"personnelId":5,"personnelName":"Finn Heizmann"},' +

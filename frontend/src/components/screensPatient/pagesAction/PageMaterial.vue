@@ -1,8 +1,8 @@
 <script setup lang="ts">
 	import socketPatient from '@/sockets/SocketPatient'
-	import { useExerciseStore } from '@/stores/Exercise'
-	import { usePatientStore } from '@/stores/Patient'
-	import { useRessourceAssignmentsStore } from '@/stores/RessourceAssignments'
+	import {useExerciseStore} from '@/stores/Exercise'
+	import {usePatientStore} from '@/stores/Patient'
+	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
 	import {computed} from 'vue'
 
 	const patientStore = usePatientStore()
@@ -18,7 +18,7 @@
 	))
 	const busyMaterial = computed(() => assignments.value?.material.filter(assignment => 
 		assignment.patientId != patientStore.patientId && 
-		assignment.patientId != null
+		assignment.patientId != null && assignment.patientId != ''
 	))
 
 	function releaseMaterial(materialId: number) {

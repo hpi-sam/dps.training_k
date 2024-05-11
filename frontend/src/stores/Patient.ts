@@ -5,7 +5,7 @@ import {useAvailablesStore} from "./Availables"
 export const usePatientStore = defineStore('patient', {
 	state: () => ({
 		token: '',
-		patientId: Number.NEGATIVE_INFINITY,
+		patientId: '',
 		code: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',

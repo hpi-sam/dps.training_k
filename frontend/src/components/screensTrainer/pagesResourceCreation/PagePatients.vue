@@ -19,9 +19,9 @@
 	const showEditPatientPopup = ref(false)
 	const showAddPatientPopup = ref(false)
 
-	const currentPatientId = ref(Number.NEGATIVE_INFINITY)
+	const currentPatientId = ref('')
 
-	function editPatient(patientId: number) {
+	function editPatient(patientId: string) {
 		currentPatientId.value = patientId
 		showEditPatientPopup.value = true
 	}
@@ -47,7 +47,7 @@
 			>
 				<button class="listItemButton" @click="editPatient(patient.patientId)">
 					<div class="listItemId">
-						{{ patient.patientId.toString().padStart(6, '0') }}
+						{{ patient.patientId }}
 					</div>
 					<TriageForListItems :patient-code="patient.code" />
 					<div class="listItemName">
