@@ -4,6 +4,7 @@ from game.models import PatientInstance
 from template.tests.factories import EmptyPatientStateFactory
 from .area_factory import AreaFactory
 from .exercise_factory import ExerciseFactory
+from .patient_information_factory import PatientInformationFactory
 
 
 class PatientFactory(factory.django.DjangoModelFactory):
@@ -17,3 +18,4 @@ class PatientFactory(factory.django.DjangoModelFactory):
     triage = "R"
     area = factory.SubFactory(AreaFactory)
     patient_state = factory.SubFactory(EmptyPatientStateFactory)
+    static_information = factory.SubFactory(PatientInformationFactory)
