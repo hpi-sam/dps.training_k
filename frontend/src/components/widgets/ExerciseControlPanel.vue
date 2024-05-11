@@ -1,12 +1,12 @@
 <script setup lang="ts">
-	import { svg } from "@/assets/Svg"
-	import { ref, computed, watch } from "vue"
-	import socketTrainer from "@/sockets/SocketTrainer"
-	import { useExerciseStore } from "@/stores/Exercise"
+	import {svg} from "@/assets/Svg"
+	import {computed, ref, watch} from "vue"
+	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer"
+	import {useExerciseStore} from "@/stores/Exercise"
 	import ButtonPopup from "./ButtonPopup.vue"
 	import SpeedSelectorPopup from "./SpeedSelectorPopup.vue"
-	import { useAvailablesStore } from "@/stores/Availables"
-	import { useLogStore } from "@/stores/Log"
+	import {useAvailablesStore} from "@/stores/Availables"
+	import {useLogStore} from "@/stores/Log"
 	import {Screens, setLeftScreen, setRightScreen} from "@/components/ModuleTrainer.vue"
 
 	const exerciseStore = useExerciseStore()
@@ -49,19 +49,22 @@
 	}
 
 	function startExercise() {
-		socketTrainer.exerciseStart()
+		socketTrainer.socket.onmessage({data: serverMockEventsTrainer.find(e => e.id === 'exercise-started').data} as MessageEvent)
 	}
 
 	function resumeExercise() {
-		socketTrainer.exerciseResume()
+		socketTrainer.socket.onmessage({data: serverMockEventsTrainer.find(e => e.id === 'exercise-resumed').data} as MessageEvent)
+		showResumePopup.value = false
 	}
 
 	function pauseExercise() {
-		socketTrainer.exercisePause()
+		socketTrainer.socket.onmessage({data: serverMockEventsTrainer.find(e => e.id === 'exercise-paused').data} as MessageEvent)
+		showPausePopup.value = false
 	}
 
 	function endExercise() {
-		socketTrainer.exerciseEnd()
+		socketTrainer.socket.onmessage({data: serverMockEventsTrainer.find(e => e.id === 'exercise-ended').data} as MessageEvent)
+		showEndPopup.value = false
 	}
 
 	const showLeavePopup = ref(false)
