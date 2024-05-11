@@ -61,6 +61,13 @@
 		<tr>
 			<td colspan="2">
 				<p class="key">
+					Name
+				</p>{{ patientStore.patientName }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p class="key">
 					Verletzungen
 				</p>{{ patientStore.injury }}
 			</td>
@@ -91,13 +98,6 @@
 				<p class="key">
 					Vorbehandlung
 				</p>{{ patientStore.pretreatment }}
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<p class="key">
-					Personalien
-				</p>{{ patientStore.personalDetails }}
 			</td>
 		</tr>
 		<tr>
