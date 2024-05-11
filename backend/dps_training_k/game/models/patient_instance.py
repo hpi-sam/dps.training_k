@@ -5,7 +5,6 @@ from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
 from template.tests.factories import PatientStateFactory
-from .scheduled_event import ScheduledEvent
 
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
@@ -14,7 +13,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     static_information = models.ForeignKey(
         "template.PatientInformation",
         on_delete=models.CASCADE,
-        null=True,  # for migration purposes
     )  # via Sensen ID
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     area = models.ForeignKey(
