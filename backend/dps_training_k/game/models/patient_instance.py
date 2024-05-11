@@ -55,8 +55,18 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             self.patient_state = PatientStateFactory(
                 10, 2
             )  # temporary state for testing - should later take static_information into account
+            self.triage = self.static_information.triage
 
         changes = kwargs.get("update_fields", None)
+
+        if (
+            changes is not None
+            and "static_information" in changes
+            and self.triage is not self.static_information.triage
+        ):
+            self.triage = self.static_information.triage
+            changes.append("triage")
+
         PatientInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
         )
