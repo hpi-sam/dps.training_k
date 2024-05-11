@@ -18,7 +18,7 @@ export const usePatientStore = defineStore('patient', {
 		psyche: '',
 		pupils: '',
 		skin: '',
-		personalDetails: '',
+		personalDetails: '', // currently unused - might be later configurable with birthday and address
 		injury: '',
 		biometrics: '',
 		consecutiveUniqueNumber: -1,
@@ -50,7 +50,6 @@ export const usePatientStore = defineStore('patient', {
 		},
 		initializePatientFromAvailablePatients() {
 			const availablesStore = useAvailablesStore()
-			this.personalDetails = availablesStore.getPatient(this.code)?.personalDetails || ''
 			this.injury = availablesStore.getPatient(this.code)?.injury || ''
 			this.biometrics = availablesStore.getPatient(this.code)?.biometrics || ''
 			this.consecutiveUniqueNumber = availablesStore.getPatient(this.code)?.consecutiveUniqueNumber || -1

@@ -42,10 +42,6 @@
 	</p>{{ props.mobility }}
 	<br>
 	<p class="key">
-		Personalien
-	</p>{{ props.personalDetails }}
-	<br>
-	<p class="key">
 		Fortlaufende Eineindeutige Nummer
 	</p>{{ props.consecutiveUniqueNumber }}
 </template>
