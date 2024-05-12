@@ -1,6 +1,6 @@
 from django.db import models
 from game.channel_notifications import LogEntryDispatcher
-import datetime
+from django.utils import timezone
 
 
 class LogEntry(models.Model):
@@ -32,7 +32,7 @@ class LogEntry(models.Model):
     def save(self, *args, **kwargs):
         if self._state.adding:
             if self.exercise.is_running():
-                self.timestamp = datetime.datetime.now()
+                self.timestamp = timezone.now()
             else:
                 self.timestamp = None
 
@@ -46,7 +46,7 @@ class LogEntry(models.Model):
     @classmethod
     def set_empty_timestamps(cls, exercise):
         log_entries = cls.objects.filter(exercise=exercise)
-        current_timestamp = datetime.datetime.now()
+        current_timestamp = timezone.now()
         for log_entry in log_entries:
             log_entry.timestamp = current_timestamp
             log_entry.save(update_fields=["timestamp"])

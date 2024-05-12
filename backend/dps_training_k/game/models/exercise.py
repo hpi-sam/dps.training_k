@@ -18,10 +18,6 @@ class Exercise(NonEventable, models.Model):
         blank=True,
         null=True,
     )
-    """trainer = models.ForeignKey(
-        to="Trainer",
-        on_delete=models.CASCADE,
-    ) """
     exercise_frontend_id = models.CharField(
         unique=True,
         editable=settings.DEBUG,
@@ -30,6 +26,10 @@ class Exercise(NonEventable, models.Model):
         choices=StateTypes.choices,
         default=StateTypes.CONFIGURATION,
     )
+    """trainer = models.ForeignKey(
+        to="Trainer",
+        on_delete=models.CASCADE,
+    ) """
 
     @classmethod
     def createExercise(cls):

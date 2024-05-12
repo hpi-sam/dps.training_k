@@ -82,70 +82,6 @@ class ChannelNotifier:
         cls._notify_group(channel, event)
 
 
-class PatientInstanceDispatcher(ChannelNotifier):
-
-    @classmethod
-    def dispatch_event(cls, patient_instance, changes, is_updated):
-        if changes is not None and "patient_state" in changes:
-            cls._notify_patient_state_change(patient_instance)
-
-        if not (changes is not None and len(changes) == 1 and "patient_state"):
-            cls._notify_exercise_update(patient_instance.exercise)
-
-    @classmethod
-    def create_trainer_log(cls, patient_instance, changes, is_updated):
-        message = None
-        if not is_updated:
-            message = f"Patient {patient_instance.name} wurde eingeliefert. Patient hat folgende Verletzungen: {patient_instance.static_information.injury}"
-        elif "triage" in changes:
-            message = f"Patient {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
-        if message:
-            models.LogEntry.objects.create(
-                exercise=patient_instance.exercise,
-                message=message,
-                patient_instance=patient_instance,
-            )
-
-    @classmethod
-    def _notify_patient_state_change(cls, patient_instance):
-        channel = cls.get_group_name(patient_instance)
-        event = {
-            "type": ChannelEventTypes.STATE_CHANGE_EVENT,
-            "patient_instance_pk": patient_instance.id,
-        }
-        cls._notify_group(channel, event)
-
-    @classmethod
-    def delete_and_notify(cls, patient, *args, **kwargs):
-        exercise = patient.exercise
-        super(patient.__class__, patient).delete(*args, **kwargs)
-        cls._notify_exercise_update(exercise)
-
-
-class AreaDispatcher(ChannelNotifier):
-    @classmethod
-    def dispatch_event(cls, area, changes, is_updated):
-        cls._notify_exercise_update(area.exercise)
-
-    @classmethod
-    def delete_and_notify(cls, area, *args, **kwargs):
-        exercise = area.exercise
-        super(area.__class__, area).delete(*args, **kwargs)
-        cls._notify_exercise_update(exercise)
-
-
-class PersonnelDispatcher(ChannelNotifier):
-    @classmethod
-    def dispatch_event(cls, personnel, changes, is_updated):
-        cls._notify_exercise_update(personnel.area.exercise)
-
-    @classmethod
-    def delete_and_notify(cls, personnel, *args, **kwargs):
-        exercise = personnel.area.exercise
-        super(personnel.__class__, personnel).delete(*args, **kwargs)
-        cls._notify_exercise_update(exercise)
-
-
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes, is_updated):
@@ -287,6 +223,58 @@ class LogEntryDispatcher(ChannelNotifier):
             "log_entry_pk": log_entry.id,
         }
         cls._notify_group(channel, event)
+
+
+class PatientInstanceDispatcher(ChannelNotifier):
+
+    @classmethod
+    def dispatch_event(cls, patient_instance, changes, is_updated):
+        if changes is not None and "patient_state" in changes:
+            cls._notify_patient_state_change(patient_instance)
+
+        if not (changes is not None and len(changes) == 1 and "patient_state"):
+            cls._notify_exercise_update(patient_instance.exercise)
+
+    @classmethod
+    def create_trainer_log(cls, patient_instance, changes, is_updated):
+        message = None
+        if not is_updated:
+            message = f"Patient {patient_instance.name} wurde eingeliefert. Patient hat folgende Verletzungen: {patient_instance.static_information.injury if patient_instance.static_information else "keine"}"
+        elif "triage" in changes:
+            message = f"Patient {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
+        if message:
+            models.LogEntry.objects.create(
+                exercise=patient_instance.exercise,
+                message=message,
+                patient_instance=patient_instance,
+            )
+
+    @classmethod
+    def _notify_patient_state_change(cls, patient_instance):
+        channel = cls.get_group_name(patient_instance)
+        event = {
+            "type": ChannelEventTypes.STATE_CHANGE_EVENT,
+            "patient_instance_pk": patient_instance.id,
+        }
+        cls._notify_group(channel, event)
+
+    @classmethod
+    def delete_and_notify(cls, patient, *args, **kwargs):
+        exercise = patient.exercise
+        super(patient.__class__, patient).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
+class PersonnelDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, personnel, changes, is_updated):
+        cls._notify_exercise_update(personnel.area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, personnel, *args, **kwargs):
+        exercise = personnel.area.exercise
+        super(personnel.__class__, personnel).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
 
 
 class MaterialInstanceDispatcher(ChannelNotifier):

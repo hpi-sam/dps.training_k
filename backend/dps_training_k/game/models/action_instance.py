@@ -68,39 +68,18 @@ class ActionInstance(LocalTimeable, models.Model):
             one_or_more_field_not_null(["patient_instance", "lab"], "action"),
         ]
 
-    patient_instance = models.ForeignKey(
-        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
-    )
     area = models.ForeignKey(
         "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
     )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
-    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
     order_id = models.IntegerField(null=True)
-
-    @property
-    def name(self):
-        return self.action_template.name
-
-    @property
-    def state_name(self):
-        if self.current_state != None:
-            return self.current_state.name
-        else:
-            return None
-
-    @property
-    def result(self):
-        if (
-            self.current_state != None
-            and self.current_state.name in ActionInstanceState.success_states()
-        ):
-            return self.states.get(name=ActionInstanceStateNames.FINISHED).info_text
-        else:
-            return None
+    patient_instance = models.ForeignKey(
+        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
+    )
 
     @property
     def completed(self):
@@ -115,6 +94,27 @@ class ActionInstance(LocalTimeable, models.Model):
             return self.patient_instance.exercise
         if self.lab:
             return self.lab.exercise
+
+    @property
+    def name(self):
+        return self.action_template.name
+
+    @property
+    def result(self):
+        if (
+            self.current_state != None
+            and self.current_state.name in ActionInstanceState.success_states()
+        ):
+            return self.states.get(name=ActionInstanceStateNames.FINISHED).info_text
+        else:
+            return None
+
+    @property
+    def state_name(self):
+        if self.current_state != None:
+            return self.current_state.name
+        else:
+            return None
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
