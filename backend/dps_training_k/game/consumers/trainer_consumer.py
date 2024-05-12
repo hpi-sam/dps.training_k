@@ -113,6 +113,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def connect(self):
         self.accept()
+        self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.send_available_patients()
         self.send_available_materials()
         self.send_past_logs()

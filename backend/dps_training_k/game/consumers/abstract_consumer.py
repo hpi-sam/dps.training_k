@@ -202,3 +202,8 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def handle_exercise_start_event(self, event):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
 
+    def handle_exercise_resume_event(self, event):
+        raise NotImplementedError(
+            """Introducing resuming feature requires reworking the dispatch method inside ExerciseDispatcher. 
+            It currently sends "exercise-start" every time it enters the running state"""
+        )

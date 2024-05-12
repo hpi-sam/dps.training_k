@@ -225,7 +225,48 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 )
                 log_entry.personnel.add(*personnel_list)
                 log_entry.is_dirty = False
-                log_entry.save()
+                log_entry.save(update_fields=["is_dirty"])
+
+
+class AreaDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, area, changes, is_updated):
+        cls._notify_exercise_update(area.exercise)
+
+    @classmethod
+    def delete_and_notify(cls, area, *args, **kwargs):
+        exercise = area.exercise
+        super(area.__class__, area).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
+class ExerciseInstanceDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, obj, changes, is_updated):
+        if (
+            changes
+            and "state" in changes
+            and obj.state == models.Exercise.StateTypes.RUNNING
+        ):
+            cls._notify_exercise_started_event(obj)
+
+    @classmethod
+    def create_trainer_log(cls, exercise, changes, is_updated):
+        message = ""
+        if (
+            changes
+            and "state" in changes
+            and exercise.state == models.Exercise.StateTypes.RUNNING
+        ):
+            message = "MANV-Übung gestartet"
+        if message:
+            models.LogEntry.objects.create(exercise=exercise, message=message)
+
+    @classmethod
+    def _notify_exercise_started_event(cls, exercise):
+        channel = cls.get_group_name(exercise)
+        event = {"type": ChannelEventTypes.EXERCISE_START_EVENT}
+        cls._notify_group(channel, event)
 
 
 class LogEntryDispatcher(ChannelNotifier):
