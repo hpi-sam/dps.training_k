@@ -17,6 +17,7 @@ Sending events is done by the celery worker.
 class ChannelEventTypes:
     STATE_CHANGE_EVENT = "state.change.event"
     EXERCISE_UPDATE = "send.exercise.event"
+    EXERCISE_START_EVENT = "exercise.start.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_LIST_EVENT = "action.list.event"
     LOG_UPDATE_EVENT = "log.update.event"
@@ -188,9 +189,9 @@ class ActionInstanceDispatcher(ChannelNotifier):
         if applied_action != models.ActionInstanceStateNames.PLANNED:
             message = None
             if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
-                message = f'"{applied_action.action_template.name}" wurde gestartet'
+                message = f'"{applied_action.name}" wurde gestartet'
             elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
-                message = f'"{applied_action.action_template.name}" wurde abgeschlossen'
+                message = f'"{applied_action.name}" wurde abgeschlossen'
                 if (
                     applied_action.action_template.category
                     == template.Action.Category.PRODUCTION
@@ -199,18 +200,18 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         material.name: amount
                         for material, amount in applied_action.action_template.produced_resources().items()
                     }
-                    message += f" und hat {named_produced_resources} produziert"
+                    message += f' und hat "{named_produced_resources}" produziert'
             elif (
                 applied_action.state_name == models.ActionInstanceStateNames.CANCELED
                 and applied_action.states.filter(
                     name=models.ActionInstanceStateNames.IN_PROGRESS
                 ).exists()
             ):
-                message = f'"{applied_action.action_template.name}" wurde abgebrochen'
+                message = f'"{applied_action.name}" wurde abgebrochen'
             elif applied_action.state_name == models.ActionInstanceStateNames.IN_EFFECT:
-                message = f'"{applied_action.action_template.name}" beginnt zu wirken'
+                message = f'"{applied_action.name}" beginnt zu wirken'
             elif applied_action.state_name == models.ActionInstanceStateNames.EXPIRED:
-                message = f'"{applied_action.action_template.name}" wirkt nicht mehr'
+                message = f'"{applied_action.name}" wirkt nicht mehr'
             if message:
                 log_entry = models.LogEntry.objects.create(
                     exercise=applied_action.exercise,

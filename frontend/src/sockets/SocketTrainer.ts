@@ -68,22 +68,22 @@ class SocketTrainer {
 					}
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					break
-				case 'exercise-started':
+				case 'exercise-start':
 					exerciseStore.status = 'running'
 					moduleTrainerSetLeftScreen(Screens.LOG)
 					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
-				case 'exercise-paused':
+				case 'exercise-pause':
 					exerciseStore.status = 'paused'
 					moduleTrainerSetLeftScreen(Screens.LOG)
 					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
-				case 'exercise-resumed':
+				case 'exercise-resume':
 					exerciseStore.status = 'running'
 					moduleTrainerSetLeftScreen(Screens.LOG)
 					moduleTrainerSetRightScreen(Screens.SCENARIO)
 					break
-				case 'exercise-ended':
+				case 'exercise-end':
 					exerciseStore.status = 'ended'
 					moduleTrainerSetLeftScreen(Screens.LOG)
 					moduleTrainerSetRightScreen(Screens.SCENARIO)

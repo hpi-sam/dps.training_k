@@ -28,6 +28,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         FAILURE = "failure"
         SUCCESS = "success"
         EXERCISE = "exercise"
+        EXERCISE_START = "exercise-start"
+        EXERCISE_END = "exercise-end"
+        EXERCISE_PAUSE = "exercise-pause"
+        EXERCISE_RESUME = "exercise-resume"
         AVAILABLE_ACTIONS = "available-actions"
         AVAILABLE_PATIENTS = "available-patients"
         AVAILABLE_MATERIALS = "available-materials"
@@ -191,3 +195,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.OutgoingMessageTypes.AVAILABLE_MATERIALS,
             availableMaterials=availableMaterials,
         )
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # Events triggered internally by channel notifications
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    def handle_exercise_start_event(self, event):
+        self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
+

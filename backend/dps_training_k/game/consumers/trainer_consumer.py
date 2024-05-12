@@ -35,10 +35,6 @@ class TrainerConsumer(AbstractConsumer):
         RESPONSE = "response"
         EXERCISE_CREATED = "trainer-exercise-create"
         TEST_PASSTHROUGH = "test-passthrough"
-        EXERCISE_STARTED = "exercise-start"
-        EXERCISE_STOPED = "exercise-stop"
-        EXERCISE_PAUSED = "exercise-pause"
-        EXERCISE_RESUMED = "exercise-resume"
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
         LOG_UPDATE = "log-update"
@@ -145,11 +141,12 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_start_exercise(self):
         owned_patients = PatientInstance.objects.filter(exercise=self.exercise)
-        [patient.schedule_state_change() for patient in owned_patients]
+        for patient in owned_patients:
+            patient.schedule_state_change()
+
         self.exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_stop_exercise(self):
-        # Stop Celery
         # Stop all objects with all time tracks
         # Stop phase transitions
         # Stop laboratory

@@ -73,18 +73,18 @@ class SocketPatient {
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
 					break
-				case 'exercise-started':
+				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-paused':
+				case 'exercise-pause':
 					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
-				case 'exercise-resumed':
+				case 'exercise-resume':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-ended':
+				case 'exercise-end':
 					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
 				case 'delete':
