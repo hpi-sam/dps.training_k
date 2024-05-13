@@ -18,6 +18,7 @@ class ChannelEventTypes:
     STATE_CHANGE_EVENT = "state.change.event"
     EXERCISE_UPDATE = "send.exercise.event"
     EXERCISE_START_EVENT = "exercise.start.event"
+    EXERCISE_END_EVENT = "exercise.end.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_LIST_EVENT = "action.list.event"
     LOG_UPDATE_EVENT = "log.update.event"
@@ -176,12 +177,11 @@ class AreaDispatcher(ChannelNotifier):
 class ExerciseDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes, is_updated):
-        if (
-            changes
-            and "state" in changes
-            and obj.state == models.Exercise.StateTypes.RUNNING
-        ):
-            cls._notify_exercise_started_event(obj)
+        if changes and "state" in changes:
+            if obj.state == models.Exercise.StateTypes.RUNNING:
+                cls._notify_exercise_start_event(obj)
+            if obj.state == models.Exercise.StateTypes.FINISHED:
+                cls._notify_exercise_end_event(obj)
 
     @classmethod
     def create_trainer_log(cls, exercise, changes, is_updated):
@@ -198,9 +198,15 @@ class ExerciseDispatcher(ChannelNotifier):
             models.LogEntry.objects.create(exercise=exercise, message=message)
 
     @classmethod
-    def _notify_exercise_started_event(cls, exercise):
+    def _notify_exercise_start_event(cls, exercise):
         channel = cls.get_group_name(exercise)
         event = {"type": ChannelEventTypes.EXERCISE_START_EVENT}
+        cls._notify_group(channel, event)
+
+    @classmethod
+    def _notify_exercise_end_event(cls, exercise):
+        channel = cls.get_group_name(exercise)
+        event = {"type": ChannelEventTypes.EXERCISE_END_EVENT}
         cls._notify_group(channel, event)
 
 

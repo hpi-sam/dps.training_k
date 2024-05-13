@@ -202,6 +202,9 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def exercise_start_event(self, event):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
 
+    def exercise_end_event(self, event):
+        self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
+
     def exercise_resume_event(self, event):
         raise NotImplementedError(
             """Introducing resuming feature requires reworking the dispatch method inside ExerciseDispatcher. 

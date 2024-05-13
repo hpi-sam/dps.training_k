@@ -146,10 +146,8 @@ class TrainerConsumer(AbstractConsumer):
         self.exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_end_exercise(self):
-        for patient_instance in PatientInstance.objects.filter(exercise=self.exercise):
-            patient_instance.user.delete()
+        self.exercise.update_state(Exercise.StateTypes.FINISHED)
         self.exercise.delete()
-        self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
         self.close()
 
     def handle_pause_exercise(self):
