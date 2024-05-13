@@ -17,7 +17,7 @@ class TrainerConsumer(AbstractConsumer):
         EXERCISE_CREATE = "exercise-create"
         TEST_PASSTHROUGH = "test-passthrough"
         EXERCISE_START = "exercise-start"
-        EXERCISE_STOP = "exercise-stop"
+        EXERCISE_END = "exercise-end"
         EXERCISE_PAUSE = "exercise-pause"
         EXERCISE_RESUME = "exercise-resume"
         AREA_ADD = "area-add"
@@ -57,9 +57,7 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.EXERCISE_START: (
                 self.handle_start_exercise,
             ),
-            self.TrainerIncomingMessageTypes.EXERCISE_STOP: (
-                self.handle_stop_exercise,
-            ),
+            self.TrainerIncomingMessageTypes.EXERCISE_END: (self.handle_end_exercise,),
             self.TrainerIncomingMessageTypes.EXERCISE_PAUSE: (
                 self.handle_pause_exercise,
             ),
@@ -147,13 +145,12 @@ class TrainerConsumer(AbstractConsumer):
             pass
         self.exercise.update_state(Exercise.StateTypes.RUNNING)
 
-    def handle_stop_exercise(self):
-        # Stop all objects with all time tracks
-        # Stop phase transitions
-        # Stop laboratory
-        # Stop measures
-        # Stop everything using NestedEventable
-        pass
+    def handle_end_exercise(self):
+        for patient_instance in PatientInstance.objects.filter(exercise=self.exercise):
+            patient_instance.user.delete()
+        self.exercise.delete()
+        self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
+        self.close()
 
     def handle_pause_exercise(self):
         pass
