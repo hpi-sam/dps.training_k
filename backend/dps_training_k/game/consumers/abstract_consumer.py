@@ -204,6 +204,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     def exercise_end_event(self, event):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
+        self.close()
 
     def exercise_resume_event(self, event):
         raise NotImplementedError(

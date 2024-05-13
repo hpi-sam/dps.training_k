@@ -148,7 +148,6 @@ class TrainerConsumer(AbstractConsumer):
     def handle_end_exercise(self):
         self.exercise.update_state(Exercise.StateTypes.FINISHED)
         self.exercise.delete()
-        self.close()
 
     def handle_pause_exercise(self):
         pass
