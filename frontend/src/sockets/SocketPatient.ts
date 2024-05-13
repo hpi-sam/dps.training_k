@@ -85,7 +85,7 @@ class SocketPatient {
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				case 'exercise-end':
-					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+					setScreen(Screens.ENDED, ScreenPosition.FULL)
 					break
 				case 'delete':
 					console.log('Patient Websocket ToDo: handle delete event ', data)
