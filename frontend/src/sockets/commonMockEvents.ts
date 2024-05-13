@@ -589,8 +589,8 @@ export const commonMockEvents = [
 			'}' +
 		']}}'
 	},
-	{id: 'exercise-started', data: '{"messageType":"exercise-started"}'},
-	{id: 'exercise-paused', data: '{"messageType":"exercise-paused"}'},
-	{id: 'exercise-resumed', data: '{"messageType":"exercise-resumed"}'},
-	{id: 'exercise-ended', data: '{"messageType":"exercise-ended"}'},
+	{id: 'exercise-start', data: '{"messageType":"exercise-start"}'},
+	{id: 'exercise-pause', data: '{"messageType":"exercise-pause"}'},
+	{id: 'exercise-resume', data: '{"messageType":"exercise-resume"}'},
+	{id: 'exercise-end', data: '{"messageType":"exercise-end"}'},
 ]

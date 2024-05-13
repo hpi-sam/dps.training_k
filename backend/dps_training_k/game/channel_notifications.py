@@ -176,7 +176,7 @@ class AreaDispatcher(ChannelNotifier):
         cls._notify_exercise_update(exercise)
 
 
-class ExerciseInstanceDispatcher(ChannelNotifier):
+class ExerciseDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes, is_updated):
         if (
@@ -188,6 +188,8 @@ class ExerciseInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def create_trainer_log(cls, exercise, changes, is_updated):
+        if not is_updated:
+            return
         message = ""
         if (
             changes

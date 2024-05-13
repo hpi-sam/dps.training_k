@@ -3,6 +3,7 @@ from django.db import models
 from .log_entry import LogEntry
 from .lab import Lab
 from helpers.eventable import NonEventable
+from game.channel_notifications import ExerciseDispatcher
 
 
 class Exercise(NonEventable, models.Model):
@@ -39,6 +40,10 @@ class Exercise(NonEventable, models.Model):
         )
         Lab.objects.create(exercise=new_Exercise)
         return new_Exercise
+
+    def save(self, *args, **kwargs):
+        changes = kwargs.get("update_fields", None)
+        ExerciseDispatcher.save_and_notify(self, changes, super(), *args, **kwargs)
 
     def update_state(self, state):
         old_state = self.state

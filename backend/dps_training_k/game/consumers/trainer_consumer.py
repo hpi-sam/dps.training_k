@@ -113,10 +113,10 @@ class TrainerConsumer(AbstractConsumer):
 
     def connect(self):
         self.accept()
-        self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.send_available_patients()
         self.send_available_materials()
-        self.send_past_logs()
+        if self.exercise:
+            self.send_past_logs()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -143,8 +143,8 @@ class TrainerConsumer(AbstractConsumer):
     def handle_start_exercise(self):
         owned_patients = PatientInstance.objects.filter(exercise=self.exercise)
         for patient in owned_patients:
-            patient.schedule_state_change()
-
+            # patient.schedule_state_change() ToDo: Uncomment once PatientInformation is integrated
+            pass
         self.exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_stop_exercise(self):
@@ -252,6 +252,9 @@ class TrainerConsumer(AbstractConsumer):
 
     def send_past_logs(self):
         log_entry_objects = LogEntry.objects.filter(exercise=self.exercise)
+        log_entry_objects = filter(
+            lambda log_entry: log_entry.is_valid(), log_entry_objects
+        )
         if not log_entry_objects:
             return
         log_entry_dicts = [
@@ -265,10 +268,8 @@ class TrainerConsumer(AbstractConsumer):
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def log_update_event(self, event):
-        log_entry_objects = LogEntry.objects.filter(exercise=self.exercise)
-        log_entry_dicts = [
-            LogEntrySerializer(log_entry).data for log_entry in log_entry_objects
-        ]
+        log_entry = LogEntry.objects.get(pk=event["log_entry_pk"])
         self.send_event(
-            self.TrainerOutgoingMessageTypes.LOG_UPDATE, logEntries=log_entry_dicts
+            self.TrainerOutgoingMessageTypes.LOG_UPDATE,
+            logEntries=[LogEntrySerializer(log_entry).data],
         )

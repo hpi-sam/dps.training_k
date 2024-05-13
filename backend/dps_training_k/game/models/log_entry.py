@@ -19,7 +19,7 @@ class LogEntry(models.Model):
     message = models.TextField()
     is_dirty = models.BooleanField(
         default=False,
-        help_text="Set to True if log_entry is missing Keys (e.g. personnel)",
+        help_text="Set to True if objects is missing relevant Keys (e.g. timestamp)",
     )
 
     patient_instance = models.ForeignKey(
