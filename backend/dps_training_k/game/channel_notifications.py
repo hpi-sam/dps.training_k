@@ -57,12 +57,6 @@ class ChannelNotifier:
         return f"{obj.__class__.__name__}_{obj.id}"
 
     @classmethod
-    def get_log_group_name(cls, obj):
-        raise NotImplementedError(
-            "Method get_log_group_name must be implemented by subclass"
-        )
-
-    @classmethod
     def dispatch_event(cls, obj, changes):
         raise NotImplementedError(
             "Method dispatch_event must be implemented by subclass"

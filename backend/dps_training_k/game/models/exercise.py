@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.db import models
-from .log_entry import LogEntry
-from .lab import Lab
-from helpers.eventable import NonEventable
+
 from game.channel_notifications import ExerciseDispatcher
+from helpers.eventable import NonEventable
+from .lab import Lab
+from .log_entry import LogEntry
 
 
 class Exercise(NonEventable, models.Model):
@@ -27,10 +28,6 @@ class Exercise(NonEventable, models.Model):
         choices=StateTypes.choices,
         default=StateTypes.CONFIGURATION,
     )
-    """trainer = models.ForeignKey(
-        to="Trainer",
-        on_delete=models.CASCADE,
-    ) """
 
     @classmethod
     def createExercise(cls):

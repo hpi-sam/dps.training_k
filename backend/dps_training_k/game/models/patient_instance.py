@@ -5,7 +5,6 @@ from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
 from template.tests.factories import PatientStateFactory
-from .scheduled_event import ScheduledEvent
 
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
