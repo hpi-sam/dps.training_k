@@ -133,7 +133,7 @@ interface LogEntry {
 	logTime: Date
 	areaName: string
 	patientId: string
-	personnelId: number
+	personnelIds: number[]
 }
 
 interface ActionOverview {
