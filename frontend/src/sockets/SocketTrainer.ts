@@ -158,7 +158,7 @@ class SocketTrainer {
 		}))
 	}
 
-	patientUpdate(patientId: number, patientName: string, code: number) {
+	patientUpdate(patientId: string, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-update',
 			'patientId': patientId,
@@ -167,7 +167,7 @@ class SocketTrainer {
 		}))
 	}
 
-	patientDelete(patientId: number) {
+	patientDelete(patientId: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-delete',
 			'patientId': patientId

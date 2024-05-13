@@ -1,9 +1,9 @@
 from rest_framework import serializers
+
 from template.models import PatientInformation
 
 
 class PatientInformationSerializer(serializers.ModelSerializer):
-    personalDetails = serializers.CharField(source="personal_details")
     consecutiveUniqueNumber = serializers.CharField(source="consecutive_unique_number")
     preexistingIllnesses = serializers.CharField(source="preexisting_illnesses")
     permanentMedication = serializers.CharField(source="permanent_medication")
@@ -13,7 +13,6 @@ class PatientInformationSerializer(serializers.ModelSerializer):
         model = PatientInformation
         fields = [
             "code",
-            "personalDetails",
             "injury",
             "biometrics",
             "triage",

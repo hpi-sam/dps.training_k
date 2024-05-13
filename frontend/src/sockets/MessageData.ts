@@ -11,7 +11,7 @@ interface MessageData {
 	areaName?: string
 	patientName?: string
 	code?: number
-	patientId?: number
+	patientId?: string
 	personnelName?: string
 	personnelId?: number
 	materialName?: string
@@ -43,7 +43,7 @@ interface Area {
 }
 
 interface Patient {
-	patientId: number
+	patientId: string
 	patientName: string
 	code: number
 	triage: string
@@ -114,13 +114,13 @@ interface RessourceAssignment {
 interface PersonnelAssignments {
 	personnelId: number
 	personnelName: string
-	patientId: number
+	patientId: string
 }
 
 interface MaterialAssignments {
 	materialId: number
 	materialName: string
-	patientId: number
+	patientId: string
 }
 
 interface Log {
@@ -132,7 +132,7 @@ interface LogEntry {
 	logMessage: string
 	logTime: Date
 	areaName: string
-	patientId: number
+	patientId: string
 	personnelId: number
 }
 

@@ -193,7 +193,7 @@ class TrainerConsumer(AbstractConsumer):
         patient_information = PatientInformation.objects.get(code=code)
         patient.name = patientName
         patient.static_information = patient_information
-        patient.save()
+        patient.save(update_fields=["name", "static_information"])
 
     def handle_delete_patient(self, patientFrontendId):
         try:

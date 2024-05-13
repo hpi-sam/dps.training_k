@@ -13,6 +13,11 @@
             default: "Löschen"
         }
 	})
+
+	function deleteItem() {
+		emit('delete')
+		emit('close-popup')
+	}
 </script>
 
 <template>
@@ -21,7 +26,7 @@
 		:button-text="props.deleteText"
 		button-color="var(--red)"
 		button-text-color="white"
-		@button-click="emit('delete')"
+		@button-click="deleteItem"
 		@close-popup="emit('close-popup')"
 	/>
 </template>

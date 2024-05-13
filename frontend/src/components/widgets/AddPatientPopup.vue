@@ -78,7 +78,6 @@
 				</div>
 				<div class="scroll">
 					<PatientInfo
-						:personal-details="currentPatient?.personalDetails"
 						:injury="currentPatient?.injury"
 						:biometrics="currentPatient?.biometrics"
 						:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"

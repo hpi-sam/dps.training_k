@@ -12,17 +12,17 @@
 
 	const props = defineProps({
 		patientId: {
-			type: Number,
-			default: Number.NEGATIVE_INFINITY
+			type: String,
+			default: ''
 		}
 	})
 
-	function deletePatient(patientId: number) {
+	function deletePatient(patientId: string) {
 		socketTrainer.patientDelete(patientId)
 		emit('close-popup')
 	}
 
-	function updatePatient(patientId: number, patientName: string, patientCode: number) {
+	function updatePatient(patientId: string, patientName: string, patientCode: number) {
 		socketTrainer.patientUpdate(patientId, patientName, patientCode)
 		emit('close-popup')
 	}
@@ -60,7 +60,7 @@
 				<div class="flex-container">
 					<div class="listItem">
 						<div class="patientId">
-							{{ props.patientId.toString().padStart(5, '0') }}
+							{{ props.patientId }}
 						</div>
 						<TriageForListItems :patient-code="currentPatient?.code" />
 						<div class="patientName">
@@ -69,7 +69,6 @@
 					</div>
 					<div class="scroll">
 						<PatientInfo
-							:personal-details="currentPatient?.personalDetails"
 							:injury="currentPatient?.injury"
 							:biometrics="currentPatient?.biometrics"
 							:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"

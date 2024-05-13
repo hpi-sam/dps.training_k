@@ -1,5 +1,10 @@
-from django.test import TestCase
+import datetime
+from unittest.mock import patch
+
 from django.conf import settings
+from django.test import TestCase
+from django.utils import timezone
+
 from game.models import (
     ScheduledEvent,
     ActionInstance,
@@ -7,12 +12,9 @@ from game.models import (
     ActionInstanceState,
 )
 from game.tasks import check_for_updates
+from template.tests.factories import ActionFactory
 from .factories import PatientFactory, ActionInstanceFactory
 from .mixin import TestUtilsMixin
-from template.tests.factories import ActionFactory
-from unittest.mock import patch
-from django.utils import timezone
-import datetime
 
 
 class ActionInstanceTestCase(TestCase):
@@ -54,7 +56,7 @@ class ActionInstanceTestCase(TestCase):
     @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
     def test_channel_notifications_being_send(self, _notify_action_event):
         """
-        Once an action instance is started, the dispatcher detects it and detecs the actual state.
+        Once an action instance is started, the dispatcher detects it and detects the actual state.
         """
         self.application_status.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())

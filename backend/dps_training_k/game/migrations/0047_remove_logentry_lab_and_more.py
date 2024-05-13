@@ -2,26 +2,33 @@
 
 from django.db import migrations, models
 
+import game.models.patient_instance
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0046_alter_patientinstance_user'),
+        ("game", "0046_alter_patientinstance_user"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='logentry',
-            name='lab',
+            model_name="logentry",
+            name="lab",
         ),
         migrations.RemoveField(
-            model_name='patientinstance',
-            name='patient_frontend_id',
+            model_name="patientinstance",
+            name="patient_frontend_id",
         ),
         migrations.AddField(
-            model_name='patientinstance',
-            name='frontend_id',
-            field=models.IntegerField(default=123, help_text='frontend_id used to log into patient - therefore part of authentication', unique=True),
+            model_name="patientinstance",
+            name="frontend_id",
+            field=models.CharField(
+                help_text="patient_frontend_id used to log into patient - see validator for format",
+                max_length=6,
+                unique=True,
+                validators=[game.models.patient_instance.validate_patient_frontend_id],
+            ),
             preserve_default=False,
         ),
     ]

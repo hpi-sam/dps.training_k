@@ -233,33 +233,33 @@ export const serverMockEvents = [
 		data: '{"messageType":"ressource-assignments","ressourceAssignments":{"ressourceAssignments":[' +
 			'{"areaName":"Intensiv",' +
 			'"personnel":[' +
-			'{"personnelId":1,"personnelName":"Albert Spahn","patientId":5},' +
-			'{"personnelId":2,"personnelName":"Anna Neumann","patientId":3}' +
+			'{"personnelId":1,"personnelName":"Albert Spahn","patientId":"5"},' +
+			'{"personnelId":2,"personnelName":"Anna Neumann","patientId":"3"}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":1,"materialName":"Beatmungsgerät","patientId":3},' +
-			'{"materialId":2,"materialName":"Defibrillator","patientId":5}' +
+			'{"materialId":1,"materialName":"Beatmungsgerät","patientId":"3"},' +
+			'{"materialId":2,"materialName":"Defibrillator","patientId":"5"}' +
 			']},' +
 			'{"areaName":"ZNA",' +
 			'"personnel":[' +
-			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":123456},' +
-			'{"personnelId":4,"personnelName":"Lena Schulze","patientId":6},' +
-			'{"personnelId":8,"personnelName":"Julian Mohn","patientId":123456},' +
-			'{"personnelId":9,"personnelName":"Elisabeth Bauer","patientId":8}' +
+			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":"123456"},' +
+			'{"personnelId":4,"personnelName":"Lena Schulze","patientId":"6"},' +
+			'{"personnelId":8,"personnelName":"Julian Mohn","patientId":"123456"},' +
+			'{"personnelId":9,"personnelName":"Elisabeth Bauer","patientId":"8"}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":3,"materialName":"Defibrillator","patientId":123456},' +
-			'{"materialId":4,"materialName":"EKG-Monitor","patientId":123456},' +
-			'{"materialId":9,"materialName":"Narkosegerät","patientId":9}' +
+			'{"materialId":3,"materialName":"Defibrillator","patientId":"123456"},' +
+			'{"materialId":4,"materialName":"EKG-Monitor","patientId":"123456"},' +
+			'{"materialId":9,"materialName":"Narkosegerät","patientId":"9"}' +
 			']},' +
 			'{"areaName":"Wagenhalle",' +
 			'"personnel":[' +
-			'{"personnelId":5,"personnelName":"Finn Heizmann","patientId":1},' +
-			'{"personnelId":6,"personnelName":"Ursula Seiler","patientId":4}' +
+			'{"personnelId":5,"personnelName":"Finn Heizmann","patientId":"1"},' +
+			'{"personnelId":6,"personnelName":"Ursula Seiler","patientId":"4"}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":5,"materialName":"EKG-Gerät","patientId":1},' +
-			'{"materialId":6,"materialName":"Blutdruckmessgerät","patientId":4}' +
+			'{"materialId":5,"materialName":"EKG-Gerät","patientId":"1"},' +
+			'{"materialId":6,"materialName":"Blutdruckmessgerät","patientId":"4"}' +
 			']' +
 			'}]}}'
 	},
