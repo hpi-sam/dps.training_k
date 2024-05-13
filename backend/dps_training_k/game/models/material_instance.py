@@ -10,13 +10,13 @@ class MaterialInstance(models.Model):
             one_or_more_field_not_null(["patient_instance", "area", "lab"], "material")
         ]
 
+    area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True)
+    is_blocked = models.BooleanField(default=False)
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True)
     material_template = models.ForeignKey("template.Material", on_delete=models.CASCADE)
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True
     )
-    area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True)
-    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True)
-    is_blocked = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)

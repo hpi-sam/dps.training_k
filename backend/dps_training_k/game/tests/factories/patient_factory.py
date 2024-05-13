@@ -10,11 +10,11 @@ from .patient_information_factory import PatientInformationFactory
 class PatientFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PatientInstance
-        django_get_or_create = ("name", "exercise", "patient_frontend_id")
+        django_get_or_create = ("name", "exercise", "frontend_id")
 
     name = "Max Mustermann"
     exercise = factory.SubFactory(ExerciseFactory)
-    patient_frontend_id = 123456
+    frontend_id = 123456
     triage = "R"
     area = factory.SubFactory(AreaFactory)
     patient_state = factory.SubFactory(EmptyPatientStateFactory)

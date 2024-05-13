@@ -72,7 +72,7 @@ class PatientConsumer(AbstractConsumer):
         if not self.patient_frontend_id:
             return None
         return PatientInstance.objects.get(
-            patient_frontend_id=self.patient_frontend_id
+            frontend_id=self.patient_frontend_id
         )  # This enforces patient_instance to always work with valid data
 
     def connect(self):

@@ -3,7 +3,7 @@ from template.models import PatientState
 
 
 class StateSerializer(serializers.Serializer):
-    phaseNumber = serializers.IntegerField(source="current_phase")
+    phaseNumber = serializers.IntegerField(source="state_depth")
     airway = serializers.CharField(source="data.airway")
     breathing = serializers.CharField(source="data.breathing")
     circulation = serializers.CharField(source="data.circulation")

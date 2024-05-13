@@ -26,7 +26,7 @@ class TestUtilsMixin:
             static_information=self.patient_information,
             exercise=self.exercise,
             area=area,
-            patient_frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
+            frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
         )
         self.token, _ = await sync_to_async(Token.objects.get_or_create)(
             user=self.patient.user

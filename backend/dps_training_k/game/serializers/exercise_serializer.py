@@ -10,7 +10,7 @@ import game.models.personnel as p
 
 
 class PatientInstanceSerializer(serializers.ModelSerializer):
-    patientId = serializers.CharField(source="patient_frontend_id")
+    patientId = serializers.CharField(source="frontend_id")
     patientName = serializers.CharField(source="name")
     code = serializers.IntegerField(source="static_information.code")
 

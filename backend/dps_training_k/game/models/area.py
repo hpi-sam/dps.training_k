@@ -13,10 +13,9 @@ class Area(ActionsQueueable, models.Model):
             )
         ]
 
-    name = models.CharField(max_length=30)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     isPaused = models.BooleanField(default=False)
-    # labID = models.ForeignKey("Lab")
+    name = models.CharField(max_length=30)
 
     @classmethod
     def create_area(cls, name, exercise, isPaused=False):

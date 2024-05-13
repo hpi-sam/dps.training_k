@@ -6,8 +6,8 @@ from ..serializers.exercise_serializer import ExerciseSerializer
 
 
 class SavedExercise(models.Model):
-    saved_exercise = models.JSONField()
     name = models.CharField(unique=True)
+    saved_exercise = models.JSONField()
     time_speed_up = models.FloatField(default=1.0)
 
 

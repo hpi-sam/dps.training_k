@@ -68,29 +68,36 @@ class ActionInstance(LocalTimeable, models.Model):
             one_or_more_field_not_null(["patient_instance", "lab"], "action"),
         ]
 
-    patient_instance = models.ForeignKey(
-        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
-    )
     area = models.ForeignKey(
         "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
     )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
-    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
     action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
     order_id = models.IntegerField(null=True)
+    patient_instance = models.ForeignKey(
+        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    @property
+    def completed(self):
+        if self.current_state in ActionInstanceState.completion_states():
+            return True
+        else:
+            return False
+
+    @property
+    def exercise(self):
+        if self.patient_instance:
+            return self.patient_instance.exercise
+        if self.lab:
+            return self.lab.exercise
 
     @property
     def name(self):
         return self.action_template.name
-
-    @property
-    def state_name(self):
-        if self.current_state != None:
-            return self.current_state.name
-        else:
-            return None
 
     @property
     def result(self):
@@ -103,11 +110,11 @@ class ActionInstance(LocalTimeable, models.Model):
             return None
 
     @property
-    def completed(self):
-        if self.current_state in ActionInstanceState.completion_states():
-            return True
+    def state_name(self):
+        if self.current_state != None:
+            return self.current_state.name
         else:
-            return False
+            return None
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)

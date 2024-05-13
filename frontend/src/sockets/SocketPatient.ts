@@ -73,19 +73,19 @@ class SocketPatient {
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
 					break
-				case 'exercise-started':
+				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-paused':
+				case 'exercise-pause':
 					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
-				case 'exercise-resumed':
+				case 'exercise-resume':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-ended':
-					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+				case 'exercise-end':
+					setScreen(Screens.ENDED, ScreenPosition.FULL)
 					break
 				case 'delete':
 					console.log('Patient Websocket ToDo: handle delete event ', data)
