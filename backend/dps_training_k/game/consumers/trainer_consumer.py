@@ -177,7 +177,7 @@ class TrainerConsumer(AbstractConsumer):
                 static_information=patient_information,
                 exercise=area.exercise,
                 area=area,
-                patient_frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
+                frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
             )
         except Area.DoesNotExist:
             self.send_failure(
@@ -189,7 +189,7 @@ class TrainerConsumer(AbstractConsumer):
             )
 
     def handle_update_patient(self, patientFrontendId, patientName, code):
-        patient = PatientInstance.objects.get(patient_frontend_id=patientFrontendId)
+        patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
         patient_information = PatientInformation.objects.get(code=code)
         patient.name = patientName
         patient.static_information = patient_information
@@ -197,7 +197,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_delete_patient(self, patientFrontendId):
         try:
-            patient = PatientInstance.objects.get(patient_frontend_id=patientFrontendId)
+            patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
             patient.delete()
         except PatientInstance.DoesNotExist:
             self.send_failure(

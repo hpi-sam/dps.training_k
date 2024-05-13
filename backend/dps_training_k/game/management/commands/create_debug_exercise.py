@@ -23,7 +23,7 @@ class Command(BaseCommand):
         self.patient_information = PatientInformation.objects.get(code=1004)
 
         self.patient, _ = PatientInstance.objects.update_or_create(
-            patient_frontend_id=123456,
+            frontend_id=123456,
             defaults={
                 "name": "Max Mustermann",
                 "static_information": self.patient_information,

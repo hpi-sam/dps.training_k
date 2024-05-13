@@ -244,12 +244,12 @@ class PatientInstanceDispatcher(ChannelNotifier):
     def create_trainer_log(cls, patient_instance, changes, is_updated):
         message = None
         if not is_updated:
-            message = f"Patient*in {patient_instance.name} wurde eingeliefert."
+            message = f"Patient*in {patient_instance.name}({patient_instance.code}) wurde eingeliefert."
             if (
                 patient_instance.static_information
                 and patient_instance.static_information.injury
             ):
-                message += f" Patient hat folgende Verletzungen: {patient_instance.static_information.injury}"
+                message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
         elif "triage" in changes:
             message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
         if message:

@@ -14,9 +14,9 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     )
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, default="Max Mustermann")
-    patient_frontend_id = models.IntegerField(
+    frontend_id = models.IntegerField(
         unique=True,
-        help_text="patient_frontend_id used to log into patient - therefore part of authentication",
+        help_text="frontend_id used to log into patient - therefore part of authentication",
     )
     patient_state = models.ForeignKey(
         "template.PatientState",
@@ -35,18 +35,22 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     )
     user = models.OneToOneField(
         "User",
-        on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL,  # PatientInstance is deleted when user is deleted
         null=True,
         blank=True,
         help_text="User object for authentication - has to be deleted explicitly or manually",
     )
+
+    @property
+    def code(self):
+        return self.static_information.code
 
     def save(self, *args, **kwargs):
         from . import User
 
         if not self.pk:
             self.user, _ = User.objects.get_or_create(
-                username=self.patient_frontend_id, user_type=User.UserType.PATIENT
+                username=self.frontend_id, user_type=User.UserType.PATIENT
             )
             self.user.set_password(
                 self.exercise.exercise_frontend_id
@@ -101,4 +105,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         return False
 
     def __str__(self):
-        return f"Patient #{self.id} called {self.name} with frontend ID {self.patient_frontend_id}"
+        return (
+            f"Patient #{self.id} called {self.name} with frontend ID {self.frontend_id}"
+        )

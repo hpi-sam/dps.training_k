@@ -27,7 +27,6 @@ class LogEntry(models.Model):
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     personnel = models.ManyToManyField("Personnel", blank=True)
-    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding:
