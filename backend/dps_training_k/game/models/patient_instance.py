@@ -1,3 +1,6 @@
+import re
+
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
@@ -5,7 +8,14 @@ from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
 from template.tests.factories import PatientStateFactory
-from .scheduled_event import ScheduledEvent
+
+
+def validate_patient_frontend_id(value):
+    if not re.fullmatch(r"^\d{6}$", value):
+        raise ValidationError(
+            "The patient_frontend_id must be a six-digit number, including leading zeros.",
+            params={"value": value},
+        )
 
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
@@ -14,7 +24,6 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     static_information = models.ForeignKey(
         "template.PatientInformation",
         on_delete=models.CASCADE,
-        null=True,  # for migration purposes
     )  # via Sensen ID
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     area = models.ForeignKey(
@@ -27,9 +36,11 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         null=True,  # for debugging purposes
         default=None,  # for debugging purposes
     )
-    patient_frontend_id = models.IntegerField(
+    patient_frontend_id = models.CharField(
+        max_length=6,
         unique=True,
-        help_text="patient_frontend_id used to log into patient - therefore part of authentication",
+        help_text="patient_frontend_id used to log into patient - see validator for format",
+        validators=[validate_patient_frontend_id],
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -57,8 +68,18 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             self.patient_state = PatientStateFactory(
                 10, 2
             )  # temporary state for testing - should later take static_information into account
+            self.triage = self.static_information.triage
 
         changes = kwargs.get("update_fields", None)
+
+        if (
+            changes
+            and "static_information" in changes
+            and self.triage is not self.static_information.triage
+        ):
+            self.triage = self.static_information.triage
+            changes.append("triage")
+
         PatientInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
         )

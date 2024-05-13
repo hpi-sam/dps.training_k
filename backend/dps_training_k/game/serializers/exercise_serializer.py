@@ -2,15 +2,15 @@ from rest_framework import serializers
 
 import game.models.area as a
 import game.models.exercise as e
+import game.models.material_instance as m
 import game.models.patient_instance as pt
 import game.models.personnel as p
-import game.models.material_instance as m
 
 """Serializers for the sending the exercise event. All Serializers except for ExerciseSerializers are just helpers"""
 
 
 class PatientInstanceSerializer(serializers.ModelSerializer):
-    patientId = serializers.IntegerField(source="patient_frontend_id")
+    patientId = serializers.CharField(source="patient_frontend_id")
     patientName = serializers.CharField(source="name")
     code = serializers.IntegerField(source="static_information.code")
 

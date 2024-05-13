@@ -11,9 +11,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not Exercise.objects.filter(exercise_frontend_id="abcdef").exists():
             settings.ID_GENERATOR.codes_taken.append("abcdef")
-            settings.ID_GENERATOR.codes_taken.append("123456")
         else:
             Exercise.objects.get(exercise_frontend_id="abcdef").delete()
+
+        # I have no friggin idea why this is necessary, but it is (exercise deletion should cascade area and therefore patient deletion)
+        if not PatientInstance.objects.filter(patient_frontend_id=123456).exists():
+            settings.ID_GENERATOR.codes_taken.append("123456")
+        else:
+            PatientInstance.objects.get(patient_frontend_id=123456).delete()
 
         self.exercise = Exercise.createExercise()
         self.exercise.exercise_frontend_id = "abcdef"
