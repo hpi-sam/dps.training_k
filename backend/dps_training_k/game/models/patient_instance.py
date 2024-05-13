@@ -1,3 +1,6 @@
+import re
+
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
@@ -5,6 +8,14 @@ from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
 from template.tests.factories import PatientStateFactory
+
+
+def validate_patient_frontend_id(value):
+    if not re.fullmatch(r"^\d{6}$", value):
+        raise ValidationError(
+            "The patient_frontend_id must be a six-digit number, including leading zeros.",
+            params={"value": value},
+        )
 
 
 class PatientInstance(Eventable, ActionsQueueable, models.Model):
@@ -28,7 +39,8 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     patient_frontend_id = models.CharField(
         max_length=6,
         unique=True,
-        help_text="patient_frontend_id used to log into patient - therefore part of authentication. Numeric with leading zeros",
+        help_text="patient_frontend_id used to log into patient - see validator for format",
+        validators=[validate_patient_frontend_id],
     )
     triage = models.CharField(
         choices=Triage.choices,
@@ -61,7 +73,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         changes = kwargs.get("update_fields", None)
 
         if (
-            changes is not None
+            changes
             and "static_information" in changes
             and self.triage is not self.static_information.triage
         ):

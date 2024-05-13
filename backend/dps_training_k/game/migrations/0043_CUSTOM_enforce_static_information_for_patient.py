@@ -7,7 +7,7 @@ def populate_patient_instance_static_information_relation(apps, schema_editor):
     PatientInstance = apps.get_model("game", "PatientInstance")
     PatientInformation = apps.get_model("template", "PatientInformation")
 
-    if not PatientInstance.objects.filter(static_information__isnull=True).exists():
+    if not PatientInstance.objects.filter(static_information=None).exists():
         return
 
     call_command("patient_information")
