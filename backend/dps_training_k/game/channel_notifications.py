@@ -136,7 +136,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         material.name: amount
                         for material, amount in applied_action.action_template.produced_resources().items()
                     }
-                    message += f' und hat "{named_produced_resources}" produziert'
+                    message += f" und hat {str(named_produced_resources)} produziert"
             elif (
                 applied_action.state_name == models.ActionInstanceStateNames.CANCELED
                 and applied_action.states.filter(
@@ -241,9 +241,14 @@ class PatientInstanceDispatcher(ChannelNotifier):
     def create_trainer_log(cls, patient_instance, changes, is_updated):
         message = None
         if not is_updated:
-            message = f"Patient {patient_instance.name} wurde eingeliefert. Patient hat folgende Verletzungen: {patient_instance.static_information.injury if patient_instance.static_information else "keine"}"
+            message = f"Patient*in {patient_instance.name} wurde eingeliefert."
+            if (
+                patient_instance.static_information
+                and patient_instance.static_information.injury
+            ):
+                message += f" Patient hat folgende Verletzungen: {patient_instance.static_information.injury}"
         elif "triage" in changes:
-            message = f"Patient {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
+            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
         if message:
             models.LogEntry.objects.create(
                 exercise=patient_instance.exercise,

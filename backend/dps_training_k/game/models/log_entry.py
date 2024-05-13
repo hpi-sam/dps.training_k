@@ -45,7 +45,7 @@ class LogEntry(models.Model):
 
     @classmethod
     def set_empty_timestamps(cls, exercise):
-        log_entries = cls.objects.filter(exercise=exercise)
+        log_entries = cls.objects.filter(exercise=exercise, timestamp=None)
         current_timestamp = timezone.now()
         for log_entry in log_entries:
             log_entry.timestamp = current_timestamp
