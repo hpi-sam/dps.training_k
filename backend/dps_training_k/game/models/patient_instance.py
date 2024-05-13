@@ -38,6 +38,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        help_text="User object for authentication - has to be deleted explicitly or manually",
     )
 
     def save(self, *args, **kwargs):
@@ -62,6 +63,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         )
 
     def delete(self, using=None, keep_parents=False):
+        """Is only called when the patient explicitly deleted and not in an e.g. batch or cascade delete"""
         self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 

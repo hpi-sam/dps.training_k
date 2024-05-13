@@ -46,7 +46,7 @@ class Exercise(NonEventable, models.Model):
         old_state = self.state
         self.state = state
         self.save(update_fields=["state"])
-        if old_state != self.StateTypes.RUNNING and state == self.StateTypes.RUNNING:
+        if not self.is_running_state(old_state) and self.is_running_state(state):
             LogEntry.set_empty_timestamps(self)
 
     def time_factor(self):
@@ -55,6 +55,10 @@ class Exercise(NonEventable, models.Model):
         return 1 / self.config.time_speed_up
 
     def is_running(self):
-        if self.state == self.StateTypes.RUNNING:
+        return self.is_running_state(self.state)
+
+    @classmethod
+    def is_running_state(cls, state):
+        if state == cls.StateTypes.RUNNING:
             return True
         return False

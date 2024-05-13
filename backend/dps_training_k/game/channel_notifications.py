@@ -46,7 +46,7 @@ class ChannelNotifier:
     @classmethod
     def _notify_group(cls, group_channel_name, event):
         """
-        Handled internally by the channels dispatcher. Will try to call a method with event.type as name at the receiver; "." are replaced by "_".
+        Handled internally by the channels' dispatcher. Will try to call a method with event.type as name at the receiver; "." are replaced by "_".
         For more info look into:
         https://channels.readthedocs.io/en/stable/topics/channel_layers.html?highlight=periods#what-to-send-over-the-channel-layer
         """
@@ -116,46 +116,49 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def create_trainer_log(cls, applied_action, changes, is_updated):
-        if applied_action != models.ActionInstanceStateNames.PLANNED:
-            message = None
-            if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
-                message = f'"{applied_action.name}" wurde gestartet'
-            elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
-                message = f'"{applied_action.name}" wurde abgeschlossen'
-                if (
-                    applied_action.action_template.category
-                    == template.Action.Category.PRODUCTION
-                ):
-                    named_produced_resources = {
-                        material.name: amount
-                        for material, amount in applied_action.action_template.produced_resources().items()
-                    }
-                    message += f" und hat {str(named_produced_resources)} produziert"
-            elif (
-                applied_action.state_name == models.ActionInstanceStateNames.CANCELED
-                and applied_action.states.filter(
-                    name=models.ActionInstanceStateNames.IN_PROGRESS
-                ).exists()
+        if applied_action == models.ActionInstanceStateNames.PLANNED:
+            return
+
+        message = None
+        if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
+            message = f'"{applied_action.name}" wurde gestartet'
+        elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
+            message = f'"{applied_action.name}" wurde abgeschlossen'
+            if (
+                applied_action.action_template.category
+                == template.Action.Category.PRODUCTION
             ):
-                message = f'"{applied_action.name}" wurde abgebrochen'
-            elif applied_action.state_name == models.ActionInstanceStateNames.IN_EFFECT:
-                message = f'"{applied_action.name}" beginnt zu wirken'
-            elif applied_action.state_name == models.ActionInstanceStateNames.EXPIRED:
-                message = f'"{applied_action.name}" wirkt nicht mehr'
-            if message:
-                log_entry = models.LogEntry.objects.create(
-                    exercise=applied_action.exercise,
-                    message=message,
-                    patient_instance=applied_action.patient_instance,
-                    area=applied_action.area,
-                    is_dirty=True,
-                )
-                personnel_list = models.Personnel.objects.filter(
-                    action_instance=applied_action
-                )
-                log_entry.personnel.add(*personnel_list)
-                log_entry.is_dirty = False
-                log_entry.save(update_fields=["is_dirty"])
+                named_produced_resources = {
+                    material.name: amount
+                    for material, amount in applied_action.action_template.produced_resources().items()
+                }
+                message += f" und hat {str(named_produced_resources)} produziert"
+        elif (
+            applied_action.state_name == models.ActionInstanceStateNames.CANCELED
+            and applied_action.states.filter(
+                name=models.ActionInstanceStateNames.IN_PROGRESS
+            ).exists()
+        ):
+            message = f'"{applied_action.name}" wurde abgebrochen'
+        elif applied_action.state_name == models.ActionInstanceStateNames.IN_EFFECT:
+            message = f'"{applied_action.name}" beginnt zu wirken'
+        elif applied_action.state_name == models.ActionInstanceStateNames.EXPIRED:
+            message = f'"{applied_action.name}" wirkt nicht mehr'
+
+        if message:
+            log_entry = models.LogEntry.objects.create(
+                exercise=applied_action.exercise,
+                message=message,
+                patient_instance=applied_action.patient_instance,
+                area=applied_action.area,
+                is_dirty=True,
+            )
+            personnel_list = models.Personnel.objects.filter(
+                action_instance=applied_action
+            )
+            log_entry.personnel.add(*personnel_list)
+            log_entry.is_dirty = False
+            log_entry.save(update_fields=["is_dirty"])
 
 
 class AreaDispatcher(ChannelNotifier):
@@ -190,7 +193,7 @@ class ExerciseDispatcher(ChannelNotifier):
             and "state" in changes
             and exercise.state == models.Exercise.StateTypes.RUNNING
         ):
-            message = "MANV-Übung gestartet"
+            message = "Übung gestartet"
         if message:
             models.LogEntry.objects.create(exercise=exercise, message=message)
 
