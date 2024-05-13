@@ -13,14 +13,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
     logMessage = serializers.CharField(source="message")
     logTime = serializers.SerializerMethodField()
     areaName = serializers.SerializerMethodField()
-    patientId = serializers.PrimaryKeyRelatedField(
-        source="patient_instance",
-        queryset=pa.PatientInstance.objects.all(),
-        allow_null=True,
-    )
-    labId = serializers.PrimaryKeyRelatedField(
-        source="lab", queryset=la.Lab.objects.all(), allow_null=True
-    )
+    patientId = serializers.SerializerMethodField()
     personnelIds = serializers.PrimaryKeyRelatedField(
         source="personnel",
         queryset=pe.Personnel.objects.all(),
@@ -36,7 +29,6 @@ class LogEntrySerializer(serializers.ModelSerializer):
             "logTime",
             "areaName",
             "patientId",
-            "labId",
             "personnelIds",
         ]
         read_only_fields = fields
@@ -48,3 +40,6 @@ class LogEntrySerializer(serializers.ModelSerializer):
 
     def get_areaName(self, obj):
         return obj.area.name if obj.area else None
+
+    def get_patientId(self, obj):
+        return obj.patient_instance.frontend_id if obj.patient_instance else None
