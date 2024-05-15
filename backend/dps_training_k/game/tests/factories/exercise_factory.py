@@ -21,4 +21,4 @@ class ExerciseFactory(factory.django.DjangoModelFactory):
 
     config = factory.SubFactory(SavedExerciseFactory)
     exercise_frontend_id = "a" * settings.ID_GENERATOR.code_length
-    state = Exercise.ExerciseStateTypes.CONFIGURATION
+    state = Exercise.StateTypes.CONFIGURATION

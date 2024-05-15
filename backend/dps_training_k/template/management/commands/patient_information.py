@@ -53,11 +53,6 @@ def import_patients(file_path):
 class Command(BaseCommand):
     help = "Imports patient data from a CSV file"
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "csv_file", type=str, help="Path to the CSV file containing patient data"
-        )
-
     def handle(self, *args, **options):
-        import_patients(options["csv_file"])
+        import_patients("./data/patient_information.csv")  # path to the csv file
         self.stdout.write(self.style.SUCCESS("Successfully imported patient data"))

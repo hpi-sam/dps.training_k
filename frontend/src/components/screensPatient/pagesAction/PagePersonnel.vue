@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import { useExerciseStore } from '@/stores/Exercise'
-	import { usePatientStore } from '@/stores/Patient'
-	import { useRessourceAssignmentsStore } from '@/stores/RessourceAssignments'
+	import {useExerciseStore} from '@/stores/Exercise'
+	import {usePatientStore} from '@/stores/Patient'
+	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
 	import {computed} from 'vue'
 	import socketPatient from '@/sockets/SocketPatient'
 
@@ -18,7 +18,7 @@
 	))
 	const busyPersonnel = computed(() => assignments.value?.personnel.filter(assignment => 
 		assignment.patientId != patientStore.patientId && 
-		assignment.patientId != null
+		assignment.patientId != null && assignment.patientId != ''
 	))
 
 	function releasePersonnel(personnelId: number) {

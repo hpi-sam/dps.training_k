@@ -1,13 +1,15 @@
 from urllib.parse import parse_qs
 
+from django.db.models import Q
+
 from game.models import (
     PatientInstance,
-    Exercise,
+    MaterialInstance,
     ActionInstance,
     ScheduledEvent,
 )
 from template.models import Action
-from template.serializer.state_serialize import StateSerializer
+from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier
 
@@ -22,6 +24,8 @@ class PatientConsumer(AbstractConsumer):
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
         ACTION_ADD = "action-add"
+        MATERIAL_RELEASE = "material-release"
+        MATERIAL_ASSIGN = "material-assign"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
@@ -35,7 +39,7 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.patient_patient_frontend_id = ""
+        self.patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -53,6 +57,14 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_action_add,
                 "actionName",
             ),
+            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
+                self.handle_material_release,
+                "material_id",
+            ),
+            self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
+                self.handle_material_assign,
+                "material_id",
+            ),
         }
 
     @property
@@ -60,24 +72,10 @@ class PatientConsumer(AbstractConsumer):
         if not self.patient_frontend_id:
             return None
         return PatientInstance.objects.get(
-            patient_frontend_id=self.patient_frontend_id
+            frontend_id=self.patient_frontend_id
         )  # This enforces patient_instance to always work with valid data
 
     def connect(self):
-        # example trainer creation for testing purposes as long as the actual exercise flow is not useful for patient route debugging
-        self.tempExercise = Exercise.createExercise()
-        # example patient creation for testing purposes as long as the actual patient flow is not implemented
-        from template.tests.factories.patient_state_factory import PatientStateFactory
-
-        self.temp_state = PatientStateFactory(10, 2)
-        PatientInstance.objects.create(
-            name="Max Mustermann",
-            exercise=self.exercise,
-            patient_frontend_id=2,  # has to be the same as the username in views.py#post
-            exercise_id=self.tempExercise.id,
-            patient_state=self.temp_state,
-        )
-
         query_string = parse_qs(self.scope["query_string"].decode())
         token = query_string.get("token", [None])[0]
         success, patient_frontend_id = self.authenticate(token)
@@ -88,17 +86,12 @@ class PatientConsumer(AbstractConsumer):
             self.accept()
             self.subscribe(ChannelNotifier.get_group_name(self.patient_instance))
             self.subscribe(ChannelNotifier.get_group_name(self.exercise))
+            self.subscribe(ChannelNotifier.get_group_name(self.patient_instance.area))
+            self.subscribe(ChannelNotifier.get_group_name(self.exercise.lab))
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-
-    def disconnect(self, code):
-        # example patient_instance deletion - see #connect
-        self.patient_instance.delete()
-        # example trainer deletion - see #connect
-        self.tempExercise.delete()
-        self.temp_state.delete()
-        super().disconnect(code)
+            self.action_list_event(None)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -118,16 +111,26 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_triage(self, triage):
-        patient_instance = self.patient_instance
-        patient_instance.triage = triage
-        patient_instance.save(update_fields=["triage"])
+        self.patient_instance.triage = triage
+        self.patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, action_name):
-        action = Action.objects.get(name=action_name)
-        action_instance = ActionInstance.create(
-            action_template=action, patient_instance=self.patient_instance
-        )
-        action_instance.try_application()
+        try:
+            action_template = Action.objects.get(name=action_name)
+            if action_template.category == Action.Category.PRODUCTION:
+                action_instance = ActionInstance.create(
+                    action_template=action_template,
+                    lab=self.exercise.lab,
+                    area=self.patient_instance.area,
+                )
+            else:
+                action_instance = ActionInstance.create(
+                    action_template=action_template,
+                    patient_instance=self.patient_instance,
+                )
+            action_instance.try_application()
+        except:
+            self._send_action_declination(action_instance=action_instance)
 
     def handle_action_check(self, action_id):
         stub_action_name = "Recovery Position"
@@ -146,12 +149,40 @@ class PatientConsumer(AbstractConsumer):
             requirements=stub_requirements,
         )
 
+    def handle_material_release(self, material_id):
+        material_instance = MaterialInstance.objects.get(pk=material_id)
+        area = self.patient_instance.area
+        succeeded = material_instance.try_moving_to(area)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
+    def handle_material_assign(self, material_id):
+        material_instance = MaterialInstance.objects.get(pk=material_id)
+        succeeded = material_instance.try_moving_to(self.patient_instance)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # methods used internally
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+
+    def _send_action_declination(self, action_instance):
+        self.send_event(
+            self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
+            actionName=action_instance.name,
+            actionDeclinationReason=action_instance.current_state.info_text,
+        )
+
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
-        serialized_state = StateSerializer(self.patient_instance.state).data
+        serialized_state = StateSerializer(self.patient_instance.patient_state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,
@@ -165,19 +196,20 @@ class PatientConsumer(AbstractConsumer):
             actionName=action_instance.name,
         )
 
-    def action_declination_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
-        self.send_event(
-            self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
-            actionName=action_instance.name,
-            actionDeclinationReason=action_instance.current_state.info_text,
-        )
-
     def action_list_event(self, event):
         actions = []
-        for action_instance in ActionInstance.objects.filter(
-            patient_instance=self.patient_instance
-        ):
+
+        """all action_instances where either the patient_instance is self.patient_instance or 
+        the category is production and the area is the same as the patient_instance.area"""
+        action_instances = ActionInstance.objects.filter(
+            Q(patient_instance=self.patient_instance)
+            | Q(
+                action_template__category=Action.Category.PRODUCTION,
+                area=self.patient_instance.area,
+            )
+        )
+
+        for action_instance in action_instances:
             action_data = {
                 "actionId": action_instance.id,
                 "orderId": action_instance.order_id,
@@ -192,6 +224,7 @@ class PatientConsumer(AbstractConsumer):
             }
 
             actions.append(action_data)
+
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_LIST,
             actions=actions,

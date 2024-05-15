@@ -11,6 +11,7 @@ import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
 import { commonMockEvents } from "./commonMockEvents"
 import { useActionCheckStore } from "@/stores/ActionCheck"
 
+
 class SocketPatient {
 	private readonly url: string
 	socket: WebSocket | null = null
@@ -75,19 +76,19 @@ class SocketPatient {
 					exerciseStore.createFromJSON(data.exercise as Exercise)
 					patientStore.initializePatientFromExercise()
 					break
-				case 'exercise-started':
+				case 'exercise-start':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-paused':
+				case 'exercise-pause':
 					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
 					break
-				case 'exercise-resumed':
+				case 'exercise-resume':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
-				case 'exercise-ended':
-					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+				case 'exercise-end':
+					setScreen(Screens.ENDED, ScreenPosition.FULL)
 					break
 				case 'delete':
 					console.log('Patient Websocket ToDo: handle delete event ', data)
@@ -213,8 +214,10 @@ export default socketPatient
 export const serverMockEvents = [
 	{
 		id: 'state',
-		data: '{"messageType":"state","state":{"phaseNumber":"123","airway":"Normal","breathing":"Regelmäßig","circulation":"Stabil",' +
-			'"consciousness":"Bewusstlos","pupils":"Geweitet","psyche":"Ruhig","skin":"Blass"}}'
+		data: '{"messageType":"state","state":{"phaseNumber":"1","airway":"künstlicher Atemweg",' +
+			'"breathing":"Atemfreq: 15 /min; SpO2: 99 %; Beatmung; normales AG hörbar",' +
+			'"circulation":"Herzfreq: 72 /min; peripher tastbar; RR: 120.063",' +
+			'"consciousness":"narkotisiert","pupils":"mittelweit","psyche":"","skin":"trocken, rosig"}}'
 	},
 	{
 		id: 'available-actions',
@@ -223,6 +226,7 @@ export const serverMockEvents = [
 			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Güdeltubus anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Blut abnehmen","actionCategory":"TR"},' +
 			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
 			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
 			'{"actionName":"Wundversorgung","actionCategory":"TR"},{"actionName":"Stabile Seitenlage","actionCategory":"TR"},' +
@@ -239,66 +243,60 @@ export const serverMockEvents = [
 		data: '{"messageType":"action-declination","actionName":"Stabile Seitenlage","actionDeclinationReason":"Es fehlen die nötigen Ressourcen."}'
 	},
 	{
-		id: 'action-result',
-		data: '{"messageType":"action-result","actionName":"Blutprobe untersuchen","actionId":"125",' +
-			'"actionResult":"Der Patient hat eine Blutgruppe von 0+."}'
-	},
-	{
 		id: 'ressource-assignments',
 		data: '{"messageType":"ressource-assignments","ressourceAssignments":{"ressourceAssignments":[' +
 			'{"areaName":"Intensiv",' +
 			'"personnel":[' +
-			'{"personnelId":1,"personnelName":"Albert Spahn","patientId":5},' +
-			'{"personnelId":2,"personnelName":"Anna Neumann","patientId":3}' +
+			'{"personnelId":1,"personnelName":"Albert Spahn","patientId":"5"},' +
+			'{"personnelId":2,"personnelName":"Anna Neumann","patientId":"3"}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":1,"materialName":"Beatmungsgerät","patientId":3},' +
-			'{"materialId":2,"materialName":"Defibrillator","patientId":5}' +
+			'{"materialId":1,"materialName":"Beatmungsgerät","patientId":"3"},' +
+			'{"materialId":2,"materialName":"Defibrillator","patientId":"5"}' +
 			']},' +
 			'{"areaName":"ZNA",' +
 			'"personnel":[' +
-			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":2},' +
-			'{"personnelId":4,"personnelName":"Lena Schulze","patientId":6},' +
-			'{"personnelId":8,"personnelName":"Julian Mohn","patientId":2},' +
-			'{"personnelId":9,"personnelName":"Elisabeth Bauer","patientId":8}' +
+			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":"123456"},' +
+			'{"personnelId":4,"personnelName":"Lena Schulze","patientId":"6"},' +
+			'{"personnelId":8,"personnelName":"Julian Mohn","patientId":"123456"},' +
+			'{"personnelId":9,"personnelName":"Elisabeth Bauer","patientId":"8"}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":3,"materialName":"Defibrillator","patientId":2},' +
-			'{"materialId":4,"materialName":"EKG-Monitor","patientId":2},' +
-			'{"materialId":9,"materialName":"Narkosegerät","patientId":9}' +
+			'{"materialId":3,"materialName":"Defibrillator","patientId":"123456"},' +
+			'{"materialId":4,"materialName":"EKG-Monitor","patientId":"123456"},' +
+			'{"materialId":9,"materialName":"Narkosegerät","patientId":"9"}' +
 			']},' +
 			'{"areaName":"Wagenhalle",' +
 			'"personnel":[' +
-			'{"personnelId":5,"personnelName":"Finn Heizmann","patientId":1},' +
-			'{"personnelId":6,"personnelName":"Ursula Seiler","patientId":4}' +
+			'{"personnelId":5,"personnelName":"Finn Heizmann","patientId":"1"},' +
+			'{"personnelId":6,"personnelName":"Ursula Seiler","patientId":"4"}' +
 			'],' +
 			'"material":[' +
-			'{"materialId":5,"materialName":"EKG-Gerät","patientId":1},' +
-			'{"materialId":6,"materialName":"Blutdruckmessgerät","patientId":4}' +
+			'{"materialId":5,"materialName":"EKG-Gerät","patientId":"1"},' +
+			'{"materialId":6,"materialName":"Blutdruckmessgerät","patientId":"4"}' +
 			']' +
 			'}]}}'
 	},
 	{
 		id: 'action-list',
 		data: '{"messageType":"action-list","actions":[' +
-			'{"actionId":1,"orderId":5,"actionName":"Stabile Seitenlage","actionStatus":"IP","timeUntilCompletion":20,"actionResult":null},' +
+			'{"actionId":1,"orderId":4,"actionName":"Stabile Seitenlage","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
-			'{"actionId":4,"orderId":3,"actionName":"Beatmungsmaske anlegen","actionStatus":"PL","timeUntilCompletion":320,"actionResult":' +
+			'{"actionId":4,"orderId":2,"actionName":"Adrenalin","actionStatus":"OH","timeUntilCompletion":40,"actionResult":' +
 			'null},' +
-			'{"actionId":3,"orderId":4,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
+			'{"actionId":3,"orderId":5,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
 			'"Der Patient hat eine Blutgruppe von 0+."},' +
-			'{"actionId":6,"orderId":1,"actionName":"Tornique anlegen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
-			'{"actionId":5,"orderId":2,"actionName":"Infusion anlegen","actionStatus":"OH","timeUntilCompletion":110,"actionResult":null}' +
+			'{"actionId":5,"orderId":3,"actionName":"Infusion anlegen","actionStatus":"PL","timeUntilCompletion":110,"actionResult":null}' +
 			']}'
 	},
 	{
 		id: 'visible-injuries',
 		data: '{"messageType":"visible-injuries","injuries":[' +
-			'{ "injuryId": 1, "injuryType": "fracture", "position": "left hand" },' +
-			'{ "injuryId": 2, "injuryType": "blood", "position": "right lower leg" },' +
-			'{ "injuryId": 3, "injuryType": "blood", "position": "head" },' +
-			'{ "injuryId": 4, "injuryType": "fracture", "position": "right collarbone" },' +
-			'{ "injuryId": 5, "injuryType": "blood", "position": "left rip" }' +
+			'{ "injuryId": 1, "injuryType": "fracture", "position": "left collarbone" },' +
+			'{ "injuryId": 1, "injuryType": "blood", "position": "left collarbone" },' +
+			'{ "injuryId": 2, "injuryType": "fracture", "position": "left upper arm" },' +
+			'{ "injuryId": 3, "injuryType": "fracture", "position": "left thorax" },' +
+			'{ "injuryId": 3, "injuryType": "blood", "position": "left thorax" }' +
 			']}'
 	},
 	{

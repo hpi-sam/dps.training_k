@@ -1,7 +1,8 @@
 <script setup lang="ts">
-	import { computed } from "vue"
-    import { useLogStore } from '@/stores/Log'
+	import {computed} from "vue"
+	import {useLogStore} from '@/stores/Log'
 	import CloseButton from "./CloseButton.vue"
+	import {useExerciseStore} from "../../stores/Exercise"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -19,6 +20,29 @@
 			return logStore.getLogEntry(props.logId)
 		}
 		return null
+	})
+
+	const patientName = computed(() => {
+		if (currentLogEntry.value?.patientId) {
+			const store = useExerciseStore()
+			const patient = store.getPatient(currentLogEntry.value.patientId)
+			console.log(store.getPatient(currentLogEntry.value.patientId))
+			return patient ? patient.patientName : ''
+		}
+		return ''
+	})
+
+	const personnelNames = computed(() => {
+		console.log(currentLogEntry.value.patientId)
+		var names = ''
+		if (currentLogEntry.value?.personnelIds) {
+			const store = useExerciseStore()
+			for (const personnelId of currentLogEntry.value.personnelIds) {
+				if (names !== '') names = names + ', '
+				names = names + store.getPersonnel(personnelId).personnelName
+			}
+		}
+		return names
 	})
 </script>
 
@@ -51,7 +75,7 @@
 						Patient:
 					</td>
 					<td>
-						{{ currentLogEntry?.patientId }}
+						{{ currentLogEntry?.patientId }} {{ patientName }}
 					</td>
 				</tr>
 				<tr>
@@ -59,7 +83,7 @@
 						Personal:
 					</td>
 					<td>
-						{{ currentLogEntry?.personnelId }}
+						{{ personnelNames }}
 					</td>
 				</tr>
 			</table>

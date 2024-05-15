@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
-	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import EditPatientPopup from '@/components/widgets/EditPatientPopup.vue'
 	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
 	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
@@ -20,9 +19,9 @@
 	const showEditPatientPopup = ref(false)
 	const showAddPatientPopup = ref(false)
 
-	const currentPatientId = ref(Number.NEGATIVE_INFINITY)
+	const currentPatientId = ref('')
 
-	function editPatient(patientId: number) {
+	function editPatient(patientId: string) {
 		currentPatientId.value = patientId
 		showEditPatientPopup.value = true
 	}
@@ -38,7 +37,7 @@
 	<div class="scroll">
 		<h1>Patienten</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="addPatient()">
+			<button v-if="currentAreaData" id="create-patient-button" class="listItemAddButton" @click="addPatient()">
 				Patient hinzufügen
 			</button>
 			<div
@@ -48,14 +47,13 @@
 			>
 				<button class="listItemButton" @click="editPatient(patient.patientId)">
 					<div class="listItemId">
-						{{ patient.patientId.toString().padStart(6, '0') }}
+						{{ patient.patientId }}
 					</div>
 					<TriageForListItems :patient-code="patient.code" />
 					<div class="listItemName">
 						{{ patient.patientName }}
 					</div>
 				</button>
-				<ToggleSwitchForListItems default="active" />
 			</div>
 		</div>
 	</div>

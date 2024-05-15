@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 import game.models.area as a
 import game.models.exercise as e
+import game.models.material_instance as m
 import game.models.patient_instance as pt
 import game.models.personnel as p
 
@@ -9,14 +10,14 @@ import game.models.personnel as p
 
 
 class PatientInstanceSerializer(serializers.ModelSerializer):
-    patientId = serializers.IntegerField(source="patient_frontend_id")
+    patientId = serializers.CharField(source="frontend_id")
     patientName = serializers.CharField(source="name")
     code = serializers.IntegerField(source="static_information.code")
 
     class Meta:
         model = pt.PatientInstance
         fields = ["patientId", "patientName", "code", "triage"]
-        read_only = ["patientId", "patientName", "code", "triage"]
+        read_only = fields
 
 
 class PersonnelSerializer(serializers.ModelSerializer):
@@ -26,22 +27,34 @@ class PersonnelSerializer(serializers.ModelSerializer):
     class Meta:
         model = p.Personnel
         fields = ["personnelId", "personnelName"]
-        read_only = ["personnelId", "personnelName"]
+        read_only = fields
+
+
+class MaterialInstanceSerializer(serializers.ModelSerializer):
+    materialId = serializers.IntegerField(source="id")
+    materialType = serializers.CharField(source="material_template.category")
+    materialName = serializers.CharField(source="material_template.name")
+
+    class Meta:
+        model = m.MaterialInstance
+        fields = [
+            "materialId",
+            "materialType",
+            "materialName",
+        ]
+        read_only = fields
 
 
 class AreaSerializer(serializers.ModelSerializer):
     areaName = serializers.CharField(source="name")
     patients = PatientInstanceSerializer(source="patientinstance_set", many=True)
     personnel = PersonnelSerializer(source="personnel_set", many=True)
-    material = serializers.SerializerMethodField()  # TODO: implement material
+    material = MaterialInstanceSerializer(source="materialinstance_set", many=True)
 
     class Meta:
         model = a.Area
         fields = ["areaName", "patients", "personnel", "material"]
-        read_only = ["areaName", "patients", "personnel", "material"]
-
-    def get_material(self, obj):
-        return []  # Return an empty list for material until it's implemented
+        read_only = fields
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
@@ -51,4 +64,4 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = e.Exercise
         fields = ["exerciseId", "areas"]
-        read_only = ["exerciseId", "areas"]
+        read_only = fields
