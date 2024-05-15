@@ -4,7 +4,7 @@ import {useExerciseStore} from "@/stores/Exercise"
 import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
-import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
+import {allowNewActions} from "@/components/screensPatient/pagesAction/PageActionCheck.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import {useActionOverviewStore} from "@/stores/ActionOverview"
 import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
@@ -307,8 +307,8 @@ export const serverMockEvents = [
 			"messageType": "action-check",
 			"actionCheck": {
 				"actionName": "Beatmungsmaske anlegen",
-				"applicationDuration": 4,
-				"effectDuration": 3,
+				"applicationDuration": 40,
+				"effectDuration": null,
 				"personnel": [
 				{
 					"name": "Ärzte",
@@ -348,14 +348,12 @@ export const serverMockEvents = [
 						"groupName": "",
 						"actions": [
 							"Blutdruck messen",
-							"Infusion anlegen"
+							"Infusion anlegen",
+							"Zugang legen"
 						]
 					}
 				]
-				},
-				"prohibitedActions": [
-					"Blut abnehmen"
-				]
+				}
 			}
 		}`
 	},

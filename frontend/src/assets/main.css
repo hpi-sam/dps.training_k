@@ -146,7 +146,6 @@ button:active {
 
 .listItem {
   position: relative;
-  background-color: #FFFFFF;
   border: 1px solid rgb(209, 213, 219);
   display: flex;
   align-items: center;
@@ -154,20 +153,23 @@ button:active {
   margin-top: -1px;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
 }
 
 .listItemButton {
   position: relative;
-  background-color: #FFFFFF;
+  background-color: white;
   border: none;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   font-size: 1.25rem;
   padding: 0;
   text-align: left;
   height: 50px;
-  max-width: 100%;
+  width: 100%;
   flex-grow: 1;
+  flex-wrap: nowrap;
 }
 
 .selected .listItemButton {
@@ -192,11 +194,13 @@ button:active {
   margin-left: 16px;
   display: flex;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .listItemId {
   padding: .75rem 1rem;
   width: fit-content;
+  flex-shrink: 0;
 }
 
 .listItemName {
@@ -204,6 +208,8 @@ button:active {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  width: 100%;
 }
 
 .scroll {

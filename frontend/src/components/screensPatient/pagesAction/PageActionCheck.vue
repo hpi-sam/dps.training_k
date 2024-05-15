@@ -1,32 +1,25 @@
 <script setup lang="ts">
 	import socketPatient from '@/sockets/SocketPatient'
 	import { computed, ref } from 'vue'
-	import CloseButton from './CloseButton.vue'
+	import CloseButton from '@/components/widgets/CloseButton.vue'
 	import { useActionCheckStore } from '@/stores/ActionCheck'
 	import { svg } from '@/assets/Svg'	
-	import ActionGroupPopup from './ActionGroupPopup.vue'
+	import ActionGroupPopup from '@/components/widgets/ActionGroupPopup.vue'
 
 	const emit = defineEmits(['close-action'])
 
-	const props = defineProps({
-		currentAction: {
-			type: String,
-			default: "Kein Name angegeben"
-		}
-	})
+	const actionCheckStore = useActionCheckStore()
 
 	function addAction() {
-		socketPatient.actionAdd(props.currentAction)
+		socketPatient.actionAdd(actionCheckStore?.actionName)
 		newActionsAllowed.value = false
 		emit('close-action')
 	}
 
-	const actionCheckStore = useActionCheckStore()
-
 	const errorMessage = ref(computed(() => {
-		if (actionCheckStore.prohibitedActions.length > 0) {
+		if (actionCheckStore?.prohibitedActions?.length > 0) {
 			return "Eine durchgeführte Aktion verhindert die Anordnung."
-		} else if (actionCheckStore.requiredActions.singleActions.length > 0 || actionCheckStore.requiredActions.actionGroups.length > 0) {
+		} else if (actionCheckStore?.requiredActions?.singleActions?.length > 0 || actionCheckStore?.requiredActions?.actionGroups?.length > 0) {
 			return "Es müssen zuerst andere Aktionen durchgeführt werden."
 		} else if (!newActionsAllowed.value) {
 			return "Warte, bis wieder neue Aktionen angeordnet werden können."
@@ -72,27 +65,29 @@
 			<CloseButton @close="emit('close-action')" />
 		</div>
 		<div class="scroll">
-			<h1>{{ props.currentAction }}</h1>
+			<h1>{{ actionCheckStore?.actionName }}</h1>
 			<div class="list">
-				<p>
-					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore.applicationDuration)).toISOString().substring(14, 19) }}
+				<p v-if="actionCheckStore?.applicationDuration">
+					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(14, 19) }}
 				</p>
-				<p v-if="actionCheckStore.effectDuration > 0">
-					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore.effectDuration)).toISOString().substring(14, 19) }}
+				<p v-if="actionCheckStore?.effectDuration > 0">
+					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(14, 19) }}
 				</p>
 				<br>
-				Personal
+				<p v-if="actionCheckStore?.personnel?.length > 0">
+					Personal
+				</p>
 				<div
-					v-for="personnel in actionCheckStore.personnel"
+					v-for="personnel in actionCheckStore?.personnel"
 					:key="personnel.name"
 					class="listItem"
 				>
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="getIconPath(personnel.available, personnel.assigned, personnel.needed)" />
-						</svg>
-					</div>
 					<div class="listItemButton">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="getIconPath(personnel.available, personnel.assigned, personnel.needed)" />
+							</svg>
+						</div>
 						<div class="listItemName">
 							{{ personnel.name }}
 						</div>
@@ -101,18 +96,21 @@
 						</div>
 					</div>
 				</div>
-				<br>Material
+				<br>
+				<p v-if="actionCheckStore?.material?.length > 0">
+					Material
+				</p>
 				<div
-					v-for="material in actionCheckStore.material"
+					v-for="material in actionCheckStore?.material"
 					:key="material.name"
 					class="listItem"
 				>
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="getIconPath(material.available, material.assigned, material.needed)" />
-						</svg>
-					</div>
 					<div class="listItemButton">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="getIconPath(material.available, material.assigned, material.needed)" />
+							</svg>
+						</div>
 						<div class="listItemName">
 							{{ material.name }}
 						</div>
@@ -121,18 +119,21 @@
 						</div>
 					</div>
 				</div>
-				<br>Laborgeräte
+				<br>
+				<p v-if="actionCheckStore.labDevices?.length > 0">
+					Laborgeräte
+				</p>
 				<div
-					v-for="labDevice in actionCheckStore.labDevices"
+					v-for="labDevice in actionCheckStore?.labDevices"
 					:key="labDevice.name"
 					class="listItem"
 				>
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="getIconPath(labDevice.available, labDevice.available, labDevice.needed)" />
-						</svg>
-					</div>
 					<div class="listItemButton">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="getIconPath(labDevice.available, labDevice.available, labDevice.needed)" />
+							</svg>
+						</div>
 						<div class="listItemName">
 							{{ labDevice.name }}
 						</div>
@@ -141,51 +142,62 @@
 						</div>
 					</div>
 				</div>
-				<br>Folgende Aktionen müssen zuvor durchgeführt werden
+				<br>
+				<p v-if="actionCheckStore?.requiredActions?.singleActions?.length > 0">
+					Folgende Aktionen müssen zuvor durchgeführt werden
+				</p>
 				<div
-					v-for="(action, index) in actionCheckStore.requiredActions.singleActions"
+					v-for="(action, index) in actionCheckStore?.requiredActions?.singleActions"
 					:key="index"
 					class="listItem"
 				>
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.closeIcon" />
-						</svg>
-					</div>
 					<div class="listItemButton">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="svg.closeIcon" />
+							</svg>
+						</div>
 						<div class="listItemName">
 							{{ action }}
 						</div>
 					</div>
 				</div>
 				<div
-					v-for="(actionGroup, index) in actionCheckStore.requiredActions.actionGroups"
+					v-for="(actionGroup, index) in actionCheckStore?.requiredActions?.actionGroups"
 					:key="index"
 					class="listItem"
 				>
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.closeIcon" />
-						</svg>
-					</div>
 					<div class="listItemButton" @click="openActionGroupPopup(actionGroup.actions)">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="svg.closeIcon" />
+							</svg>
+						</div>
 						<div class="listItemName">
 							{{ actionGroup.groupName ? actionGroup.groupName : actionGroup.actions.join(' / ') }}
 						</div>
+						<div class="rightText">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="svg.descriptionIcon" />
+							</svg>
+						</div>
 					</div>
 				</div>
-				<br>Folgende durchgeführte Aktionen verhindern die Anordnung
+				<br>
+				<p v-if="actionCheckStore?.prohibitedActions?.length > 0">
+					Folgende durchgeführte Aktionen verhindern die Anordnung
+				</p>
 				<div
-					v-for="(action, index) in actionCheckStore.prohibitedActions"
+					v-for="(action, index) in actionCheckStore?.prohibitedActions"
 					:key="index"
 					class="listItem"
 				>
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.closeIcon" />
-						</svg>
-					</div>
 					<div class="listItemButton">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="svg.closeIcon" />
+							</svg>
+						</div>
 						<div class="listItemName">
 							{{ action }}
 						</div>
@@ -193,7 +205,7 @@
 				</div>
 			</div>
 		</div>
-		<div>
+		<div v-if="actionCheckStore?.actionName">
 			<button class="main-button" :disabled="errorMessage.length > 0" @click="addAction()">
 				Aktion anordnen
 				<p v-if="errorMessage" class="error-message">
@@ -219,9 +231,10 @@
 	}
 
 	.rightText {
-		margin-left: auto;
+		flex-shrink: 0;
 		margin-right: 16px;
-		min-width: fit-content
+		white-space: nowrap;
+		width: auto;
 	}
 
 	.error-message {
