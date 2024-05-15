@@ -46,4 +46,5 @@ def create_auth_token(instance=None, created=False, **kwargs):
 
 @receiver(pre_delete, sender=PatientInstance)
 def delete_patient(sender, instance, **kwargs):
-    instance.user.delete()
+    if instance.user:
+        instance.user.delete()

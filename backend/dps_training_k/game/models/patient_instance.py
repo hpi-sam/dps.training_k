@@ -66,7 +66,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
                 username=self.frontend_id, user_type=User.UserType.PATIENT
             )
             self.user.set_password(
-                self.exercise.exercise_frontend_id
+                self.exercise.frontend_id
             )  # Properly hash the password
             self.user.save()
 
@@ -91,7 +91,8 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def delete(self, using=None, keep_parents=False):
         """Is only called when the patient explicitly deleted and not in an e.g. batch or cascade delete"""
-        self.user.delete()
+        if self.user:
+            self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 
     def schedule_state_change(self):

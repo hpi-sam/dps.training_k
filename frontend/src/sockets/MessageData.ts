@@ -134,6 +134,7 @@ interface LogEntry {
 	areaName: string
 	patientId: string
 	personnelIds: number[]
+	materialNames: string[]
 }
 
 interface ActionOverview {
