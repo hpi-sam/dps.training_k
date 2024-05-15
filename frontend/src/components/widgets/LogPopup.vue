@@ -86,7 +86,7 @@
 						{{ personnelNames }}
 					</td>
 				</tr>
-				<tr v-if="currentLogEntry?.materialNames">
+				<tr v-if="currentLogEntry?.materialNames?.length > 0">
 					<td class="key">
 						Material:
 					</td>
