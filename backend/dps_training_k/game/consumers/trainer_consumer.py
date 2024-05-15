@@ -263,6 +263,7 @@ class TrainerConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def log_update_event(self, event):
         log_entry = LogEntry.objects.get(pk=event["log_entry_pk"])
+
         self.send_event(
             self.TrainerOutgoingMessageTypes.LOG_UPDATE,
             logEntries=[LogEntrySerializer(log_entry).data],

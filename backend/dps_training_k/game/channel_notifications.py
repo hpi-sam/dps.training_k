@@ -158,6 +158,11 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 action_instance=applied_action
             )
             log_entry.personnel.add(*personnel_list)
+            material_list = models.MaterialInstance.objects.filter(
+                patient_instance=applied_action.patient_instance,
+                lab=applied_action.lab,
+            )
+            log_entry.materials.add(*material_list)
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
 
@@ -208,6 +213,18 @@ class ExerciseDispatcher(ChannelNotifier):
         channel = cls.get_group_name(exercise)
         event = {"type": ChannelEventTypes.EXERCISE_END_EVENT}
         cls._notify_group(channel, event)
+
+
+class MaterialInstanceDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, material, changes, is_updated):
+        cls._notify_exercise_update(material.attached_instance().exercise)
+
+    @classmethod
+    def delete_and_notify(cls, material, *args, **kwargs):
+        exercise = material.area.exercise
+        super(material.__class__, material).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
 
 
 class LogEntryDispatcher(ChannelNotifier):
@@ -284,16 +301,4 @@ class PersonnelDispatcher(ChannelNotifier):
     def delete_and_notify(cls, personnel, *args, **kwargs):
         exercise = personnel.area.exercise
         super(personnel.__class__, personnel).delete(*args, **kwargs)
-        cls._notify_exercise_update(exercise)
-
-
-class MaterialInstanceDispatcher(ChannelNotifier):
-    @classmethod
-    def dispatch_event(cls, material, changes, is_updated):
-        cls._notify_exercise_update(material.area.exercise)
-
-    @classmethod
-    def delete_and_notify(cls, material, *args, **kwargs):
-        exercise = material.area.exercise
-        super(material.__class__, material).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)

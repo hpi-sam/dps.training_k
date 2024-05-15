@@ -20,6 +20,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
         many=True,
         allow_null=True,
     )
+    materialNames = serializers.SerializerMethodField()
 
     class Meta:
         model = le.LogEntry
@@ -30,6 +31,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
             "areaName",
             "patientId",
             "personnelIds",
+            "materialNames",
         ]
         read_only_fields = fields
 
@@ -43,3 +45,6 @@ class LogEntrySerializer(serializers.ModelSerializer):
 
     def get_patientId(self, obj):
         return obj.patient_instance.frontend_id if obj.patient_instance else None
+
+    def get_materialNames(self, obj):
+        return [material.name for material in obj.materials.all()]

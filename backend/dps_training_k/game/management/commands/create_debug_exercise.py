@@ -9,10 +9,10 @@ class Command(BaseCommand):
     help = "Creates a basic exercise one can join immediately without having to create it via the trainer interface first."
 
     def handle(self, *args, **options):
-        if not Exercise.objects.filter(exercise_frontend_id="abcdef").exists():
+        if not Exercise.objects.filter(frontend_id="abcdef").exists():
             settings.ID_GENERATOR.codes_taken.append("abcdef")
         else:
-            Exercise.objects.get(exercise_frontend_id="abcdef").delete()
+            Exercise.objects.get(frontend_id="abcdef").delete()
 
         # I have no friggin idea why this is necessary, but it is (exercise deletion should cascade area and therefore patient deletion)
         if not PatientInstance.objects.filter(frontend_id=123456).exists():
@@ -21,7 +21,7 @@ class Command(BaseCommand):
             PatientInstance.objects.get(frontend_id=123456).delete()
 
         self.exercise = Exercise.createExercise()
-        self.exercise.exercise_frontend_id = "abcdef"
+        self.exercise.frontend_id = "abcdef"
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
         )

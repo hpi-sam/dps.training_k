@@ -37,3 +37,6 @@ class Area(ActionsQueueable, models.Model):
 
     def delete(self, using=None, keep_parents=False):
         AreaDispatcher.delete_and_notify(self)
+
+    def __str__(self):
+        return f"{self.name} of exercise {self.exercise.frontend_id}"
