@@ -75,7 +75,7 @@
 				</p>
 				<br>
 				<p v-if="actionCheckStore?.personnel?.length > 0">
-					Personal
+					Personal (verfügbar / zugeordnet / benötigt)
 				</p>
 				<div
 					v-for="personnel in actionCheckStore?.personnel"
@@ -98,7 +98,7 @@
 				</div>
 				<br>
 				<p v-if="actionCheckStore?.material?.length > 0">
-					Material
+					Material (verfügbar / zugeordnet / benötigt)
 				</p>
 				<div
 					v-for="material in actionCheckStore?.material"
@@ -121,7 +121,7 @@
 				</div>
 				<br>
 				<p v-if="actionCheckStore.labDevices?.length > 0">
-					Laborgeräte
+					Laborgeräte (verfügbar / benötigt)
 				</p>
 				<div
 					v-for="labDevice in actionCheckStore?.labDevices"
