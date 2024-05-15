@@ -33,11 +33,14 @@
 	const actionCheckStore = useActionCheckStore()
 
 	function openAction(actionName: string) {
+		/*
 		actionCheckStore.$reset()
 		socketPatient.actionCheck(actionName)
 		currentAction.value = actionName
 		emit('set-page', Pages.ACTION_CHECK)
-		console.log('openAction: ' + actionName)
+		*/
+		// this is a hotfix until the action check is implemented in backend
+		socketPatient.actionAdd(actionName)
 	}
 </script>
 <template>
