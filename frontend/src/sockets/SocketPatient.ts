@@ -4,11 +4,13 @@ import {useExerciseStore} from "@/stores/Exercise"
 import {useAvailablesStore} from "@/stores/Availables"
 import {showErrorToast, showWarningToast} from "@/App.vue"
 import {ScreenPosition, Screens, setScreen} from "@/components/ModulePatient.vue"
-import {allowNewActions} from "@/components/widgets/ActionConfig.vue"
+import {allowNewActions} from "@/components/screensPatient/pagesAction/PageActionCheck.vue"
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import {useActionOverviewStore} from "@/stores/ActionOverview"
 import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
-import {commonMockEvents} from "./commonMockEvents"
+import { commonMockEvents } from "./commonMockEvents"
+import { useActionCheckStore } from "@/stores/ActionCheck"
+
 
 class SocketPatient {
 	private readonly url: string
@@ -25,6 +27,7 @@ class SocketPatient {
 		const ressourceAssignmentsStore = useRessourceAssignmentsStore()
 		const actionOverview = useActionOverviewStore()
 		const visibleInjuriesStore = useVisibleInjuriesStore()
+		const actionCheckStore = useActionCheckStore()
 
 		this.socket = new WebSocket(this.url + usePatientStore().token)
 
@@ -115,6 +118,9 @@ class SocketPatient {
 				case 'visible-injuries':
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
+				case 'action-check':
+					actionCheckStore.loadActionCheck(data.actionCheck as ActionCheck)
+					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
 					console.error('Patient received unknown message type:', data.messageType, 'with data:', data)
@@ -193,6 +199,13 @@ class SocketPatient {
 			'areaName': areaName,
 		}))
 	}
+
+	actionCheck(actionName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'action-check',
+			'actionName': actionName,
+		}))
+	}
 }
 
 const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')
@@ -212,6 +225,7 @@ export const serverMockEvents = [
 			'{"actionName":"Blutdruck messen","actionCategory":"TR"},{"actionName":"Blutprobe untersuchen","actionCategory":"LA"},' +
 			'{"actionName":"Beatmungsmaske anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Infusion anlegen","actionCategory":"TR"},' +
+			'{"actionName":"Güdeltubus anlegen","actionCategory":"TR"},' +
 			'{"actionName":"Blut abnehmen","actionCategory":"TR"},' +
 			'{"actionName":"Medikament verabreichen","actionCategory":"TR"},' +
 			'{"actionName":"Ruheposition einnehmen","actionCategory":"TR"},{"actionName":"Röntgen","actionCategory":"LA"},' +
@@ -284,6 +298,62 @@ export const serverMockEvents = [
 			'{ "injuryId": 3, "injuryType": "fracture", "position": "left thorax" },' +
 			'{ "injuryId": 3, "injuryType": "blood", "position": "left thorax" }' +
 			']}'
+	},
+	{
+		id: 'action-check',
+		data: `{
+			"messageType": "action-check",
+			"actionCheck": {
+				"actionName": "Beatmungsmaske anlegen",
+				"applicationDuration": 40,
+				"effectDuration": null,
+				"personnel": [
+				{
+					"name": "Ärzte",
+					"available": 1,
+					"assigned": 2,
+					"needed": 2
+				}
+				],
+				"material": [
+				{
+					"name": "Beatmungsmaske",
+					"available": 0,
+					"assigned": 0,
+					"needed": 1
+				}
+				],
+				"labDevices": [
+				{
+					"name": "EKG",
+					"available": 4,
+					"needed": 1
+				}
+				],
+				"requiredActions": {
+				"singleActions": [
+					"Stabile Seitenlage"
+				],
+				"actionGroups": [
+					{
+					"groupName": "Tubus anlegen",
+					"actions": [
+						"Güdeltubus anlegen",
+						"Endotrachealtubus anlegen"
+					]
+					},
+					{
+						"groupName": "",
+						"actions": [
+							"Blutdruck messen",
+							"Infusion anlegen",
+							"Zugang legen"
+						]
+					}
+				]
+				}
+			}
+		}`
 	},
 	...commonMockEvents
 ]
