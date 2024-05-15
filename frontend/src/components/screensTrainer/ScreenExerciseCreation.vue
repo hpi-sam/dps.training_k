@@ -41,7 +41,7 @@
 		<TopBarTrainer />
 		<div class="scroll">
 			<div class="list">
-				<button class="listItemAddButton" @click="addArea()">
+				<button id="add-area-button" class="listItemAddButton" @click="addArea()">
 					Bereich hinzufügen
 				</button>
 				<div

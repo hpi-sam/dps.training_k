@@ -14,6 +14,7 @@
 	import ScreenActions from './screensPatient/ScreenActions.vue'
 	import {computed, ref} from "vue"
 	import ScreenInactive from "@/components/screensPatient/ScreenInactive.vue"
+	import ScreenEnd from "@/components/screensPatient/ScreenEnd.vue"
 
 	export enum ScreenPosition {
 		LEFT = "left",
@@ -25,6 +26,7 @@
 		STATUS = "ScreenStatus",
 		ACTIONS = "ScreenActions",
 		INACTIVE = "ScreenInactive",
+		ENDED = "ScreenEnd",
 	}
 
 	const currentLeftScreen = ref(Screens.STATUS)
@@ -43,6 +45,8 @@
 				return ScreenActions
 			case Screens.INACTIVE:
 				return ScreenInactive
+			case Screens.ENDED:
+				return ScreenEnd
 		}
 	}
 

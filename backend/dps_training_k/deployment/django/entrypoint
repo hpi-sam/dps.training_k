@@ -9,7 +9,9 @@ if [ "${RUN_MIGRATIONS:-0}" = "1" ]; then
     python manage.py migrate
     python manage.py collectstatic --noinput
     python manage.py minimal_actions
-    python manage.py patient_information ./data/patient_information.csv
+    python manage.py minimal_material
+    python manage.py patient_information
+    python manage.py create_debug_exercise
 fi
 
 exec "$@"

@@ -13,33 +13,17 @@ from .mixin import TestUtilsMixin
 class TrainerConsumerTestCase(TransactionTestCase):
     maxDiff = None
 
-    async def test_trainer_consumer_example_request(self):
-        path = "/ws/trainer/"
-        communicator = WebsocketCommunicator(application, path)
-        connected, _ = await communicator.connect()
-        self.assertTrue(connected)
-
-        await communicator.receive_json_from()  # catch available patients
-
-        # Send an "example" request type message to the server
-        await communicator.send_json_to({"messageType": "example", "exerciseId": "123"})
-
-        # Receive and test the response from the server
-        response = await communicator.receive_json_from()
-        self.assertEqual(
-            response, {"messageType": "response", "content": "exerciseId 123"}
-        )
-
-        # Close the connection
-        await communicator.disconnect()
-
     async def test_trainer_handle_create_exercise(self):
+        """
+        trainer consumer responds to exercise-create event by sending an exercise object
+        """
         path = "/ws/trainer/"
         communicator = WebsocketCommunicator(application, path)
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
 
         await communicator.receive_json_from()  # catch available patients
+        await communicator.receive_json_from()  # catch available materials
 
         # Send an "example" request type message to the server
         await communicator.send_json_to({"messageType": "exercise-create"})
@@ -53,12 +37,16 @@ class TrainerConsumerTestCase(TransactionTestCase):
         await communicator.disconnect()
 
     async def test_trainer_consumer_test_passthrough_request(self):
+        """
+        trainer consumer responds to events by sending a test-passthrough event and receiving a response.
+        """
         path = "/ws/trainer/"
         communicator = WebsocketCommunicator(application, path)
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
 
         await communicator.receive_json_from()  # catch available patients
+        await communicator.receive_json_from()  # catch available materials
 
         # Send an "example" request type message to the server
         await communicator.send_json_to({"messageType": "test-passthrough"})
@@ -85,6 +73,9 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
         return ActionInstance.objects.filter(action_template__name=action_name).exists()
 
     async def test_patient_consumer_add_action(self):
+        """
+        sending an action-add event results in the action existing in the database.
+        """
         communicator = await self.create_patient_communicator_and_authenticate()
 
         # receive exercise object
@@ -101,7 +92,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
             }
         )
         # it needs some time for processing, will hang otherwise (assuming it deadlocks)
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
         exists = await self.action_instance_exists(action_name)
         self.assertTrue(

@@ -18,11 +18,13 @@
 			return
 		}
 
-		patientStore.patientId = patientIdNumber
+		const patientId = String(patientIdNumber).padStart(6, '0')
+
+		patientStore.patientId = patientId
 
 		const requestBody = {
 			"exerciseId": exerciseId,
-			"patientId": patientIdNumber,
+			"patientId": patientId,
 		}
 
 		fetch('http://localhost:8000/patient/access', {

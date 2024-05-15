@@ -12,7 +12,7 @@ from unittest.mock import patch
 class ChannelNotifierTestCase(TestCase):
     @patch.object(cn.ChannelNotifier, "_notify_group")
     def test_action_dispatcher(self, notify_group_mock):
-        action_instance = ActionInstanceFactory()
+        action_instance = ActionInstanceFactory(patient_instance=PatientFactory())
         action_instance.current_state = ActionInstanceStateFactory(
             name=ActionInstanceStateNames.FINISHED
         )

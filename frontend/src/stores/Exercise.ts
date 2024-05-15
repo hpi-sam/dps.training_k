@@ -15,7 +15,7 @@ export const useExerciseStore = defineStore('exercise', {
 			}
 		},
 		getAreaOfPatient: (state) => {
-			return (patientId: number): Area | null => {
+			return (patientId: string): Area | null => {
 				return state.areas?.find(area =>
 					area.patients.some(patient => patient.patientId === patientId)
 				) ?? null
@@ -25,7 +25,7 @@ export const useExerciseStore = defineStore('exercise', {
 			return state.areas?.map(area => area.areaName) ?? []
 		},
 		getPatient: (state) => {
-			return (patientId: number): Patient | null => {
+			return (patientId: string): Patient | null => {
 				return state.areas?.find(area =>
 					area.patients.find(patient => patient.patientId === patientId)
 				)?.patients?.find(patient => patient.patientId === patientId) ?? null

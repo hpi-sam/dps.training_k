@@ -1,6 +1,14 @@
 from django.core.management.base import BaseCommand
+
+from template.constants import (
+    ActionIDs,
+    MaterialIDs,
+    RoleIDs,
+    ActionResultIDs,
+    role_map,
+)
 from template.models import Action
-from template.constants import ActionIDs, MaterialIDs, RoleIDs, ActionResultIDs, role_map
+import json
 
 
 class Command(BaseCommand):
@@ -8,7 +16,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.create_actions()
-        self.stdout.write(self.style.SUCCESS("Successfully added data to the database"))
+        self.stdout.write(
+            self.style.SUCCESS("Successfully added minimal actions to the database")
+        )
 
     @staticmethod
     def create_actions():
@@ -29,7 +39,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
-                "results": None,
+                "results": json.dumps({}),
             },
         )
         Action.objects.update_or_create(
@@ -48,7 +58,7 @@ class Command(BaseCommand):
                     "area": None,
                     "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                 },
-                "results": None,
+                "results": json.dumps({}),
             },
         )
         # Examinations
@@ -73,11 +83,41 @@ class Command(BaseCommand):
                         ]
                     ],
                 },
-                "results": {
-                    "Hb": [
-                        {ActionResultIDs.HB420: "Ergebnis1"},
-                        {ActionResultIDs.HB430: "Ergebnis2"},
-                    ]
+                "results": json.dumps(
+                    {
+                        "Hb": [
+                            {ActionResultIDs.HB420: "Ergebnis1"},
+                            {ActionResultIDs.HB430: "Ergebnis2"},
+                        ]
+                    }
+                ),
+            },
+        )
+        # Produce Material
+        Action.objects.update_or_create(
+            name="Fresh Frozen Plasma (0 positiv) auftauen",
+            uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
+            defaults={
+                "category": "PR",
+                "application_duration": 20,
+                "effect_duration": None,
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    ],
                 },
+                "results": json.dumps(
+                    {
+                        "produced_material": {
+                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
+                        }
+                    }
+                ),
             },
         )
