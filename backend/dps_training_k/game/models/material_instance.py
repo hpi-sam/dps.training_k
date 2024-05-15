@@ -38,17 +38,18 @@ class MaterialInstance(models.Model):
                 cls.objects.create(material_template=material_template, area=area)
 
     def try_moving_to(self, obj):
+        from game.models import PatientInstance, Area, Lab
         if self.is_blocked:
             return False
-        if isinstance(obj, models.PatientInstance):
+        if isinstance(obj, PatientInstance):
             self.patient_instance = obj
             self.area = None
             self.lab = None
-        elif isinstance(obj, models.Area):
+        elif isinstance(obj, Area):
             self.patient_instance = None
             self.area = obj
             self.lab = None
-        elif isinstance(obj, models.Lab):
+        elif isinstance(obj, Lab):
             self.patient_instance = None
             self.area = None
             self.lab = obj

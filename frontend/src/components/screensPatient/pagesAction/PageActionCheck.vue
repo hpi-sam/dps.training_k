@@ -205,8 +205,8 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="actionCheckStore?.actionName">
-			<button class="main-button" :disabled="errorMessage.length > 0" @click="addAction()">
+		<div>
+			<button v-if="actionCheckStore?.actionName" class="main-button" :disabled="errorMessage.length > 0" @click="addAction()">
 				Aktion anordnen
 				<p v-if="errorMessage" class="error-message">
 					{{ errorMessage }}

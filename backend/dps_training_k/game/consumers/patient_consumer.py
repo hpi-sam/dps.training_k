@@ -59,11 +59,11 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
                 self.handle_material_release,
-                "material_id",
+                "materialId",
             ),
             self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
                 self.handle_material_assign,
-                "material_id",
+                "materialId",
             ),
         }
 
@@ -130,7 +130,7 @@ class PatientConsumer(AbstractConsumer):
                 )
             action_instance.try_application()
         except:
-            self._send_action_declination(action_instance=action_instance)
+            self._send_action_declination(action_name=action_name)
 
     def handle_action_check(self, action_id):
         stub_action_name = "Recovery Position"
@@ -170,11 +170,11 @@ class PatientConsumer(AbstractConsumer):
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def _send_action_declination(self, action_instance):
+    def _send_action_declination(self, action_name):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
-            actionName=action_instance.name,
-            actionDeclinationReason=action_instance.current_state.info_text,
+            actionName=action_name,
+            actionDeclinationReason="Irgendetwas ist schiefgegangen",
         )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
