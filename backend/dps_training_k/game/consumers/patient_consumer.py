@@ -59,11 +59,11 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
                 self.handle_material_release,
-                "material_id",
+                "materialId",
             ),
             self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
                 self.handle_material_assign,
-                "material_id",
+                "materialId",
             ),
         }
 
