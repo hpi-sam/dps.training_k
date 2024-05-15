@@ -222,7 +222,7 @@ class MaterialInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def delete_and_notify(cls, material, *args, **kwargs):
-        exercise = material.area.exercise
+        exercise = material.attached_instance().exercise
         super(material.__class__, material).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)
 
