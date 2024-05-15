@@ -7,6 +7,7 @@ for i in range(1001, 1042):
         reader = csv.reader(csvfile)
         for row in reader:
             row = [field.replace("\r\n", " ") for field in row]
+            row = [field for field in row if field != 'ml'] # remove ",ml" fields
             row = [field.replace("Bluttstillung", "Blutstillung") for field in row]
             data.append(row)
     with open(filename, mode="w", newline="", encoding="utf-8") as file:

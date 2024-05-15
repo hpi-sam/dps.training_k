@@ -1554,23 +1554,3 @@ class Command(BaseCommand):
                 },
             },
         )
-        Action.objects.update_or_create(
-            name="Enthrozytenkonzentrate (jegliche Blutgruppe) anwenden",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_JEGLICHE_BLUTGRUPPE_ANWENDEN,
-            defaults={
-                "category": "TR",
-                "application_duration": 0,
-                "effect_duration": None,
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
-            },
-        )
