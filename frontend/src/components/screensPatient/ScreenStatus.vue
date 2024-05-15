@@ -20,7 +20,7 @@
 	<div class="flex-container">
 		<nav>
 			<button id="nav-trainer">
-				{{ patientStore.patientId }}
+				{{ patientStore.patientName }}
 			</button>
 			<button
 				id="nav-triage"
