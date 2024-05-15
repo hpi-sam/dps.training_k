@@ -205,7 +205,7 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="actionCheckStore?.actionName">
+		<div>
 			<button class="main-button" :disabled="errorMessage.length > 0" @click="addAction()">
 				Aktion anordnen
 				<p v-if="errorMessage" class="error-message">
