@@ -39,6 +39,7 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.default_arguments = [lambda: PatientInstance.objects.get(frontend_id=self.patient_frontend_id)]
         self.patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
@@ -92,11 +93,13 @@ class PatientConsumer(AbstractConsumer):
             self.send_available_actions()
             self.send_available_patients()
             self.action_list_event(None)
+        else:
+            self.close()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_frontend_id, patient_frontend_id):
+    def handle_example(self, patient_instance, exercise_frontend_id, patient_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
         self.patient_frontend_id = patient_frontend_id
         self.send_event(
@@ -104,36 +107,35 @@ class PatientConsumer(AbstractConsumer):
             content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
         )
 
-    def handle_test_passthrough(self):
+    def handle_test_passthrough(self, patient_instance):
         self.send_event(
             self.PatientOutgoingMessageTypes.TEST_PASSTHROUGH,
             message="received test event",
         )
 
-    def handle_triage(self, triage):
-        patient_instance = self.get_patient_instance
+    def handle_triage(self, patient_instance, triage):
         patient_instance.triage = triage
         patient_instance.save(update_fields=["triage"])
 
-    def handle_action_add(self, action_name):
+    def handle_action_add(self, patient_instance, action_name):
         try:
             action_template = Action.objects.get(name=action_name)
             if action_template.category == Action.Category.PRODUCTION:
                 action_instance = ActionInstance.create(
                     action_template=action_template,
                     lab=self.exercise.lab,
-                    area=self.get_patient_instance.area,
+                    area=patient_instance.area,
                 )
             else:
                 action_instance = ActionInstance.create(
                     action_template=action_template,
-                    patient_instance=self.get_patient_instance,
+                    patient_instance=patient_instance,
                 )
             action_instance.try_application()
         except:
             self._send_action_declination(action_name=action_name)
 
-    def handle_action_check(self, action_id):
+    def handle_action_check(self, patient_instance, action_id):
         stub_action_name = "Recovery Position"
         stub_time = 10
         stub_requirements = [
@@ -150,18 +152,18 @@ class PatientConsumer(AbstractConsumer):
             requirements=stub_requirements,
         )
 
-    def handle_material_release(self, material_id):
+    def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        area = self.get_patient_instance.area
+        area = patient_instance.area
         succeeded = material_instance.try_moving_to(area)
         if not succeeded:
             self.send_failure(
                 message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
             )
 
-    def handle_material_assign(self, material_id):
+    def handle_material_assign(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded = material_instance.try_moving_to(self.get_patient_instance)
+        succeeded = material_instance.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(
                 message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
