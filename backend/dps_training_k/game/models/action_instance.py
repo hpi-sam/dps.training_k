@@ -167,17 +167,9 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        if self.patient_instance:
-            is_applicable, context = self.action_template.application_status(
-                self._available_materials_count(),
-                patient_instance=self.patient_instance,
-                area=self.patient_instance.area,
-            )
-        elif self.lab:
-            is_applicable, context = self.action_template.application_status(
-                self._available_materials_count(),
-                lab=self.lab,
-                area=self.area,
+        is_applicable, context = self.check_conditions_and_block_resources(
+                self.attached_instance(),
+                self.attached_instance()
             )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
@@ -239,18 +231,10 @@ class ActionInstance(LocalTimeable, models.Model):
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
 
-    def _available_materials_count(self):
-        material_types = [
-            material_instance.material_template
-            for material_instance in self._available_materials()
-        ]
-        material_type_occurences = dict(Counter(material_types))
-        return material_type_occurences
-
-    def _available_materials(self):
-        if self.patient_instance:
-            return self.patient_instance.materialinstance_set.filter(is_blocked=False)
-        return self.lab.materialinstance_set.filter(is_blocked=False)
+    def attached_instance(self):
+        return (
+            self.patient_instance or self.lab
+        )  # first not null value determined by short-circuiting
 
     def __str__(self):
         return f"ActionInstance {self.action_template.name} for {self.patient_instance.name + str(self.patient_instance.id) if self.patient_instance else "Lab" + str(self.lab.exercise.frontend_id)}"

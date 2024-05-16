@@ -39,6 +39,40 @@ class Action(UUIDable, models.Model):
         }
         return resources
 
+    def material_needed(self):
+        """
+        :return list of lists: each list entry means that at least
+        one of the materials in the list is needed to perfom this action
+        """
+        if not self.conditions:
+            return None
+        parsed_condition = json.loads(self.conditions)
+        if not "material" in parsed_condition:
+            return None
+        material_uuids = parsed_condition["material"]
+        needed_material_groups = []
+        for material_condition_uuid in material_uuids:
+            if material_condition_uuid is list:
+                needed_material_group = [
+                    Material.objects.get(uuid=uuid.UUID(uuid))
+                    for uuid in material_condition_uuid
+                ]
+                needed_material_groups.append(needed_material_group)
+        needed_single_material = [
+            [Material.objects.get(uuid=uuid.UUID(uuid))]
+            for uuid in material_uuids
+            if uuid is not list
+        ]
+        return needed_material_groups + needed_single_material
+
+    def personnel_count__needed(self):
+        if not self.conditions:
+            return None
+        parsed_condition = json.loads(self.conditions)
+        if not "num_personnel" in parsed_condition:
+            return None
+        return parsed_condition["num_personnel"]
+
     def get_result(self, patient_state_data=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:
             return self.treatment_result(patient_state_data)
@@ -77,12 +111,3 @@ class Action(UUIDable, models.Model):
 
     def lab_result(self, area_materials):
         return "This is a lab result"
-
-    def application_status(
-        self,
-        material_availabilities,
-        lab=None,
-        patient_instance=None,
-        area=None,
-    ):
-        return True, None
