@@ -12,6 +12,7 @@ class Personnel(models.Model):
         "PatientInstance", on_delete=models.SET_NULL, null=True, blank=True
     )
     name = models.CharField(max_length=100, blank=True)
+    is_blocked = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Personnel #{self.id} called {self.name} in area {self.area.name}"
