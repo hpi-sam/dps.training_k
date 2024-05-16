@@ -1,4 +1,3 @@
-from collections import Counter
 from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
@@ -71,7 +70,7 @@ class ActionInstance(LocalTimeable, models.Model):
     area = models.ForeignKey(
         "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
     )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
-    action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
+    template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
@@ -97,7 +96,7 @@ class ActionInstance(LocalTimeable, models.Model):
 
     @property
     def name(self):
-        return self.action_template.name
+        return self.template.name
 
     @property
     def result(self):
@@ -132,7 +131,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None, lab=None):
+    def create(cls, template, patient_instance=None, area=None, lab=None):
         if not patient_instance and not area:
             raise ValueError(
                 "Either patient_instance or lab must be provided - an action instance always need a context"
@@ -142,7 +141,7 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance=patient_instance,
             area=area,
             lab=lab,
-            action_template=action_template,
+            template=template,
             order_id=ActionInstance.generate_order_id(patient_instance),
         )
         action_instance.current_state = ActionInstanceState.objects.create(
@@ -185,7 +184,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.patient_instance:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
-                self.action_template.application_duration,  # ToDo: Replace with scalable local time system
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
                 "_patient_application_finished",
                 action_instance=self,
                 patient_state=self.patient_instance.patient_state.data,
@@ -193,7 +192,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.lab:
             ScheduledEvent.create_event(
                 self.lab.exercise,
-                self.action_template.application_duration,  # ToDo: Replace with scalable local time system
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
                 "_lab_application_finished",
                 action_instance=self,
             )
@@ -203,26 +202,26 @@ class ActionInstance(LocalTimeable, models.Model):
     def _patient_application_finished(self, patient_state):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.action_template.get_result(patient_state),
+            info_text=self.template.get_result(patient_state),
         )
         self._application_finished()
 
     def _lab_application_finished(self):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.action_template.get_result(),
+            info_text=self.template.get_result(),
         )
         self._application_finished()
 
     def _application_finished(self):
-        if self.action_template.produced_resources() != None:
+        if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
-                self.action_template.produced_resources(), self.area
+                self.template.produced_resources(), self.area
             )
-        if self.action_template.effect_duration != None:
+        if self.template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
-                self.action_template.effect_duration,  # ToDo: Replace with scalable local time system
+                self.template.effect_duration,  # ToDo: Replace with scalable local time system
                 "_effect_expired",
                 action_instance=self,
             )

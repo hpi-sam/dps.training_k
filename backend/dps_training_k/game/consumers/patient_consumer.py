@@ -119,13 +119,13 @@ class PatientConsumer(AbstractConsumer):
             action_template = Action.objects.get(name=action_name)
             if action_template.category == Action.Category.PRODUCTION:
                 action_instance = ActionInstance.create(
-                    action_template=action_template,
+                    template=action_template,
                     lab=self.exercise.lab,
                     area=self.patient_instance.area,
                 )
             else:
                 action_instance = ActionInstance.create(
-                    action_template=action_template,
+                    template=action_template,
                     patient_instance=self.patient_instance,
                 )
             action_instance.try_application()
@@ -204,7 +204,7 @@ class PatientConsumer(AbstractConsumer):
         action_instances = ActionInstance.objects.filter(
             Q(patient_instance=self.patient_instance)
             | Q(
-                action_template__category=Action.Category.PRODUCTION,
+                template__category=Action.Category.PRODUCTION,
                 area=self.patient_instance.area,
             )
         )

@@ -32,7 +32,7 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
             "patient_instance",
             "area",
             "lab",
-            "action_template",
+            "template",
             "current_state",
             "order_id",
         )
@@ -40,7 +40,7 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
     patient_instance = None
     area = None
     lab = None
-    action_template = factory.SubFactory(ActionFactory)
+    template = factory.SubFactory(ActionFactory)
     current_state = None
     # gets maximum order id for the associated patient_instance, then adds 1
     # or sets to 1 if no order_id was found for this patient_instance
@@ -68,14 +68,14 @@ class ActionInstanceFactoryWithEffectDuration(factory.django.DjangoModelFactory)
             "patient_instance",
             "area",
             "lab",
-            "action_template",
+            "template",
             "current_state",
         )
 
     patient_instance = None
     area = None
     lab = None
-    action_template = factory.SubFactory(ActionFactoryWithEffectDuration)
+    template = factory.SubFactory(ActionFactoryWithEffectDuration)
     current_state = None
 
     @factory.post_generation

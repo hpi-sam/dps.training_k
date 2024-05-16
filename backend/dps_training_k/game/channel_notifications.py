@@ -125,13 +125,10 @@ class ActionInstanceDispatcher(ChannelNotifier):
             message = f'"{applied_action.name}" wurde gestartet'
         elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
             message = f'"{applied_action.name}" wurde abgeschlossen'
-            if (
-                applied_action.action_template.category
-                == template.Action.Category.PRODUCTION
-            ):
+            if applied_action.template.category == template.Action.Category.PRODUCTION:
                 named_produced_resources = {
                     material.name: amount
-                    for material, amount in applied_action.action_template.produced_resources().items()
+                    for material, amount in applied_action.template.produced_resources().items()
                 }
                 message += f" und hat {str(named_produced_resources)} produziert"
         elif (

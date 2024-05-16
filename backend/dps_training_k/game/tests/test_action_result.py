@@ -56,7 +56,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         """
         action = ActionFactoryWithProduction()
         action_instance = ActionInstanceFactory(
-            action_template=action, lab=LabFactory(), area=AreaFactory()
+            template=action, lab=LabFactory(), area=AreaFactory()
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
