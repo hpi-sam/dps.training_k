@@ -73,6 +73,44 @@ class Action(UUIDable, models.Model):
             return None
         return parsed_condition["num_personnel"]
 
+    def ckeck_conditions_and_suggest_blocking(self, material_owner, personell_owner):
+        """
+        Iff all conditions are met, it suggests which objects to use for this action.
+        Every argument passed needs to return a queryset for their "available"-like methods.
+        This method does not interact with the objects of the queryset, so it makes no assumptions about them
+        :params material_owner: Instance having a material_available method
+        :params personell_owner: Instance having a personell_available method
+        :return bool, list of objects, str: True if all conditions are met, False if not.
+        If True, the list contains all resources the condition wants to use.
+        If false, send a string describing the reason
+        """
+        resources_to_block = []
+        for material_condition_or in self.template.material_needed():
+            for material_condition in material_condition_or:
+                available_materials = material_owner.material_available(
+                    material_condition
+                )
+                if available_materials:
+                    resources_to_block.append(available_materials[0])
+                    break
+                else:
+                    return (
+                        False,
+                        None,
+                        f"A material of the materials {material_condition} is needed but not available.",
+                    )
+
+        available_personnel = personell_owner.personell_available()
+        if available_personnel.count() < self.template.personnel_count__needed():
+            return (
+                False,
+                None,
+                f"{self.template.personnel_count__needed()} personnel are needed but only {available_personnel.count()} are available.",
+            )
+        for i in range(self.template.personnel_count__needed()):
+            resources_to_block.append(available_personnel[i])
+        return True, resources_to_block, None
+
     def get_result(self, patient_state_data=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:
             return self.treatment_result(patient_state_data)
