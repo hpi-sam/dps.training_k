@@ -31,7 +31,7 @@
 			<button
 				id="button"
 				:style="{backgroundColor: props.buttonColor, color: props.buttonTextColor}"
-				@click="emit('button-click')"
+				@click="emit('button-click'); emit('close-popup')"
 			>
 				{{ props.buttonText }}
 			</button>
