@@ -67,54 +67,56 @@
 		:result="currentActionResult"
 		@close-popup="showResultPopup=false"
 	/>
-	<h1>Übersicht</h1>
-	<div class="scroll">
-		<div class="list">
-			<button class="listItemAddButton" @click="emit('add-action')">
-				Aktion hinzufügen
-			</button>
-			<div
-				v-for="action in actionsNotFinished"
-				:key="action.actionId"
-				class="listItem"
-			>
-				<button class="listItemButton" @click="openDeletePopup(action.actionName)">
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="getIconPath(action.actionStatus)" />
-						</svg>
-					</div>
-					<div class="listItemName">
-						{{ action.actionName }}
-					</div>
-					<div class="time">
-						{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
-					</div>
+	<div class="flex-container">
+		<div class="scroll">
+			<h1>Übersicht</h1>
+			<div class="list">
+				<button class="listItemAddButton" @click="emit('add-action')">
+					Aktion hinzufügen
 				</button>
+				<div
+					v-for="action in actionsNotFinished"
+					:key="action.actionId"
+					class="listItem"
+				>
+					<button class="listItemButton" @click="openDeletePopup(action.actionName)">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="getIconPath(action.actionStatus)" />
+							</svg>
+						</div>
+						<div class="listItemName">
+							{{ action.actionName }}
+						</div>
+						<div class="time">
+							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+						</div>
+					</button>
+				</div>
 			</div>
-		</div>
-		<div v-if="actionsFinished.length" class="list">
-			<p>Abgeschlossene Aktionen</p>
-			<div
-				v-for="action in actionsFinished"
-				:key="action.actionId"
-				class="listItem"
-			>
-				<button class="listItemButton" @click="openResultPopup(action.actionName, action.actionResult)">
-					<div class="listItemIcon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="getIconPath(action.actionStatus)" />
-						</svg>
-					</div>
-					<div class="listItemName">
-						{{ action.actionName }}
-					</div>
-					<div v-if="action.actionResult" class="time">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-							<path :d="svg.descriptionIcon" />
-						</svg>
-					</div>
-				</button>
+			<div v-if="actionsFinished.length" class="list">
+				<p>Abgeschlossene Aktionen</p>
+				<div
+					v-for="action in actionsFinished"
+					:key="action.actionId"
+					class="listItem"
+				>
+					<button class="listItemButton" @click="openResultPopup(action.actionName, action.actionResult)">
+						<div class="listItemIcon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="getIconPath(action.actionStatus)" />
+							</svg>
+						</div>
+						<div class="listItemName">
+							{{ action.actionName }}
+						</div>
+						<div v-if="action.actionResult" class="time">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="svg.descriptionIcon" />
+							</svg>
+						</div>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
