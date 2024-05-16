@@ -209,6 +209,27 @@ class SocketTrainer {
 			'speed': speed
 		}))
 	}
+
+	movePatient(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-move',
+			'areaName': areaName,
+		}))
+	}
+
+	movePersonnel(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-move',
+			'areaName': areaName,
+		}))
+	}
+
+	moveMaterial(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'material-move',
+			'areaName': areaName,
+		}))
+	}
 }
 
 const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')

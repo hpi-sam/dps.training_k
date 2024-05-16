@@ -3,7 +3,8 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
 	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
-	import {computed} from 'vue'
+	import {computed,ref} from 'vue'
+	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
 	const ressourceAssignmentStore = useRessourceAssignmentsStore()
@@ -28,9 +29,18 @@
 	function assignMaterial(materialId: number) {
 		socketPatient.assignMaterial(materialId)
 	}
+
+	const showMovePopup = ref(false)
 </script>
 
 <template>
+	<MovePopup
+		v-if="showMovePopup"
+		:module="'Material'"
+		:type-to-move="'Material'"
+		:current-area="patientStore.areaName"
+		@close-popup="showMovePopup=false"
+	/>
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Material</h1>
@@ -42,11 +52,11 @@
 						:key="materialAssignment.materialId"
 						class="listItem"
 					>
-						<div class="listItemButton">
+						<button class="listItemButton" @click="showMovePopup = true">
 							<div class="listItemName">
 								{{ materialAssignment.materialName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
 							Freigeben
 						</button>
@@ -60,11 +70,11 @@
 						:key="materialAssignment.materialId"
 						class="listItem"
 					>
-						<div class="listItemButton">
+						<button class="listItemButton" @click="showMovePopup = true">
 							<div class="listItemName">
 								{{ materialAssignment.materialName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
 							Zuweisen
 						</button>
@@ -78,14 +88,14 @@
 						:key="materialAssignment.materialId"
 						class="listItem"
 					>
-						<div class="listItemButton">
+						<button class="listItemButton" @click="showMovePopup = true">
 							<div class="listItemName">
 								{{ materialAssignment.materialName }}
 							</div>
 							<div class="listItemName assigned-patient">
 								Patient {{ materialAssignment.patientId }}
 							</div>
-						</div>
+						</button>
 					</div>
 				</div>
 			</div>

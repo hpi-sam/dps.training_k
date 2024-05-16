@@ -2,8 +2,9 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
 	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
-	import {computed} from 'vue'
+	import {computed,ref} from 'vue'
 	import socketPatient from '@/sockets/SocketPatient'
+	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
 	const ressourceAssignmentStore = useRessourceAssignmentsStore()
@@ -28,9 +29,18 @@
 	function assignPersonnel(personnelId: number) {
 		socketPatient.assignPersonnel(personnelId)
 	}
+
+	const showMovePopup = ref(false)
 </script>
 
 <template>
+	<MovePopup
+		v-if="showMovePopup"
+		:module="'Patient'"
+		:type-to-move="'Personnel'"
+		:current-area="patientStore.areaName"
+		@close-popup="showMovePopup=false"
+	/>
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Personal</h1>
@@ -42,11 +52,11 @@
 						:key="personnelAssignment.personnelId"
 						class="listItem"
 					>
-						<div class="listItemButton">
+						<button class="listItemButton" @click="showMovePopup = true">
 							<div class="listItemName">
 								{{ personnelAssignment.personnelName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
 							Freigeben
 						</button>
@@ -60,11 +70,11 @@
 						:key="personnelAssignment.personnelId"
 						class="listItem"
 					>
-						<div class="listItemButton">
+						<button class="listItemButton" @click="showMovePopup = true">
 							<div class="listItemName">
 								{{ personnelAssignment.personnelName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
 							Zuweisen
 						</button>
@@ -79,9 +89,9 @@
 						class="listItem"
 					>
 						<div class="listItemButton">
-							<div class="listItemName">
+							<button class="listItemName" @click="showMovePopup = true">
 								{{ personnelAssignment.personnelName }}
-							</div>
+							</button>
 							<div class="listItemName assigned-patient">
 								Patient {{ personnelAssignment.patientId }}
 							</div>

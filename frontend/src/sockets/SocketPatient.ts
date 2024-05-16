@@ -200,6 +200,20 @@ class SocketPatient {
 		}))
 	}
 
+	movePersonnel(areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'personnel-move',
+			'areaName': areaName,
+		}))
+	}
+
+	moveMaterial(areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'material-move',
+			'areaName': areaName,
+		}))
+	}
+
 	actionCheck(actionName: string) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'action-check',
