@@ -34,7 +34,7 @@
 				<button
 					v-for="triageButton in triageButtons"
 					:key="triageButton.char"
-					class="triageButton"
+					class="triage-button"
 					:style="{backgroundColor: getTriageColor(triageButton.color)}"
 					@click="setTriage(triageButton.char)"
 				>
@@ -56,7 +56,7 @@
 		justify-content: center;
 	}
 
-	.triageButton {
+	.triage-button {
 		width: 50px;
 		height: 50px;
         position: relative;

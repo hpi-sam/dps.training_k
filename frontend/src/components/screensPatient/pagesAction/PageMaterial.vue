@@ -40,10 +40,10 @@
 					<div
 						v-for="materialAssignment in assignedMaterial"
 						:key="materialAssignment.materialId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
 						</div>
@@ -58,10 +58,10 @@
 					<div
 						v-for="materialAssignment in freeMaterial"
 						:key="materialAssignment.materialId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
 						</div>
@@ -76,13 +76,13 @@
 					<div
 						v-for="materialAssignment in busyMaterial"
 						:key="materialAssignment.materialId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
-							<div class="listItemName assigned-patient">
+							<div class="list-item-name assigned-patient">
 								Patient {{ materialAssignment.patientId }}
 							</div>
 						</div>
@@ -94,7 +94,7 @@
 </template>
 
 <style scoped>
-	.listItemButton {
+	.list-item-button {
 		padding-right: 0;
 	}
 

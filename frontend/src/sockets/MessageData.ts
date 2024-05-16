@@ -135,6 +135,7 @@ interface LogEntry {
 	areaName: string
 	patientId: string
 	personnelIds: number[]
+	personnelNames: string[]
 	materialNames: string[]
 }
 

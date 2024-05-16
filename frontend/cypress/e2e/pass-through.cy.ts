@@ -19,24 +19,24 @@ describe('pass-through tests', () => {
 
 		cy.get('#create-exercise-button').click()
 		cy.get('#add-area-button').click()
-		cy.get('.listItem').first().find('.listItemButton').click()
+		cy.get('.list-item').first().find('.list-item-button').click()
 		cy.get('#create-patient-button').click()
-		cy.contains('.availablePatientButton', '1001').click()
-		cy.get('#saveButton').click()
+		cy.contains('.available-patient-button', '1001').click()
+		cy.get('#save-button').click()
 		cy.get('.close-button').click()
-		cy.contains('.listItemButton', '1001').should('be.visible')
+		cy.contains('.list-item-button', '1001').should('be.visible')
 
 		cy.get('#nav-exercise-code').invoke('text').then((exerciseId) => {
-			Cypress.env('exerciseId', exerciseId.trim())
+			Cypress.env('exercise-id', exerciseId.trim())
 		})
-		cy.contains('.listItemButton', '1001').find('.listItemId').invoke('text').then((patientId) => {
-			Cypress.env('patientId', patientId.trim())
+		cy.contains('.list-item-button', '1001').find('.list-item-id').invoke('text').then((patientId) => {
+			Cypress.env('patient-id', patientId.trim())
 		})
 	})
 
 	it('patient route passthrough test', () => {
-		cy.get('#patient-login-exercise-id').type(Cypress.env('exerciseId'))
-		cy.get('#patient-login-patient-id').type(Cypress.env('patientId'))
+		cy.get('#patient-login-exercise-id').type(Cypress.env('exercise-id'))
+		cy.get('#patient-login-patient-id').type(Cypress.env('patient-id'))
 		cy.get('#patient-login').click()
 		cy.get('#ps-test').should('be.visible').click()
 		cy.get('.Vue-Toastification__toast-body').should('contain', 'received test event')
