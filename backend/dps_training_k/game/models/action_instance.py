@@ -166,7 +166,9 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        is_applicable, context = self.check_conditions_and_block_resources()
+        is_applicable, context = self.check_conditions_and_block_resources(
+            self.attached_instance, self.attached_instance
+        )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False
@@ -238,17 +240,32 @@ class ActionInstance(LocalTimeable, models.Model):
              if self.patient_instance 
              else "Lab" + str(self.lab.exercise.frontend_id)}"""
 
-    def check_conditions_and_block_resources(self):
+    def check_conditions_and_block_resources(self, material_owner, personell_owner):
         """
-        :return bool, str: If all conditions are met and resources were blocked, True is returned. If not, a string describing the reason is returned.
+        Iff all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
+        Each element of the queryset needs to have an is_blocked field.
+        :params material_owner: Instance having a material_available method
+        :params personell_owner: Instance having a personell_available method
+        :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
         """
-        is_applicable, resources_to_block, failure_message = (
-            self.template.ckeck_conditions_suggest_blocking(
-                self.attached_instance(), self.attached_instance()
-            )
-        )
-        if not is_applicable:
-            return False, failure_message
+        needed_material_groups = self.template.material_needed()
+        resources_to_block = []
+        for material_condition_or in needed_material_groups:
+            for material_condition in material_condition_or:
+                available_materials = material_owner.material_available(
+                    material_condition
+                )
+                if available_materials:
+                    resources_to_block.append(available_materials[0])
+                    break
+                else:
+                    return False, f"No material of {material_condition} available"
+
+        available_personnel = personell_owner.personell_available()
+        if available_personnel.count() < self.template.personnel_count__needed():
+            return False, f"Not enough personnel available"
+        for i in range(self.template.personnel_count__needed()):
+            resources_to_block.append(available_personnel[i])
         for resource in resources_to_block:
             resource.is_blocked = True
             resource.save(update_fields=["is_blocked"])

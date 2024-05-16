@@ -8,6 +8,10 @@ from game.models import (
     ActionInstance,
     ScheduledEvent,
 )
+from game.serializers.action_check_serializers import (
+    PatientInstanceActionCheckSerializer,
+    LabActionCheckSerializer,
+)
 from template.models import Action
 from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
@@ -133,20 +137,18 @@ class PatientConsumer(AbstractConsumer):
             self._send_action_declination(action_name=action_name)
 
     def handle_action_check(self, action_id):
-        stub_action_name = "Recovery Position"
-        stub_time = 10
-        stub_requirements = [
-            {
-                "name": "a recovery position condition",
-                "category": "material",
-                "values": [{"available": 1, "assigned": 1, "needed": 1}],
-            }
-        ]
+        action_template = Action.objects.get(pk=action_id)
+        if action_template.category == Action.Category.PRODUCTION:
+            action_check_message = LabActionCheckSerializer(
+                action_template, self.exercise.lab
+            ).data
+        else:
+            action_check_message = PatientInstanceActionCheckSerializer(
+                action_template, self.patient_instance
+            ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CHECK,
-            actionName=stub_action_name,
-            time=stub_time,
-            requirements=stub_requirements,
+            **action_check_message,
         )
 
     def handle_material_release(self, material_id):
