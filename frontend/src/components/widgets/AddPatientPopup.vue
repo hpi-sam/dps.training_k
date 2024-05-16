@@ -7,6 +7,7 @@
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
 	import CloseButton from "./CloseButton.vue"
+	import { generateName } from "@/utils"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -16,16 +17,6 @@
 			default: 'No Area'
 		},
 	})
-
-	const firstNameList = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
-	const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
-
-	function generateName() {
-		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
-		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
-		return `${firstName} ${surname}`
-	}
-
 
 	const patientName = ref("")
 	patientName.value = generateName()
