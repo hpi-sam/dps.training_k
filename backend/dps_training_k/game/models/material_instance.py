@@ -11,7 +11,7 @@ class MaterialInstance(models.Model):
         ]
 
     action_instance = models.ForeignKey(
-        "ActionInstance", on_delete=models.CASCADE, null=True, blank=True
+        "game.ActionInstance", on_delete=models.CASCADE, null=True, blank=True
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)

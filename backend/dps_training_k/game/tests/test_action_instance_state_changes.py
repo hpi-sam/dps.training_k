@@ -11,10 +11,12 @@ class ActionInstanceStateChangeTestCase(TestUtilsMixin, TestCase):
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
         self.deactivate_notifications()
+        self.deactivate_condition_checking()
 
     def tearDown(self):
         self.get_local_time_patch.stop()
         self.activate_notifications()
+        self.activate_condition_checking()
 
     def test_action_instance_state_changed(self):
         """

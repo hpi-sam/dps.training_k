@@ -167,7 +167,7 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def try_application(self):
         is_applicable, context = self.check_conditions_and_block_resources(
-            self.attached_instance, self.attached_instance
+            self.attached_instance(), self.attached_instance()
         )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
@@ -241,7 +241,7 @@ class ActionInstance(LocalTimeable, models.Model):
              if self.patient_instance 
              else "Lab" + str(self.lab.exercise.frontend_id)}"""
 
-    def check_conditions_and_block_resources(self, material_owner, personell_owner):
+    def check_conditions_and_block_resources(self, material_owner, personnel_owner):
         """
         Iff all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
         Each element of the queryset needs to have a block method.
@@ -250,6 +250,8 @@ class ActionInstance(LocalTimeable, models.Model):
         :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
         """
         needed_material_groups = self.template.material_needed()
+        if not needed_material_groups:
+            needed_material_groups = []
         resources_to_block = []
         for needed_material_group in needed_material_groups:
             for material_condition in needed_material_group:
@@ -262,20 +264,22 @@ class ActionInstance(LocalTimeable, models.Model):
                 else:
                     return False, f"No material of {material_condition} available"
 
-        available_personnel = personell_owner.personell_available()
-        if available_personnel.count() < self.template.personnel_count__needed():
+        available_personnel = personnel_owner.personnel_available()
+        if available_personnel.count() < self.template.personnel_count_needed():
             return False, f"Not enough personnel available"
-        for i in range(self.template.personnel_count__needed()):
+        for i in range(self.template.personnel_count_needed()):
             resources_to_block.append(available_personnel[i])
+        if not resources_to_block:
+            return True, None
         for resource in resources_to_block:
             resource.block(self)
         return True, None
 
     def consume_and_free_resources(self):
-        for material in self.materials.all():
+        for material in self.materialinstance_set.all():
             if material.is_reusable:
                 material.release()
             else:
                 material.consume()
-        for personnel in self.personnel.all():
+        for personnel in self.personnel_set.all():
             personnel.release()

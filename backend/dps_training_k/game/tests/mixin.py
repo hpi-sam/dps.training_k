@@ -67,7 +67,7 @@ class TestUtilsMixin:
         self._deactivate_condition_checking = (
             self._deactivate_condition_checking_patch.start()
         )
-        self.deactivate_condition_checking.return_value = True, None
+        self._deactivate_condition_checking.return_value = (True, None)
 
     def activate_condition_checking(self):
         self._deactivate_condition_checking_patch.stop()

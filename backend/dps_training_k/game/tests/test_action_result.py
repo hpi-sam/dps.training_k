@@ -27,10 +27,12 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
+        self.deactivate_condition_checking()
 
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
         self.activate_notifications()
+        self.activate_condition_checking()
 
     def test_action_examination_result(self):
         """
@@ -117,6 +119,12 @@ class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
             is_reusable=False,
         )
         ActionFactoryWithProduction(application_duration=0)
+        self.deactivate_notifications()
+        self.deactivate_condition_checking()
+
+    def tearDown(self):
+        self.activate_notifications()
+        self.activate_condition_checking()
 
     @mock.patch("game.models.MaterialInstance.generate_materials")
     async def test_action_production_creation(self, generate_materials):

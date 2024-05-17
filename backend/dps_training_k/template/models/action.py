@@ -44,34 +44,38 @@ class Action(UUIDable, models.Model):
         :return list of lists: each list entry means that at least
         one of the materials in the list is needed to perfom this action
         """
-        if not self.conditions:
+        if not self.conditions or not "material" in self.conditions:
             return None
         parsed_condition = json.loads(self.conditions)
-        if not "material" in parsed_condition:
-            return None
         material_uuids = parsed_condition["material"]
+        if not material_uuids:
+            return None
         needed_material_groups = []
         for material_condition_uuid in material_uuids:
-            if material_condition_uuid is list:
+            if isinstance(material_condition_uuid, list):
                 needed_material_group = [
-                    Material.objects.get(uuid=uuid.UUID(uuid))
-                    for uuid in material_condition_uuid
+                    Material.objects.get(uuid=uuid.UUID(material_uuid))
+                    for material_uuid in material_condition_uuid
                 ]
                 needed_material_groups.append(needed_material_group)
         needed_single_material = [
-            [Material.objects.get(uuid=uuid.UUID(uuid))]
-            for uuid in material_uuids
-            if uuid is not list
+            [Material.objects.get(uuid=uuid.UUID(material_uuid))]
+            for material_uuid in material_uuids
+            if not isinstance(material_uuid, list)
         ]
         return needed_material_groups + needed_single_material
 
-    def personnel_count__needed(self):
+    def personnel_count_needed(self):
         if not self.conditions:
-            return None
+            return 0
         parsed_condition = json.loads(self.conditions)
         if not "num_personnel" in parsed_condition:
-            return None
-        return parsed_condition["num_personnel"]
+            return 0
+        return (
+            parsed_condition["num_personnel"]
+            if parsed_condition["num_personnel"]
+            else 0
+        )
 
     def get_result(self, patient_state_data=None, area_materials=None):
         if self.category == Action.Category.TREATMENT:

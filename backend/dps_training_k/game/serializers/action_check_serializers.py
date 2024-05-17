@@ -37,7 +37,7 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
                 "name": "Beliebiges Personal",
                 "available": self.patient_instance.personnel_available(),
                 "assigned": self.patient_instance.personel_assigned(),
-                "needed": self.action.personnel_count__needed(),
+                "needed": self.action.personnel_count_needed(),
             }
         ]
 
@@ -70,7 +70,7 @@ class LabActionCheckSerializer(ActionCheckSerializer):
                 "name": "Beliebiges Personal",
                 "available": self.lab.personnel_available(),
                 "assigned": self.lab.personel_assigned(),
-                "needed": self.action.personnel_count__needed(),
+                "needed": self.action.personnel_count_needed(),
             }
         ]
 

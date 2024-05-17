@@ -10,5 +10,5 @@ class PersonnelFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("name", "area", "assigned_patient")
 
     name = "Maxim Musterfrau"
-    area = AreaFactory()
+    area = factory.SubFactory(AreaFactory)
     assigned_patient = None
