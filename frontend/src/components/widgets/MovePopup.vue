@@ -47,13 +47,19 @@ import socketTrainer from "@/sockets/SocketTrainer";
 		}
 		emit('close-popup')
 	}
+
+	const title = computed(() => {
+		if (props.typeToMove === 'Personnel') return 'Personal verlegen'
+		if (props.typeToMove === 'Material') return 'Material verlegen'
+		return 'Kein Typ ausgewählt'
+	})
 </script> 
 <template>
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<CloseButton @close="emit('close-popup')" />
 			<div class="scroll">
-				<h2>{{ typeToMove }} verlegen</h2>
+				<h2>{{ title }}</h2>
 				<div class="list">
 					<div
 						v-for="areaName in areas"
