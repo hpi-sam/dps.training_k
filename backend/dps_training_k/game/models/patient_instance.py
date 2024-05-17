@@ -128,14 +128,14 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def material_available(self, material_template):
         return self.material_set.filter(
-            material_template=material_template, is_blocked=False
+            material_template=material_template, action_instance=None
         )
 
     def personel_assigned(self):
         return self.personell_set.filter()
 
     def personnel_available(self):
-        return self.personell_set.filter(is_blocked=False)
+        return self.personell_set.filter(action_instance=None)
 
     def is_dead(self):
         if self.patient_state.is_dead:

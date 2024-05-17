@@ -55,7 +55,7 @@ class TestUtilsMixin:
             "game.channel_notifications.ChannelNotifier.save_and_notify",
             new=custom_save_and_notify,
         )
-        save_and_notify = self._deactivate_notifications_patch.start()
+        self._deactivate_notifications_patch.start()
 
     def activate_notifications(self):
         self._deactivate_notifications_patch.stop()

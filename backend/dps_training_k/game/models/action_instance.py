@@ -243,7 +243,7 @@ class ActionInstance(LocalTimeable, models.Model):
     def check_conditions_and_block_resources(self, material_owner, personell_owner):
         """
         Iff all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
-        Each element of the queryset needs to have an is_blocked field.
+        Each element of the queryset needs to have a block method.
         :params material_owner: Instance having a material_available method
         :params personell_owner: Instance having a personell_available method
         :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
@@ -267,6 +267,5 @@ class ActionInstance(LocalTimeable, models.Model):
         for i in range(self.template.personnel_count__needed()):
             resources_to_block.append(available_personnel[i])
         for resource in resources_to_block:
-            resource.is_blocked = True
-            resource.save(update_fields=["is_blocked"])
+            resource.block(self)
         return True, None

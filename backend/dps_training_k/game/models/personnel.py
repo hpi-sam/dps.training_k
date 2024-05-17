@@ -12,10 +12,20 @@ class Personnel(models.Model):
         "PatientInstance", on_delete=models.SET_NULL, null=True, blank=True
     )
     name = models.CharField(max_length=100, blank=True)
-    is_blocked = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Personnel #{self.id} called {self.name} in area {self.area.name}"
+    def block(self, action_instance):
+        self.action_instance = action_instance
+        self.save(update_fields=["action_instance"])
+
+    def release(self):
+        self.action_instance = None
+        self.save(update_fields=["action_instance"])
+
+    def is_blocked(self):
+        return self.action_instance is not None
+
+    def delete(self, using=None, keep_parents=False):
+        PersonnelDispatcher.delete_and_notify(self)
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields", None)
@@ -26,5 +36,5 @@ class Personnel(models.Model):
             self.name = f"Personnel {self.id}"
             self.save(update_fields=["name"])
 
-    def delete(self, using=None, keep_parents=False):
-        PersonnelDispatcher.delete_and_notify(self)
+    def __str__(self):
+        return f"Personnel #{self.id} called {self.name} in area {self.area.name}"

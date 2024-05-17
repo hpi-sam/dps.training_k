@@ -12,7 +12,7 @@ class Lab(models.Model):
 
     def material_available(self, material_template):
         return self.material_set.filter(
-            material_template=material_template, is_blocked=False
+            material_template=material_template, action_instance=None
         )
 
     def personel_assigned(self):
