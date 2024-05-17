@@ -71,7 +71,7 @@ class PatientConsumer(AbstractConsumer):
     @property
     def get_patient_instance(self):
         # this enforces that we always work with up to date data from the database
-        # if you want to update values, save the instance this function returns and work with that.
+        # if you want to update values, copy the instance this function returns and work with that.
         self.patient_instance.refresh_from_db()
         return self.patient_instance
 

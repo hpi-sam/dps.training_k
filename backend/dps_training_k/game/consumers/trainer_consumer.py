@@ -131,6 +131,7 @@ class TrainerConsumer(AbstractConsumer):
             content=f"exerciseId {self.exercise_frontend_id}",
         )
 
+    # here, the exercise argument is None
     def handle_create_exercise(self, exercise):
         self.exercise = Exercise.createExercise()
         self.exercise_frontend_id = self.exercise.frontend_id
