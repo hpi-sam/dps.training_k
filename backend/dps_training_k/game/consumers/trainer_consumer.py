@@ -41,6 +41,11 @@ class TrainerConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.default_arguments = [lambda: (
+            Exercise.objects.get(frontend_id=self.exercise_frontend_id)
+            if self.exercise_frontend_id
+            else None
+        )]
         self.exercise_frontend_id = None
         self.exercise = None
         self.REQUESTS_MAP = {
@@ -119,55 +124,57 @@ class TrainerConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_frontend_id):
+    def handle_example(self, exercise, exercise_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
         self.send_event(
             self.TrainerOutgoingMessageTypes.RESPONSE,
             content=f"exerciseId {self.exercise_frontend_id}",
         )
 
-    def handle_create_exercise(self):
+    # here, the exercise argument is None
+    def handle_create_exercise(self, exercise):
         self.exercise = Exercise.createExercise()
+        self.exercise_frontend_id = self.exercise.frontend_id
         self._send_exercise(self.exercise)
         self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.subscribe(LogEntryDispatcher.get_group_name(self.exercise))
 
-    def handle_test_passthrough(self):
+    def handle_test_passthrough(self, exercise):
         self.send_event(
             self.TrainerOutgoingMessageTypes.TEST_PASSTHROUGH,
             message="received test event",
         )
 
-    def handle_start_exercise(self):
-        owned_patients = PatientInstance.objects.filter(exercise=self.exercise)
+    def handle_start_exercise(self, exercise):
+        owned_patients = PatientInstance.objects.filter(exercise=exercise)
         for patient in owned_patients:
             # patient.schedule_state_change() ToDo: Uncomment once Patient State is integrated
             pass
-        self.exercise.update_state(Exercise.StateTypes.RUNNING)
+        exercise.update_state(Exercise.StateTypes.RUNNING)
 
-    def handle_end_exercise(self):
-        self.exercise.update_state(Exercise.StateTypes.FINISHED)
-        self.exercise.delete()
+    def handle_end_exercise(self, exercise):
+        exercise.update_state(Exercise.StateTypes.FINISHED)
+        exercise.delete()
 
-    def handle_pause_exercise(self):
+    def handle_pause_exercise(self, exercise):
         pass
 
-    def handle_resume_exercise(self):
+    def handle_resume_exercise(self, exercise):
         pass
 
-    def handle_add_area(self):
-        Area.create_area(name="Bereich", exercise=self.exercise, isPaused=False)
+    def handle_add_area(self, exercise):
+        Area.create_area(name="Bereich", exercise=exercise, isPaused=False)
 
-    def handle_delete_area(self, areaName):
+    def handle_delete_area(self, exercise, areaName):
         try:
-            area = Area.objects.get(exercise=self.exercise, name=areaName)
+            area = Area.objects.get(exercise=exercise, name=areaName)
             area.delete()
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the name '{areaName}'",
             )
 
-    def handle_add_patient(self, areaName, patientName, code):
+    def handle_add_patient(self, exercise, areaName, patientName, code):
         try:
             area = Area.objects.get(name=areaName)
             patient_information = PatientInformation.objects.get(code=code)
@@ -187,14 +194,14 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the name '{areaName}'",
             )
 
-    def handle_update_patient(self, patientFrontendId, patientName, code):
+    def handle_update_patient(self, exercise, patientFrontendId, patientName, code):
         patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
         patient_information = PatientInformation.objects.get(code=code)
         patient.name = patientName
         patient.static_information = patient_information
         patient.save(update_fields=["name", "static_information"])
 
-    def handle_delete_patient(self, patientFrontendId):
+    def handle_delete_patient(self, exercise, patientFrontendId):
         try:
             patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
             patient.delete()
@@ -203,7 +210,7 @@ class TrainerConsumer(AbstractConsumer):
                 f"No patient found with the patientId '{patientFrontendId}'",
             )
 
-    def handle_add_personnel(self, areaName):
+    def handle_add_personnel(self, exercise, areaName):
         try:
             area = Area.objects.get(name=areaName)
             Personnel.objects.create(area=area)
@@ -216,12 +223,12 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the name '{areaName}'",
             )
 
-    def handle_update_personnel(self, personnelId, personnelName):
+    def handle_update_personnel(self, exercise, personnelId, personnelName):
         personnel = Personnel.objects.get(id=personnelId)
         personnel.name = personnelName
         personnel.save()
 
-    def handle_delete_personnel(self, personnel_id):
+    def handle_delete_personnel(self, exercise, personnel_id):
         try:
             personnel = Personnel.objects.get(id=personnel_id)
             personnel.delete()
@@ -230,12 +237,12 @@ class TrainerConsumer(AbstractConsumer):
                 f"No personnel found with the pk '{personnel_id}'",
             )
 
-    def handle_add_material(self, areaName, materialName):
+    def handle_add_material(self, exercise, areaName, materialName):
         area = Area.objects.get(name=areaName)
         material_template = Material.objects.get(name=materialName)
         MaterialInstance.objects.create(material_template=material_template, area=area)
 
-    def handle_delete_material(self, materialId):
+    def handle_delete_material(self, exercise, materialId):
         try:
             material = MaterialInstance.objects.get(id=materialId)
             material.delete()
@@ -244,8 +251,8 @@ class TrainerConsumer(AbstractConsumer):
                 f"No material found with the pk '{materialId}'",
             )
 
-    def send_past_logs(self):
-        log_entry_objects = LogEntry.objects.filter(exercise=self.exercise)
+    def send_past_logs(self, exercise):
+        log_entry_objects = LogEntry.objects.filter(exercise=exercise)
         log_entry_objects = filter(
             lambda log_entry: log_entry.is_valid(), log_entry_objects
         )
