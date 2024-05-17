@@ -59,3 +59,15 @@ class TestUtilsMixin:
 
     def activate_notifications(self):
         self._deactivate_notifications_patch.stop()
+
+    def deactivate_condition_checking(self):
+        self._deactivate_condition_checking_patch = patch(
+            "game.models.ActionInstance.check_conditions_and_block_resources"
+        )
+        self._deactivate_condition_checking = (
+            self._deactivate_condition_checking_patch.start()
+        )
+        self.deactivate_condition_checking.return_value = True, None
+
+    def activate_condition_checking(self):
+        self._deactivate_condition_checking_patch.stop()

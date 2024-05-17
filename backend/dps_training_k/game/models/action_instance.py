@@ -217,6 +217,7 @@ class ActionInstance(LocalTimeable, models.Model):
             MaterialInstance.generate_materials(
                 self.template.produced_resources(), self.area
             )
+        self.consume_and_free_resources()
         if self.template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
@@ -250,8 +251,8 @@ class ActionInstance(LocalTimeable, models.Model):
         """
         needed_material_groups = self.template.material_needed()
         resources_to_block = []
-        for material_condition_or in needed_material_groups:
-            for material_condition in material_condition_or:
+        for needed_material_group in needed_material_groups:
+            for material_condition in needed_material_group:
                 available_materials = material_owner.material_available(
                     material_condition
                 )
@@ -269,3 +270,12 @@ class ActionInstance(LocalTimeable, models.Model):
         for resource in resources_to_block:
             resource.block(self)
         return True, None
+
+    def consume_and_free_resources(self):
+        for material in self.materials.all():
+            if material.is_reusable:
+                material.release()
+            else:
+                material.consume()
+        for personnel in self.personnel.all():
+            personnel.release()
