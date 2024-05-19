@@ -1,5 +1,4 @@
 <script setup lang="ts">
-	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
 	import {useLogStore} from "@/stores/Log"
 	import LogPopup from "../widgets/LogPopup.vue"
 	import {ref} from "vue"
@@ -19,7 +18,6 @@
 <template>
 	<LogPopup v-if="showPopup" :log-id="currentLogId" @close-popup="showPopup=false" />
 	<div class="flex-container">
-		<TopBarTrainer />
 		<h1>Log</h1>
 		<div class="scroll">
 			<div class="list">
