@@ -10,12 +10,12 @@ class MaterialInstanceFactory(factory.django.DjangoModelFactory):
             "action_instance",
             "area",
             "lab",
-            "material_template",
+            "template",
             "patient_instance",
         ]
 
     action_instance = None
     area = None
     lab = None
-    material_template = factory.SubFactory(MaterialFactory)
+    template = factory.SubFactory(MaterialFactory)
     patient_instance = None

@@ -1,6 +1,7 @@
 import uuid
 from unittest.mock import patch
 from django.test import TestCase
+from django.core.exceptions import ObjectDoesNotExist
 from template.tests.factories import MaterialFactory, ConditionFactory, ActionFactory
 from .factories import (
     ActionInstanceFactory,
@@ -8,6 +9,7 @@ from .factories import (
     PatientFactory,
     PersonnelFactory,
 )
+from ..models import MaterialInstance
 from .mixin import TestUtilsMixin
 
 
@@ -39,7 +41,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         ActionInstances with empty conditions may always be applied
         """
         action_template = ActionFactory(conditions=self._empty_material_condition)
-        self.assertIsNone(action_template.material_needed())
+        self.assertEqual(action_template.material_needed(), [])
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
         )
@@ -55,7 +57,6 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         Each group of the material condition is satisfied by at least one material. The personnel condition is satisfied.
         """
         action_template = ActionFactory(conditions=self.material_personnel_condition)
-        print(action_template.material_needed())
         self.assertIn(
             [self.material_1, self.material_2], action_template.material_needed()
         )
@@ -71,15 +72,15 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(conditions_satisfied, False)
         personnel = PersonnelFactory(assigned_patient=action_instance.patient_instance)
         material_instance_1 = MaterialInstanceFactory(
-            material_template=self.material_1,
+            template=self.material_1,
             patient_instance=action_instance.patient_instance,
         )
         material_instance_2 = MaterialInstanceFactory(
-            material_template=self.material_2,
+            template=self.material_2,
             patient_instance=action_instance.patient_instance,
         )
         material_instance_3 = MaterialInstanceFactory(
-            material_template=self.material_3,
+            template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
         conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
@@ -97,15 +98,15 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         )
         personnel = PersonnelFactory(assigned_patient=action_instance.patient_instance)
         material_instance_1 = MaterialInstanceFactory(
-            material_template=self.material_1,
+            template=self.material_1,
             patient_instance=action_instance.patient_instance,
         )
         material_instance_2 = MaterialInstanceFactory(
-            material_template=self.material_2,
+            template=self.material_2,
             patient_instance=action_instance.patient_instance,
         )
         material_instance_3 = MaterialInstanceFactory(
-            material_template=self.material_3,
+            template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
         conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
@@ -119,3 +120,41 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         self.assertTrue(material_instance_3.is_blocked())
         self.assertFalse(material_instance_2.is_blocked())
         self.assertTrue(personnel.is_blocked())
+
+    def test_consuming_freeing_resources(self):
+        """
+        After an action is finished, the materials and personnel used for the action are freed. Consumable materials are deleted.
+        """
+        action_template = ActionFactory(conditions=self.material_personnel_condition)
+        action_instance = ActionInstanceFactory(
+            template=action_template, patient_instance=PatientFactory()
+        )
+        personnel = PersonnelFactory(assigned_patient=action_instance.patient_instance)
+        self.material_1.is_reusable = False
+        self.material_1.save(update_fields=["is_reusable"])
+
+        material_instance_1 = MaterialInstanceFactory(
+            template=self.material_1,
+            patient_instance=action_instance.patient_instance,
+        )
+        material_instance_2 = MaterialInstanceFactory(
+            template=self.material_2,
+            patient_instance=action_instance.patient_instance,
+        )
+        material_instance_3 = MaterialInstanceFactory(
+            template=self.material_3,
+            patient_instance=action_instance.patient_instance,
+        )
+        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
+            action_instance.attached_instance(), action_instance.attached_instance()
+        )
+        action_instance.consume_and_free_resources()
+        self.assertRaises(
+            ObjectDoesNotExist, MaterialInstance.objects.get, pk=material_instance_1.id
+        )
+        material_instance_2.refresh_from_db()
+        material_instance_3.refresh_from_db()
+        personnel.refresh_from_db()
+        self.assertFalse(material_instance_3.is_blocked())
+        self.assertFalse(material_instance_2.is_blocked())
+        self.assertFalse(personnel.is_blocked())

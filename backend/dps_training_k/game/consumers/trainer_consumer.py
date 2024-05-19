@@ -232,8 +232,8 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_material(self, areaName, materialName):
         area = Area.objects.get(name=areaName)
-        material_template = Material.objects.get(name=materialName)
-        MaterialInstance.objects.create(material_template=material_template, area=area)
+        template = Material.objects.get(name=materialName)
+        MaterialInstance.objects.create(template=template, area=area)
 
     def handle_delete_material(self, materialId):
         try:

@@ -15,14 +15,14 @@ class MaterialInstance(models.Model):
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
-    material_template = models.ForeignKey("template.Material", on_delete=models.CASCADE)
+    template = models.ForeignKey("template.Material", on_delete=models.CASCADE)
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, null=True, blank=True
     )
 
     @property
     def name(self):
-        return self.material_template.name
+        return self.template.name
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
@@ -35,13 +35,13 @@ class MaterialInstance(models.Model):
 
     @property
     def is_reusable(self):
-        return self.material_template.is_reusable
+        return self.template.is_reusable
 
     @classmethod
     def generate_materials(cls, materials_recipe, area):
-        for material_template, amount in materials_recipe.items():
+        for template, amount in materials_recipe.items():
             for _ in range(amount):
-                cls.objects.create(material_template=material_template, area=area)
+                cls.objects.create(template=template, area=area)
 
     def try_moving_to(self, obj):
         from game.models import PatientInstance, Area, Lab
