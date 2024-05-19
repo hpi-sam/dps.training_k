@@ -48,7 +48,7 @@ export const commonMockEvents = [
 				"personalDetails": "Helena Raedder 15.03.1964 Albert-Einstein-Str. 34, 06122 Halle",
 				"injury": "ca. 8 cm gro\u00dfe, weit klaffende Kopfplatzwunde re. temporal, blutet noch; im Wundgrund vermutlich Knochensplitter sichtbar.",
 				"biometrics": "weiblich; ca. 52; blond, braune Augen, Brille, 1,82 m",
-				"triage": "G",
+				"triage": "3",
 				"consecutiveUniqueNumber": 5225,
 				"mobility": "initial gehf\u00e4hig",
 				"preexistingIllnesses": "funktionelle Herzbeschwerden; beginnender Bechterew",
@@ -84,7 +84,7 @@ export const commonMockEvents = [
 				"personalDetails": "Birgit Bauer 06.08.1958 Am Weidenbach 25, 53229 Bonn",
 				"injury": "geschlossene Oberschenkelfraktur bds.; gro\u00dfe Weichteilquetschung Unterschenkel re.; instabiler Thorax re. lateral; Prellmarken Becken, Becken aber stabil; SHT mit Kopfplatzwunde occipital",
 				"biometrics": "weiblich; ca. 58; blaue Augen, grauhaarig, 163 cm",
-				"triage": "R",
+				"triage": "1",
 				"consecutiveUniqueNumber": 6623,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "nicht bekannt",
@@ -96,7 +96,7 @@ export const commonMockEvents = [
 				"personalDetails": "Petra Stelzyk 18.10.1959 Feldm\u00fchlestra\u00dfe 24, 53859 Niederkassel",
 				"injury": "gro\u00dfe Prellmarke rechte Flanke; Abdomen gespannt; H\u00e4matom Unterbauch",
 				"biometrics": "weiblich; ca. 57; schwarzhaarig, 1,79 m, blaue Augen",
-				"triage": "R",
+				"triage": "1",
 				"consecutiveUniqueNumber": 1616,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "Hypertonie; Diab. Mell.",
@@ -108,7 +108,7 @@ export const commonMockEvents = [
 				"personalDetails": "Ludger G\u00f6hlke 11.05.1938 K\u00f6nigswall 15, 44137 Dortmund",
 				"injury": "rechte Clavikula lateral 3-gradig offen frakturiert; gro\u00dfe Sch\u00fcrfwunde proximaler Oberarm re.; instabiler Thorax re.; gro\u00dfe Sch\u00fcrfwunde rechter Thorax, nur noch wenig blutend",
 				"biometrics": "m\u00e4nnlich; ca. 78; schwarzgraue Haare, gr\u00fcne Augen, 1,69 m",
-				"triage": "R",
+				"triage": "1",
 				"consecutiveUniqueNumber": 3443,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "verm. Infarkt v. 4 J.",
@@ -144,7 +144,7 @@ export const commonMockEvents = [
 				"personalDetails": "Lena Krings 20.09.1954 Altenessener Str. 606, 45329 Essen",
 				"injury": "Druckschmerz \u00fcber der HWS c2-4; leichte Kribbelpar\u00e4sthesien in beiden H\u00e4nden, Kraft oB.; Haut intakt",
 				"biometrics": "weiblich; ca. 62; blaue Augen, blond, 1,68, extrem adip\u00f6s",
-				"triage": "G",
+				"triage": "3",
 				"consecutiveUniqueNumber": 7754,
 				"mobility": "initial gehf\u00e4hig",
 				"preexistingIllnesses": "Hashimoto-Thyreoiditis",
@@ -156,7 +156,7 @@ export const commonMockEvents = [
 				"personalDetails": "Herrmann Miller 26.10.1942 Trankgasse 11, 50667 K\u00f6ln",
 				"injury": "Sch\u00fcrfwunden an beiden Beinen, kann nicht auftreten; Platzwunde Ellenbogen li.",
 				"biometrics": "m\u00e4nnlich; ca. 74; schwarzgraue Haare, braune Augen, 179 cm",
-				"triage": "G",
+				"triage": "3",
 				"consecutiveUniqueNumber": 2725,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "COPD; Hyperlipid\u00e4mie; postthrombotisches Syndrom re.",
@@ -168,7 +168,7 @@ export const commonMockEvents = [
 				"personalDetails": "Christopher Krings 16.07.1961 Altenessener Str. 606, 45329 Essen",
 				"injury": "gro\u00dfe Holzsplitter in beiden H\u00e4nden; gro\u00dfe Quetschwunde mit Holzsp\u00e4nen rechter Unterschenkel",
 				"biometrics": "m\u00e4nnlich; ca. 55; blond, blaugraue Augen, Brille, 1,80 m",
-				"triage": "G",
+				"triage": "3",
 				"consecutiveUniqueNumber": 4543,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "keine",
@@ -180,7 +180,7 @@ export const commonMockEvents = [
 				"personalDetails": "Heide Kr\u00f6mer 07.06.1993 Freiherr-von-Stein-Str. 211, 45133 Essen",
 				"injury": "Fehlstellung Unterarm links; ca 1 cm lange Prellmarke an der Stirn",
 				"biometrics": "weiblich; ca. 23; blaue Augen, blond, 174 cm",
-				"triage": "G",
+				"triage": "3",
 				"consecutiveUniqueNumber": 7747,
 				"mobility": "initial gehf\u00e4hig",
 				"preexistingIllnesses": "App. vor 4 J; allergisches Asthma",
@@ -192,7 +192,7 @@ export const commonMockEvents = [
 				"personalDetails": "Nezrin Azzouni 17.07.1941 Rudolf-Diesel-Stra\u00dfe 32, 51149 K\u00f6ln",
 				"injury": "ca 5 cm lange verschmutzte Kopfplatzwunde temporal re.",
 				"biometrics": "m\u00e4nnlich; ca. 75; graublond, blaue Augen, 180 cm",
-				"triage": "G",
+				"triage": "3",
 				"consecutiveUniqueNumber": 8852,
 				"mobility": "initial gehf\u00e4hig",
 				"preexistingIllnesses": "Apoplex vor 12 J. ohne Residuen; Colon-CA vor 4 J.; Diab. Mell.",
@@ -204,7 +204,7 @@ export const commonMockEvents = [
 				"personalDetails": "Freddy Schulze 16.02.1957 Am Dinaswerk 4a, 53179 Bad Godesberg",
 				"injury": "starke Schwellung im re. Sprunggelenk; Fehlstellung im Handgelenk li.; Sch\u00fcrfwunden linker Arm; DMS Hand und Fu\u00df oB.",
 				"biometrics": "m\u00e4nnlich; ca. 59; schwarzhaarig, Brille, braune Augen, ca. 170 cm",
-				"triage": "Y",
+				"triage": "2",
 				"consecutiveUniqueNumber": 1645,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "Depressionen; Hypertonie",
@@ -216,7 +216,7 @@ export const commonMockEvents = [
 				"personalDetails": "Eric Weilandt 06.07.1967 Moltkestr. 43, 53173 Bonn",
 				"injury": "Monokelh\u00e4matom rechts; Prellung Nasenbein; occipitale Kopfplatzwunde; offene Sprunggelenks# li.;",
 				"biometrics": "m\u00e4nnlich; ca. 49; Glatze, braune Augen, 1,76 m",
-				"triage": "Y",
+				"triage": "2",
 				"consecutiveUniqueNumber": 8235,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "Prostatahypertrophie; vor 10 d beginnende Pneumonie, antibiotisch behandelt",
@@ -228,7 +228,7 @@ export const commonMockEvents = [
 				"personalDetails": "Gundula Stra\u00dfen 24.02.1953 Eschweiler Stra\u00dfe 2, 50354 H\u00fcrth",
 				"injury": "Schulterprellung re.; geschlossene OA# re mit massivem H\u00e4matom; Unterschenkelquetschung re.; Prellmarke Becken re.",
 				"biometrics": "weiblich; ca. 63; braune Augen, braunhaarig, 1,82 m",
-				"triage": "Y",
+				"triage": "2",
 				"consecutiveUniqueNumber": 5482,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "Epilepsie, medikament\u00f6s gut eingestellt; Psoriasis; M. Crohn",
@@ -240,7 +240,7 @@ export const commonMockEvents = [
 				"personalDetails": "Danuta Krings 30.11.1955 Altenessener Str. 606, 45329 Essen",
 				"injury": "Oberschenkelschaft# re.; Sch\u00fcrfwunden beide Arme; Prellmarken H\u00fcfte re.",
 				"biometrics": "weiblich; ca. 60; braune Haare, braune Augen, 1,77 m",
-				"triage": "Y",
+				"triage": "2",
 				"consecutiveUniqueNumber": 2285,
 				"mobility": "initial nicht gehf\u00e4hig",
 				"preexistingIllnesses": "Hepatitis C; Hyperlipid\u00e4mie",
@@ -507,8 +507,8 @@ export const commonMockEvents = [
 		data: '{"messageType":"exercise","exercise":{"exerciseId":"abcdef","areas":[' +
 			'{"areaName":"Intensiv",' +
 				'"patients":[' +
-					'{"patientId":"145345","patientName":"Anna Müller","code":1007,"triage":"R"},' +
-					'{"patientId":"256443","patientName":"Frank Huber","code":1008,"triage":"R"}' +
+					'{"patientId":"145345","patientName":"Anna Müller","code":1007,"triage":"1"},' +
+					'{"patientId":"256443","patientName":"Frank Huber","code":1008,"triage":"1"}' +
 				'],' +
 				'"personnel":[' +
 					'{"personnelId":10,"personnelName":"Sebastian Lieb"},' +
@@ -523,17 +523,17 @@ export const commonMockEvents = [
 			'},' +
 			'{"areaName":"ZNA",' +
 				'"patients":[' +
-					'{"patientId":"123456","patientName":"Ludger Göhlke","code":1009,"triage":"R"},' +
-					'{"patientId":"623422","patientName":"Friedrich Gerhard","code":1007,"triage":"R"},' +
-					'{"patientId":"754262","patientName":"Hans Schmidt","code":1017,"triage":"Y"},' +
-					'{"patientId":"836545","patientName":"Johannes Müller","code":1018,"triage":"Y"},' +
-					'{"patientId":"963733","patientName":"Sophie Schneider","code":1019,"triage":"Y"},' +
-					'{"patientId":"105626","patientName":"Lisa Fischer","code":1020,"triage":"Y"},' +
-					'{"patientId":"126541","patientName":"Julia Meyer","code":1004,"triage":"G"},' +
-					'{"patientId":"526612","patientName":"Max Weber","code":1012,"triage":"G"},' +
-					'{"patientId":"256413","patientName":"Lukas Wagner","code":1013,"triage":"G"},' +
-					'{"patientId":"145664","patientName":"Laura Becker","code":1014,"triage":"G"},' +
-					'{"patientId":"157242","patientName":"Anna Schäfer","code":1015,"triage":"G"}' +
+					'{"patientId":"123456","patientName":"Ludger Göhlke","code":1009,"triage":"1"},' +
+					'{"patientId":"623422","patientName":"Friedrich Gerhard","code":1007,"triage":"1"},' +
+					'{"patientId":"754262","patientName":"Hans Schmidt","code":1017,"triage":"2"},' +
+					'{"patientId":"836545","patientName":"Johannes Müller","code":1018,"triage":"2"},' +
+					'{"patientId":"963733","patientName":"Sophie Schneider","code":1019,"triage":"2"},' +
+					'{"patientId":"105626","patientName":"Lisa Fischer","code":1020,"triage":"2"},' +
+					'{"patientId":"126541","patientName":"Julia Meyer","code":1004,"triage":"3"},' +
+					'{"patientId":"526612","patientName":"Max Weber","code":1012,"triage":"3"},' +
+					'{"patientId":"256413","patientName":"Lukas Wagner","code":1013,"triage":"3"},' +
+					'{"patientId":"145664","patientName":"Laura Becker","code":1014,"triage":"3"},' +
+					'{"patientId":"157242","patientName":"Anna Schäfer","code":1015,"triage":"3"}' +
 				'],' +
 				'"personnel":[' +
 					'{"personnelId":11,"personnelName":"Hannah Mayer"},' +
@@ -572,8 +572,8 @@ export const commonMockEvents = [
 			'},' +
 			'{"areaName":"Wagenhalle",' +
 				'"patients":[' +
-					'{"patientId":"126143","patientName":"Isabelle Busch","code":1020,"triage":"G"},' +
-					'{"patientId":"462455","patientName":"Jasper Park","code":1016,"triage":"Y"}' +
+					'{"patientId":"126143","patientName":"Isabelle Busch","code":1020,"triage":"3"},' +
+					'{"patientId":"462455","patientName":"Jasper Park","code":1016,"triage":"2"}' +
 				'],' +
 				'"personnel":[' +
 					'{"personnelId":5,"personnelName":"Finn Heizmann"},' +

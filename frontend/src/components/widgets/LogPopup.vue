@@ -54,7 +54,7 @@
 				Log-Eintrag
 			</h2>
 			<table>
-				<tr>
+				<tr v-if="currentLogEntry?.logTime">
 					<td class="key">
 						Zeitpunkt:
 					</td>
@@ -62,7 +62,7 @@
 						{{ new Date(currentLogEntry?.logTime || '').toTimeString().split(' ')[0] }}
 					</td>
 				</tr>
-				<tr>
+				<tr v-if="currentLogEntry?.areaName">
 					<td class="key">
 						Bereich:
 					</td>
@@ -70,7 +70,7 @@
 						{{ currentLogEntry?.areaName }}
 					</td>
 				</tr>
-				<tr>
+				<tr v-if="currentLogEntry?.patientId">
 					<td class="key">
 						Patient:
 					</td>
@@ -78,12 +78,20 @@
 						{{ currentLogEntry?.patientId }} {{ patientName }}
 					</td>
 				</tr>
-				<tr>
+				<tr v-if="currentLogEntry?.personnelNames">
 					<td class="key">
 						Personal:
 					</td>
 					<td>
 						{{ personnelNames }}
+					</td>
+				</tr>
+				<tr v-if="currentLogEntry?.materialNames?.length > 0">
+					<td class="key">
+						Material:
+					</td>
+					<td>
+						{{ currentLogEntry?.materialNames.join(', ') }}
 					</td>
 				</tr>
 			</table>

@@ -12,3 +12,6 @@ class Lab(models.Model):
 
     def start_production(self, action_template, area):
         pass
+
+    def __str__(self):
+        return f"Lab: {self.exercise.frontend_id}"

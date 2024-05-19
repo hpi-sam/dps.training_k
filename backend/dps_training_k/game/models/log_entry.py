@@ -26,6 +26,7 @@ class LogEntry(models.Model):
         "PatientInstance", on_delete=models.CASCADE, null=True, blank=True
     )
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
+    materials = models.ManyToManyField("MaterialInstance", blank=True)
     personnel = models.ManyToManyField("Personnel", blank=True)
 
     def save(self, *args, **kwargs):

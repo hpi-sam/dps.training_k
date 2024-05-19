@@ -158,6 +158,11 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 action_instance=applied_action
             )
             log_entry.personnel.add(*personnel_list)
+            material_list = models.MaterialInstance.objects.filter(
+                patient_instance=applied_action.patient_instance,
+                lab=applied_action.lab,
+            )
+            log_entry.materials.add(*material_list)
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
 
@@ -210,6 +215,18 @@ class ExerciseDispatcher(ChannelNotifier):
         cls._notify_group(channel, event)
 
 
+class MaterialInstanceDispatcher(ChannelNotifier):
+    @classmethod
+    def dispatch_event(cls, material, changes, is_updated):
+        cls._notify_exercise_update(material.attached_instance().exercise)
+
+    @classmethod
+    def delete_and_notify(cls, material, *args, **kwargs):
+        exercise = material.attached_instance().exercise
+        super(material.__class__, material).delete(*args, **kwargs)
+        cls._notify_exercise_update(exercise)
+
+
 class LogEntryDispatcher(ChannelNotifier):
     @classmethod
     def get_group_name(cls, exercise):
@@ -237,7 +254,9 @@ class PatientInstanceDispatcher(ChannelNotifier):
         if changes is not None and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (changes is not None and len(changes) == 1 and "patient_state"):
+        if not (
+            changes is not None and len(changes) == 1 and "patient_state" in changes
+        ):
             cls._notify_exercise_update(patient_instance.exercise)
 
     @classmethod
@@ -251,7 +270,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
             ):
                 message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
         elif "triage" in changes:
-            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
+            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"  # get_triage_display gets the long version of a ChoiceField
         if message:
             models.LogEntry.objects.create(
                 exercise=patient_instance.exercise,
@@ -284,16 +303,4 @@ class PersonnelDispatcher(ChannelNotifier):
     def delete_and_notify(cls, personnel, *args, **kwargs):
         exercise = personnel.area.exercise
         super(personnel.__class__, personnel).delete(*args, **kwargs)
-        cls._notify_exercise_update(exercise)
-
-
-class MaterialInstanceDispatcher(ChannelNotifier):
-    @classmethod
-    def dispatch_event(cls, material, changes, is_updated):
-        cls._notify_exercise_update(material.area.exercise)
-
-    @classmethod
-    def delete_and_notify(cls, material, *args, **kwargs):
-        exercise = material.area.exercise
-        super(material.__class__, material).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)

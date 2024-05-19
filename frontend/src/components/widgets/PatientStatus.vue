@@ -61,15 +61,15 @@
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Name
-				</p>{{ patientStore.patientName }}
+					Verletzungen
+				</p>{{ patientStore.injury }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Verletzungen
-				</p>{{ patientStore.injury }}
+					Mobilität
+				</p>{{ patientStore.mobility }}
 			</td>
 		</tr>
 		<tr>
@@ -110,15 +110,8 @@
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Mobilität
-				</p>{{ patientStore.mobility }}
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<p class="key">
-					Fortlaufende Eineindeutige Nummer
-				</p>{{ patientStore.consecutiveUniqueNumber }}
+					Patienten-ID
+				</p>{{ patientStore.patientId }}
 			</td>
 		</tr>
 		<tr>

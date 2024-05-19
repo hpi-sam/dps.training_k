@@ -58,7 +58,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    exerciseId = serializers.CharField(source="exercise_frontend_id")
+    exerciseId = serializers.CharField(source="frontend_id")
     areas = AreaSerializer(source="area_set", many=True)
 
     class Meta:

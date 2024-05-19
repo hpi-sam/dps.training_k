@@ -20,7 +20,7 @@ class Exercise(NonEventable, models.Model):
         blank=True,
         null=True,
     )
-    exercise_frontend_id = models.CharField(
+    frontend_id = models.CharField(
         unique=True,
         editable=settings.DEBUG,
     )
@@ -32,7 +32,7 @@ class Exercise(NonEventable, models.Model):
     @classmethod
     def createExercise(cls):
         new_Exercise = cls.objects.create(
-            exercise_frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
+            frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.StateTypes.CONFIGURATION,
         )
         Lab.objects.create(exercise=new_Exercise)
@@ -62,3 +62,6 @@ class Exercise(NonEventable, models.Model):
         if state == cls.StateTypes.RUNNING:
             return True
         return False
+
+    def __str__(self):
+        return f"Exercise {self.frontend_id}"

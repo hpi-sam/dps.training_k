@@ -1,16 +1,10 @@
 <script setup lang="ts">
 	import PageActionOverview from './pagesAction/PageActionOverview.vue'
 	import PageActionSelection from './pagesAction/PageActionSelection.vue'
+	import PageActionCheck from './pagesAction/PageActionCheck.vue'
 	import PagePersonnel from './pagesAction/PagePersonnel.vue'
 	import PageMaterial from './pagesAction/PageMaterial.vue'
 	import {computed, ref} from 'vue'
-
-	enum Pages {
-		ACTION_OVERVIEW = "PageActionOverview",
-		ACTION_SELECTION = "PageActionSelection",
-		PERSONNEL = "PagePersonnel",
-		MATERIAL = "PageMaterial"
-	}
 
 	const currentPage = ref(Pages.ACTION_OVERVIEW)
 	const currentPageComponent = computed(() => getPageComponent(currentPage.value))
@@ -21,6 +15,8 @@
 				return PageActionOverview
 			case Pages.ACTION_SELECTION:
 				return PageActionSelection
+			case Pages.ACTION_CHECK:
+				return PageActionCheck
 			case Pages.PERSONNEL:
 				return PagePersonnel
 			case Pages.MATERIAL:
@@ -32,13 +28,23 @@
 		currentPage.value = newPage
 	}
 </script>
-
+<script lang="ts">
+	export enum Pages {
+		ACTION_OVERVIEW = "PageActionOverview",
+		ACTION_SELECTION = "PageActionSelection",
+		ACTION_CHECK = "PageActionCheck",
+		PERSONNEL = "PagePersonnel",
+		MATERIAL = "PageMaterial"
+	}
+</script>
 <template>
 	<div class="page">
 		<component
 			:is="currentPageComponent"
 			@add-action="setPage(Pages.ACTION_SELECTION)"
 			@close-action-selection="setPage(Pages.ACTION_OVERVIEW)"
+			@set-page="(page) => setPage(page as Pages)"
+			@close-action="setPage(Pages.ACTION_OVERVIEW)"
 		/>
 	</div>
 	<nav>
@@ -57,7 +63,6 @@
 		</button>
 	</nav>
 </template>
-
 <style scoped>
 	.page {
 		height: calc(100% - 60px);

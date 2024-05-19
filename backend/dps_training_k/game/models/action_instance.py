@@ -251,3 +251,6 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.patient_instance:
             return self.patient_instance.materialinstance_set.filter(is_blocked=False)
         return self.lab.materialinstance_set.filter(is_blocked=False)
+
+    def __str__(self):
+        return f"ActionInstance {self.action_template.name} for {self.patient_instance.name + str(self.patient_instance.id) if self.patient_instance else "Lab" + str(self.lab.exercise.frontend_id)}"

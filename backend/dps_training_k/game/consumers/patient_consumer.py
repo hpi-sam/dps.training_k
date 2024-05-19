@@ -39,6 +39,7 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.default_arguments = [lambda: PatientInstance.objects.get(frontend_id=self.patient_frontend_id)]
         self.patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
@@ -59,21 +60,20 @@ class PatientConsumer(AbstractConsumer):
             ),
             self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
                 self.handle_material_release,
-                "material_id",
+                "materialId",
             ),
             self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
                 self.handle_material_assign,
-                "material_id",
+                "materialId",
             ),
         }
 
     @property
-    def patient_instance(self):
-        if not self.patient_frontend_id:
-            return None
-        return PatientInstance.objects.get(
-            frontend_id=self.patient_frontend_id
-        )  # This enforces patient_instance to always work with valid data
+    def get_patient_instance(self):
+        # this enforces that we always work with up to date data from the database
+        # if you want to update values, copy the instance this function returns and work with that.
+        self.patient_instance.refresh_from_db()
+        return self.patient_instance
 
     def connect(self):
         query_string = parse_qs(self.scope["query_string"].decode())
@@ -81,6 +81,7 @@ class PatientConsumer(AbstractConsumer):
         success, patient_frontend_id = self.authenticate(token)
         if success:
             self.patient_frontend_id = patient_frontend_id
+            self.patient_instance = PatientInstance.objects.get(frontend_id=self.patient_frontend_id)
 
             self.exercise = self.patient_instance.exercise
             self.accept()
@@ -92,11 +93,13 @@ class PatientConsumer(AbstractConsumer):
             self.send_available_actions()
             self.send_available_patients()
             self.action_list_event(None)
+        else:
+            self.close()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, exercise_frontend_id, patient_frontend_id):
+    def handle_example(self, patient_instance, exercise_frontend_id, patient_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
         self.patient_frontend_id = patient_frontend_id
         self.send_event(
@@ -104,35 +107,35 @@ class PatientConsumer(AbstractConsumer):
             content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
         )
 
-    def handle_test_passthrough(self):
+    def handle_test_passthrough(self, patient_instance):
         self.send_event(
             self.PatientOutgoingMessageTypes.TEST_PASSTHROUGH,
             message="received test event",
         )
 
-    def handle_triage(self, triage):
-        self.patient_instance.triage = triage
-        self.patient_instance.save(update_fields=["triage"])
+    def handle_triage(self, patient_instance, triage):
+        patient_instance.triage = triage
+        patient_instance.save(update_fields=["triage"])
 
-    def handle_action_add(self, action_name):
+    def handle_action_add(self, patient_instance, action_name):
         try:
             action_template = Action.objects.get(name=action_name)
             if action_template.category == Action.Category.PRODUCTION:
                 action_instance = ActionInstance.create(
                     action_template=action_template,
                     lab=self.exercise.lab,
-                    area=self.patient_instance.area,
+                    area=patient_instance.area,
                 )
             else:
                 action_instance = ActionInstance.create(
                     action_template=action_template,
-                    patient_instance=self.patient_instance,
+                    patient_instance=patient_instance,
                 )
             action_instance.try_application()
         except:
-            self._send_action_declination(action_instance=action_instance)
+            self._send_action_declination(action_name=action_name)
 
-    def handle_action_check(self, action_id):
+    def handle_action_check(self, patient_instance, action_id):
         stub_action_name = "Recovery Position"
         stub_time = 10
         stub_requirements = [
@@ -149,18 +152,18 @@ class PatientConsumer(AbstractConsumer):
             requirements=stub_requirements,
         )
 
-    def handle_material_release(self, material_id):
+    def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        area = self.patient_instance.area
+        area = patient_instance.area
         succeeded = material_instance.try_moving_to(area)
         if not succeeded:
             self.send_failure(
                 message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
             )
 
-    def handle_material_assign(self, material_id):
+    def handle_material_assign(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded = material_instance.try_moving_to(self.patient_instance)
+        succeeded = material_instance.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(
                 message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
@@ -170,11 +173,11 @@ class PatientConsumer(AbstractConsumer):
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def _send_action_declination(self, action_instance):
+    def _send_action_declination(self, action_name):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
-            actionName=action_instance.name,
-            actionDeclinationReason=action_instance.current_state.info_text,
+            actionName=action_name,
+            actionDeclinationReason="Irgendetwas ist schiefgegangen",
         )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -182,7 +185,7 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
-        serialized_state = StateSerializer(self.patient_instance.patient_state).data
+        serialized_state = StateSerializer(self.get_patient_instance.patient_state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,
@@ -202,10 +205,10 @@ class PatientConsumer(AbstractConsumer):
         """all action_instances where either the patient_instance is self.patient_instance or 
         the category is production and the area is the same as the patient_instance.area"""
         action_instances = ActionInstance.objects.filter(
-            Q(patient_instance=self.patient_instance)
+            Q(patient_instance=self.get_patient_instance)
             | Q(
                 action_template__category=Action.Category.PRODUCTION,
-                area=self.patient_instance.area,
+                area=self.get_patient_instance.area,
             )
         )
 
