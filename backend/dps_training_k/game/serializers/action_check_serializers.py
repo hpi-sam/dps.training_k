@@ -28,6 +28,12 @@ class ActionCheckSerializer(ABC):
         material_available_assigned_needed = self.material_available_assigned_needed()
         if material_available_assigned_needed:
             data.update({"material": material_available_assigned_needed})
+        data.update(
+            {
+                "personnel": self.personnel_available_assigned_needed(),
+                "material": self.material_available_assigned_needed(),
+            }
+        )
         return data
 
 
@@ -72,6 +78,8 @@ class LabActionCheckSerializer(ActionCheckSerializer):
         self.lab = lab
 
     def personnel_available_assigned_needed(self):
+        if not self.action.personnel_count_needed():
+            return []
         return [
             {
                 "name": "Beliebiges Personal",

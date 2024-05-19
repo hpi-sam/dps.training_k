@@ -112,12 +112,10 @@ class Command(BaseCommand):
                         "required_actions": None,
                         "prohibitive_actions": None,
                         "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 1,
+                        "num_personnel": 0,  # TODo: Add back once personnel for labs is being used
                         "lab_devices": None,
                         "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
+                        "role": [],  # TODo: Add back once personnel for labs is being used
                     }
                 ),
                 "results": json.dumps(

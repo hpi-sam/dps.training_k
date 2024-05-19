@@ -32,3 +32,9 @@ class Command(BaseCommand):
             category=Material.Category.DEVICE,
             is_reusable=True,
         )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
+            name="Wärmegerät",
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+        )

@@ -8,11 +8,13 @@ class Lab(models.Model):
     )
 
     def material_assigned(self, material_template):
-        return list(self.material_set.filter(template=material_template))
+        return list(self.materialinstance_set.filter(template=material_template))
 
     def material_available(self, material_template):
         return list(
-            self.material_set.filter(template=material_template, action_instance=None)
+            self.materialinstance_set.filter(
+                template=material_template, action_instance=None
+            )
         )
 
     def personel_assigned(self):

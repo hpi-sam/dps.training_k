@@ -213,11 +213,12 @@ class ActionInstance(LocalTimeable, models.Model):
         self._application_finished()
 
     def _application_finished(self):
+        print("called application finished")
+        self.consume_and_free_resources()
         if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
                 self.template.produced_resources(), self.area
             )
-        self.consume_and_free_resources()
         if self.template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
@@ -276,6 +277,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return True, None
 
     def consume_and_free_resources(self):
+        print("called consume and free")
         for material in self.materialinstance_set.all():
             if material.is_reusable:
                 material.release()
