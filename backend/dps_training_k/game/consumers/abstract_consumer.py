@@ -112,6 +112,9 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
         complete = True
         args = []
+        # add default arguments for inheriting consumers based on a lambda function supplied by them
+        for argument in self.default_arguments:
+            args.append(argument())
         for key in keys:
             if key not in content:
                 self.send_failure(

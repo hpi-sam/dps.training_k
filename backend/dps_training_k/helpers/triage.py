@@ -2,12 +2,8 @@ from django.db import models
 
 
 class Triage(models.TextChoices):
-    UNDEFINED = "-", "undefined"
-    RED = "R", "red"
-    YELLOW = "Y", "yellow"
-    GREEN = "G", "green"
-    Airway = "A", "airway"
-    BREATHING = "B", "breathing"
-    CIRCULATION = "C", "circulation"
-    DISABILITY = "D", "disability"
-    EXPOSURE = "E", "exposure"
+    UNDEFINED = "-", "Gray"
+    BLACK = "X", "Black"
+    RED = "1", "Red"
+    YELLOW = "2", "Yellow"
+    GREEN = "3", "Green"

@@ -4,6 +4,7 @@
   --red: #ee4035;
   --yellow: #e6cf00;
   --green: #269f42;
+  --black: black;
   --gray: gray;
   --border-color: var(--gray);
 }
@@ -103,6 +104,10 @@ button:active {
 
 .gray {
   background-color: var(--gray);
+}
+
+.black {
+  background-color: var(--black);
 }
 
 .red {

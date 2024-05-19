@@ -11,13 +11,10 @@
 
 	const triageButtons = ref([
 		{char: '-', color: 'gray'},
-		{char: 'G', color: 'green'},
-		{char: 'Y', color: 'yellow'},
-		{char: 'A', color: 'red'},
-		{char: 'B', color: 'red'},
-		{char: 'C', color: 'red'},
-		{char: 'D', color: 'red'},
-		{char: 'E', color: 'red'},
+		{char: 'X', color: 'black'},
+		{char: '1', color: 'red'},
+		{char: '2', color: 'yellow'},
+		{char: '3', color: 'green'},
 	])
 
 	function getTriageColor(color: string) {
