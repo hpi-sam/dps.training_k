@@ -7,6 +7,7 @@
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
 	import CloseButton from "./CloseButton.vue"
+	import { generateName } from "@/utils"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -16,16 +17,6 @@
 			default: 'No Area'
 		},
 	})
-
-	const firstNameList = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Sarah']
-	const surnameList = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis']
-
-	function generateName() {
-		const firstName = firstNameList[Math.floor(Math.random() * firstNameList.length)]
-		const surname = surnameList[Math.floor(Math.random() * surnameList.length)]
-		return `${firstName} ${surname}`
-	}
-
 
 	const patientName = ref("")
 	patientName.value = generateName()
@@ -63,16 +54,16 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<CloseButton @close="emit('close-popup')" />
-			<div id="leftSide">
+			<div id="left-side">
 				<div class="flex-container">
 					<h2>Patienten-Datensätze</h2>
 					<PatientCodeList @change-patient="changePatientCode" />
 				</div>
 			</div>
-			<div id="rightSide">
-				<div class="listItem">
+			<div id="right-side">
+				<div class="list-item">
 					<TriageForListItems :patient-code="currentPatient?.code" />
-					<div class="patientName">
+					<div class="patient-name">
 						{{ patientName }}
 					</div>
 				</div>
@@ -88,9 +79,9 @@
 						:pretreatment="currentPatient?.pretreatment"
 					/>
 				</div>
-				<div id="buttonRow">
+				<div id="button-row">
 					<button
-						id="saveButton"
+						id="save-button"
 						@click="addPatient()"
 					>
 						Patient hinzufügen
@@ -112,24 +103,24 @@
 		display: flex;
 	}
 
-	#leftSide {
+	#left-side {
 		float: left;
 		width: 50%;
 		padding: 10px;
 	}
 
-	#rightSide {
+	#right-side {
 		width: 50%;
 		padding: 10px;
 		display: flex;
 		flex-direction: column;
 	}
 
-	#buttonRow {
+	#button-row {
 		display: flex;
 	}
 
-	#saveButton {
+	#save-button {
 		position: relative;
 		color: white;
 		border: 1px solid rgb(209, 213, 219);
@@ -142,7 +133,7 @@
 		background-color: var(--green);
 	}
 
-	.listItem {
+	.list-item {
 		margin-right: 40px;
 		font-size: 1.25rem;
 		text-align: left;
@@ -150,7 +141,7 @@
 		padding-left: 0;
 	}
 
-	.patientId, .patientName {
+	.patient-id, .patient-name {
 		padding: .75rem 1rem;
 	}
 </style>
