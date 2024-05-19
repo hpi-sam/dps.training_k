@@ -32,7 +32,7 @@
 	})
 
 	const personnelNames = computed(() => {
-		var names = ''
+		let names = ''
 		if (currentLogEntry.value?.personnelIds) {
 			const store = useExerciseStore()
 			for (const personnelId of currentLogEntry.value.personnelIds) {
