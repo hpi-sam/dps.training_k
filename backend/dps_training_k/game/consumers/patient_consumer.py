@@ -7,6 +7,7 @@ from game.models import (
     MaterialInstance,
     ActionInstance,
     ScheduledEvent,
+    Exercise,
 )
 from game.serializers.action_check_serializers import (
     PatientInstanceActionCheckSerializer,
@@ -44,7 +45,9 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.default_arguments = [lambda: PatientInstance.objects.get(frontend_id=self.patient_frontend_id)]
+        self.default_arguments = [
+            lambda: PatientInstance.objects.get(frontend_id=self.patient_frontend_id)
+        ]
         self.patient_frontend_id = ""
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
@@ -90,7 +93,9 @@ class PatientConsumer(AbstractConsumer):
         success, patient_frontend_id = self.authenticate(token)
         if success:
             self.patient_frontend_id = patient_frontend_id
-            self.patient_instance = PatientInstance.objects.get(frontend_id=self.patient_frontend_id)
+            self.patient_instance = PatientInstance.objects.get(
+                frontend_id=self.patient_frontend_id
+            )
 
             self.exercise = self.patient_instance.exercise
             self.accept()
@@ -102,13 +107,17 @@ class PatientConsumer(AbstractConsumer):
             self.send_available_actions()
             self.send_available_patients()
             self.action_list_event(None)
+            if self.exercise.state == Exercise.StateTypes.RUNNING:
+                self.exercise_start_event(None)
         else:
             self.close()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, patient_instance, exercise_frontend_id, patient_frontend_id):
+    def handle_example(
+        self, patient_instance, exercise_frontend_id, patient_frontend_id
+    ):
         self.exercise_frontend_id = exercise_frontend_id
         self.patient_frontend_id = patient_frontend_id
         self.send_event(
