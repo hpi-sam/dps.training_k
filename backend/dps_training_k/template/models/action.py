@@ -44,12 +44,14 @@ class Action(UUIDable, models.Model):
         :return list of lists: each list entry means that at least
         one of the materials in the list is needed to perfom this action
         """
-        if not self.conditions or not "material" in self.conditions:
-            return None
+        if not self.conditions:
+            return []
         parsed_condition = json.loads(self.conditions)
+        if not "material" in parsed_condition:
+            return []
         material_uuids = parsed_condition["material"]
         if not material_uuids:
-            return None
+            return []
         needed_material_groups = []
         for material_condition_uuid in material_uuids:
             if isinstance(material_condition_uuid, list):

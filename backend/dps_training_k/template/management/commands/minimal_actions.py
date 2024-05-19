@@ -30,15 +30,17 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    }
+                ),
                 "results": json.dumps({}),
             },
         )
@@ -49,15 +51,17 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    }
+                ),
                 "results": json.dumps({}),
             },
         )
@@ -69,20 +73,22 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        [
-                            {role_map[RoleIDs.LABORASSISTENT]: 1},
-                            {role_map[RoleIDs.ARZT]: 1},
-                        ]
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            [
+                                {role_map[RoleIDs.LABORASSISTENT]: 1},
+                                {role_map[RoleIDs.ARZT]: 1},
+                            ]
+                        ],
+                    }
+                ),
                 "results": json.dumps(
                     {
                         "Hb": [
@@ -101,17 +107,19 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    }
+                ),
                 "results": json.dumps(
                     {
                         "produced_material": {

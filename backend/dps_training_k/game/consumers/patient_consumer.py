@@ -27,6 +27,7 @@ class PatientConsumer(AbstractConsumer):
         EXAMPLE = "example"
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
+        ACTION_CHECK = "action-check"
         ACTION_ADD = "action-add"
         MATERIAL_RELEASE = "material-release"
         MATERIAL_ASSIGN = "material-assign"
@@ -56,6 +57,10 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.TRIAGE: (
                 self.handle_triage,
                 "triage",
+            ),
+            self.PatientIncomingMessageTypes.ACTION_CHECK: (
+                self.handle_action_check,
+                "actionName",
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
@@ -119,25 +124,24 @@ class PatientConsumer(AbstractConsumer):
         self.patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, action_name):
-        try:
-            action_template = Action.objects.get(name=action_name)
-            if action_template.category == Action.Category.PRODUCTION:
-                action_instance = ActionInstance.create(
-                    template=action_template,
-                    lab=self.exercise.lab,
-                    area=self.patient_instance.area,
-                )
-            else:
-                action_instance = ActionInstance.create(
-                    template=action_template,
-                    patient_instance=self.patient_instance,
-                )
-            action_instance.try_application()
-        except:
+        action_template = Action.objects.get(name=action_name)
+        if action_template.category == Action.Category.PRODUCTION:
+            action_instance = ActionInstance.create(
+                template=action_template,
+                lab=self.exercise.lab,
+                area=self.patient_instance.area,
+            )
+        else:
+            action_instance = ActionInstance.create(
+                template=action_template,
+                patient_instance=self.patient_instance,
+            )
+        application_succeded = action_instance.try_application()
+        if not application_succeded:
             self._send_action_declination(action_name=action_name)
 
-    def handle_action_check(self, action_id):
-        action_template = Action.objects.get(pk=action_id)
+    def handle_action_check(self, action_name):
+        action_template = Action.objects.get(name=action_name)
         if action_template.category == Action.Category.PRODUCTION:
             action_check_message = LabActionCheckSerializer(
                 action_template, self.exercise.lab

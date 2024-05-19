@@ -4,6 +4,7 @@ import template.models.action as a
 
 
 class ActionSerializer(serializers.ModelSerializer):
+    actionName = serializers.CharField(source="name")
     applicationDuration = serializers.IntegerField(source="application_duration")
     effectDuration = serializers.IntegerField(source="effect_duration")
 
@@ -20,10 +21,14 @@ class ActionSerializer(serializers.ModelSerializer):
 class ActionCheckSerializer(ABC):
     @property
     def data(self):
-        return ActionSerializer(self.action).data + {
-            "personnel": self.personnel_available_assigned_needed(),
-            "material": self.material_available_assigned_needed(),
-        }
+        data = ActionSerializer(self.action).data
+        personnel_available_assigned_needed = self.personnel_available_assigned_needed()
+        if personnel_available_assigned_needed:
+            data.update({"personnel": personnel_available_assigned_needed})
+        material_available_assigned_needed = self.material_available_assigned_needed()
+        if material_available_assigned_needed:
+            data.update({"material": material_available_assigned_needed})
+        return data
 
 
 class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
@@ -35,8 +40,8 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
         return [
             {
                 "name": "Beliebiges Personal",
-                "available": self.patient_instance.personnel_available(),
-                "assigned": self.patient_instance.personel_assigned(),
+                "available": len(self.patient_instance.personnel_available()),
+                "assigned": len(self.patient_instance.personel_assigned()),
                 "needed": self.action.personnel_count_needed(),
             }
         ]
@@ -51,8 +56,10 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
             material_entries.append(
                 {
                     "name": material.name,
-                    "available": self.patient_instance.material_available(material),
-                    "assigned": self.patient_instance.material_assigned(material),
+                    "available": len(
+                        self.patient_instance.material_available(material)
+                    ),
+                    "assigned": len(self.patient_instance.material_assigned(material)),
                     "needed": 1,
                 }
             )
@@ -68,8 +75,8 @@ class LabActionCheckSerializer(ActionCheckSerializer):
         return [
             {
                 "name": "Beliebiges Personal",
-                "available": self.lab.personnel_available(),
-                "assigned": self.lab.personel_assigned(),
+                "available": len(self.lab.personnel_available()),
+                "assigned": len(self.lab.personel_assigned()),
                 "needed": self.action.personnel_count_needed(),
             }
         ]
@@ -84,8 +91,8 @@ class LabActionCheckSerializer(ActionCheckSerializer):
             material_entries.append(
                 {
                     "name": material.name,
-                    "available": self.lab.material_available(material),
-                    "assigned": self.lab.material_assigned(material),
+                    "available": len(self.lab.material_available(material)),
+                    "assigned": len(self.lab.material_assigned(material)),
                     "needed": 1,
                 }
             )

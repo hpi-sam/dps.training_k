@@ -265,7 +265,7 @@ class ActionInstance(LocalTimeable, models.Model):
                     return False, f"No material of {material_condition} available"
 
         available_personnel = personnel_owner.personnel_available()
-        if available_personnel.count() < self.template.personnel_count_needed():
+        if len(available_personnel) < self.template.personnel_count_needed():
             return False, f"Not enough personnel available"
         for i in range(self.template.personnel_count_needed()):
             resources_to_block.append(available_personnel[i])
