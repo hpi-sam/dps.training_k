@@ -71,3 +71,6 @@ class TestUtilsMixin:
 
     def activate_condition_checking(self):
         self._deactivate_condition_checking_patch.stop()
+
+    def deactivate_live_updates(self):
+        pass

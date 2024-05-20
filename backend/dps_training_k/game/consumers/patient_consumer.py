@@ -210,6 +210,8 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def _start_inspecting_action(self, action_name):
+        if self.currently_inspected_action == action_name:
+            return
         self.currently_inspected_action = action_name
         self.subscribe(PersonnelDispatcher.get_live_group_name(self.exercise))
         self.subscribe(MaterialInstanceDispatcher.get_live_group_name(self.exercise))
@@ -233,6 +235,7 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_check_changed_event(self, event):
+        print("action check event called")
         if self.currently_inspected_action:
             self.receive_json(
                 {

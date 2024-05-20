@@ -17,7 +17,11 @@ class ChannelNotifierTestCase(TestCase):
             name=ActionInstanceStateNames.FINISHED
         )
         previous_function_calls = notify_group_mock.call_count
+        print("**************************")
+        print(notify_group_mock.call_count, previous_function_calls + 1)
+        print("**************************")
         action_instance.save(update_fields=["current_state"])
+
         self.assertEqual(notify_group_mock.call_count, previous_function_calls + 1)
 
     @patch.object(cn.ChannelNotifier, "_notify_group")

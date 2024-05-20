@@ -12,6 +12,14 @@ This also implies that it should be as transparent as possible to the models it 
 Events must be sent as strings, thus objects are passed by ids.
 Sending events is done by the celery worker.
 """
+import traceback
+
+
+def print_call_stack():
+    stack = traceback.format_stack()
+    for line in stack:
+        print(line.strip())
+    print("*************************************************")
 
 
 class ChannelEventTypes:
@@ -65,6 +73,7 @@ class ChannelNotifier:
 
     @classmethod
     def get_live_group_name(cls, exercise):
+        print(f"{cls.__name__}_{exercise.id}_live")
         return f"{cls.__name__}_{exercise.id}_live"
 
     @classmethod
@@ -88,6 +97,7 @@ class ChannelNotifier:
 
     @classmethod
     def _notify_action_check_update(cls, exercise):
+        print_call_stack()
         channel = cls.get_live_group_name(exercise)
         event = {"type": ChannelEventTypes.ACTION_CHECK_CHANGED_EVENT}
         cls._notify_group(channel, event)
@@ -335,7 +345,6 @@ class PersonnelDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, personnel, changes, is_updated):
         cls._notify_exercise_update(cls.get_exercise(personnel))
-        cls._notify_action_check_update(cls.get_exercise(personnel))
 
     @classmethod
     def delete_and_notify(cls, personnel, *args, **kwargs):
