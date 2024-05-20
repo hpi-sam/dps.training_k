@@ -41,21 +41,21 @@
 		<TopBarTrainer />
 		<div class="scroll">
 			<div class="list">
-				<button id="add-area-button" class="listItemAddButton" @click="addArea()">
+				<button id="add-area-button" class="list-item-add-button" @click="addArea()">
 					Bereich hinzufügen
 				</button>
 				<div
 					v-for="area in areas"
 					:key="area.areaName"
-					class="listItem"
+					class="list-item"
 					:class="{ 'selected': currentArea === area.areaName }"
 				>
-					<button class="listItemButton" @click="openArea(area.areaName)">
-						<div class="listItemName">
+					<button class="list-item-button" @click="openArea(area.areaName)">
+						<div class="list-item-name">
 							{{ area.areaName }}
 						</div>
 					</button>
-					<button class="settingsButton" @click="openPopup(area.areaName)">
+					<button class="settings-button" @click="openPopup(area.areaName)">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							height="24"
@@ -73,7 +73,7 @@
 </template>
 
 <style scoped>
-	.settingsButton {
+	.settings-button {
 		height: 50px;
 		width: 50px;
 		border: none;

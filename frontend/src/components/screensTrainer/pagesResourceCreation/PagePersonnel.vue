@@ -43,16 +43,16 @@
 	<div class="scroll">
 		<h1>Personal</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="addPersonnel()">
+			<button v-if="currentAreaData" class="list-item-add-button" @click="addPersonnel()">
 				Personal hinzufügen
 			</button>
 			<div
 				v-for="personnel in currentAreaData?.personnel"
 				:key="personnel.personnelName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="openPopup(personnel.personnelId)">
-					<div class="listItemName">
+				<button class="list-item-button" @click="openPopup(personnel.personnelId)">
+					<div class="list-item-name">
 						{{ personnel.personnelName }}
 					</div>
 				</button>

@@ -51,10 +51,10 @@
 					<div
 						v-for="material in availableMaterial"
 						:key="material.materialName"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="addMaterial(material.materialName)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="addMaterial(material.materialName)">
+							<div class="list-item-name">
 								{{ material.materialName }}
 							</div>
 						</button>

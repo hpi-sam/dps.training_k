@@ -57,10 +57,10 @@
 				<div
 					v-for="action in filteredActions(actionTyp)"
 					:key="action.actionName"
-					class="listItem"
+					class="list-item"
 				>
-					<button class="listItemButton" @click="openAction(action.actionName)">
-						<div class="listItemName">
+					<button class="list-item-button" @click="openAction(action.actionName)">
+						<div class="list-item-name">
 							{{ action.actionName }}
 						</div>
 					</button>

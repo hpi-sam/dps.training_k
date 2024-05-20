@@ -21,10 +21,10 @@
 					<div
 						v-for="(action, index) in props.actions"
 						:key="index"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ action }}
 							</div>
 						</div>

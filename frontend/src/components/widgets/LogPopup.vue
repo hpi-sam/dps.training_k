@@ -26,20 +26,18 @@
 		if (currentLogEntry.value?.patientId) {
 			const store = useExerciseStore()
 			const patient = store.getPatient(currentLogEntry.value.patientId)
-			console.log(store.getPatient(currentLogEntry.value.patientId))
 			return patient ? patient.patientName : ''
 		}
 		return ''
 	})
 
 	const personnelNames = computed(() => {
-		console.log(currentLogEntry.value.patientId)
-		var names = ''
+		let names = ''
 		if (currentLogEntry.value?.personnelIds) {
 			const store = useExerciseStore()
 			for (const personnelId of currentLogEntry.value.personnelIds) {
 				if (names !== '') names = names + ', '
-				names = names + store.getPersonnel(personnelId).personnelName
+				names = names + store.getPersonnel(personnelId)?.personnelName
 			}
 		}
 		return names
@@ -86,7 +84,7 @@
 						{{ personnelNames }}
 					</td>
 				</tr>
-				<tr v-if="currentLogEntry?.materialNames?.length > 0">
+				<tr v-if="currentLogEntry?.materialNames?.length">
 					<td class="key">
 						Material:
 					</td>

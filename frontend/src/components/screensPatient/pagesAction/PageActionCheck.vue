@@ -82,16 +82,16 @@
 					:key="personnel.name"
 					class="listItem"
 				>
-					<div class="listItemButton">
-						<div class="listItemIcon">
+					<div class="list-item-button">
+						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(personnel.available, personnel.assigned, personnel.needed)" />
 							</svg>
 						</div>
-						<div class="listItemName">
+						<div class="list-item-name">
 							{{ personnel.name }}
 						</div>
-						<div class="rightText">
+						<div class="right-text">
 							{{ personnel.available }} / {{ personnel.assigned }} / {{ personnel.needed }}
 						</div>
 					</div>
@@ -105,16 +105,16 @@
 					:key="material.name"
 					class="listItem"
 				>
-					<div class="listItemButton">
-						<div class="listItemIcon">
+					<div class="list-item-button">
+						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(material.available, material.assigned, material.needed)" />
 							</svg>
 						</div>
-						<div class="listItemName">
+						<div class="list-item-name">
 							{{ material.name }}
 						</div>
-						<div class="rightText">
+						<div class="right-text">
 							{{ material.available }} / {{ material.assigned }} / {{ material.needed }}
 						</div>
 					</div>
@@ -128,16 +128,16 @@
 					:key="labDevice.name"
 					class="listItem"
 				>
-					<div class="listItemButton">
-						<div class="listItemIcon">
+					<div class="list-item-button">
+						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(labDevice.available, labDevice.available, labDevice.needed)" />
 							</svg>
 						</div>
-						<div class="listItemName">
+						<div class="list-item-name">
 							{{ labDevice.name }}
 						</div>
-						<div class="rightText">
+						<div class="right-text">
 							{{ labDevice.available }} / {{ labDevice.needed }}
 						</div>
 					</div>
@@ -151,13 +151,13 @@
 					:key="index"
 					class="listItem"
 				>
-					<div class="listItemButton">
-						<div class="listItemIcon">
+					<div class="list-item-button">
+						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.closeIcon" />
 							</svg>
 						</div>
-						<div class="listItemName">
+						<div class="list-item-name">
 							{{ action }}
 						</div>
 					</div>
@@ -165,18 +165,18 @@
 				<div
 					v-for="(actionGroup, index) in actionCheckStore?.requiredActions?.actionGroups"
 					:key="index"
-					class="listItem"
+					class="list-item"
 				>
-					<div class="listItemButton" @click="openActionGroupPopup(actionGroup.actions)">
-						<div class="listItemIcon">
+					<div class="list-item-button" @click="openActionGroupPopup(actionGroup.actions)">
+						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.closeIcon" />
 							</svg>
 						</div>
-						<div class="listItemName">
+						<div class="list-item-name">
 							{{ actionGroup.groupName ? actionGroup.groupName : actionGroup.actions.join(' / ') }}
 						</div>
-						<div class="rightText">
+						<div class="right-text">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.descriptionIcon" />
 							</svg>
@@ -190,15 +190,15 @@
 				<div
 					v-for="(action, index) in actionCheckStore?.prohibitedActions"
 					:key="index"
-					class="listItem"
+					class="list-item"
 				>
-					<div class="listItemButton">
-						<div class="listItemIcon">
+					<div class="list-item-button">
+						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.closeIcon" />
 							</svg>
 						</div>
-						<div class="listItemName">
+						<div class="list-item-name">
 							{{ action }}
 						</div>
 					</div>
@@ -230,7 +230,7 @@
 		margin-bottom: 80px;
 	}
 
-	.rightText {
+	.right-text {
 		flex-shrink: 0;
 		margin-right: 16px;
 		white-space: nowrap;

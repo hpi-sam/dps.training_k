@@ -69,13 +69,13 @@
 </script>
 
 <template>
-	<div v-if="!fullScreen" class="leftScreen">
+	<div v-if="!fullScreen" class="left-screen">
 		<component :is="currentLeftScreenComponent" />
 	</div>
-	<div v-if="!fullScreen" class="rightScreen">
+	<div v-if="!fullScreen" class="right-screen">
 		<component :is="currentRightScreenComponent" />
 	</div>
-	<div v-if="fullScreen" class="fullScreen">
+	<div v-if="fullScreen" class="full-screen">
 		<component :is="currentFullScreenComponent" />
 	</div>
 </template>

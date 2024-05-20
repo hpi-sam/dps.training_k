@@ -4,10 +4,10 @@
 </script>
 
 <template>
-	<div class="leftScreen">
+	<div class="left-screen">
 		<ScreenTrainer />
 	</div>
-	<div class="rightScreen">
+	<div class="right-screen">
 		<ScreenPatient />
 	</div>
 </template>
