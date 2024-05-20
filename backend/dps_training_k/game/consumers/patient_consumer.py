@@ -227,7 +227,12 @@ class PatientConsumer(AbstractConsumer):
 
     def action_check_changed_event(self, event):
         if self.currently_inspected_action:
-            self.handle_action_check(self.currently_inspected_action)
+            self.receive_json(
+                {
+                    "messageType": self.PatientIncomingMessageTypes.ACTION_CHECK,
+                    "actionName": self.currently_inspected_action,
+                }
+            )
 
     def action_confirmation_event(self, event):
         action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
