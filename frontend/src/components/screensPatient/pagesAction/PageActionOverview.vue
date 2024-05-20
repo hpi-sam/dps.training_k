@@ -28,6 +28,9 @@
 		switch (status) {
 			case 'IP':
 				return svg.playIcon
+			case 'FI':
+			case 'EX':
+				return svg.checkIcon
 			case 'PL':
 				return svg.waitingIcon
 			case 'OH':
@@ -107,6 +110,11 @@
 				class="listItem"
 			>
 				<button class="listItemButton" @click="openResultPopup(action.actionName, action.actionResult)">
+					<div class="listItemIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path :d="getIconPath(action.actionStatus)" />
+						</svg>
+					</div>
 					<div class="listItemName">
 						{{ action.actionName }}
 					</div>
