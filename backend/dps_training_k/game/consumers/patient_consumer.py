@@ -157,10 +157,10 @@ class PatientConsumer(AbstractConsumer):
                 template=action_template,
                 patient_instance=patient_instance,
             )
-        application_succeded = action_instance.try_application()
+        application_succeded, context = action_instance.try_application()
         self._stop_inspecting_action(action_name)
         if not application_succeded:
-            self._send_action_declination(action_name=action_name)
+            self._send_action_declination(action_name=action_name, message=context)
 
     def handle_action_check(self, patient_instance, action_name):
         self._start_inspecting_action(action_name)
@@ -202,11 +202,13 @@ class PatientConsumer(AbstractConsumer):
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def _send_action_declination(self, action_name):
+    def _send_action_declination(self, action_name, message=None):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
             actionName=action_name,
-            actionDeclinationReason="Irgendetwas ist schiefgegangen",
+            actionDeclinationReason=(
+                "Irgendetwas ist schiefgegangen" if not message else message
+            ),
         )
 
     def _start_inspecting_action(self, action_name):

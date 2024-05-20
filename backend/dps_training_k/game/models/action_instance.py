@@ -171,9 +171,9 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
-            return False
+            return False, context
         self._start_application()
-        return True
+        return True, None
 
     def _start_application(self):
         if not self.patient_instance and not self.lab:
@@ -262,11 +262,14 @@ class ActionInstance(LocalTimeable, models.Model):
                     resources_to_block.append(available_materials[0])
                     break
                 else:
-                    return False, f"No material of {material_condition} available"
+                    return (
+                        False,
+                        f"Kein Material des Typs {material_condition} verfügbar",
+                    )
 
         available_personnel = personnel_owner.personnel_available()
         if len(available_personnel) < self.template.personnel_count_needed():
-            return False, f"Not enough personnel available"
+            return False, f"Nicht genug Personal verfügbar"
         for i in range(self.template.personnel_count_needed()):
             resources_to_block.append(available_personnel[i])
         if not resources_to_block:
