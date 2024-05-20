@@ -18,7 +18,7 @@ class StuffIDs:
     OLYMPIA_RANGLISTENPUNKTE = UUID("62431fc5-7276-4fac-a972-054d7c45d12a")
     ISSUE = UUID("0108b8dc-4d4d-40bc-89b0-53c3f7cff48e")
     RETRO_PHOTO = UUID("f4ac3d26-bb8c-4e9d-83ef-4462a171dbc3")
-    CLAAS_VERSCHLÄFT = UUID("0b8eb900-5003-4e57-a76b-9158c1cc646c")
+    CLAAS_VERSCHLAEFT = UUID("0b8eb900-5003-4e57-a76b-9158c1cc646c")
 
 
 class ActionIDs:
@@ -35,6 +35,7 @@ class Command(BaseCommand):
     help = "Creates a basic exercise one can join immediately without having to create it via the trainer interface first."
 
     def handle(self, *args, **options):
+        call_command("flush", "--noinput")
         import_patients("./data/patient_information.csv")  # path to the csv file
         self.stdout.write(self.style.SUCCESS("Successfully imported patient data"))
 
@@ -83,6 +84,12 @@ class Command(BaseCommand):
             name="Retro Foto",
             category=Material.Category.DEVICE,
             is_reusable=True,
+        )
+        Material.objects.update_or_create(
+            uuid=StuffIDs.CLAAS_VERSCHLAEFT,
+            name="Claas verschläft",
+            category=Material.Category.BLOOD,
+            is_reusable=False,
         )
 
     @staticmethod
@@ -217,7 +224,7 @@ class Command(BaseCommand):
                     }
                 ),
                 "results": json.dumps(
-                    {"produced_material": {str(StuffIDs.CLAAS_VERSCHLÄFT): 10}}
+                    {"produced_material": {str(StuffIDs.CLAAS_VERSCHLAEFT): 1}}
                 ),
             },
         )
