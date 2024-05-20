@@ -15,7 +15,11 @@ from game.serializers.action_check_serializers import (
 from template.models import Action
 from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
-from ..channel_notifications import ChannelNotifier
+from ..channel_notifications import (
+    ChannelNotifier,
+    PersonnelDispatcher,
+    MaterialInstanceDispatcher,
+)
 
 
 class PatientConsumer(AbstractConsumer):
@@ -45,6 +49,7 @@ class PatientConsumer(AbstractConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.patient_frontend_id = ""
+        self.currently_inspected_action = None
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -137,10 +142,12 @@ class PatientConsumer(AbstractConsumer):
                 patient_instance=self.patient_instance,
             )
         application_succeded = action_instance.try_application()
+        self._stop_inspecting_action(action_name)
         if not application_succeded:
             self._send_action_declination(action_name=action_name)
 
     def handle_action_check(self, action_name):
+        self._start_inspecting_action(action_name)
         action_template = Action.objects.get(name=action_name)
         if action_template.category == Action.Category.PRODUCTION:
             action_check_message = LabActionCheckSerializer(
@@ -183,6 +190,18 @@ class PatientConsumer(AbstractConsumer):
             actionDeclinationReason="Irgendetwas ist schiefgegangen",
         )
 
+    def _start_inspecting_action(self, action_name):
+        self.currently_inspected_action = action_name
+        self.subscribe(PersonnelDispatcher.get_live_group_name(self.exercise))
+        self.subscribe(MaterialInstanceDispatcher.get_live_group_name(self.exercise))
+
+    def _stop_inspecting_action(self, action_name):
+        if not self.currently_inspected_action == action_name:
+            return
+        self.currently_inspected_action = None
+        self.unsubscribe(PersonnelDispatcher.get_live_group_name(self.exercise))
+        self.unsubscribe(MaterialInstanceDispatcher.get_live_group_name(self.exercise))
+
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -193,6 +212,10 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,
         )
+
+    def action_check_changed_event(self, event):
+        if self.currently_inspected_action:
+            self.handle_action_check(self.currently_inspected_action)
 
     def action_confirmation_event(self, event):
         action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
