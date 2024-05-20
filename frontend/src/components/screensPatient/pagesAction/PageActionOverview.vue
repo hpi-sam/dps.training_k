@@ -35,6 +35,8 @@
 				return svg.waitingIcon
 			case 'OH':
 				return svg.blockIcon
+			case 'IE':
+				return svg.clockIcon
 		}
 	}
 
