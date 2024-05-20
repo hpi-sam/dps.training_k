@@ -1,4 +1,15 @@
+import asyncio
+import datetime
+import unittest.mock as mock
+
+from asgiref.sync import sync_to_async
+from django.conf import settings
+from django.core.management import call_command
 from django.test import TestCase, TransactionTestCase
+from django.utils import timezone
+
+from game.models import ActionInstanceStateNames, MaterialInstance
+from game.tasks import check_for_updates
 from game.tests.factories import (
     ActionInstanceFactory,
     PatientFactory,
@@ -6,17 +17,10 @@ from game.tests.factories import (
     AreaFactory,
     ActionInstance,
 )
-from .mixin import TestUtilsMixin
-from template.tests.factories.action_factory import ActionFactoryWithProduction
-from game.models import ActionInstanceStateNames, MaterialInstance
-from django.utils import timezone
-import datetime, unittest.mock as mock, asyncio
-from django.conf import settings
-from django.core.management import call_command
-from game.tasks import check_for_updates
-from template.models import Material, Action
 from template.constants import MaterialIDs
-from asgiref.sync import sync_to_async
+from template.models import Material, Action
+from template.tests.factories.action_factory import ActionFactoryWithProduction
+from .mixin import TestUtilsMixin
 
 
 class ActionResultTestCase(TestUtilsMixin, TestCase):
@@ -79,7 +83,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
 
     def test_action_production_lifecycle(self):
         """
-        Integration Test: Iff production action is finished, material instances are created according to the results.produced_material field.
+        Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
         """
         call_command("minimal_actions")
         call_command("minimal_material")

@@ -123,6 +123,7 @@ class PatientConsumer(AbstractConsumer):
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
+    # These methods are not allowed to be called directly. If you want to call them from the backend, go via self.receive_json()
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def handle_example(
         self, patient_instance, exercise_frontend_id, patient_frontend_id

@@ -243,7 +243,7 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def check_conditions_and_block_resources(self, material_owner, personnel_owner):
         """
-        Iff all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
+        If all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
         Each element of the queryset needs to have a block method.
         :params material_owner: Instance having a material_available method
         :params personell_owner: Instance having a personell_available method
