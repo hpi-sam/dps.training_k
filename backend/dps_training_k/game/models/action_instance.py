@@ -264,7 +264,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 else:
                     return (
                         False,
-                        f"Kein Material des Typs {material_condition} verfügbar",
+                        f"Kein Material des Typs {material_condition.name} verfügbar",
                     )
 
         available_personnel = personnel_owner.personnel_available()
