@@ -8,6 +8,7 @@ from game.models import (
     ActionInstance,
     ScheduledEvent,
     Exercise,
+    ActionInstanceStateNames,
 )
 from game.serializers.action_check_serializers import (
     PatientInstanceActionCheckSerializer,
@@ -265,7 +266,8 @@ class PatientConsumer(AbstractConsumer):
                 template__category=Action.Category.PRODUCTION,
                 area=self.get_patient_instance.area,
             )
-        )
+        ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+        # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
 
         for action_instance in action_instances:
             action_data = {
