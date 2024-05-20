@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from configuration import settings
-from game.models import Exercise, PatientInstance, Area
+from game.models import Exercise, PatientInstance, Area, Personnel
 from template.models import PatientInformation
 
 
@@ -34,6 +34,20 @@ class Command(BaseCommand):
                 "static_information": self.patient_information,
                 "exercise": self.exercise,
                 "area": self.area,
+            },
+        )
+        Personnel.objects.update_or_create(
+            name="Pflegekraft 1",
+            defaults={
+                "area": self.area,
+                "assigned_patient": self.patient,
+            },
+        )
+        Personnel.objects.update_or_create(
+            name="Pflegekraft 2",
+            defaults={
+                "area": self.area,
+                "assigned_patient": self.patient,
             },
         )
         self.stdout.write(

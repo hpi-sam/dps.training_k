@@ -248,7 +248,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def dispatch_event(cls, patient_instance, changes, is_updated):
-        if changes is not None and "patient_state" in changes:
+        if changes and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
         if not (changes is not None and len(changes) == 1 and "patient_state"):
@@ -264,8 +264,8 @@ class PatientInstanceDispatcher(ChannelNotifier):
                 and patient_instance.static_information.injury
             ):
                 message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
-        elif "triage" in changes:
-            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.triage.label}"
+        elif changes and "triage" in changes:
+            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"  # get_triage_display gets the long version of a ChoiceField
         if message:
             models.LogEntry.objects.create(
                 exercise=patient_instance.exercise,
