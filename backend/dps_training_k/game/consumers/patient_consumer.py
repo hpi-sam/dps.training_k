@@ -33,6 +33,7 @@ class PatientConsumer(AbstractConsumer):
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
         ACTION_CHECK = "action-check"
+        ACTION_CHECK_STOP = "action-check-stop"
         ACTION_ADD = "action-add"
         MATERIAL_RELEASE = "material-release"
         MATERIAL_ASSIGN = "material-assign"
@@ -70,6 +71,9 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.ACTION_CHECK: (
                 self.handle_action_check,
                 "actionName",
+            ),
+            self.PatientIncomingMessageTypes.ACTION_CHECK_STOP: (
+                self.handle_action_check_stop,
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
@@ -173,6 +177,9 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.ACTION_CHECK,
             **action_check_message,
         )
+
+    def handle_action_check_stop(self, patient_instance):
+        self._stop_inspecting_action(self.currently_inspected_action)
 
     def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)

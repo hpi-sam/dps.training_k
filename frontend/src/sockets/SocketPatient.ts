@@ -204,6 +204,12 @@ class SocketPatient {
 			'actionName': actionName,
 		}))
 	}
+
+	stopActionCheck() {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'action-check-stop',
+		}))
+	}
 }
 
 const socketPatient = new SocketPatient('ws://localhost:8000/ws/patient/?token=')

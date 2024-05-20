@@ -1,19 +1,24 @@
 <script setup lang="ts">
 	import socketPatient from '@/sockets/SocketPatient'
-	import { computed, ref } from 'vue'
+	import {computed, ref} from 'vue'
 	import CloseButton from '@/components/widgets/CloseButton.vue'
-	import { useActionCheckStore } from '@/stores/ActionCheck'
-	import { svg } from '@/assets/Svg'	
+	import {useActionCheckStore} from '@/stores/ActionCheck'
+	import {svg} from '@/assets/Svg'
 	import ActionGroupPopup from '@/components/widgets/ActionGroupPopup.vue'
 
 	const emit = defineEmits(['close-action'])
 
 	const actionCheckStore = useActionCheckStore()
 
+	function closeActionCheck() {
+		socketPatient.stopActionCheck()
+		emit('close-action')
+	}
+
 	function addAction() {
 		socketPatient.actionAdd(actionCheckStore?.actionName)
 		newActionsAllowed.value = false
-		emit('close-action')
+		closeActionCheck()
 	}
 
 	const errorMessage = ref(computed(() => {
@@ -62,7 +67,7 @@
 	/>
 	<div class="flex-container">
 		<div>
-			<CloseButton @close="emit('close-action')" />
+			<CloseButton @close="closeActionCheck()" />
 		</div>
 		<div class="scroll">
 			<h1>{{ actionCheckStore?.actionName }}</h1>
