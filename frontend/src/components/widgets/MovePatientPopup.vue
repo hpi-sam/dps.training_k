@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { computed, ref } from "vue"
+	import { computed } from "vue"
 	import CloseButton from "./CloseButton.vue"
     import { useExerciseStore } from "@/stores/Exercise"
 	import socketPatient from "@/sockets/SocketPatient"
@@ -32,10 +32,10 @@
 					<div
 						v-for="areaName in areas"
 						:key="areaName"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="movePatient(areaName)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="movePatient(areaName)">
+							<div class="list-item-name">
 								{{ areaName }}
 							</div>
 						</button>

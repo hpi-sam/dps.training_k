@@ -98,12 +98,10 @@ class SocketPatient {
 					break
 				case 'action-confirmation':
 					allowNewActions()
-					console.log('Patient Websocket ToDo: handle action-confirmation event ', data)
 					break
 				case 'action-declination':
 					allowNewActions()
 					showErrorToast('Aktion ' + data.actionName + ' konnte nicht angeordnet werden:\n ' + data.actionDeclinationReason)
-					console.log('Patient Websocket ToDo: handle action-declination event ', data)
 					break
 				case 'action-result':
 					console.log('Patient Websocket ToDo: handle action-result event ', data)
@@ -282,6 +280,8 @@ export const serverMockEvents = [
 		data: '{"messageType":"action-list","actions":[' +
 			'{"actionId":1,"orderId":4,"actionName":"Stabile Seitenlage","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":2,"orderId":7,"actionName":"Vollelektrolyt","actionStatus":"IE","timeUntilCompletion":200,"actionResult":null},' +
+			'{"actionId":2,"orderId":8,"actionName":"IV-Zugang","actionStatus":"EX","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":4,"orderId":2,"actionName":"Adrenalin","actionStatus":"OH","timeUntilCompletion":40,"actionResult":' +
 			'null},' +
 			'{"actionId":3,"orderId":5,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +
