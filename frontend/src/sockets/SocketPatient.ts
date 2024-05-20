@@ -98,12 +98,10 @@ class SocketPatient {
 					break
 				case 'action-confirmation':
 					allowNewActions()
-					console.log('Patient Websocket ToDo: handle action-confirmation event ', data)
 					break
 				case 'action-declination':
 					allowNewActions()
 					showErrorToast('Aktion ' + data.actionName + ' konnte nicht angeordnet werden:\n ' + data.actionDeclinationReason)
-					console.log('Patient Websocket ToDo: handle action-declination event ', data)
 					break
 				case 'action-result':
 					console.log('Patient Websocket ToDo: handle action-result event ', data)
