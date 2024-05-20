@@ -63,32 +63,32 @@
 	<div class="scroll">
 		<h1>Material</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('DE')">
+			<button v-if="currentAreaData" class="list-item-add-button" @click="openAddPopup('DE')">
 				Gerät hinzufügen
 			</button>
 			<div
 				v-for="device in devices as Material[]"
 				:key="device.materialName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="openDeletePopup(device.materialName, device.materialId)">
-					<div class="listItemName">
+				<button class="list-item-button" @click="openDeletePopup(device.materialName, device.materialId)">
+					<div class="list-item-name">
 						{{ device.materialName }}
 					</div>
 				</button>
 			</div>
 		</div>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('BL')">
+			<button v-if="currentAreaData" class="list-item-add-button" @click="openAddPopup('BL')">
 				Blut hinzufügen
 			</button>
 			<div
 				v-for="blood in bloodList as Material[]"
 				:key="blood.materialName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="openDeletePopup(blood.materialName, blood.materialId)">
-					<div class="listItemName">
+				<button class="list-item-button" @click="openDeletePopup(blood.materialName, blood.materialId)">
+					<div class="list-item-name">
 						{{ blood.materialName }}
 					</div>
 				</button>

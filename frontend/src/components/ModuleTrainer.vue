@@ -62,10 +62,10 @@
 </script>
 
 <template>
-	<div class="leftScreen">
+	<div class="left-screen">
 		<component :is="currentLeftScreenComponent" />
 	</div>
-	<div class="rightScreen">
+	<div class="right-screen">
 		<component :is="currentRightScreenComponent" />
 	</div>
 </template>

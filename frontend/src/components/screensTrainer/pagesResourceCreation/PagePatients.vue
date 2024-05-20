@@ -37,20 +37,20 @@
 	<div class="scroll">
 		<h1>Patienten</h1>
 		<div class="list">
-			<button v-if="currentAreaData" id="create-patient-button" class="listItemAddButton" @click="addPatient()">
+			<button v-if="currentAreaData" id="create-patient-button" class="list-item-add-button" @click="addPatient()">
 				Patient hinzufügen
 			</button>
 			<div
 				v-for="patient in currentAreaData?.patients"
 				:key="patient.patientName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="editPatient(patient.patientId)">
-					<div class="listItemId">
+				<button class="list-item-button" @click="editPatient(patient.patientId)">
+					<div class="list-item-id">
 						{{ patient.patientId }}
 					</div>
 					<TriageForListItems :patient-code="patient.code" />
-					<div class="listItemName">
+					<div class="list-item-name">
 						{{ patient.patientName }}
 					</div>
 				</button>

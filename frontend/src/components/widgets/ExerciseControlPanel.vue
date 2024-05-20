@@ -123,7 +123,7 @@
 	/>
 	<div class="panel">
 		<button
-			class="leaveButton"
+			class="leave-button"
 			@click="showLeavePopup = true"
 		>
 			<svg
@@ -136,22 +136,22 @@
 				<path :d="svg.arrowBackIcon" />
 			</svg>
 		</button>
-		<div class="listItemButton">
-			<div class="listItemName">
+		<div class="list-item-button">
+			<div class="list-item-name">
 				{{ info }}
 			</div>
 		</div>
-		<div class="rightButtons">
+		<div class="right-buttons">
 			<button
 				v-if="status != 'ended'"
-				class="speedButton"
+				class="speed-button"
 				@click="showSpeedPopup = true"
 			>
 				{{ speed }}x
 			</button>
 			<button
 				v-if="status == 'not-started'"
-				class="startButton"
+				class="start-button"
 				@click="showStartPopup = true"
 			>
 				<svg
@@ -166,7 +166,7 @@
 			</button>
 			<button
 				v-if="status == 'paused'"
-				class="startButton"
+				class="start-button"
 				@click="showResumePopup = true"
 			>
 				<svg
@@ -181,7 +181,7 @@
 			</button>
 			<button
 				v-if="status == 'running'"
-				class="pauseButton"
+				class="pause-button"
 				@click="showPausePopup = true"
 			>
 				<svg
@@ -196,7 +196,7 @@
 			</button>
 			<button
 				v-if="status == 'running' || status == 'paused'"
-				class="endButton"
+				class="end-button"
 				@click="showEndPopup = true"
 			>
 				<svg
@@ -223,40 +223,40 @@
 		align-items: center;
 	}
 
-	.listItemButton {
+	.list-item-button {
 		flex-grow: 1;
 		height: 100%;
 	}
 
-	.leaveButton {
+	.leave-button {
 		background-color: var(--red);
 	}
 
-	.rightButtons {
+	.right-buttons {
 		margin-left: auto;
 		display: flex;
 	}
 
-	.leaveButton, .speedButton, .startButton, .pauseButton, .endButton {
+	.leave-button, .speed-button, .start-button, .pause-button, .end-button {
 		height: 58px;
 		width: 60px;
 		border: none;
 	}
 
-	.speedButton {
+	.speed-button {
 		font-size: 1.25rem;
 		line-height: 1.25rem;
 	}
 
-	.startButton {
+	.start-button {
 		background-color: var(--green);
 	}
 
-	.pauseButton {
+	.pause-button {
 		background-color: var(--yellow);
 	}
 
-	.endButton {
+	.end-button {
 		background-color: var(--red);
 	}
 </style>

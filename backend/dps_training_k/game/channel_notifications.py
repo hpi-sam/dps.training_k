@@ -251,7 +251,9 @@ class PatientInstanceDispatcher(ChannelNotifier):
         if changes and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (changes is not None and len(changes) == 1 and "patient_state"):
+        if not (
+            changes is not None and len(changes) == 1 and "patient_state" in changes
+        ):
             cls._notify_exercise_update(patient_instance.exercise)
 
     @classmethod

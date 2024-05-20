@@ -40,10 +40,10 @@
 					<div
 						v-for="personnelAssignment in assignedPersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
 						</div>
@@ -58,10 +58,10 @@
 					<div
 						v-for="personnelAssignment in freePersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
 						</div>
@@ -76,13 +76,13 @@
 					<div
 						v-for="personnelAssignment in busyPersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<div class="list-item-button">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
-							<div class="listItemName assigned-patient">
+							<div class="list-item-name assigned-patient">
 								Patient {{ personnelAssignment.patientId }}
 							</div>
 						</div>
@@ -94,7 +94,7 @@
 </template>
 
 <style scoped>
-	.listItemButton {
+	.list-item-button {
 		padding-right: 0;
 	}
 
