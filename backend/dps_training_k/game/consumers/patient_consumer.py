@@ -159,7 +159,6 @@ class PatientConsumer(AbstractConsumer):
                 patient_instance=patient_instance,
             )
         application_succeded, context = action_instance.try_application()
-        self._stop_inspecting_action(action_name)
         if not application_succeded:
             self._send_action_declination(action_name=action_name, message=context)
 
