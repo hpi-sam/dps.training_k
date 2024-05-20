@@ -282,6 +282,8 @@ export const serverMockEvents = [
 		data: '{"messageType":"action-list","actions":[' +
 			'{"actionId":1,"orderId":4,"actionName":"Stabile Seitenlage","actionStatus":"FI","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":2,"orderId":6,"actionName":"Blutdruck messen","actionStatus":"IP","timeUntilCompletion":220,"actionResult":null},' +
+			'{"actionId":2,"orderId":7,"actionName":"Vollelektrolyt","actionStatus":"IE","timeUntilCompletion":200,"actionResult":null},' +
+			'{"actionId":2,"orderId":8,"actionName":"IV-Zugang","actionStatus":"EX","timeUntilCompletion":null,"actionResult":null},' +
 			'{"actionId":4,"orderId":2,"actionName":"Adrenalin","actionStatus":"OH","timeUntilCompletion":40,"actionResult":' +
 			'null},' +
 			'{"actionId":3,"orderId":5,"actionName":"Blutprobe untersuchen","actionStatus":"FI","timeUntilCompletion":null,"actionResult":' +

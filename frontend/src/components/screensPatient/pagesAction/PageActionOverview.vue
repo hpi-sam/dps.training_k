@@ -12,20 +12,31 @@
 
 	const actions = computed(() => actionOverviewStore.actions)
 
-	const actionsFinished = computed(() => actions.value.filter(action => action.actionStatus === 'FI'))
+	const actionsFinished = computed(() => actions.value.filter(
+		action => action.actionStatus === 'FI' || action.actionStatus === 'EX'
+	))
 
-	const actionsNotFinished = computed(() => actions.value.filter(action => action.actionStatus !== 'FI'))
+	const actionsInEffect = computed(() => actions.value.filter(
+		action => action.actionStatus === 'IE'
+	))
+
+	const actionsNotFinished = computed(() => actions.value.filter(
+		action => action.actionStatus === 'IP' || action.actionStatus === 'PL' || action.actionStatus === 'OH'
+	))
 
 	const getIconPath = (status: string) => {
 		switch (status) {
 			case 'IP':
 				return svg.playIcon
 			case 'FI':
+			case 'EX':
 				return svg.checkIcon
 			case 'PL':
 				return svg.waitingIcon
 			case 'OH':
 				return svg.blockIcon
+			case 'IE':
+				return svg.clockIcon
 		}
 	}
 
@@ -89,6 +100,28 @@
 							{{ action.actionName }}
 						</div>
 						<div class="time">
+							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+						</div>
+					</button>
+				</div>
+			</div>
+			<div v-if="actionsInEffect.length" class="list">
+				<p>Wirkende Effekte</p>
+				<div
+					v-for="action in actionsInEffect"
+					:key="action.actionId"
+					class="list-item"
+				>
+					<button class="list-item-button" @click="openResultPopup(action.actionName, action.actionResult)">
+						<div class="list-item-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+								<path :d="getIconPath(action.actionStatus)" />
+							</svg>
+						</div>
+						<div class="list-item-name">
+							{{ action.actionName }}
+						</div>
+						<div v-if="action.timeUntilCompletion > 0" class="time">
 							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
 						</div>
 					</button>
