@@ -14,6 +14,21 @@ class Personnel(models.Model):
     )
     name = models.CharField(max_length=100, blank=True)
 
+    @classmethod
+    def create_personnel(cls, area, name):
+        unique_name = name
+        number = 1
+
+        # Loop until a unique name is found
+        while cls.objects.filter(name=unique_name).exists():
+            unique_name = f"{name} {number}"
+            number += 1
+
+        return cls.objects.create(
+            area=area,
+            name=unique_name,
+        )
+
     def delete(self, using=None, keep_parents=False):
         PersonnelDispatcher.delete_and_notify(self)
 
@@ -22,9 +37,6 @@ class Personnel(models.Model):
         PersonnelDispatcher.save_and_notify(
             self, update_fields, super(), *args, **kwargs
         )
-        if self.name == "":
-            self.name = f"Personnel {self.id}"
-            self.save(update_fields=["name"])
 
     def block(self, action_instance):
         self.action_instance = action_instance

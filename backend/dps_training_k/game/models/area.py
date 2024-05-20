@@ -24,7 +24,7 @@ class Area(ActionsQueueable, models.Model):
 
         # Loop until a unique name is found
         while cls.objects.filter(name=unique_name).exists():
-            unique_name = f"{name}{number}"
+            unique_name = f"{name} {number}"
             number += 1
 
         return cls.objects.create(

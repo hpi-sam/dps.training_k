@@ -238,7 +238,6 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def action_check_changed_event(self, event):
-        print("action check event called")
         if self.currently_inspected_action:
             self.receive_json(
                 {
