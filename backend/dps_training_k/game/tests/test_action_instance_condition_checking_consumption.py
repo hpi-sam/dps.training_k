@@ -148,7 +148,9 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
             action_instance.attached_instance(), action_instance.attached_instance()
         )
-        action_instance.consume_and_free_resources()
+        action_instance.free_resources()
+        action_instance.consume_resources()
+
         self.assertRaises(
             ObjectDoesNotExist, MaterialInstance.objects.get, pk=material_instance_1.id
         )

@@ -197,6 +197,7 @@ class ActionInstance(LocalTimeable, models.Model):
             )
 
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
+        self.consume_resources()
 
     def _patient_application_finished(self, patient_state):
         self._update_state(
@@ -213,7 +214,7 @@ class ActionInstance(LocalTimeable, models.Model):
         self._application_finished()
 
     def _application_finished(self):
-        self.consume_and_free_resources()
+        self.free_resources()
         if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
                 self.template.produced_resources(), self.area
@@ -278,11 +279,14 @@ class ActionInstance(LocalTimeable, models.Model):
             resource.block(self)
         return True, None
 
-    def consume_and_free_resources(self):
+    def free_resources(self):
         for material in self.materialinstance_set.all():
             if material.is_reusable:
                 material.release()
-            else:
-                material.consume()
         for personnel in self.personnel_set.all():
             personnel.release()
+
+    def consume_resources(self):
+        for material in self.materialinstance_set.all():
+            if not material.is_reusable:
+                material.consume()
