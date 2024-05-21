@@ -120,10 +120,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
             raise ValueError(
                 "ActionInstance must be associated with a patient_instance or lab."
             )
-        if applied_action.patient_instance:
-            channel = cls.get_group_name(applied_action.patient_instance)
-        if applied_action.lab:
-            channel = cls.get_group_name(applied_action.lab)
+        channel = cls.get_group_name(applied_action.attached_instance())
 
         event = {
             "type": event_type,
@@ -240,6 +237,31 @@ class ExerciseDispatcher(ChannelNotifier):
         cls._notify_group(channel, event)
 
 
+class LogEntryDispatcher(ChannelNotifier):
+    @classmethod
+    def get_group_name(cls, exercise):
+        return f"{exercise.__class__.__name__}_{exercise.id}_log"
+
+    @classmethod
+    def get_exercise(cls, log_entry):
+        return log_entry.exercise
+
+    @classmethod
+    def dispatch_event(cls, log_entry, changes, is_updated):
+
+        if log_entry.is_valid():
+            cls._notify_log_update_event(log_entry)
+
+    @classmethod
+    def _notify_log_update_event(cls, log_entry):
+        channel = cls.get_group_name(log_entry.exercise)
+        event = {
+            "type": ChannelEventTypes.LOG_UPDATE_EVENT,
+            "log_entry_pk": log_entry.id,
+        }
+        cls._notify_group(channel, event)
+
+
 class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, material, changes, is_updated):
@@ -254,30 +276,6 @@ class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
     def get_exercise(cls, material):
         return material.attached_instance().exercise
-
-
-class LogEntryDispatcher(ChannelNotifier):
-    @classmethod
-    def get_group_name(cls, exercise):
-        return f"{exercise.__class__.__name__}_{exercise.id}_log"
-
-    @classmethod
-    def get_exercise(cls, log_entry):
-        return log_entry.exercise
-
-    @classmethod
-    def dispatch_event(cls, log_entry, changes, is_updated):
-        if log_entry.is_valid():
-            cls._notify_log_update_event(log_entry)
-
-    @classmethod
-    def _notify_log_update_event(cls, log_entry):
-        channel = cls.get_group_name(log_entry.exercise)
-        event = {
-            "type": ChannelEventTypes.LOG_UPDATE_EVENT,
-            "log_entry_pk": log_entry.id,
-        }
-        cls._notify_group(channel, event)
 
 
 class PatientInstanceDispatcher(ChannelNotifier):

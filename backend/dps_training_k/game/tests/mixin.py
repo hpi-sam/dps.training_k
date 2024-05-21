@@ -72,5 +72,20 @@ class TestUtilsMixin:
     def activate_condition_checking(self):
         self._deactivate_condition_checking_patch.stop()
 
+    def deactivate_logging(self):
+        self._deactivate_logging_patch = patch(
+            "game.channel_notifications.LogEntryDispatcher.dispatch_event"
+        )
+        self._deactivate_logging = self._deactivate_logging_patch.start()
+
+    def activate_logging(self):
+        self._deactivate_logging_patch.stop()
+
     def deactivate_live_updates(self):
-        pass
+        self._deactivate_live_updates_patch = patch(
+            "game.channel_notifications.ChannelNotifier._notify_action_check_update"
+        )
+        self._deactivate_live_updates = self._deactivate_live_updates_patch.start()
+
+    def activate_live_updates(self):
+        self._deactivate_live_updates_patch.stop()

@@ -52,7 +52,8 @@ class ActionInstanceTestCase(TestCase):
         )
 
         self.check_conditions_and_block_resources.return_value = False, "Not applicable"
-        self.assertFalse(action_instance.try_application())
+        condition_succeeded, _ = action_instance.try_application()
+        self.assertFalse(condition_succeeded)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
     @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
