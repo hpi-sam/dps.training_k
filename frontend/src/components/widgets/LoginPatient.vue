@@ -2,7 +2,6 @@
 	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient'
 	import {Modules, setModule, showErrorToast} from "@/App.vue"
-	import {svg} from "@/assets/Svg"
 
 	const exerciseIdInput = ref("")
 	const patientIdInput = ref("")
