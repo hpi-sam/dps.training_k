@@ -30,7 +30,13 @@
 		socketPatient.assignPersonnel(personnelId)
 	}
 
+	const selectedPersonnel = ref(Number.NEGATIVE_INFINITY)
 	const showMovePopup = ref(false)
+
+	function openMovePopup(personnelId: number) {
+		selectedPersonnel.value = personnelId
+		showMovePopup.value = true
+	}
 </script>
 
 <template>
@@ -38,6 +44,7 @@
 		v-if="showMovePopup"
 		:module="'Patient'"
 		:type-to-move="'Personnel'"
+		:id-of-moveable="selectedPersonnel" 
 		:current-area="patientStore.areaName"
 		@close-popup="showMovePopup=false"
 	/>
@@ -52,7 +59,7 @@
 						:key="personnelAssignment.personnelId"
 						class="listItem"
 					>
-						<button class="listItemButton" @click="showMovePopup = true">
+						<button class="listItemButton" @click="openMovePopup(personnelAssignment.personnelId)">
 							<div class="listItemName">
 								{{ personnelAssignment.personnelName }}
 							</div>
@@ -70,7 +77,7 @@
 						:key="personnelAssignment.personnelId"
 						class="listItem"
 					>
-						<button class="listItemButton" @click="showMovePopup = true">
+						<button class="listItemButton" @click="openMovePopup(personnelAssignment.personnelId)">
 							<div class="listItemName">
 								{{ personnelAssignment.personnelName }}
 							</div>
@@ -89,7 +96,7 @@
 						class="listItem"
 					>
 						<div class="listItemButton">
-							<button class="listItemName" @click="showMovePopup = true">
+							<button class="listItemName" @click="openMovePopup(personnelAssignment.personnelId)">
 								{{ personnelAssignment.personnelName }}
 							</button>
 							<div class="listItemName assigned-patient">

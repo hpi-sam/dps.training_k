@@ -30,14 +30,21 @@
 		socketPatient.assignMaterial(materialId)
 	}
 
+	const selectedMaterial = ref(Number.NEGATIVE_INFINITY)
 	const showMovePopup = ref(false)
+
+	function openMovePopup(materialId: number) {
+		selectedMaterial.value = materialId
+		showMovePopup.value = true
+	}
 </script>
 
 <template>
 	<MovePopup
 		v-if="showMovePopup"
-		:module="'Material'"
+		:module="'Patient'"
 		:type-to-move="'Material'"
+		:id-of-moveable="selectedMaterial" 
 		:current-area="patientStore.areaName"
 		@close-popup="showMovePopup=false"
 	/>
@@ -52,7 +59,7 @@
 						:key="materialAssignment.materialId"
 						class="listItem"
 					>
-						<button class="listItemButton" @click="showMovePopup = true">
+						<button class="listItemButton" @click="openMovePopup(materialAssignment.materialId)">
 							<div class="listItemName">
 								{{ materialAssignment.materialName }}
 							</div>
@@ -70,7 +77,7 @@
 						:key="materialAssignment.materialId"
 						class="listItem"
 					>
-						<button class="listItemButton" @click="showMovePopup = true">
+						<button class="listItemButton" @click="openMovePopup(materialAssignment.materialId)">
 							<div class="listItemName">
 								{{ materialAssignment.materialName }}
 							</div>
@@ -88,7 +95,7 @@
 						:key="materialAssignment.materialId"
 						class="listItem"
 					>
-						<button class="listItemButton" @click="showMovePopup = true">
+						<button class="listItemButton" @click="openMovePopup(materialAssignment.materialId)">
 							<div class="listItemName">
 								{{ materialAssignment.materialName }}
 							</div>

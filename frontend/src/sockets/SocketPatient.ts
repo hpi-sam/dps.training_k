@@ -200,16 +200,18 @@ class SocketPatient {
 		}))
 	}
 
-	movePersonnel(areaName: string) {
+	movePersonnel(personnelId: number, areaName: string) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'personnel-move',
+			'personnelId': personnelId,
 			'areaName': areaName,
 		}))
 	}
 
-	moveMaterial(areaName: string) {
+	moveMaterial(materialId: number, areaName: string) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'material-move',
+			'materialId': materialId,
 			'areaName': areaName,
 		}))
 	}
