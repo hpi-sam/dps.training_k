@@ -59,7 +59,7 @@
 						:key="personnelAssignment.personnelId"
 						class="list-item"
 					>
-						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
+						<button class="list-item-button">
 							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
@@ -95,7 +95,7 @@
 						:key="personnelAssignment.personnelId"
 						class="list-item"
 					>
-						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
+						<button class="list-item-button">
 							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>

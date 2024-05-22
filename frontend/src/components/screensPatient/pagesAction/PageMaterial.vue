@@ -59,7 +59,7 @@
 						:key="materialAssignment.materialId"
 						class="list-item"
 					>
-						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
+						<button class="list-item-button">
 							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
@@ -95,7 +95,7 @@
 						:key="materialAssignment.materialId"
 						class="list-item"
 					>
-						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
+						<button class="list-item-button">
 							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
