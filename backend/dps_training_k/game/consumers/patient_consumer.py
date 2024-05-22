@@ -7,11 +7,21 @@ from game.models import (
     MaterialInstance,
     ActionInstance,
     ScheduledEvent,
+    Exercise,
+    ActionInstanceStateNames,
+)
+from game.serializers.action_check_serializers import (
+    PatientInstanceActionCheckSerializer,
+    LabActionCheckSerializer,
 )
 from template.models import Action
 from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
-from ..channel_notifications import ChannelNotifier
+from ..channel_notifications import (
+    ChannelNotifier,
+    PersonnelDispatcher,
+    MaterialInstanceDispatcher,
+)
 
 
 class PatientConsumer(AbstractConsumer):
@@ -23,6 +33,8 @@ class PatientConsumer(AbstractConsumer):
         EXAMPLE = "example"
         TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
+        ACTION_CHECK = "action-check"
+        ACTION_CHECK_STOP = "action-check-stop"
         ACTION_ADD = "action-add"
         MATERIAL_RELEASE = "material-release"
         MATERIAL_ASSIGN = "material-assign"
@@ -39,8 +51,11 @@ class PatientConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.default_arguments = [lambda: PatientInstance.objects.get(frontend_id=self.patient_frontend_id)]
+        self.default_arguments = [
+            lambda: PatientInstance.objects.get(frontend_id=self.patient_frontend_id)
+        ]
         self.patient_frontend_id = ""
+        self.currently_inspected_action = None
         self.REQUESTS_MAP = {
             self.PatientIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -53,6 +68,13 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.TRIAGE: (
                 self.handle_triage,
                 "triage",
+            ),
+            self.PatientIncomingMessageTypes.ACTION_CHECK: (
+                self.handle_action_check,
+                "actionName",
+            ),
+            self.PatientIncomingMessageTypes.ACTION_CHECK_STOP: (
+                self.handle_action_check_stop,
             ),
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
@@ -81,7 +103,9 @@ class PatientConsumer(AbstractConsumer):
         success, patient_frontend_id = self.authenticate(token)
         if success:
             self.patient_frontend_id = patient_frontend_id
-            self.patient_instance = PatientInstance.objects.get(frontend_id=self.patient_frontend_id)
+            self.patient_instance = PatientInstance.objects.get(
+                frontend_id=self.patient_frontend_id
+            )
 
             self.exercise = self.patient_instance.exercise
             self.accept()
@@ -93,13 +117,18 @@ class PatientConsumer(AbstractConsumer):
             self.send_available_actions()
             self.send_available_patients()
             self.action_list_event(None)
+            if self.exercise.state == Exercise.StateTypes.RUNNING:
+                self.exercise_start_event(None)
         else:
             self.close()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
+    # These methods are not allowed to be called directly. If you want to call them from the backend, go via self.receive_json()
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(self, patient_instance, exercise_frontend_id, patient_frontend_id):
+    def handle_example(
+        self, patient_instance, exercise_frontend_id, patient_frontend_id
+    ):
         self.exercise_frontend_id = exercise_frontend_id
         self.patient_frontend_id = patient_frontend_id
         self.send_event(
@@ -118,39 +147,40 @@ class PatientConsumer(AbstractConsumer):
         patient_instance.save(update_fields=["triage"])
 
     def handle_action_add(self, patient_instance, action_name):
-        try:
-            action_template = Action.objects.get(name=action_name)
-            if action_template.category == Action.Category.PRODUCTION:
-                action_instance = ActionInstance.create(
-                    action_template=action_template,
-                    lab=self.exercise.lab,
-                    area=patient_instance.area,
-                )
-            else:
-                action_instance = ActionInstance.create(
-                    action_template=action_template,
-                    patient_instance=patient_instance,
-                )
-            action_instance.try_application()
-        except:
-            self._send_action_declination(action_name=action_name)
+        action_template = Action.objects.get(name=action_name)
+        if action_template.category == Action.Category.PRODUCTION:
+            action_instance = ActionInstance.create(
+                template=action_template,
+                lab=self.exercise.lab,
+                area=patient_instance.area,
+            )
+        else:
+            action_instance = ActionInstance.create(
+                template=action_template,
+                patient_instance=patient_instance,
+            )
+        application_succeded, context = action_instance.try_application()
+        if not application_succeded:
+            self._send_action_declination(action_name=action_name, message=context)
 
-    def handle_action_check(self, patient_instance, action_id):
-        stub_action_name = "Recovery Position"
-        stub_time = 10
-        stub_requirements = [
-            {
-                "name": "a recovery position condition",
-                "category": "material",
-                "values": [{"available": 1, "assigned": 1, "needed": 1}],
-            }
-        ]
+    def handle_action_check(self, patient_instance, action_name):
+        self._start_inspecting_action(action_name)
+        action_template = Action.objects.get(name=action_name)
+        if action_template.category == Action.Category.PRODUCTION:
+            action_check_message = LabActionCheckSerializer(
+                action_template, self.exercise.lab
+            ).data
+        else:
+            action_check_message = PatientInstanceActionCheckSerializer(
+                action_template, self.patient_instance
+            ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CHECK,
-            actionName=stub_action_name,
-            time=stub_time,
-            requirements=stub_requirements,
+            **action_check_message,
         )
+
+    def handle_action_check_stop(self, patient_instance):
+        self._stop_inspecting_action(self.currently_inspected_action)
 
     def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
@@ -173,12 +203,28 @@ class PatientConsumer(AbstractConsumer):
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def _send_action_declination(self, action_name):
+    def _send_action_declination(self, action_name, message=None):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_DECLINATION,
             actionName=action_name,
-            actionDeclinationReason="Irgendetwas ist schiefgegangen",
+            actionDeclinationReason=(
+                "Irgendetwas ist schiefgegangen" if not message else message
+            ),
         )
+
+    def _start_inspecting_action(self, action_name):
+        if self.currently_inspected_action == action_name:
+            return
+        self.currently_inspected_action = action_name
+        self.subscribe(PersonnelDispatcher.get_live_group_name(self.exercise))
+        self.subscribe(MaterialInstanceDispatcher.get_live_group_name(self.exercise))
+
+    def _stop_inspecting_action(self, action_name):
+        if not self.currently_inspected_action == action_name:
+            return
+        self.currently_inspected_action = None
+        self.unsubscribe(PersonnelDispatcher.get_live_group_name(self.exercise))
+        self.unsubscribe(MaterialInstanceDispatcher.get_live_group_name(self.exercise))
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
@@ -190,6 +236,15 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,
         )
+
+    def action_check_changed_event(self, event):
+        if self.currently_inspected_action:
+            self.receive_json(
+                {
+                    "messageType": self.PatientIncomingMessageTypes.ACTION_CHECK,
+                    "actionName": self.currently_inspected_action,
+                }
+            )
 
     def action_confirmation_event(self, event):
         action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
@@ -207,10 +262,11 @@ class PatientConsumer(AbstractConsumer):
         action_instances = ActionInstance.objects.filter(
             Q(patient_instance=self.get_patient_instance)
             | Q(
-                action_template__category=Action.Category.PRODUCTION,
+                template__category=Action.Category.PRODUCTION,
                 area=self.get_patient_instance.area,
             )
-        )
+        ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+        # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
 
         for action_instance in action_instances:
             action_data = {

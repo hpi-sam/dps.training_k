@@ -7,11 +7,21 @@ class Lab(models.Model):
         on_delete=models.CASCADE,
     )
 
-    def start_examination(self, action_template, patient_instance):
-        pass
+    def material_assigned(self, material_template):
+        return list(self.materialinstance_set.filter(template=material_template))
 
-    def start_production(self, action_template, area):
-        pass
+    def material_available(self, material_template):
+        return list(
+            self.materialinstance_set.filter(
+                template=material_template, action_instance=None
+            )
+        )
+
+    def personel_assigned(self):
+        return []
+
+    def personnel_available(self):
+        return []
 
     def __str__(self):
         return f"Lab: {self.exercise.frontend_id}"

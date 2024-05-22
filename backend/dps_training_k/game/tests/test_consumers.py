@@ -70,7 +70,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):
-        return ActionInstance.objects.filter(action_template__name=action_name).exists()
+        return ActionInstance.objects.filter(template__name=action_name).exists()
 
     async def test_patient_consumer_add_action(self):
         """

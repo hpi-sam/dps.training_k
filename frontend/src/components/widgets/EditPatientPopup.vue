@@ -50,20 +50,20 @@
 	<div class="popup-overlay" @click="emit('close-popup')">
 		<div class="popup" @click.stop="">
 			<CloseButton @close="emit('close-popup')" />
-			<div id="leftSide">
+			<div id="left-side">
 				<div class="flex-container">
 					<h2>Patienten-Datensätze</h2>
 					<PatientCodeList @change-patient="changePatientCode" />
 				</div>
 			</div>
-			<div id="rightSide">
+			<div id="right-side">
 				<div class="flex-container">
-					<div class="listItem">
-						<div class="patientId">
+					<div class="list-item">
+						<div class="patient-id">
 							{{ props.patientId }}
 						</div>
 						<TriageForListItems :patient-code="currentPatient?.code" />
-						<div class="patientName">
+						<div class="patient-name">
 							{{ currentPatientName }}
 						</div>
 					</div>
@@ -79,12 +79,12 @@
 							:pretreatment="currentPatient?.pretreatment"
 						/>
 					</div>
-					<div id="buttonRow">
-						<button id="deleteButton" @click="deletePatient(props.patientId)">
+					<div id="button-row">
+						<button id="delete-button" @click="deletePatient(props.patientId)">
 							Löschen
 						</button>
 						<button
-							id="saveButton"
+							id="save-button"
 							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.code || Number.NEGATIVE_INFINITY)"
 						>
 							Speichern
@@ -103,22 +103,22 @@
 		display: flex;
 	}
 
-	#leftSide {
+	#left-side {
 		float: left;
 		width: 50%;
 		padding: 10px;
 	}
 
-	#rightSide {
+	#right-side {
 		width: 50%;
 		padding: 10px;
 	}
 
-	#buttonRow {
+	#button-row {
 		display: flex;
 	}
 
-	#deleteButton, #saveButton {
+	#delete-button, #save-button {
 		position: relative;
 		color: white;
 		border: 1px solid rgb(209, 213, 219);
@@ -130,16 +130,16 @@
 		margin-top: 10px;
 	}
 
-	#deleteButton {
+	#delete-button {
 		background-color: var(--red);
 	}
 
-	#saveButton {
+	#save-button {
 		background-color: var(--green);
 		margin-left: 10px;
 	}
 
-	.listItem {
+	.list-item {
 		margin-right: 40px;
 		font-size: 1.25rem;
 		text-align: left;
@@ -147,7 +147,7 @@
 		padding-left: 0;
 	}
 
-	.patientId, .patientName {
+	.patient-id, .patient-name {
 		padding: .75rem 1rem;
 	}
 </style>

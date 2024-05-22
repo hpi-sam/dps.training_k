@@ -32,8 +32,8 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
 class MaterialInstanceSerializer(serializers.ModelSerializer):
     materialId = serializers.IntegerField(source="id")
-    materialType = serializers.CharField(source="material_template.category")
-    materialName = serializers.CharField(source="material_template.name")
+    materialType = serializers.CharField(source="template.category")
+    materialName = serializers.CharField(source="template.name")
 
     class Meta:
         model = m.MaterialInstance

@@ -57,10 +57,10 @@
 					<div
 						v-for="materialAssignment in assignedMaterial"
 						:key="materialAssignment.materialId"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="openMovePopup(materialAssignment.materialId)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
+							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
 						</button>
@@ -75,10 +75,10 @@
 					<div
 						v-for="materialAssignment in freeMaterial"
 						:key="materialAssignment.materialId"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="openMovePopup(materialAssignment.materialId)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
+							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
 						</button>
@@ -93,13 +93,13 @@
 					<div
 						v-for="materialAssignment in busyMaterial"
 						:key="materialAssignment.materialId"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="openMovePopup(materialAssignment.materialId)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
+							<div class="list-item-name">
 								{{ materialAssignment.materialName }}
 							</div>
-							<div class="listItemName assigned-patient">
+							<div class="list-item-name assigned-patient">
 								Patient {{ materialAssignment.patientId }}
 							</div>
 						</button>
@@ -111,7 +111,7 @@
 </template>
 
 <style scoped>
-	.listItemButton {
+	.list-item-button {
 		padding-right: 0;
 	}
 

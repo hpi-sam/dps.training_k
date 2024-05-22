@@ -71,10 +71,10 @@
 					<div
 						v-for="areaName in areas"
 						:key="areaName"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="move(areaName)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="move(areaName)">
+							<div class="list-item-name">
 								{{ areaName }}
 							</div>
 						</button>

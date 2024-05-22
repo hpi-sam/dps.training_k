@@ -55,7 +55,37 @@ class TestUtilsMixin:
             "game.channel_notifications.ChannelNotifier.save_and_notify",
             new=custom_save_and_notify,
         )
-        save_and_notify = self._deactivate_notifications_patch.start()
+        self._deactivate_notifications_patch.start()
 
     def activate_notifications(self):
         self._deactivate_notifications_patch.stop()
+
+    def deactivate_condition_checking(self):
+        self._deactivate_condition_checking_patch = patch(
+            "game.models.ActionInstance.check_conditions_and_block_resources"
+        )
+        self._deactivate_condition_checking = (
+            self._deactivate_condition_checking_patch.start()
+        )
+        self._deactivate_condition_checking.return_value = (True, None)
+
+    def activate_condition_checking(self):
+        self._deactivate_condition_checking_patch.stop()
+
+    def deactivate_logging(self):
+        self._deactivate_logging_patch = patch(
+            "game.channel_notifications.LogEntryDispatcher.dispatch_event"
+        )
+        self._deactivate_logging = self._deactivate_logging_patch.start()
+
+    def activate_logging(self):
+        self._deactivate_logging_patch.stop()
+
+    def deactivate_live_updates(self):
+        self._deactivate_live_updates_patch = patch(
+            "game.channel_notifications.ChannelNotifier._notify_action_check_update"
+        )
+        self._deactivate_live_updates = self._deactivate_live_updates_patch.start()
+
+    def activate_live_updates(self):
+        self._deactivate_live_updates_patch.stop()

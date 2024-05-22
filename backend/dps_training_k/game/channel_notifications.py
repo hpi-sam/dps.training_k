@@ -21,6 +21,7 @@ class ChannelEventTypes:
     EXERCISE_END_EVENT = "exercise.end.event"
     ACTION_CONFIRMATION_EVENT = "action.confirmation.event"
     ACTION_LIST_EVENT = "action.list.event"
+    ACTION_CHECK_CHANGED_EVENT = "action.check.changed.event"
     LOG_UPDATE_EVENT = "log.update.event"
 
 
@@ -37,6 +38,7 @@ class ChannelNotifier:
         save_origin.save(*args, **kwargs)
         cls.dispatch_event(obj, changes, is_updated)
         cls.create_trainer_log(obj, changes, is_updated)
+        cls._notify_action_check_update(cls.get_exercise(obj))
 
     @classmethod
     def delete_and_notify(cls, obj, changes):
@@ -54,8 +56,16 @@ class ChannelNotifier:
         async_to_sync(get_channel_layer().group_send)(group_channel_name, event)
 
     @classmethod
+    def get_exercise(cls, obj):
+        raise NotImplementedError("Method get_exercise must be implemented by subclass")
+
+    @classmethod
     def get_group_name(cls, obj):
         return f"{obj.__class__.__name__}_{obj.id}"
+
+    @classmethod
+    def get_live_group_name(cls, exercise):
+        return f"{cls.__name__}_{exercise.id}_live"
 
     @classmethod
     def dispatch_event(cls, obj, changes):
@@ -74,6 +84,12 @@ class ChannelNotifier:
             "type": ChannelEventTypes.EXERCISE_UPDATE,
             "exercise_pk": exercise.id,
         }
+        cls._notify_group(channel, event)
+
+    @classmethod
+    def _notify_action_check_update(cls, exercise):
+        channel = cls.get_live_group_name(exercise)
+        event = {"type": ChannelEventTypes.ACTION_CHECK_CHANGED_EVENT}
         cls._notify_group(channel, event)
 
 
@@ -104,10 +120,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
             raise ValueError(
                 "ActionInstance must be associated with a patient_instance or lab."
             )
-        if applied_action.patient_instance:
-            channel = cls.get_group_name(applied_action.patient_instance)
-        if applied_action.lab:
-            channel = cls.get_group_name(applied_action.lab)
+        channel = cls.get_group_name(applied_action.attached_instance())
 
         event = {
             "type": event_type,
@@ -125,13 +138,10 @@ class ActionInstanceDispatcher(ChannelNotifier):
             message = f'"{applied_action.name}" wurde gestartet'
         elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
             message = f'"{applied_action.name}" wurde abgeschlossen'
-            if (
-                applied_action.action_template.category
-                == template.Action.Category.PRODUCTION
-            ):
+            if applied_action.template.category == template.Action.Category.PRODUCTION:
                 named_produced_resources = {
                     material.name: amount
-                    for material, amount in applied_action.action_template.produced_resources().items()
+                    for material, amount in applied_action.template.produced_resources().items()
                 }
                 message += f" und hat {str(named_produced_resources)} produziert"
         elif (
@@ -166,17 +176,25 @@ class ActionInstanceDispatcher(ChannelNotifier):
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
 
+    @classmethod
+    def get_exercise(cls, applied_action):
+        return applied_action.exercise
+
 
 class AreaDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, area, changes, is_updated):
-        cls._notify_exercise_update(area.exercise)
+        cls._notify_exercise_update(cls.get_exercise(area))
 
     @classmethod
     def delete_and_notify(cls, area, *args, **kwargs):
-        exercise = area.exercise
+        exercise = cls.get_exercise(area)
         super(area.__class__, area).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)
+
+    @classmethod
+    def get_exercise(cls, area):
+        return area.exercise
 
 
 class ExerciseDispatcher(ChannelNotifier):
@@ -203,6 +221,10 @@ class ExerciseDispatcher(ChannelNotifier):
             models.LogEntry.objects.create(exercise=exercise, message=message)
 
     @classmethod
+    def get_exercise(cls, exercise):
+        return exercise
+
+    @classmethod
     def _notify_exercise_start_event(cls, exercise):
         channel = cls.get_group_name(exercise)
         event = {"type": ChannelEventTypes.EXERCISE_START_EVENT}
@@ -212,6 +234,31 @@ class ExerciseDispatcher(ChannelNotifier):
     def _notify_exercise_end_event(cls, exercise):
         channel = cls.get_group_name(exercise)
         event = {"type": ChannelEventTypes.EXERCISE_END_EVENT}
+        cls._notify_group(channel, event)
+
+
+class LogEntryDispatcher(ChannelNotifier):
+    @classmethod
+    def get_group_name(cls, exercise):
+        return f"{exercise.__class__.__name__}_{exercise.id}_log"
+
+    @classmethod
+    def get_exercise(cls, log_entry):
+        return log_entry.exercise
+
+    @classmethod
+    def dispatch_event(cls, log_entry, changes, is_updated):
+
+        if log_entry.is_valid():
+            cls._notify_log_update_event(log_entry)
+
+    @classmethod
+    def _notify_log_update_event(cls, log_entry):
+        channel = cls.get_group_name(log_entry.exercise)
+        event = {
+            "type": ChannelEventTypes.LOG_UPDATE_EVENT,
+            "log_entry_pk": log_entry.id,
+        }
         cls._notify_group(channel, event)
 
 
@@ -226,38 +273,22 @@ class MaterialInstanceDispatcher(ChannelNotifier):
         super(material.__class__, material).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)
 
-
-class LogEntryDispatcher(ChannelNotifier):
     @classmethod
-    def get_group_name(cls, exercise):
-        return f"{exercise.__class__.__name__}_{exercise.id}_log"
-
-    @classmethod
-    def dispatch_event(cls, log_entry, changes, is_updated):
-        if log_entry.is_valid():
-            cls._notify_log_update_event(log_entry)
-
-    @classmethod
-    def _notify_log_update_event(cls, log_entry):
-        channel = cls.get_group_name(log_entry.exercise)
-        event = {
-            "type": ChannelEventTypes.LOG_UPDATE_EVENT,
-            "log_entry_pk": log_entry.id,
-        }
-        cls._notify_group(channel, event)
+    def get_exercise(cls, material):
+        return material.attached_instance().exercise
 
 
 class PatientInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def dispatch_event(cls, patient_instance, changes, is_updated):
-        if changes is not None and "patient_state" in changes:
+        if changes and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
         if not (
             changes is not None and len(changes) == 1 and "patient_state" in changes
         ):
-            cls._notify_exercise_update(patient_instance.exercise)
+            cls._notify_exercise_update(cls.get_exercise(patient_instance))
 
     @classmethod
     def create_trainer_log(cls, patient_instance, changes, is_updated):
@@ -269,14 +300,18 @@ class PatientInstanceDispatcher(ChannelNotifier):
                 and patient_instance.static_information.injury
             ):
                 message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
-        elif "triage" in changes:
+        elif changes and "triage" in changes:
             message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"  # get_triage_display gets the long version of a ChoiceField
         if message:
             models.LogEntry.objects.create(
-                exercise=patient_instance.exercise,
+                exercise=cls.get_exercise(patient_instance),
                 message=message,
                 patient_instance=patient_instance,
             )
+
+    @classmethod
+    def get_exercise(cls, patient_instance):
+        return patient_instance.exercise
 
     @classmethod
     def _notify_patient_state_change(cls, patient_instance):
@@ -297,10 +332,14 @@ class PatientInstanceDispatcher(ChannelNotifier):
 class PersonnelDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, personnel, changes, is_updated):
-        cls._notify_exercise_update(personnel.area.exercise)
+        cls._notify_exercise_update(cls.get_exercise(personnel))
 
     @classmethod
     def delete_and_notify(cls, personnel, *args, **kwargs):
-        exercise = personnel.area.exercise
+        exercise = cls.get_exercise(personnel)
         super(personnel.__class__, personnel).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)
+
+    @classmethod
+    def get_exercise(cls, personnel):
+        return personnel.area.exercise

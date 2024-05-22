@@ -57,10 +57,10 @@
 					<div
 						v-for="personnelAssignment in assignedPersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="openMovePopup(personnelAssignment.personnelId)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
 						</button>
@@ -75,10 +75,10 @@
 					<div
 						v-for="personnelAssignment in freePersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="openMovePopup(personnelAssignment.personnelId)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
 						</button>
@@ -93,16 +93,16 @@
 					<div
 						v-for="personnelAssignment in busyPersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<button class="listItemName" @click="openMovePopup(personnelAssignment.personnelId)">
+						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
-							</button>
-							<div class="listItemName assigned-patient">
+							</div>
+							<div class="list-item-name assigned-patient">
 								Patient {{ personnelAssignment.patientId }}
 							</div>
-						</div>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -111,7 +111,7 @@
 </template>
 
 <style scoped>
-	.listItemButton {
+	.list-item-button {
 		padding-right: 0;
 	}
 

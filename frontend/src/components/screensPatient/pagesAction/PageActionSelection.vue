@@ -33,14 +33,10 @@
 	const actionCheckStore = useActionCheckStore()
 
 	function openAction(actionName: string) {
-		/*
 		actionCheckStore.$reset()
 		socketPatient.actionCheck(actionName)
 		currentAction.value = actionName
 		emit('set-page', Pages.ACTION_CHECK)
-		*/
-		// this is a hotfix until the action check is implemented in backend
-		socketPatient.actionAdd(actionName)
 	}
 </script>
 <template>
@@ -57,10 +53,10 @@
 				<div
 					v-for="action in filteredActions(actionTyp)"
 					:key="action.actionName"
-					class="listItem"
+					class="list-item"
 				>
-					<button class="listItemButton" @click="openAction(action.actionName)">
-						<div class="listItemName">
+					<button class="list-item-button" @click="openAction(action.actionName)">
+						<div class="list-item-name">
 							{{ action.actionName }}
 						</div>
 					</button>

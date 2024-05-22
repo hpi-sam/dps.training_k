@@ -19,7 +19,7 @@
 			<button
 				v-for="patient in availablePatients"
 				:key="patient.code"
-				class="availablePatientButton"
+				class="available-patient-button"
 				@click="changePatient(patient.code)"
 			>
 				<TriageForListItems :patient-code="patient.code" />
@@ -29,7 +29,7 @@
 </template>
 
 <style scoped>
-	.availablePatientButton {
+	.available-patient-button {
 		position: relative;
 		border: none;
 		padding: 0px;
