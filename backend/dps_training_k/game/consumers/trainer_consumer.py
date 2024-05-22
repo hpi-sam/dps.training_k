@@ -178,7 +178,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_patient(self, exercise, areaName, patientName, code):
         try:
-            area = Area.objects.get(name=areaName)
+            area = Area.objects.get(name=areaName, exercise=exercise)
             patient_information = PatientInformation.objects.get(code=code)
             PatientInstance.objects.create(
                 name=patientName,
@@ -214,7 +214,7 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_personnel(self, exercise, areaName):
         try:
-            area = Area.objects.get(name=areaName)
+            area = Area.objects.get(name=areaName, exercise=exercise)
             Personnel.create_personnel(area=area, name="Personnel")
         except Area.DoesNotExist:
             self.send_failure(
