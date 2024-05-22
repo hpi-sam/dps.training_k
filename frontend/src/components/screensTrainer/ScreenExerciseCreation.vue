@@ -7,6 +7,7 @@
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
+	import { Screens, setRightScreen } from '../ModuleTrainer.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -16,6 +17,7 @@
 
 	function openArea(areaName: string) {
 		setArea(areaName)
+		setRightScreen(Screens.RESOURCE_CREATION)
 		currentArea.value = areaName
 	}
 
@@ -30,6 +32,10 @@
 
 	function deleteArea() {
 		socketTrainer.areaDelete(currentArea.value)
+	}
+
+	function openLog() {
+		setRightScreen(Screens.LOG)
 	}
 
 	const showPopup = ref(false)
@@ -68,6 +74,11 @@
 				</div>
 			</div>
 		</div>
+		<div>
+			<button v-if="exerciseStore?.status !== 'not-started'" class="main-button" @click="openLog()">
+				Log öffnen
+			</button>
+		</div>
 		<ExerciseControlPanel />
 	</div>
 </template>
@@ -83,5 +94,11 @@
 
 	.scroll {
 		margin-bottom: 50px;
+	}
+
+	.main-button {
+		background-color: var(--green);
+		color: white;
+		margin-bottom: 80px;
 	}
 </style>

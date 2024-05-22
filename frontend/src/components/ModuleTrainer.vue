@@ -17,7 +17,6 @@
 	import {computed, ref} from "vue"
 	import ScreenStatus from "@/components/screensPatient/ScreenStatus.vue"
 	import ScreenLog from "@/components/screensTrainer/ScreenLog.vue"
-	import ScreenScenario from "@/components/screensTrainer/ScreenScenario.vue"
 
 	export enum Screens {
 		CREATE_EXERCISE = "ScreenCreateExercise",
@@ -25,7 +24,6 @@
 		EXERCISE_CREATION = "ScreenExerciseCreation",
 		RESOURCE_CREATION = "ScreenResourceCreation",
 		LOG = "ScreenLog",
-		SCENARIO = "ScreenScenario",
 	}
 
 	const currentLeftScreen = ref(Screens.CREATE_EXERCISE)
@@ -45,8 +43,6 @@
 				return ScreenResourceCreation
 			case Screens.LOG:
 				return ScreenLog
-			case Screens.SCENARIO:
-				return ScreenScenario
 			default:
 				return ScreenStatus
 		}

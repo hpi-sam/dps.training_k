@@ -18,8 +18,8 @@
 <template>
 	<LogPopup v-if="showPopup" :log-id="currentLogId" @close-popup="showPopup=false" />
 	<div class="flex-container">
-		<h1>Log</h1>
 		<div class="scroll">
+			<h1>Log</h1>
 			<div class="list">
 				<div
 					v-for="logEntry in logStore.log"

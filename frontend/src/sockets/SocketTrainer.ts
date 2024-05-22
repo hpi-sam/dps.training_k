@@ -70,22 +70,18 @@ class SocketTrainer {
 					break
 				case 'exercise-start':
 					exerciseStore.status = 'running'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
 					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-pause':
 					exerciseStore.status = 'paused'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
 					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-resume':
 					exerciseStore.status = 'running'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
 					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-end':
 					exerciseStore.status = 'ended'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
 					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'log-update':
@@ -196,7 +192,7 @@ class SocketTrainer {
 		}))
 	}
 
-	materialDelete(materialId: string) {
+	materialDelete(materialId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'material-delete',
 			'materialId': materialId
