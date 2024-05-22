@@ -70,23 +70,18 @@ class SocketTrainer {
 					break
 				case 'exercise-start':
 					exerciseStore.status = 'running'
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-pause':
 					exerciseStore.status = 'paused'
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-resume':
 					exerciseStore.status = 'running'
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-end':
 					exerciseStore.status = 'ended'
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'log-update':
 					useLogStore().addLogEntries(data.logEntries as LogEntry[])
-					console.log('Socket Log ', data)
 					break
 				case 'set-speed':
 					useExerciseStore().speed = data.speed
