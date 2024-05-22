@@ -1,5 +1,8 @@
-from django.test import TestCase
+import json
 from unittest.mock import patch
+
+from django.test import TestCase
+
 from template.management.commands.import_actions import (
     Command as ImportActionsCommand,
 )
@@ -39,6 +42,7 @@ class TestPopulateActionsCommand(TestCase):
                     f"{defaults['effect_duration']} is neither an int nor a NoneType",
                 )
                 conditions = defaults["conditions"]
+                conditions = json.loads(conditions)
                 self.assertTrue(
                     isinstance(conditions["required_actions"], type(None))
                     or isinstance(conditions["required_actions"], list),
