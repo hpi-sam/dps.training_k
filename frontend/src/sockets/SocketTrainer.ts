@@ -6,6 +6,7 @@ import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as 
 import {useAvailablesStore} from "@/stores/Availables"
 import {useLogStore} from "@/stores/Log"
 import {commonMockEvents} from "./commonMockEvents"
+import {Modules, setModule} from "@/App.vue"
 
 class SocketTrainer {
 	private readonly url: string
@@ -63,6 +64,7 @@ class SocketTrainer {
 				case 'exercise':
 					if (exerciseStore.status == '') {
 						exerciseStore.status = 'not-started'
+						setModule(Modules.TRAINER)
 						moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
 						moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
 					}
