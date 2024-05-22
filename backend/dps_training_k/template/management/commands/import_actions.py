@@ -1,7 +1,9 @@
-from django.core.management.base import BaseCommand
-from template.models import Action
-from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
 import json
+
+from django.core.management.base import BaseCommand
+
+from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
+from template.models import Action
 
 
 class Command(BaseCommand):
@@ -37,18 +39,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.TRACHEALTUBUS)],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BEATMUNGSGERAET)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.TRACHEALTUBUS)],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.BEATMUNGSGERAET)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -58,18 +62,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 300,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -79,18 +85,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -100,18 +108,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 120,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -121,18 +131,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -142,18 +154,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -163,17 +177,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -183,17 +199,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -203,20 +221,22 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 180,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 3,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 2},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
+                        ],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 3,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 2},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -226,17 +246,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 600,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.ZVK)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.ZVK)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -246,17 +268,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 600,  # None means permanent
-                "conditions": {
-                    "required_actions": None,  # Vernebler oder Inhalator
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,  # Vernebler oder Inhalator
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -266,17 +290,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 1800,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -286,17 +312,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 600,  # None means permanent
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -306,17 +334,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 1200,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -326,19 +356,21 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 60,  # None means permanent
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.SPRITZENPUMPE)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
+                        ],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.SPRITZENPUMPE)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -348,17 +380,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 600,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -368,17 +402,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # "Freifeld", dunno how do handle that
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,  # Spritze und S.C. Kanüle?
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,  # Spritze und S.C. Kanüle?
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -388,17 +424,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,  # Spritze und I.M. Kanüle?
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,  # Spritze und I.M. Kanüle?
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -408,17 +446,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -428,18 +468,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,  # None means permanent
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -449,17 +491,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 120,  # Depends of type of "Zugang"
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -469,17 +513,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 120,  # Depends of type of "Zugang"
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -489,17 +535,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -509,18 +557,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 300,
                 "effect_duration": 360,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -530,18 +580,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 240,
                 "effect_duration": 60,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -551,17 +603,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -571,18 +625,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 240,
                 "effect_duration": 420,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -592,18 +648,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": None,  # abhängig von Medikament
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -613,17 +671,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [str(ActionIDs.ZVK)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.ZVK)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -633,17 +693,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -653,17 +715,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -673,17 +737,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -693,17 +759,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 180,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -713,17 +781,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -733,17 +803,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 60,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -753,17 +825,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -773,18 +847,20 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 300,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -794,17 +870,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -814,17 +892,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -834,21 +914,23 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        str(ActionIDs.IV_ZUGANG),
-                        [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
-                    ],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.DEFIBRILATOR)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            str(ActionIDs.IV_ZUGANG),
+                            [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
+                        ],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.DEFIBRILATOR)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -858,26 +940,28 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        str(ActionIDs.IV_ZUGANG),
-                        str(ActionIDs.NARKOTIKUM),
-                        [
-                            str(ActionIDs.TRACHEALTUBUS),
-                            str(ActionIDs.LARYNXTUBUS),
-                            str(ActionIDs.LARYNXMASKE),
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            str(ActionIDs.IV_ZUGANG),
+                            str(ActionIDs.NARKOTIKUM),
+                            [
+                                str(ActionIDs.TRACHEALTUBUS),
+                                str(ActionIDs.LARYNXTUBUS),
+                                str(ActionIDs.LARYNXMASKE),
+                            ],
                         ],
-                    ],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BEATMUNGSGERAET)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.BEATMUNGSGERAET)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -887,17 +971,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -907,17 +993,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -927,17 +1015,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -947,17 +1037,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -967,21 +1059,23 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        str(ActionIDs.IV_ZUGANG),
-                        str(ActionIDs.ANALGETIKUM),
-                    ],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.DEFIBRILATOR)],
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            str(ActionIDs.IV_ZUGANG),
+                            str(ActionIDs.ANALGETIKUM),
+                        ],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.DEFIBRILATOR)],
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -991,19 +1085,21 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
+                        ],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1013,17 +1109,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1033,19 +1131,21 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
+                        ],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1055,19 +1155,21 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
+                        ],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1077,17 +1179,19 @@ class Command(BaseCommand):
                 "category": "OT",
                 "application_duration": 0,  # Dunno, nothing given
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 2,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 2,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1097,17 +1201,19 @@ class Command(BaseCommand):
                 "category": "OT",
                 "application_duration": 0,  # Dunno, nothing given
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.HILFSKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.HILFSKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1117,17 +1223,19 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 420,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
                 "results": [
                     json.dumps(
                         {
@@ -1146,17 +1254,19 @@ class Command(BaseCommand):
                 "category": "OT",
                 "application_duration": 420,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1166,17 +1276,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [str(ActionIDs.ART_KANUELE)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.ART_KANUELE)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1186,19 +1298,21 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
+                        ],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1208,17 +1322,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1228,17 +1344,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 60,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1248,17 +1366,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [str(ActionIDs.ZVK)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.ZVK)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1268,17 +1388,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 240,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.MTRA]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.MTRA]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1288,17 +1410,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 240,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.MTRA]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.MTRA]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1308,19 +1432,21 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 300,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 3,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.MTRA]: 1},
-                        {role_map[RoleIDs.ARZT]: 1},
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 3,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.MTRA]: 1},
+                            {role_map[RoleIDs.ARZT]: 1},
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1330,17 +1456,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1350,17 +1478,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 60,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1370,17 +1500,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1390,17 +1522,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 180,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1410,20 +1544,22 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        [
-                            {role_map[RoleIDs.ARZT]: 1},
-                            {role_map[RoleIDs.LABORASSISTENT]: 1},
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            [
+                                {role_map[RoleIDs.ARZT]: 1},
+                                {role_map[RoleIDs.LABORASSISTENT]: 1},
+                            ],
                         ],
-                    ],
-                },
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1433,17 +1569,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BGA_GERAET)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.BGA_GERAET)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1453,17 +1591,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,  # "Laboranalyse"???
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,  # "Laboranalyse"???
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1473,17 +1613,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1493,17 +1635,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1513,17 +1657,19 @@ class Command(BaseCommand):
                 "category": "EX",
                 "application_duration": 120,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": None,
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1533,17 +1679,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1553,17 +1701,19 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1573,16 +1723,18 @@ class Command(BaseCommand):
                 "category": "TR",
                 "application_duration": 0,
                 "effect_duration": None,
-                "conditions": {
-                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
-                    "material": None,
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.ARZT]: 1},
-                    ],
-                },
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
             },
         )

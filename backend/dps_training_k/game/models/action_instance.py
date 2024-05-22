@@ -1,4 +1,3 @@
-from collections import Counter
 from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
@@ -71,7 +70,7 @@ class ActionInstance(LocalTimeable, models.Model):
     area = models.ForeignKey(
         "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
     )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
-    action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
+    template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
     current_state = models.ForeignKey(
         "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
     )
@@ -97,7 +96,7 @@ class ActionInstance(LocalTimeable, models.Model):
 
     @property
     def name(self):
-        return self.action_template.name
+        return self.template.name
 
     @property
     def result(self):
@@ -132,7 +131,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None, lab=None):
+    def create(cls, template, patient_instance=None, area=None, lab=None):
         if not patient_instance and not area:
             raise ValueError(
                 "Either patient_instance or lab must be provided - an action instance always need a context"
@@ -142,7 +141,7 @@ class ActionInstance(LocalTimeable, models.Model):
             patient_instance=patient_instance,
             area=area,
             lab=lab,
-            action_template=action_template,
+            template=template,
             order_id=ActionInstance.generate_order_id(patient_instance),
         )
         action_instance.current_state = ActionInstanceState.objects.create(
@@ -167,23 +166,14 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        if self.patient_instance:
-            is_applicable, context = self.action_template.application_status(
-                self._available_materials_count(),
-                patient_instance=self.patient_instance,
-                area=self.patient_instance.area,
-            )
-        elif self.lab:
-            is_applicable, context = self.action_template.application_status(
-                self._available_materials_count(),
-                lab=self.lab,
-                area=self.area,
-            )
+        is_applicable, context = self.check_conditions_and_block_resources(
+            self.attached_instance(), self.attached_instance()
+        )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
-            return False
+            return False, context
         self._start_application()
-        return True
+        return True, None
 
     def _start_application(self):
         if not self.patient_instance and not self.lab:
@@ -193,7 +183,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.patient_instance:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
-                self.action_template.application_duration,  # ToDo: Replace with scalable local time system
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
                 "_patient_application_finished",
                 action_instance=self,
                 patient_state=self.patient_instance.patient_state.data,
@@ -201,36 +191,38 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.lab:
             ScheduledEvent.create_event(
                 self.lab.exercise,
-                self.action_template.application_duration,  # ToDo: Replace with scalable local time system
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
                 "_lab_application_finished",
                 action_instance=self,
             )
 
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
+        self.consume_resources()
 
     def _patient_application_finished(self, patient_state):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.action_template.get_result(patient_state),
+            info_text=self.template.get_result(patient_state),
         )
         self._application_finished()
 
     def _lab_application_finished(self):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.action_template.get_result(),
+            info_text=self.template.get_result(),
         )
         self._application_finished()
 
     def _application_finished(self):
-        if self.action_template.produced_resources() != None:
+        self.free_resources()
+        if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
-                self.action_template.produced_resources(), self.area
+                self.template.produced_resources(), self.area
             )
-        if self.action_template.effect_duration != None:
+        if self.template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
-                self.action_template.effect_duration,  # ToDo: Replace with scalable local time system
+                self.template.effect_duration,  # ToDo: Replace with scalable local time system
                 "_effect_expired",
                 action_instance=self,
             )
@@ -239,18 +231,62 @@ class ActionInstance(LocalTimeable, models.Model):
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
 
-    def _available_materials_count(self):
-        material_types = [
-            material_instance.material_template
-            for material_instance in self._available_materials()
-        ]
-        material_type_occurences = dict(Counter(material_types))
-        return material_type_occurences
-
-    def _available_materials(self):
-        if self.patient_instance:
-            return self.patient_instance.materialinstance_set.filter(is_blocked=False)
-        return self.lab.materialinstance_set.filter(is_blocked=False)
+    def attached_instance(self):
+        return (
+            self.patient_instance or self.lab
+        )  # first not null value determined by short-circuiting
 
     def __str__(self):
-        return f"ActionInstance {self.action_template.name} for {self.patient_instance.name + str(self.patient_instance.id) if self.patient_instance else "Lab" + str(self.lab.exercise.frontend_id)}"
+        return f"""ActionInstance {self.template.name} for 
+            {self.patient_instance.name + str(self.patient_instance.id) 
+             if self.patient_instance 
+             else "Lab" + str(self.lab.exercise.frontend_id)}"""
+
+    def check_conditions_and_block_resources(self, material_owner, personnel_owner):
+        """
+        If all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
+        Each element of the queryset needs to have a block method.
+        :params material_owner: Instance having a material_available method
+        :params personell_owner: Instance having a personell_available method
+        :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
+        """
+        needed_material_groups = self.template.material_needed()
+        if not needed_material_groups:
+            needed_material_groups = []
+        resources_to_block = []
+        for needed_material_group in needed_material_groups:
+            for material_condition in needed_material_group:
+                available_materials = material_owner.material_available(
+                    material_condition
+                )
+                if available_materials:
+                    resources_to_block.append(available_materials[0])
+                    break
+                else:
+                    return (
+                        False,
+                        f"Kein Material des Typs {material_condition.name} verfügbar",
+                    )
+
+        available_personnel = personnel_owner.personnel_available()
+        if len(available_personnel) < self.template.personnel_count_needed():
+            return False, f"Nicht genug Personal verfügbar"
+        for i in range(self.template.personnel_count_needed()):
+            resources_to_block.append(available_personnel[i])
+        if not resources_to_block:
+            return True, None
+        for resource in resources_to_block:
+            resource.block(self)
+        return True, None
+
+    def free_resources(self):
+        for material in self.materialinstance_set.all():
+            if material.is_reusable:
+                material.release()
+        for personnel in self.personnel_set.all():
+            personnel.release()
+
+    def consume_resources(self):
+        for material in self.materialinstance_set.all():
+            if not material.is_reusable:
+                material.consume()

@@ -1,4 +1,15 @@
+import asyncio
+import datetime
+import unittest.mock as mock
+
+from asgiref.sync import sync_to_async
+from django.conf import settings
+from django.core.management import call_command
 from django.test import TestCase, TransactionTestCase
+from django.utils import timezone
+
+from game.models import ActionInstanceStateNames, MaterialInstance
+from game.tasks import check_for_updates
 from game.tests.factories import (
     ActionInstanceFactory,
     PatientFactory,
@@ -6,17 +17,10 @@ from game.tests.factories import (
     AreaFactory,
     ActionInstance,
 )
-from .mixin import TestUtilsMixin
-from template.tests.factories.action_factory import ActionFactoryWithProduction
-from game.models import ActionInstanceStateNames, MaterialInstance
-from django.utils import timezone
-import datetime, unittest.mock as mock, asyncio
-from django.conf import settings
-from django.core.management import call_command
-from game.tasks import check_for_updates
-from template.models import Material, Action
 from template.constants import MaterialIDs
-from asgiref.sync import sync_to_async
+from template.models import Material, Action
+from template.tests.factories.action_factory import ActionFactoryWithProduction
+from .mixin import TestUtilsMixin
 
 
 class ActionResultTestCase(TestUtilsMixin, TestCase):
@@ -27,10 +31,12 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
+        self.deactivate_condition_checking()
 
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
         self.activate_notifications()
+        self.activate_condition_checking()
 
     def test_action_examination_result(self):
         """
@@ -56,7 +62,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         """
         action = ActionFactoryWithProduction()
         action_instance = ActionInstanceFactory(
-            action_template=action, lab=LabFactory(), area=AreaFactory()
+            template=action, lab=LabFactory(), area=AreaFactory()
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
@@ -65,19 +71,19 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
             is_reusable=False,
         )
         count_before = MaterialInstance.objects.filter(
-            material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
             area=action_instance.area,
         ).count()
         action_instance._application_finished()
         count_after = MaterialInstance.objects.filter(
-            material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
             area=action_instance.area,
         ).count()
         self.assertEqual(count_before + 1, count_after)
 
-    def test_temp_ffp_creation(self):
-        """Integration test for regression testing.
-        Iff production action is finished, material instances are created according to the results.produced_material field.
+    def test_action_production_lifecycle(self):
+        """
+        Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
         """
         call_command("minimal_actions")
         call_command("minimal_material")
@@ -96,13 +102,13 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertRaises(
             MaterialInstance.DoesNotExist,
             MaterialInstance.objects.get,
-            material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
             area=area,
         )
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
-                material_template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+                template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
                 area=area,
             )
         )
@@ -117,11 +123,17 @@ class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
             is_reusable=False,
         )
         ActionFactoryWithProduction(application_duration=0)
+        self.deactivate_notifications()
+        self.deactivate_condition_checking()
+
+    def tearDown(self):
+        self.activate_notifications()
+        self.activate_condition_checking()
 
     @mock.patch("game.models.MaterialInstance.generate_materials")
-    async def test_action_production_creation(self, generate_materials):
+    async def test_action_production_dispatching(self, generate_materials):
         """
-        when a production action is added, check whether action instance steps through the production routine
+        when a production action was added via websockets, check whether action instance steps through the production routine
         inside action_instance._application_finished.
 
         """

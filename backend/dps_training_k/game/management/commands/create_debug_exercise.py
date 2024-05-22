@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand
 
 from configuration import settings
-from game.models import Exercise, PatientInstance, Area
+from game.consumers import TrainerConsumer
+from game.models import Exercise, PatientInstance, Area, Personnel
 from template.models import PatientInformation
 
 
@@ -36,6 +37,23 @@ class Command(BaseCommand):
                 "area": self.area,
             },
         )
+        Personnel.objects.update_or_create(
+            name="Pflegekraft 1",
+            defaults={
+                "area": self.area,
+                "assigned_patient": self.patient,
+            },
+        )
+        Personnel.objects.update_or_create(
+            name="Pflegekraft 2",
+            defaults={
+                "area": self.area,
+                "assigned_patient": self.patient,
+            },
+        )
+
+        TrainerConsumer.handle_start_exercise(_, self.exercise)
+
         self.stdout.write(
             self.style.SUCCESS("Successfully added debug_exercise to the database")
         )

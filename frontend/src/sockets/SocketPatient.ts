@@ -8,8 +8,8 @@ import {allowNewActions} from "@/components/screensPatient/pagesAction/PageActio
 import {useRessourceAssignmentsStore} from "@/stores/RessourceAssignments"
 import {useActionOverviewStore} from "@/stores/ActionOverview"
 import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
-import { commonMockEvents } from "./commonMockEvents"
-import { useActionCheckStore } from "@/stores/ActionCheck"
+import {commonMockEvents} from "./commonMockEvents"
+import {useActionCheckStore} from "@/stores/ActionCheck"
 
 
 class SocketPatient {
@@ -98,12 +98,10 @@ class SocketPatient {
 					break
 				case 'action-confirmation':
 					allowNewActions()
-					console.log('Patient Websocket ToDo: handle action-confirmation event ', data)
 					break
 				case 'action-declination':
 					allowNewActions()
 					showErrorToast('Aktion ' + data.actionName + ' konnte nicht angeordnet werden:\n ' + data.actionDeclinationReason)
-					console.log('Patient Websocket ToDo: handle action-declination event ', data)
 					break
 				case 'action-result':
 					console.log('Patient Websocket ToDo: handle action-result event ', data)
@@ -119,7 +117,7 @@ class SocketPatient {
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				case 'action-check':
-					actionCheckStore.loadActionCheck(data.actionCheck as ActionCheck)
+					actionCheckStore.loadActionCheck(data as unknown as ActionCheck)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)
@@ -204,6 +202,12 @@ class SocketPatient {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'action-check',
 			'actionName': actionName,
+		}))
+	}
+
+	stopActionCheck() {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'action-check-stop',
 		}))
 	}
 }

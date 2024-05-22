@@ -123,6 +123,22 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         self.schedule_state_change()
         return True
 
+    def material_assigned(self, material_template):
+        return list(self.materialinstance_set.filter(template=material_template))
+
+    def material_available(self, material_template):
+        return list(
+            self.materialinstance_set.filter(
+                template=material_template, action_instance=None
+            )
+        )
+
+    def personel_assigned(self):
+        return list(self.personnel_set.all())
+
+    def personnel_available(self):
+        return list(self.personnel_set.filter(action_instance=None))
+
     def is_dead(self):
         if self.patient_state.is_dead:
             return True

@@ -41,11 +41,13 @@ class TrainerConsumer(AbstractConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.default_arguments = [lambda: (
-            Exercise.objects.get(frontend_id=self.exercise_frontend_id)
-            if self.exercise_frontend_id
-            else None
-        )]
+        self.default_arguments = [
+            lambda: (
+                Exercise.objects.get(frontend_id=self.exercise_frontend_id)
+                if self.exercise_frontend_id
+                else None
+            )
+        ]
         self.exercise_frontend_id = None
         self.exercise = None
         self.REQUESTS_MAP = {
@@ -213,7 +215,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_add_personnel(self, exercise, areaName):
         try:
             area = Area.objects.get(name=areaName)
-            Personnel.objects.create(area=area)
+            Personnel.create_personnel(area=area, name="Personnel")
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the name '{areaName}'",
@@ -239,8 +241,8 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_material(self, exercise, areaName, materialName):
         area = Area.objects.get(name=areaName)
-        material_template = Material.objects.get(name=materialName)
-        MaterialInstance.objects.create(material_template=material_template, area=area)
+        template = Material.objects.get(name=materialName)
+        MaterialInstance.objects.create(template=template, area=area)
 
     def handle_delete_material(self, exercise, materialId):
         try:
