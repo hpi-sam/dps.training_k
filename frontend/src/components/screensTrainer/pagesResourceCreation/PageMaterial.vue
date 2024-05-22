@@ -23,7 +23,7 @@
 	const showDeletePopup = ref(false)
 	const showAddPopup = ref(false)
 
-	function openDeletePopup(materialName: string, materialId: string) {
+	function openDeletePopup(materialName: string, materialId: number) {
 		currentMaterialName.value = materialName
 		currentMaterialId.value = materialId
 		showDeletePopup.value = true

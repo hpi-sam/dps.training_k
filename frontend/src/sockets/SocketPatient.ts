@@ -196,6 +196,25 @@ class SocketPatient {
 			'messageType': 'patient-move',
 			'areaName': areaName,
 		}))
+		console.log('Move Patient to ' + areaName)
+	}
+
+	movePersonnel(personnelId: number, areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'personnel-move',
+			'personnelId': personnelId,
+			'areaName': areaName,
+		}))
+		console.log('Move Personnel ' + personnelId + ' to ' + areaName)
+	}
+
+	moveMaterial(materialId: number, areaName: string) {
+		this.sendMessage(JSON.stringify({
+			'messageType': 'material-move',
+			'materialId': materialId,
+			'areaName': areaName,
+		}))
+		console.log('Move Material ' + materialId + ' to ' + areaName)
 	}
 
 	actionCheck(actionName: string) {

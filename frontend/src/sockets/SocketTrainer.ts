@@ -196,7 +196,7 @@ class SocketTrainer {
 		}))
 	}
 
-	materialDelete(materialId: string) {
+	materialDelete(materialId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'material-delete',
 			'materialId': materialId
@@ -207,6 +207,29 @@ class SocketTrainer {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'set-speed',
 			'speed': speed
+		}))
+	}
+
+	movePatient(areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-move',
+			'areaName': areaName,
+		}))
+	}
+
+	movePersonnel(personnelId: number, areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-move',
+			'personnelId': personnelId,
+			'areaName': areaName,
+		}))
+	}
+
+	moveMaterial(materialId: number, areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'material-move',
+			'materialId': materialId,
+			'areaName': areaName,
 		}))
 	}
 }

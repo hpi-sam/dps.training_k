@@ -2,8 +2,9 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
 	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
-	import {computed} from 'vue'
+	import {computed,ref} from 'vue'
 	import socketPatient from '@/sockets/SocketPatient'
+	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
 	const ressourceAssignmentStore = useRessourceAssignmentsStore()
@@ -28,9 +29,25 @@
 	function assignPersonnel(personnelId: number) {
 		socketPatient.assignPersonnel(personnelId)
 	}
+
+	const selectedPersonnel = ref(Number.NEGATIVE_INFINITY)
+	const showMovePopup = ref(false)
+
+	function openMovePopup(personnelId: number) {
+		selectedPersonnel.value = personnelId
+		showMovePopup.value = true
+	}
 </script>
 
 <template>
+	<MovePopup
+		v-if="showMovePopup"
+		:module="'Patient'"
+		:type-to-move="'Personnel'"
+		:id-of-moveable="selectedPersonnel" 
+		:current-area="patientStore.areaName"
+		@close-popup="showMovePopup=false"
+	/>
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Personal</h1>
@@ -42,11 +59,11 @@
 						:key="personnelAssignment.personnelId"
 						class="list-item"
 					>
-						<div class="list-item-button">
+						<button class="list-item-button">
 							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
 							Freigeben
 						</button>
@@ -60,11 +77,11 @@
 						:key="personnelAssignment.personnelId"
 						class="list-item"
 					>
-						<div class="list-item-button">
+						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
 							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
 							Zuweisen
 						</button>
@@ -78,14 +95,14 @@
 						:key="personnelAssignment.personnelId"
 						class="list-item"
 					>
-						<div class="list-item-button">
+						<button class="list-item-button">
 							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
 							<div class="list-item-name assigned-patient">
 								Patient {{ personnelAssignment.patientId }}
 							</div>
-						</div>
+						</button>
 					</div>
 				</div>
 			</div>
