@@ -8,6 +8,7 @@ class PatientInformation(models.Model):
 
     code = models.IntegerField(unique=True, help_text="Sensen Code")  # Pat-Nr.
     personal_details = models.CharField(max_length=300, default="-")  # Personalien
+    blood_type = models.CharField(max_length=1, default="-")  # Blutgruppe
     injury = models.CharField(max_length=300, default="-")  # Verletzungen
     biometrics = models.CharField(
         max_length=300, default="-"
