@@ -7,14 +7,14 @@
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
 	import CloseButton from "./CloseButton.vue"
-	import { generateName } from "@/utils"
+	import {generateName} from "@/utils"
 
 	const emit = defineEmits(['close-popup'])
 
 	const props = defineProps({
-		areaName: {
-			type: String,
-			default: 'No Area'
+		areaId: {
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		},
 	})
 
@@ -26,7 +26,7 @@
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
-		socketTrainer.patientAdd(props.areaName, patientName.value, currentPatientCode.value)
+		socketTrainer.patientAdd(props.areaId, patientName.value, currentPatientCode.value)
 		patientName.value = generateName()
 	}
 

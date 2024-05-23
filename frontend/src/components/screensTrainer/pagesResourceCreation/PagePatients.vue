@@ -7,8 +7,8 @@
 
 	const props = defineProps({
 		currentArea: {
-			type: String,
-			default: "Kein Bereich ausgewählt"
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
@@ -33,7 +33,7 @@
 
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
-	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" @close-popup="showAddPatientPopup=false" />
+	<AddPatientPopup v-if="showAddPatientPopup" :area-id="currentArea" @close-popup="showAddPatientPopup=false" />
 	<div class="scroll">
 		<h1>Patienten</h1>
 		<div class="list">

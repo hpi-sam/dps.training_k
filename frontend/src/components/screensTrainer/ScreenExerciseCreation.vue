@@ -7,22 +7,22 @@
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
-	import { Screens, setRightScreen } from '../ModuleTrainer.vue'
+	import {Screens, setRightScreen} from '../ModuleTrainer.vue'
 
 	const exerciseStore = useExerciseStore()
 
 	const areas = computed(() => exerciseStore.areas)
 
-	const currentArea = ref("Kein Bereich ausgewählt")
+	const currentArea = ref(Number.NEGATIVE_INFINITY)
 
-	function openArea(areaName: string) {
-		setArea(areaName)
+	function openArea(areaId: number) {
+		setArea(areaId)
 		setRightScreen(Screens.RESOURCE_CREATION)
-		currentArea.value = areaName
+		currentArea.value = areaId
 	}
 
-	function openPopup(areaName: string) {
-		openArea(areaName)
+	function openPopup(areaId: number) {
+		openArea(areaId)
 		showPopup.value = true
 	}
 
@@ -36,14 +36,14 @@
 
 	function openLog() {
 		setRightScreen(Screens.LOG)
-		currentArea.value = 'Kein Bereich ausgewählt'
+		currentArea.value = Number.NEGATIVE_INFINITY
 	}
 
 	const showPopup = ref(false)
 </script>
 
 <template>
-	<DeleteItemPopup v-if="showPopup" :name="currentArea" @close-popup="showPopup=false" @delete="deleteArea" />
+	<DeleteItemPopup v-if="showPopup" :name="exerciseStore.getAreaName(currentArea)" @close-popup="showPopup=false" @delete="deleteArea" />
 	<div class="flex-container">
 		<TopBarTrainer />
 		<div class="scroll">
@@ -57,16 +57,16 @@
 				</button>
 				<div
 					v-for="area in areas"
-					:key="area.areaName"
+					:key="area.areaId"
 					class="list-item"
-					:class="{ 'selected': currentArea === area.areaName }"
+					:class="{ 'selected': currentArea === area.areaId }"
 				>
-					<button class="list-item-button" @click="openArea(area.areaName)">
+					<button class="list-item-button" @click="openArea(area.areaId)">
 						<div class="list-item-name">
 							{{ area.areaName }}
 						</div>
 					</button>
-					<button class="settings-button" @click="openPopup(area.areaName)">
+					<button class="settings-button" @click="openPopup(area.areaId)">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							height="24"
