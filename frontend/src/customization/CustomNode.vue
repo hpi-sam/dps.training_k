@@ -1,27 +1,49 @@
 <template>
-  <div class="node" :class="{ selected: data.selected }" :style="nodeStyles()" data-testid="node">
-    <div class="title" data-testid="title">{{ data.label }}</div>
-    <!-- Outputs-->
-    <div class="output" v-for="[key, output] in outputs()" :key="'output' + key + seed" :data-testid="'output-' + key">
-      <div class="output-title" data-testid="output-title">{{ output.label }}</div>
-      <Ref class="output-socket" :emit="emit"
-        :data="{ type: 'socket', side: 'output', key: key, nodeId: data.id, payload: output.socket }"
-        data-testid="output-socket" />
-    </div>
-    <!-- Controls-->
-    <Ref class="control" v-for="[key, control] in controls()" :key="'control' + key + seed" :emit="emit"
-      :data="{ type: 'control', payload: control }" :data-testid="'control-' + key" />
-    <!-- Inputs-->
-    <div class="input" v-for="[key, input] in inputs()" :key="'input' + key + seed" :data-testid="'input-' + key">
-      <Ref class="input-socket" :emit="emit"
-        :data="{ type: 'socket', side: 'input', key: key, nodeId: data.id, payload: input.socket }"
-        data-testid="input-socket" />
-      <div class="input-title" v-show="!input.control || !input.showControl" data-testid="input-title">{{ input.label }}
-      </div>
-      <Ref class="input-control" v-show="input.control && input.showControl" :emit="emit"
-        :data="{ type: 'control', payload: input.control }" data-testid="input-control" />
-    </div>
-  </div>
+	<div class="node" :class="{ selected: data.selected }" :style="nodeStyles()" data-testid="node">
+		<div class="title" data-testid="title">
+			{{ data.label }}
+		</div>
+		<!-- Outputs-->
+		<div v-for="[key, output] in outputs()" :key="'output' + key + seed" class="output" :data-testid="'output-' + key">
+			<div class="output-title" data-testid="output-title">
+				{{ output.label }}
+			</div>
+			<Ref
+				class="output-socket"
+				:emit="emit"
+				:data="{ type: 'socket', side: 'output', key: key, nodeId: data.id, payload: output.socket }"
+				data-testid="output-socket"
+			/>
+		</div>
+		<!-- Controls-->
+		<Ref
+			v-for="[key, control] in controls()"
+			:key="'control' + key + seed"
+			class="control"
+			:emit="emit"
+			:data="{ type: 'control', payload: control }"
+			:data-testid="'control-' + key"
+		/>
+		<!-- Inputs-->
+		<div v-for="[key, input] in inputs()" :key="'input' + key + seed" class="input" :data-testid="'input-' + key">
+			<Ref
+				class="input-socket"
+				:emit="emit"
+				:data="{ type: 'socket', side: 'input', key: key, nodeId: data.id, payload: input.socket }"
+				data-testid="input-socket"
+			/>
+			<div v-show="!input.control || !input.showControl" class="input-title" data-testid="input-title">
+				{{ input.label }}
+			</div>
+			<Ref
+				v-show="input.control && input.showControl"
+				class="input-control"
+				:emit="emit"
+				:data="{ type: 'control', payload: input.control }"
+				data-testid="input-control"
+			/>
+		</div>
+	</div>
 </template>
 
 
@@ -41,6 +63,9 @@ function sortByIndex(entries) {
 }
 
 export default defineComponent({
+  components: {
+    Ref
+  },
   props: ['data', 'emit', 'seed'],
   methods: {
     nodeStyles() {
@@ -58,9 +83,6 @@ export default defineComponent({
     outputs() {
       return sortByIndex(Object.entries(this.data.outputs))
     }
-  },
-  components: {
-    Ref
   }
 })
 </script>

@@ -1,7 +1,7 @@
 <template>
-  <svg data-testid="connection">
-    <path :d="path"></path>
-  </svg>
+	<svg data-testid="connection">
+		<path :d="path" />
+	</svg>
 </template>
 
 <script>

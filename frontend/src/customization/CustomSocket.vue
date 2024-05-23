@@ -1,5 +1,5 @@
 <template>
-  <div class="socket" :title="data.name"></div>
+	<div class="socket" :title="data.name" />
 </template>
 
 <script>
