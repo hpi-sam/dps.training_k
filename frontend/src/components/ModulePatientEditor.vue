@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { createEditor } from '@/rete'
+import { createEditor as createPatientEditor } from '@/rete/patient'
 
 export default defineComponent({
   async mounted() {
-    await createEditor(this.$refs.rete as HTMLElement)
+    await createPatientEditor(this.$refs.rete as HTMLElement)
   }
 })
 </script>

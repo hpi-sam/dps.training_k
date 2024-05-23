@@ -20,10 +20,14 @@ import {
 } from 'rete-context-menu-plugin'
 import { MinimapExtra, MinimapPlugin } from 'rete-minimap-plugin'
 
+import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
+
+import CircleNode from './customization/CircleNode.vue'
+import SquareNode from './customization/SquareNode.vue'
+
 type Node = StateNode | TransitionNode;
 type Conn =
   | Connection<StateNode, TransitionNode>
-  | Connection<TransitionNode, TransitionNode>
   | Connection<TransitionNode, StateNode>;
 type Schemes = GetSchemes<Node, Conn>;
 
@@ -34,29 +38,29 @@ class Connection<A extends Node, B extends Node> extends Classic.Connection<
 
 class StateNode extends Classic.Node {
   width = 100
-  height = 150
+  height = 100
 
   constructor() {
     super('State')
 
-    this.addInput('a', new Classic.Input(socket, ''))
-    this.addOutput('value', new Classic.Output(socket, ''))
+    this.label = 'State'
+
+    this.addInput('in', new Classic.Input(socket, undefined, false))
+    this.addOutput('out', new Classic.Output(socket, undefined, false))
   }
 }
 
 class TransitionNode extends Classic.Node {
-  width = 100
-  height = 300
+  width = 150
+  height = 100
 
   constructor() {
     super('Transition')
 
-    this.addInput('a', new Classic.Input(socket))
-    this.addInput('b', new Classic.Input(socket))
-    this.addInput('c', new Classic.Input(socket))
-    this.addOutput('x', new Classic.Output(socket))
-    this.addOutput('y', new Classic.Output(socket))
-    this.addOutput('z', new Classic.Output(socket))
+    this.label = 'Transition'
+
+    this.addInput('in', new Classic.Input(socket, undefined, true))
+    this.addOutput('out', new Classic.Output(socket, undefined, true))
   }
 }
 
@@ -75,6 +79,21 @@ export async function createEditor(container: HTMLElement) {
 
   const vueRender = new VuePlugin<Schemes, AreaExtra>()
 
+  vueRender.addPreset(
+    VuePresets.classic.setup({
+      customize: {
+        node(context) {
+          if (context.payload.label === 'State') {
+            return CircleNode
+          } else if (context.payload.label === 'Transition') {
+            return SquareNode
+          }
+          return VuePresets.classic.Node
+        },
+      },
+    })
+  )
+
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
       ['State', () => new StateNode()],
@@ -91,7 +110,27 @@ export async function createEditor(container: HTMLElement) {
   area.use(contextMenu)
   area.use(minimap)
 
-  connection.addPreset(ConnectionPresets.classic.setup())
+  connection.addPreset(() => new ClassicFlow({
+    makeConnection(from, to, context) {
+      const [source, target] = getSourceTarget(from, to) || [null, null]
+      const { editor } = context
+
+      // no connections with nodes with the same label
+      if (editor.getNode(source?.nodeId || '').label ===  editor.getNode(target?.nodeId || '').label) return false
+  
+      if (source && target) {
+        editor.addConnection(
+          new Connection(
+            editor.getNode(source.nodeId),
+            source.key,
+            editor.getNode(target.nodeId),
+            target.key
+          )
+        )
+        return true
+      }
+    }
+  }))
 
   vueRender.addPreset(VuePresets.classic.setup())
   vueRender.addPreset(VuePresets.contextMenu.setup())
@@ -105,8 +144,8 @@ export async function createEditor(container: HTMLElement) {
   await editor.addNode(b)
   await editor.addNode(t)
 
-  await editor.addConnection(new Connection(a, 'value', t, 'a'))
-  await editor.addConnection(new Connection(b, 'value', t, 'b'))
+  await editor.addConnection(new Connection(a, 'out', t, 'in'))
+  await editor.addConnection(new Connection(b, 'out', t, 'in'))
 
   const arrange = new AutoArrangePlugin<Schemes>()
 
