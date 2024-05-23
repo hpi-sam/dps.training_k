@@ -31,7 +31,7 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
 
 class MaterialInstanceSerializer(serializers.ModelSerializer):
-    materialId = serializers.IntegerField(source="id")
+    materialId = serializers.IntegerField(source="pk")
     materialType = serializers.CharField(source="template.category")
     materialName = serializers.CharField(source="template.name")
 
@@ -46,6 +46,7 @@ class MaterialInstanceSerializer(serializers.ModelSerializer):
 
 
 class AreaSerializer(serializers.ModelSerializer):
+    areaId = serializers.IntegerField(source="pk")
     areaName = serializers.CharField(source="name")
     patients = PatientInstanceSerializer(source="patientinstance_set", many=True)
     personnel = PersonnelSerializer(source="personnel_set", many=True)
@@ -53,7 +54,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = a.Area
-        fields = ["areaName", "patients", "personnel", "material"]
+        fields = ["areaId", "areaName", "patients", "personnel", "material"]
         read_only = fields
 
 

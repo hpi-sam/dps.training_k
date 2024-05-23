@@ -37,6 +37,7 @@ interface Exercise {
 }
 
 interface Area {
+	areaId: number
 	areaName: string
 	patients: Patient[]
 	personnel: Personnel[]
