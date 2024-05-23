@@ -36,6 +36,7 @@
 
 	function openLog() {
 		setRightScreen(Screens.LOG)
+		currentArea.value = 'Kein Bereich ausgewählt'
 	}
 
 	const showPopup = ref(false)
@@ -47,6 +48,10 @@
 		<TopBarTrainer />
 		<div class="scroll">
 			<div class="list">
+				<p v-if="exerciseStore?.status !== 'not-started'">
+					<i>Die Bearbeitung der Übung nach Übungsstart ist noch nicht vollständig implementiert.</i>
+				</p>
+				<br v-if="exerciseStore?.status !== 'not-started'">
 				<button id="add-area-button" class="list-item-add-button" @click="addArea()">
 					Bereich hinzufügen
 				</button>
@@ -93,7 +98,7 @@
 	}
 
 	.scroll {
-		margin-bottom: 50px;
+		margin-bottom: 110px;
 	}
 
 	.main-button {
