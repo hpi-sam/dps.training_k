@@ -33,6 +33,8 @@ for i in range(1001, 1042):
                 # overwrite useless stuff the parser found
                 row[22] = ""
                 row[21] = ""
+            if "ZVD" in row[21]:
+                row[21] = row[21].replace("ZVD : ", "")
             row = [field.replace("feucht|blass|", "feucht|blass") for field in row]
             # find dead tables (result of parsing errors) -> should no longer return anything
             if row[0] != "Status" and int(row[0]) % 10 == 0:
@@ -62,7 +64,7 @@ for i in range(1001, 1042):
                     "Psyche",
                     "Haut",
                     "BGA-Oxy",
-                    "BGA_SBH",
+                    "BGA-SBH",
                     "Hb",
                     "BZ",
                     "Gerinnung",
