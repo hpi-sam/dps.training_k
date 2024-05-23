@@ -77,6 +77,17 @@ class ActionInstanceTestCase(TestCase):
         self.assertEqual(_notify_action_event.call_count, 6)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
+    def test_action_not_permitted_on_unavailable_instances(self):
+        """
+        An action instance cannot be started if the patient instance is dead or a lab is not available
+        """
+        action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
+        action_instance.patient_instance.patient_state.is_dead = True
+        action_instance.patient_instance.patient_state.save(update_fields=["is_dead"])
+        succeeded, _ = action_instance.try_application()
+        self.assertFalse(succeeded)
+        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
+
 
 class ActionInstanceScheduledTestCase(TestUtilsMixin, TestCase):
     def timezone_from_timestamp(self, timestamp):
