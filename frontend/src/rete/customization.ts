@@ -8,11 +8,11 @@ import {
 
 import { VuePlugin, VueArea2D, Presets as VuePresets } from 'rete-vue-plugin'
 
-import CustomNode from '../customization/CustomNode.vue'
-import CustomConnection from '../customization/CustomConnection.vue'
-import CustomSocket from '../customization/CustomSocket.vue'
+import CustomNode from './customization/CustomNode.vue'
+import CustomConnection from './customization/CustomConnection.vue'
+import CustomSocket from './customization/CustomSocket.vue'
 
-import { addCustomBackground } from '../customization/custom-background'
+import { addCustomBackground } from './customization/custom-background'
 
 type Schemes = GetSchemes<
   ClassicPreset.Node,
