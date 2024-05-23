@@ -7,7 +7,7 @@ from game.channel_notifications import PatientInstanceDispatcher
 from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
-from template.tests.factories import PatientStateFactory
+from template.models import PatientState
 
 
 def validate_patient_frontend_id(value):
@@ -70,9 +70,10 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             )  # Properly hash the password
             self.user.save()
 
-            self.patient_state = PatientStateFactory(
-                10, 2
-            )  # temporary state for testing - should later take static_information into account
+            self.patient_state = PatientState.objects.get(
+                code=self.static_information.code,
+                state_id=self.static_information.start_status
+            )
             self.triage = self.static_information.triage
 
         changes = kwargs.get("update_fields", None)
@@ -97,15 +98,14 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def schedule_state_change(self):
         from game.models import ScheduledEvent
-
         if self.patient_state.is_dead:
             return False
         if self.patient_state.is_final():
             return False
         ScheduledEvent.create_event(
-            self.exercise,
-            10,
-            "execute_state_change",
+            exercise=self.exercise,
+            t_sim_delta=10,
+            method_name="execute_state_change",
             patient=self,
         )
 

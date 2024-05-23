@@ -1,21 +1,26 @@
 from rest_framework import serializers
 from template.models import PatientState
-
+import json
 
 class StateSerializer(serializers.Serializer):
-    phaseNumber = serializers.IntegerField(source="state_depth")
-    airway = serializers.CharField(source="data.airway")
-    breathing = serializers.CharField(source="data.breathing")
-    circulation = serializers.CharField(source="data.circulation")
-    consciousness = serializers.CharField(source="data.consciousness")
-    pupils = serializers.CharField(source="data.pupils")
-    psyche = serializers.CharField(source="data.psyche")
-    skin = serializers.CharField(source="data.skin")
+    airway = serializers.SerializerMethodField()
+    breathing = serializers.SerializerMethodField()
+    circulation = serializers.SerializerMethodField()
+    consciousness = serializers.SerializerMethodField()
+    pupils = serializers.SerializerMethodField()
+    psyche = serializers.SerializerMethodField()
+    skin = serializers.SerializerMethodField()
+    # airway = serializers.CharField(source="vital_signs.Airway")
+    # breathing = serializers.CharField(source="vital_signs.Breathing")
+    # circulation = serializers.CharField(source="vital_signs.Circulation")
+    # consciousness = serializers.CharField(source="vital_signs.Bewusstsein")
+    # pupils = serializers.CharField(source="vital_signs.Pupillen")
+    # psyche = serializers.CharField(source="vital_signs.Psyche")
+    # skin = serializers.CharField(source="vital_signs.Haut")
 
     class Meta:
         model = PatientState
         fields = [
-            "phaseNumber",
             "airway",
             "breathing",
             "circulation",
@@ -25,3 +30,18 @@ class StateSerializer(serializers.Serializer):
             "skin",
         ]
         read_only = fields
+    
+    def get_airway(self, obj):
+        return json.loads(obj.vital_signs).get('Airway', None)
+    def get_breathing(self, obj):
+        return json.loads(obj.vital_signs).get('Breathing', None)
+    def get_circulation(self, obj):
+        return json.loads(obj.vital_signs).get('Circulation', None)
+    def get_consciousness(self, obj):
+        return json.loads(obj.vital_signs).get('Bewusstsein', None)
+    def get_pupils(self, obj):
+        return json.loads(obj.vital_signs).get('Pupillen', None)
+    def get_psyche(self, obj):
+        return json.loads(obj.vital_signs).get('Psyche', None)
+    def get_skin(self, obj):
+        return json.loads(obj.vital_signs).get('Haut', None)

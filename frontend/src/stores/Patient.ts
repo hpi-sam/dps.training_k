@@ -14,7 +14,6 @@ export const usePatientStore = defineStore('patient', {
 		breathing: '',
 		circulation: '',
 		consciousness: '',
-		phaseNumber: 0,
 		psyche: '',
 		pupils: '',
 		skin: '',
@@ -30,7 +29,6 @@ export const usePatientStore = defineStore('patient', {
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
-			this.phaseNumber = state.phaseNumber
 			this.airway = state.airway
 			this.breathing = state.breathing
 			this.circulation = state.circulation
