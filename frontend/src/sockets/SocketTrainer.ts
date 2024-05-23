@@ -24,6 +24,7 @@ class SocketTrainer {
 		this.socket.onopen = () => {
 			console.log('Trainer WebSocket connection established')
 			connection.trainerConnected = true
+			socketTrainer.exerciseCreate()
 		}
 
 		this.socket.onclose = () => {
@@ -62,13 +63,11 @@ class SocketTrainer {
 					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					break
 				case 'exercise':
+					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					if (exerciseStore.status == '') {
 						exerciseStore.status = 'not-started'
 						setModule(Modules.TRAINER)
-						moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
-						moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
 					}
-					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					break
 				case 'exercise-start':
 					exerciseStore.status = 'running'

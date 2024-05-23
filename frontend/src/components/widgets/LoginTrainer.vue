@@ -9,8 +9,7 @@
 	function submit() {
 		const trainerStore = useTrainerStore()
 		trainerStore.username = usernameInput.value
-
-		socketTrainer.exerciseCreate()
+		socketTrainer.connect()
 		return
 
 		// Will be used when trainer login is implemented in the backend

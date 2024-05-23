@@ -1,9 +1,8 @@
 <script setup lang="ts">
-	import {onBeforeUnmount, onMounted} from 'vue'
+	import {onBeforeUnmount} from 'vue'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import {connection} from "@/stores/Connection"
 
-	onMounted(() => socketTrainer.connect())
 	onBeforeUnmount(() => {
 		if (connection.trainerConnected) socketTrainer.close()
 	})

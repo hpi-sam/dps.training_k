@@ -7,7 +7,6 @@ describe('pass-through tests', () => {
 		cy.get('#trainer-login-username').type('test')
 		cy.get('#trainer-login-password').type('password')
 		cy.get('#trainer-login').click()
-		cy.get('#trainer-module-button').click()
 
 		cy.get('#ps-test').should('be.visible').click()
 		cy.get('.Vue-Toastification__toast-body').should('contain', 'received test event')
@@ -17,7 +16,6 @@ describe('pass-through tests', () => {
 		cy.get('#trainer-login-username').type('test')
 		cy.get('#trainer-login-password').type('password')
 		cy.get('#trainer-login').click()
-		cy.get('#trainer-module-button').click()
 
 		cy.get('#add-area-button').click()
 		cy.get('.list-item').first().find('.list-item-button').click()
