@@ -12,7 +12,9 @@ class PatientState(models.Model):
         help_text="List of pairs of examination types and examination codes"
     )
     special_events = models.CharField(
-        help_text='Perceivable events of high priority, e.g. "Patient schreit vor Schmerzen"'
+        blank=True,
+        null=True,
+        help_text='Perceivable events of high priority, e.g. "Patient schreit vor Schmerzen"',
     )
     state_depth = models.IntegerField()
     is_dead = models.BooleanField(default=False)

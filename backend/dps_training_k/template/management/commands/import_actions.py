@@ -29,6 +29,10 @@ class Command(BaseCommand):
             "lab_devices": ["L1uuid", "L2uuid", ["L3uuid", "L4uuid"]], // labdev1 AND labdev2 AND (labdev3 OR labdev4); can be None
             "area": "ZNA", // area patient has to be in for action to be applicable; can be None
             "role": [{"Pflegefachkraft": 1}, [{"Arzt": 1}, {"Laborassistent": 1}]] // this means 1 Pflegefachkraft AND (1 Arzt OR 1 Laborassistent); CANNOT be None
+        'results': {
+            "produced_material": {uuid, amount}
+            "ZVD": {code: value} //for every possible examination
+        }
         }
         """
 
@@ -661,73 +665,6 @@ class Command(BaseCommand):
                             {role_map[RoleIDs.ARZT]: 1},
                         ],
                     },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="ZVD",
-            uuid=ActionIDs.ZVD,
-            defaults={
-                "category": "TR",
-                "application_duration": 0,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": [str(ActionIDs.ZVK)],
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-                "results": json.dumps(
-                    {
-                        "ZVD": {
-                            815: "-10",
-                            827: "-6",
-                            837: "2",
-                            829: "-8",
-                            817: "-9",
-                            833: "8",
-                            834: "18",
-                            804: "6",
-                            812: "9",
-                            823: "-2",
-                            814: "-3",
-                            838: "-1",
-                            803: "14",
-                            802: "-5",
-                            801: "12",
-                            822: "0",
-                            809: "19",
-                            835: "-11",
-                            806: "-14",
-                            836: "7",
-                            831: "-4",
-                            819: "21",
-                            805: "1",
-                            825: "-13",
-                            821: "4",
-                            824: "10",
-                            828: "-7",
-                            816: "-15",
-                            800: "16",
-                            813: "5",
-                            808: "17",
-                            810: "3",
-                            807: "13",
-                            820: "11",
-                            832: "15",
-                            818: "22",
-                            811: "-12",
-                            830: "20",
-                            826: "23",
-                        }
-                    }
                 ),
             },
         )
@@ -1528,7 +1465,7 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        "BGA_SBH": {
+                        "BGA-SBH": {
                             650: "resp. Alkalose",
                             651: "kompensierte resp. Alkalose",
                             652: "kompensierte metabol. Alkalose",
@@ -2142,16 +2079,18 @@ class Command(BaseCommand):
                     },
                 ),
                 "results": json.dumps(
-                    {"Blutgruppe":{
-                        1: "A Rh pos",
-                        2: "B Rh pos",
-                        3: "A rh neg",
-                        4: "0 Rh pos",
-                        5: "B rh neg",
-                        6: "AB rh neg",
-                        7: "O rh neg",
-                        8: "AB Rh pos",
-                    }}
+                    {
+                        "Blutgruppe": {
+                            1: "A Rh pos",
+                            2: "B Rh pos",
+                            3: "A rh neg",
+                            4: "0 Rh pos",
+                            5: "B rh neg",
+                            6: "AB rh neg",
+                            7: "O rh neg",
+                            8: "AB Rh pos",
+                        }
+                    }
                 ),
             },
         )
@@ -2180,37 +2119,39 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        400: 9.5,
-                        401: 12,
-                        402: 16,
-                        403: 11,
-                        404: 5.5,
-                        405: 13,
-                        406: 7.5,
-                        407: 6,
-                        408: 9,
-                        409: 3.5,
-                        410: 3,
-                        411: 13,
-                        412: 17,
-                        413: 8,
-                        414: 2.5,
-                        415: 8.5,
-                        416: 17,
-                        417: 6.5,
-                        418: 12,
-                        419: 7,
-                        420: 11,
-                        421: 14,
-                        422: 10,
-                        423: 15,
-                        424: 16,
-                        425: 4,
-                        426: 2,
-                        427: 15,
-                        428: 5,
-                        429: 4.5,
-                        430: 14,
+                        "Hb": {
+                            400: 9.5,
+                            401: 12,
+                            402: 16,
+                            403: 11,
+                            404: 5.5,
+                            405: 13,
+                            406: 7.5,
+                            407: 6,
+                            408: 9,
+                            409: 3.5,
+                            410: 3,
+                            411: 13,
+                            412: 17,
+                            413: 8,
+                            414: 2.5,
+                            415: 8.5,
+                            416: 17,
+                            417: 6.5,
+                            418: 12,
+                            419: 7,
+                            420: 11,
+                            421: 14,
+                            422: 10,
+                            423: 15,
+                            424: 16,
+                            425: 4,
+                            426: 2,
+                            427: 15,
+                            428: 5,
+                            429: 4.5,
+                            430: 14,
+                        }
                     }
                 ),
             },
@@ -2237,15 +2178,17 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        140: "negativ",
-                        141: "stark positiv",
-                        142: "negativ",
-                        143: "stark positiv",
-                        144: "grenzwertig positiv",
-                        145: "grenzwertig positiv",
-                        146: "negativ",
-                        147: "grenzwertig positiv",
-                        148: "stark positiv",
+                        "Lactat": {
+                            140: "negativ",
+                            141: "stark positiv",
+                            142: "negativ",
+                            143: "stark positiv",
+                            144: "grenzwertig positiv",
+                            145: "grenzwertig positiv",
+                            146: "negativ",
+                            147: "grenzwertig positiv",
+                            148: "stark positiv",
+                        }
                     }
                 ),
             },
@@ -2272,15 +2215,17 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        100: "leichte Einschränkung",
-                        101: "Normalwerte",
-                        102: "leichte Einschränkung",
-                        103: "leichte Einschränkung",
-                        104: "Normalwerte",
-                        105: "Normalwerte",
-                        106: "schwere Einschränkung",
-                        107: "schwere Einschränkung",
-                        108: "schwere Einschränkung",
+                        "Gerinnung": {
+                            100: "leichte Einschränkung",
+                            101: "Normalwerte",
+                            102: "leichte Einschränkung",
+                            103: "leichte Einschränkung",
+                            104: "Normalwerte",
+                            105: "Normalwerte",
+                            106: "schwere Einschränkung",
+                            107: "schwere Einschränkung",
+                            108: "schwere Einschränkung",
+                        }
                     }
                 ),
             },
@@ -2307,15 +2252,17 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        110: "Normalwerte",
-                        111: "leichte Einschränkung",
-                        112: "schwere Einschränkung",
-                        113: "schwere Einschränkung",
-                        114: "leichte Einschränkung",
-                        115: "Normalwerte",
-                        116: "leichte Einschränkung",
-                        117: "Normalwerte",
-                        118: "schwere Einschränkung",
+                        "Leber": {
+                            110: "Normalwerte",
+                            111: "leichte Einschränkung",
+                            112: "schwere Einschränkung",
+                            113: "schwere Einschränkung",
+                            114: "leichte Einschränkung",
+                            115: "Normalwerte",
+                            116: "leichte Einschränkung",
+                            117: "Normalwerte",
+                            118: "schwere Einschränkung",
+                        }
                     }
                 ),
             },
@@ -2342,15 +2289,17 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        120: "schwere Einschränkung",
-                        121: "schwere Einschränkung",
-                        122: "Normalwerte",
-                        123: "leichte Einschränkung",
-                        124: "leichte Einschränkung",
-                        125: "leichte Einschränkung",
-                        126: "Normalwerte",
-                        127: "Normalwerte",
-                        128: "schwere Einschränkung",
+                        "Niere": {
+                            120: "schwere Einschränkung",
+                            121: "schwere Einschränkung",
+                            122: "Normalwerte",
+                            123: "leichte Einschränkung",
+                            124: "leichte Einschränkung",
+                            125: "leichte Einschränkung",
+                            126: "Normalwerte",
+                            127: "Normalwerte",
+                            128: "schwere Einschränkung",
+                        }
                     }
                 ),
             },
@@ -2377,15 +2326,17 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        130: "stark positiv",
-                        131: "negativ",
-                        132: "stark positiv",
-                        133: "negativ",
-                        134: "grenzwertig positiv",
-                        135: "negativ",
-                        136: "stark positiv",
-                        137: "grenzwertig positiv",
-                        138: "grenzwertig positiv",
+                        "Infarkt": {
+                            130: "stark positiv",
+                            131: "negativ",
+                            132: "stark positiv",
+                            133: "negativ",
+                            134: "grenzwertig positiv",
+                            135: "negativ",
+                            136: "stark positiv",
+                            137: "grenzwertig positiv",
+                            138: "grenzwertig positiv",
+                        }
                     }
                 ),
             },

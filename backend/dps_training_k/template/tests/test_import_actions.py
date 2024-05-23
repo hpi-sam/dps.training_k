@@ -76,6 +76,11 @@ class TestPopulateActionsCommand(TestCase):
                     isinstance(conditions["role"], list),
                     f"{conditions['role']} is not a list ",
                 )
+                if defaults.get("results", None):
+                    self.assertTrue(
+                        isinstance(defaults["results"], json),
+                        f"{defaults['results']} is not a json",
+                    )
                 num_personnel = 0
                 for entry in conditions["role"]:
                     if isinstance(entry, dict):
