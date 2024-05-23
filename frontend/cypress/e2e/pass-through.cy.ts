@@ -17,7 +17,6 @@ describe('pass-through tests', () => {
 		cy.get('#trainer-login-password').type('password')
 		cy.get('#trainer-login').click()
 
-		cy.get('#create-exercise-button').click()
 		cy.get('#add-area-button').click()
 		cy.get('.list-item').first().find('.list-item-button').click()
 		cy.get('#create-patient-button').click()
