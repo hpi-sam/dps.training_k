@@ -36,13 +36,13 @@ class Command(BaseCommand):
         )
         # corresponds to "4 EK´s"
         Subcondition.objects.update_or_create(
-            name="0-3 EKs",
+            name="keine 4 EK´s",
             upper_limit=3,
             lower_limit=0,
             fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 0},
         )
         Subcondition.objects.update_or_create(
-            name="4-inf EKs",
+            name="4 EK´s",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=4,
             fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 4},
@@ -74,13 +74,13 @@ class Command(BaseCommand):
         )
         # corresponds to "2l Infusion"
         Subcondition.objects.update_or_create(
-            name="0-1999 Infusion",
+            name="keine 2l Infusion",
             upper_limit=1999,
             lower_limit=0,
             fulfilling_measures={},
         )
         Subcondition.objects.update_or_create(
-            name="2000-inf Infusion",
+            name="2l Infusion",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=2000,
             fulfilling_measures={},
@@ -236,25 +236,25 @@ class Command(BaseCommand):
         )
         # corresponds to "EK´s"
         Subcondition.objects.update_or_create(
-            name="0-1 EKs",
+            name="0-1 EK´s",
             upper_limit=1,
             lower_limit=0,
             fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 0},
         )
         Subcondition.objects.update_or_create(
-            name="2-3 EKs",
+            name="2-3 EK´s",
             upper_limit=3,
             lower_limit=2,
             fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 2},
         )
         Subcondition.objects.update_or_create(
-            name="4-5 EKs",
+            name="4-5 EK´s",
             upper_limit=5,
             lower_limit=4,
             fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 4},
         )
         Subcondition.objects.update_or_create(
-            name="6-inf EKs",
+            name="6-inf EK´s",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=6,
             fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 6},
@@ -309,24 +309,47 @@ class Command(BaseCommand):
 
     def create_patient_states_and_transitions(self):
         # outer loop to create all patients
-        for i in range(1002, 1003):
+        for code in range(1001, 1042):
+            print("working on: ", code)
+            self.code = code
             # parse data for specific patient
-            self.patient_states = self.parse_patient_data(i)
-            self.state_transitions = self.parse_state_transitions(i)
-            # create first state, then go into recursion to create other states and all transitions
+            self.patient_states = self.parse_patient_data(self.code)
+            self.state_transitions = self.parse_state_transitions(self.code)
+            # create starting state, then go into recursion to create other states and all transitions
             first_patient_state = self.patient_states[0]
-            self.patient_states = self.patient_states[1:]
-            first_patient_state_obj = PatientState.objects.create(
+            first_start_patient_state_obj, _ = PatientState.objects.get_or_create(
+                code=self.code,
                 state_id=first_patient_state["state_id"],
-                transition=None,
-                data=first_patient_state["data"],
+                vital_signs=first_patient_state["vital signs"],
+                examination_codes=first_patient_state["examination codes"],
+                special_events=first_patient_state["special events"],
                 is_dead=first_patient_state["is_dead"],
             )
             first_state_transition = self.create_state_transitions(
                 first_patient_state["table_id"]
-            )
+            )[0]
             # finally, set the transition for the patient (first one of the linked list)
-            first_patient_state_obj.transition = first_state_transition
+            first_start_patient_state_obj.transition = first_state_transition
+            first_start_patient_state_obj.save()
+
+            # create the other starting state, then go into recursion to create other states and all transitions
+            for patient_state in self.patient_states:
+                if int(patient_state["state_id"]) == 551:
+                    break
+            second_start_patient_state_obj, _ = PatientState.objects.get_or_create(
+                code=self.code,
+                state_id=patient_state["state_id"],
+                vital_signs=patient_state["vital signs"],
+                examination_codes=patient_state["examination codes"],
+                special_events=patient_state["special events"],
+                is_dead=patient_state["is_dead"],
+            )
+            first_state_transition = self.create_state_transitions(
+                patient_state["table_id"]
+            )[1]
+            # finally, set the transition for the patient (first one of the linked list)
+            second_start_patient_state_obj.transition = first_state_transition
+            second_start_patient_state_obj.save()
 
     def create_patient_state(self, state_id):
         # find corresponding patient_state for state_id
@@ -335,79 +358,98 @@ class Command(BaseCommand):
                 break
 
         patient_state_obj, created = PatientState.objects.get_or_create(
+            code=self.code,
             state_id=patient_state["state_id"],
-            data=patient_state["data"],
-            transition=None,
+            vital_signs=patient_state["vital signs"],
+            examination_codes=patient_state["examination codes"],
+            special_events=patient_state["special events"],
             is_dead=patient_state["is_dead"],
         )
         return patient_state_obj, created
 
+    # TODO: remove states ending in 0, aka stop recursion at states ending in 9 or at calls that would call with table-id ""
     def create_state_transitions(self, table_id):
-        sleep(0.05)
+        # sleep(0.2)
         # end of recursion
         if table_id == "":  # this is only the case if we're in a final state
-            state_transition_obj = StateTransition.objects.create()
-            LogicNode.objects.create(
+            state_transition_obj, _ = StateTransition.objects.get_or_create(
+                resulting_state=None
+            )
+            LogicNode.objects.get_or_create(
                 state_transition=state_transition_obj,
                 node_type=LogicNode.NodeType.TRUE,
             )
-            return state_transition_obj
+            return (state_transition_obj, state_transition_obj)
 
         for i, table_id_data in enumerate(self.state_transitions["table_results"]):
             if table_id_data["table_id"] == table_id:
                 break
         relevant_table_id_data = self.state_transitions["table_results"][i]
 
+        first_state_transition_table0 = None
+        first_state_transition_table1 = None
+
         # guard condition "Immer" forces next state without any conditions
         if "Immer:" in relevant_table_id_data["extra_condition 1"]:
-            resulting_state_id = relevant_table_id_data["extra_condition 1"].split(
-                "Immer: "
-            )[1]
-            resulting_patient_state_obj, created = self.create_patient_state(
-                resulting_state_id
+            first_state_transition_table0 = self.handle_guard_condition(
+                relevant_table_id_data
+            )
+            first_state_transition_table1 = previous_state_transition = (
+                first_state_transition_table0
             )
 
-            if created:
-                print("was created")
-                # get data for next transition
-                for patient_state in self.patient_states:
-                    if patient_state["state_id"] == int(resulting_state_id):
-                        table_id = patient_state["table_id"]
-                        break
-
-                # recursive call to create transitions and resulting states for state created above
-                resulting_state_transition = self.create_state_transitions(table_id)
-                resulting_patient_state_obj.transition = resulting_state_transition
-            else:
-                print("caught existing state")
-
-            # create transitions to resulting states
-            # the "from original state" part needs to be set by caller
-            first_state_transition = StateTransition.objects.create(
-                resulting_state=resulting_patient_state_obj
-            )
-            LogicNode.objects.create(
-                state_transition=first_state_transition, node_type=LogicNode.NodeType.TRUE
-            )
         else:
+            if "keine Lyse:" in relevant_table_id_data["extra_condition 1"]:
+                subcondition = Subcondition.objects.get(name="keine Lyse")
+                first_state_transition_table0 = first_state_transition_table1 = (
+                    self.handle_guard_condition(relevant_table_id_data, subcondition)
+                )
+            if "keine OP:" in relevant_table_id_data["extra_condition 1"]:
+                subcondition = Subcondition.objects.get(
+                    name="keine OP läuft / ist gelaufen"
+                )
+                first_state_transition_table0 = first_state_transition_table1 = (
+                    self.handle_guard_condition(relevant_table_id_data, subcondition)
+                )
+            if "keine Blutstillung:" in relevant_table_id_data["extra_condition 1"]:
+                subcondition = Subcondition.objects.get(name="keine Blutstillung")
+                first_state_transition_table0 = first_state_transition_table1 = (
+                    self.handle_guard_condition(relevant_table_id_data, subcondition)
+                )
+
+            # table0 = self.state_transitions["table 0"]
+            # previous_state_transition = first_state_transition_table0  # either none or transition created by guard condition
+            # # for each line of the table
+            # for i, line in enumerate(table0[1:]):
+            #     first_state_transition_table0 = self.create_transitions_for_table0(
+            #         relevant_table_id_data,
+            #         first_state_transition_table0,
+            #         table0,
+            #         previous_state_transition,
+            #         i,
+            #         line,
+            #     )
+            previous_state_transition = first_state_transition_table0
             # create transitions for table 0
             table0 = self.state_transitions["table 0"]
-            table0_subconditions = table0[0]
-            # table0_subconditions.append(
-            #     relevant_table_id_data["extra_condition 1"]
-            # )  # TODO: handle case with multiple conditions here
-            # TODO: fix this adding the same thing multiple times, maybe use set instead
-
-            previous_state_transition = None
-            first_state_transition = None
             for i, line in enumerate(table0[1:]):  # for each line of the table
-                resulting_state_id = relevant_table_id_data["table_0_results"][i]
+                resulting_state_id = int(relevant_table_id_data["table_0_results"][i])
+                # end of recursion
+                if resulting_state_id % 10 == 0 and resulting_state_id != 500:
+                    state_transition_obj, _ = StateTransition.objects.get_or_create(
+                        resulting_state=None
+                    )
+                    LogicNode.objects.get_or_create(
+                        state_transition=state_transition_obj,
+                        node_type=LogicNode.NodeType.TRUE,
+                    )
+                    return (state_transition_obj, state_transition_obj)
+
                 resulting_patient_state_obj, created = self.create_patient_state(
                     resulting_state_id
                 )
 
                 if created:
-                    print("was created")
                     # get data for next transition
                     for patient_state in self.patient_states:
                         if patient_state["state_id"] == int(resulting_state_id):
@@ -415,87 +457,298 @@ class Command(BaseCommand):
                             break
 
                     # recursive call to create transitions and resulting states for state created above
-                    resulting_state_transition = self.create_state_transitions(table_id)
+                    resulting_state_transition = self.create_state_transitions(
+                        table_id
+                    )[0]
                     resulting_patient_state_obj.transition = resulting_state_transition
-                else:
-                    print("caught existing state")
+                    resulting_patient_state_obj.save()
 
                 # create transitions to resulting states
                 # the "from original state" part needs to be set by caller
-                state_transition = StateTransition.objects.create(
+                state_transition, _ = StateTransition.objects.get_or_create(
                     resulting_state=resulting_patient_state_obj
                 )
                 self.create_logic_nodes(
-                    deepcopy(table0_subconditions),
+                    deepcopy(table0),
                     deepcopy(relevant_table_id_data["extra_condition 1"]),
+                    state_transition,
+                    line,
                 )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
                 # save first transition for return value
-                if not first_state_transition:
-                    first_state_transition = state_transition
+                if not first_state_transition_table0:
+                    first_state_transition_table0 = state_transition
+
                 # link transitions to linked list
                 if previous_state_transition:
                     previous_state_transition.next_state_transition = state_transition
+                    previous_state_transition.save()
                 previous_state_transition = state_transition
 
-                # TODO: create logic nodes for each transition
-
             table1 = self.state_transitions["table 1"]
-            # print(table1)
-            table1_subconditions = table1[0]
-            # table1_subconditions.append(relevant_table_id_data["extra_condition 2"])
+            previous_state_transition = first_state_transition_table1
+            for i, line in enumerate(table1[1:]):  # for each line of the table
+                resulting_state_id = int(relevant_table_id_data["table_1_results"][i])
+                # end of recursion
+                if resulting_state_id % 10 == 0 and resulting_state_id != 500:
+                    state_transition_obj, _ = StateTransition.objects.get_or_create(
+                        resulting_state=None
+                    )
+                    LogicNode.objects.get_or_create(
+                        state_transition=state_transition_obj,
+                        node_type=LogicNode.NodeType.TRUE,
+                    )
+                    return (state_transition_obj, state_transition_obj)
 
-            previous_state_transition = None
-            first_state_transition = None
-            # for i, line in enumerate(table1[1:]):  # basically for each line of the table
-            for i in range(len(table1_subconditions)):
-                # TODO: deal with second table being "leer"
-                resulting_state_id = relevant_table_id_data["table_1_results"][i]
                 resulting_patient_state_obj, created = self.create_patient_state(
                     resulting_state_id
                 )
-                # print(f"resulting state id: {resulting_state_id}, i: {i}, data: {relevant_table_id_data["table_0_results"]}, created: {created}")
 
                 if created:
-                    print("was created")
                     # get data for next transition
                     for patient_state in self.patient_states:
                         if patient_state["state_id"] == int(resulting_state_id):
                             table_id = patient_state["table_id"]
-                            # print(f"table id: {table_id}")
                             break
 
                     # recursive call to create transitions and resulting states for state created above
-                    resulting_state_transition = self.create_state_transitions(table_id)
+                    resulting_state_transition = self.create_state_transitions(
+                        table_id
+                    )[1]
                     resulting_patient_state_obj.transition = resulting_state_transition
-                else:
-                    print("caught existing state")
+                    resulting_patient_state_obj.save()
 
                 # create transitions to resulting states
                 # the "from original state" part needs to be set by caller
-                state_transition = StateTransition.objects.create(
+                state_transition, _ = StateTransition.objects.get_or_create(
                     resulting_state=resulting_patient_state_obj
                 )
+                self.create_logic_nodes(
+                    deepcopy(table1),
+                    deepcopy(relevant_table_id_data["extra_condition 2"]),
+                    state_transition,
+                    line,
+                )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
+
                 # save first transition for return value
-                if not first_state_transition:
-                    first_state_transition = state_transition
+                if not first_state_transition_table1:
+                    first_state_transition_table1 = state_transition
+
                 # link transitions to linked list
                 if previous_state_transition:
                     previous_state_transition.next_state_transition = state_transition
+                    previous_state_transition.save()
                 previous_state_transition = state_transition
 
-                # TODO: create logic nodes for each transition
+            # handle cases where tables are empty
+            previous_state_transition = first_state_transition_table0
+            if len(table0[1:]) == 0:
+                resulting_state_id = int(relevant_table_id_data["table_0_results"][0])
+                # end of recursion
+                if resulting_state_id % 10 == 0 and resulting_state_id != 500:
+                    state_transition_obj, _ = StateTransition.objects.get_or_create(
+                        resulting_state=None
+                    )
+                    LogicNode.objects.get_or_create(
+                        state_transition=state_transition_obj,
+                        node_type=LogicNode.NodeType.TRUE,
+                    )
+                    return (state_transition_obj, state_transition_obj)
 
-        return first_state_transition
+                resulting_patient_state_obj, created = self.create_patient_state(
+                    resulting_state_id
+                )
+                if created:
+                    # get data for next transition
+                    for patient_state in self.patient_states:
+                        if patient_state["state_id"] == int(resulting_state_id):
+                            table_id = patient_state["table_id"]
+                            break
+                    resulting_state_transition = self.create_state_transitions(
+                        table_id
+                    )[0]
+                    resulting_patient_state_obj.transition = resulting_state_transition
+                    resulting_patient_state_obj.save()
 
-    def create_logic_nodes(self, table_subconditions, extra_conditions):
-        # print(f"table subconditions: {table_subconditions}")
-        # print(f"extra conditions: {extra_conditions}")
+                state_transition, _ = StateTransition.objects.get_or_create(
+                    resulting_state=resulting_patient_state_obj
+                )
+                self.create_logic_nodes(
+                    deepcopy(table0),
+                    deepcopy(relevant_table_id_data["extra_condition 1"]),
+                    state_transition,
+                    [],
+                )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
+
+                # save first transition for return value
+                if not first_state_transition_table0:
+                    first_state_transition_table0 = state_transition
+
+                # link transitions to linked list
+                if previous_state_transition:
+                    previous_state_transition.next_state_transition = state_transition
+                    previous_state_transition.save()
+                previous_state_transition = state_transition
+
+            previous_state_transition = first_state_transition_table1
+            if len(table1[1:]) == 0:
+                resulting_state_id = int(relevant_table_id_data["table_1_results"][0])
+                # end of recursion
+                if resulting_state_id % 10 == 0 and resulting_state_id != 500:
+                    state_transition_obj, _ = StateTransition.objects.get_or_create(
+                        resulting_state=None
+                    )
+                    LogicNode.objects.get_or_create(
+                        state_transition=state_transition_obj,
+                        node_type=LogicNode.NodeType.TRUE,
+                    )
+                    return (state_transition_obj, state_transition_obj)
+
+                resulting_patient_state_obj, created = self.create_patient_state(
+                    resulting_state_id
+                )
+                if created:
+                    # get data for next transition
+                    for patient_state in self.patient_states:
+                        if patient_state["state_id"] == int(resulting_state_id):
+                            table_id = patient_state["table_id"]
+                            break
+                    resulting_state_transition = self.create_state_transitions(
+                        table_id
+                    )[1]
+                    
+                    resulting_patient_state_obj.transition = resulting_state_transition
+                    resulting_patient_state_obj.save()
+
+                state_transition, _ = StateTransition.objects.get_or_create(
+                    resulting_state=resulting_patient_state_obj
+                )
+                self.create_logic_nodes(
+                    deepcopy(table1),
+                    deepcopy(relevant_table_id_data["extra_condition 2"]),
+                    state_transition,
+                    [],
+                )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
+
+                # save first transition for return value
+                if not first_state_transition_table1:
+                    first_state_transition_table1 = state_transition
+                # link transitions to linked list
+                if previous_state_transition:
+                    previous_state_transition.next_state_transition = state_transition
+                    previous_state_transition.save()
+
+                previous_state_transition = state_transition
+
+        return (first_state_transition_table0, first_state_transition_table1)
+
+    def handle_guard_condition(self, relevant_table_id_data, subcondition=None):
+        match = re.search(r"\d+", relevant_table_id_data["extra_condition 1"])
+        if match:
+            resulting_state_id = int(match.group())
+        else:
+            print("something went wrong while trying to find resulting state id")
+
+
+        resulting_patient_state_obj, created = self.create_patient_state(
+            resulting_state_id
+        )
+
+        if created:
+            # get data for next transition
+            for patient_state in self.patient_states:
+                if patient_state["state_id"] == int(resulting_state_id):
+                    table_id = patient_state["table_id"]
+                    break
+
+            # recursive call to create transitions and resulting states for state created above
+            resulting_state_transition = self.create_state_transitions(table_id)[0]
+            resulting_patient_state_obj.transition = resulting_state_transition
+            resulting_patient_state_obj.save()
+
+        # create transition to resulting state
+        # the "from original state" part needs to be set by caller
+        state_transition, _ = StateTransition.objects.get_or_create(
+            resulting_state=resulting_patient_state_obj
+        )
+        if subcondition is not None:
+            LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.SUBCONDITION,
+                subcondition=subcondition,
+            )
+        else:
+            LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.TRUE,
+            )
+        return state_transition
+
+    def create_logic_nodes(
+        self, table, extra_conditions, state_transition, current_line
+    ):
+        table_subconditions = table[0]
+        root_node, _ = LogicNode.objects.get_or_create(
+            state_transition=state_transition,
+            node_type=LogicNode.NodeType.AND,
+        )
+        table_lines = table[1:]
+        leaf_nodes = []
         if "Nicht beatmet" in extra_conditions:
-            table_subconditions.append(Subcondition.objects.get(name="Nicht beatmet"))
+            subcondition = Subcondition.objects.get(name="Nicht beatmet")
+            leaf_node, _ = LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.SUBCONDITION,
+                subcondition=subcondition,
+                parent=root_node,
+            )
+            leaf_nodes.append(leaf_node)
         elif "Beatmet" in extra_conditions:
-            table_subconditions.append(Subcondition.objects.get(name="Beatmet"))
-        if "keine Lyse" in extra_conditions:
-            pass
+            subcondition = Subcondition.objects.get(name="Beatmet")
+            leaf_node, _ = LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.SUBCONDITION,
+                subcondition=subcondition,
+                parent=root_node,
+            )
+            leaf_nodes.append(leaf_node)
+
+        for i, entry in enumerate(current_line):
+            if entry == "ja":
+                subcondition = Subcondition.objects.get(name=table_subconditions[i])
+                leaf_node, _ = LogicNode.objects.get_or_create(
+                    state_transition=state_transition,
+                    node_type=LogicNode.NodeType.SUBCONDITION,
+                    subcondition=subcondition,
+                    parent=root_node,
+                )
+                leaf_nodes.append(leaf_node)
+            elif entry == "nein":
+                pass
+            elif re.search(r"\d+", entry):
+                match = re.search(r"\d+", entry)
+                value = int(match.group())
+                next_higher_value = self.find_next_higher_value(value, table_lines, i)
+                subcondition_name = table_subconditions[i]
+                subcondition = Subcondition.objects.get(
+                    name__contains=subcondition_name,
+                    lower_limit=value,
+                    upper_limit=next_higher_value - 1,
+                )
+                leaf_node, _ = LogicNode.objects.get_or_create(
+                    state_transition=state_transition,
+                    node_type=LogicNode.NodeType.SUBCONDITION,
+                    subcondition=subcondition,
+                    parent=root_node,
+                )
+                leaf_nodes.append(leaf_node)
+
+    def find_next_higher_value(self, current_value, table, line_index):
+        for line in table:
+            match = re.search(r"\d+", line[line_index])
+            value = int(match.group())
+            if value > int(current_value):
+                return value
+        return CUSTOM_MAXINT + 1
 
     def parse_state_transitions(self, patient_code):
         base_dir = os.path.join(settings.DATA_ROOT, "patient_states/")
@@ -505,7 +758,6 @@ class Command(BaseCommand):
         with open(full_path, newline="", encoding="utf-8") as csvfile:
             reader = csv.reader(csvfile)
 
-            # TODO deal with empty tables
             table0 = []
             table1 = []
             table_results = []
@@ -521,11 +773,9 @@ class Command(BaseCommand):
                 elif parsing_table_0:
                     table_data = row
                     table0.append(table_data)
-                elif parsing_table_1:
+                elif parsing_table_1 and "Table-Id" not in row[0]:
                     table_data = row
                     table1.append(table_data)
-                else:
-                    print("something went wrong")
 
                 # parse data of each table id
                 if "Table-Id" in row[0]:
@@ -574,105 +824,16 @@ class Command(BaseCommand):
                         print(f"couldn't find table-id for line {row[0]}")
 
                     table_results.append(table_id_data)
+        if table0[0][0] == "leer":
+            table0[0] = []
 
-        table0[0] = [
-            Subcondition.objects.get(name=subcondition) for subcondition in table0[0]
-        ]
+        if table1[0][0] == "leer":
+            table1[0] = []
 
         state_transitions["table 0"] = table0
         state_transitions["table 1"] = table1
         state_transitions["table_results"] = table_results
         return state_transitions
-
-    # builds all trees for one table_id
-    def build_tree_for_table(self, table_id_data, table0, table1, patient_states):
-        # guard condition invalidates table -> always same resulting state
-        for patient_state in patient_states:
-            patient_state_obj = PatientState.objects.create(
-                state_id=patient_state["state_id"],
-                transition=None,  # TODO: replace
-                data=patient_state["data"],
-                is_dead=patient_state["is_dead"],
-            )
-
-        if "Immer" in table_id_data[1]:
-            resulting_state = table_id_data[1].split(" ")[1]
-            new_state_transition = StateTransition.objects.create(
-                next_state_transition=None,
-            )  # TODO: add resulting_state. will need to store this state_transition together with its resulting_state (which isn't an object yet)
-            LogicNode.objects.create(
-                state_transition=new_state_transition,
-                node_type=LogicNode.NodeType.TRUE,
-            )
-        elif (
-            " 'Nicht beatmet'" in table_id_data[1]
-        ):  # this should only match lines that don't have any other extra conditions
-            # split resulting states into the two tables they belong to and extract extra condition for second table
-            for index, resulting_state in enumerate(
-                table_id_data[2:]
-            ):  # resulting states start at index 2
-                if isinstance(resulting_state, str):
-                    break
-            first_table_resulting_states = table_id_data[2 : index - 1]
-            second_table_resulting_states = table_id_data[index + 1 :]
-            second_table_extra_condition = table_id_data[index]
-
-            # build first table
-            prev_state_transition = None
-            for resulting_state in first_table_resulting_states:
-
-                new_state_transition = (
-                    StateTransition.objects.create()
-                )  # TODO set res later
-                for patient_state in patient_states:
-                    if patient_state["state_id"] == int(resulting_state):
-                        data = patient_state["data"]
-                        is_dead = patient_state["is_dead"]
-
-                PatientState.objects.create(
-                    state_id=int(resulting_state),
-                    data=data,
-                    is_dead=is_dead,
-                )  # TODO: add transition
-
-                root_node = LogicNode.objects.create(
-                    state_transition=new_state_transition,
-                    node_type=LogicNode.NodeType.AND,
-                )
-                for subcondition in table0:
-                    subcondition_object = Subcondition.objects.get(name=subcondition)
-                    LogicNode.objects.create(
-                        state_transition=new_state_transition,
-                        node_type=LogicNode.NodeType.SUBCONDITION,
-                        subcondition=subcondition_object,
-                        parent=root_node,
-                    )
-                # if there was a previous state transition, update it's next_state_transition to the current one to create linked list
-                if prev_state_transition is not None:
-                    prev_state_transition.next_state_transition = new_state_transition
-
-                prev_state_transition = new_state_transition
-
-                # if isinstance(resulting_state, int): # Beatmet is somewhere in there
-                #     state_transition = StateTransition.objects.create() #TODO add resulting_state and next_state_transition
-
-                # else:
-
-        # assert len(row) == len(subconditions)
-        # #TODO: link resulting_state and next_state_transition
-        # state_transition = StateTransition.objects.create()
-        # for i, field in enumerate(row):
-        #     if field == "ja":
-        #         # get subcondition for this field
-        #         subcondition = Subcondition.objects.filter(name=subconditions[i])
-        #         #TODO: link parent if exists
-        #         LogicNode.objects.create(
-        #             state_transition=state_transition,
-        #             node_type=LogicNode.NodeType.SUBCONDITION,
-        #             subcondition=subcondition,
-        #         )
-
-    # def get_resulting_state(self, tables):
 
     def parse_patient_data(self, patient_code):
         base_dir = os.path.join(settings.DATA_ROOT, "patient_states/")
@@ -690,29 +851,59 @@ class Command(BaseCommand):
                 patient_state = {}
                 row = [field.replace("|", "\n") for field in row]
                 state_id = int(row[0])
-                data = []
+                # TODO: make each one dict instead of array of dicts
+                # TODO: split data into ABCDE data, rest, description; called: vital_signs, examination_codes, special_events
+                vital_signs = {}
+                examination_codes = {}
+                vital_signs_fields = [
+                    "Airway",
+                    "Breathing",
+                    "Circulation",
+                    "Bewusstsein",
+                    "Pupillen",
+                    "Psyche",
+                    "Haut",
+                ]
+                examination_codes_fields = [
+                    "BGA-Oxy",
+                    "BGA-SBH",
+                    "Hb",
+                    "BZ",
+                    "Gerinnung",
+                    "Leber",
+                    "Niere",
+                    "Infarkt",
+                    "Lactat",
+                    "Rö-Extremitäten",
+                    "Rö-Thorax",
+                    "Trauma-CT",
+                    "Ultraschall",
+                    "EKG",
+                    "ZVD",
+                ]
+                special_events_fields = ["Beschreibung"]
+
                 i = 1
                 for field in field_names:
-                    d = {field: row[i]}
+                    if field in vital_signs_fields:
+                        vital_signs.update({field: row[i]})
+                    elif field in examination_codes_fields:
+                        if row[i] != "":
+                            examination_codes.update({field: int(row[i])})
+                    elif field in special_events_fields:
+                        special_events = row[i]
                     i += 1
-                    data.append(d)
-                data = json.dumps(data, sort_keys=True)
                 is_dead = state_id == 500 or state_id == 502
                 patient_state["state_id"] = state_id
-                patient_state["data"] = data
+                patient_state["vital signs"] = json.dumps(vital_signs)
+                patient_state["examination codes"] = json.dumps(examination_codes)
+                patient_state["special events"] = special_events
                 patient_state["is_dead"] = is_dead
                 patient_state["table_id"] = row[-1]
 
                 patient_states.append(patient_state)
 
         return patient_states
-        # PatientState.objects.create(
-        #     state_id=row[0],
-        #     transition=transition,
-        #     data=data,
-        #     is_dead=is_dead,
-        # )
-
 
 # TODO: how do we check "freie Atemwege"? this doesn't depend on measures, instead its in the patient state data
 # TODO: which action corresponds to "Infusion"?
@@ -721,3 +912,4 @@ class Command(BaseCommand):
 # TODO: which action corresponds to "CPAP"?
 # TODO: are there more "Blutstillungen" than "Chir. Blutstillung"?
 # TODO: fix state_depth removal in patient_state_factory
+# TODO: patient 1036 has no value for ZVD
