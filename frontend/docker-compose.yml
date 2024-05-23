@@ -1,7 +1,13 @@
 version: '3'
 services:
   web:
-    build: .
+    env_file:
+      - .env.${RUN_CONFIG}
+    build:
+      context: .
+      args:
+        SERVER_URL: ${SERVER_URL}
+        RUN_CONFIG: ${RUN_CONFIG}
     image: dps_training_k-frontend
     container_name: K-dPS-frontend
     ports:

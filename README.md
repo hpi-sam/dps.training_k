@@ -15,12 +15,15 @@ environment variables as well as the docker-compose file as
 [Actions Artifacts](https://github.com/hpi-sam/dps.training_k/actions/workflows/deploy.yml).
 For deployment on the server following steps are needed:
 1. Download the action artifacts and extract them in a folder
-2. Run following commands in that folder:
+2. Run following command in that folder if you want to deploy the production version (for external use on the server):
 ```bash
-export IMAGE_TAG=latest
-envsubst '${IMAGE_TAG}' < docker-compose.template.yml > docker-compose.yml
-docker-compose up -d
+docker-compose --env-file .env.prod up -d
 ```
+3. Or alternatively run following command in that folder if you want to deploy the development version (for testing purposes):
+```bash
+docker-compose --env-file .env.dev up -d
+```
+
 The website should now be running on port 5173.
 
 ## MoSCoW and future plans

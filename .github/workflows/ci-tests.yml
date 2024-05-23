@@ -17,7 +17,7 @@ jobs:
       - name: Build frontend Docker container
         run: |
           cd ./frontend/
-          docker-compose up -d
+          docker-compose --env-file .env.dev up -d
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -86,13 +86,9 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run docker containers with deploy configuration
+      - name: Run docker containers with deploy dev configuration
         run: |
-          cp ./backend/dps_training_k/.env ./
-          cp ./frontend/env.d.ts ./
-          export IMAGE_TAG=dev
-          envsubst '${IMAGE_TAG}' < docker-compose.template.yml > docker-compose.yml
-          docker-compose up -d
+          docker-compose --env-file .env.dev up -d
 
       - name: Run integration tests
         run: |

@@ -11,16 +11,16 @@ services:
     container_name: K-dPS-frontend
     ports:
       - "5173:5173"
-    
+
   django:
+    env_file:
+      - .env.${RUN_CONFIG}
     image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
     container_name: K-dPS-django
     restart: unless-stopped
     depends_on:
       - postgres
       - redis
-    env_file:
-      - .env
     environment:
       - RUN_MIGRATIONS=1
     volumes:
@@ -31,13 +31,13 @@ services:
 
 
   postgres:
+    env_file:
+      - .env.${RUN_CONFIG}
     image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
     container_name: K-dPS-postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
-    env_file:
-      - .env
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 10s
@@ -50,7 +50,7 @@ services:
 
   celeryworker:
     env_file:
-      - .env
+      - .env.${RUN_CONFIG}
     image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
     container_name: K-dPS-celeryworker
     command: /start-celeryworker
@@ -59,7 +59,7 @@ services:
 
   celerybeat:
     env_file:
-      - .env
+      - .env.${RUN_CONFIG}
     image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
     container_name: K-dPS-celerybeat
     command: /start-celerybeat
