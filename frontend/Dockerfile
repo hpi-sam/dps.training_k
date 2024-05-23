@@ -2,12 +2,13 @@ FROM node:latest
 LABEL authors="Wolkenfarmer, Joshua Riewesell"
 WORKDIR /app
 RUN npm install -g vite
+ARG RUN_CONFIG
+ARG SERVER_URL
 RUN if [ "$RUN_CONFIG" = "prod" ]; then npm install -g serve; fi
 COPY package*.json ./
 RUN npm install
 COPY . .
-ARG RUN_CONFIG
-ARG SERVER_URL
+ENV VITE_RUN_CONFIG=$RUN_CONFIG
 ENV VITE_SERVER_URL=$SERVER_URL
 ENV PORT=5173
 EXPOSE 5173
