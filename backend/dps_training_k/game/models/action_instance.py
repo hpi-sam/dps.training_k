@@ -79,6 +79,9 @@ class ActionInstance(LocalTimeable, models.Model):
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
     )
+    historic_patient_state = models.ForeignKey(
+        "template.PatientState", on_delete=models.CASCADE, blank=True, null=True
+    )
 
     @property
     def completed(self):
@@ -181,12 +184,13 @@ class ActionInstance(LocalTimeable, models.Model):
                 "An action instance always needs a patient instance or lab to be scheduled"
             )
         if self.patient_instance:
+            self.historic_patient_state = self.patient_instance.patient_state
+            self.save(update_fields=["historic_patient_state"])
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
                 self.template.application_duration,  # ToDo: Replace with scalable local time system
                 "_patient_application_finished",
                 action_instance=self,
-                patient_state=self.patient_instance.patient_state.data,
             )
         if self.lab:
             ScheduledEvent.create_event(
@@ -199,10 +203,10 @@ class ActionInstance(LocalTimeable, models.Model):
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.consume_resources()
 
-    def _patient_application_finished(self, patient_state):
+    def _patient_application_finished(self):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(patient_state),
+            info_text=self.template.get_result(self),
         )
         self._application_finished()
 
@@ -290,3 +294,9 @@ class ActionInstance(LocalTimeable, models.Model):
         for material in self.materialinstance_set.all():
             if not material.is_reusable:
                 material.consume()
+
+    def get_patient_examination_codes(self):
+        return {
+            **self.historic_patient_state.examination_codes,
+            **self.patient_instance.static_information.examination_codes,
+        }
