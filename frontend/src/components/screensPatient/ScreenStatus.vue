@@ -2,7 +2,7 @@
 	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient'
 	import TriagePopup from '@/components/widgets/TriagePopup.vue'
-	import MovePatientPopup from '@/components/widgets/MovePatientPopup.vue'
+	import MovePopup from '@/components/widgets/MovePopup.vue'
 	import PatientStatus from '@/components/widgets/PatientStatus.vue'
 	import { triageToColor } from '@/utils'
 	import PatientModel from '../widgets/PatientModel.vue'
@@ -11,16 +11,22 @@
 
 	const showTriagePopup = ref(false)
 
-	const showMovePatientPopup = ref(false)
+	const showMovePopup = ref(false)
 </script>
 
 <template>
 	<TriagePopup v-if="showTriagePopup" @close-popup="showTriagePopup=false" />
-	<MovePatientPopup v-if="showMovePatientPopup" :current-area="patientStore.areaName" @close-popup="showMovePatientPopup=false" />
+	<MovePopup
+		v-if="showMovePopup"
+		:module="'Patient'"
+		:type-to-move="'Patient'"
+		:current-area="patientStore.areaName"
+		@close-popup="showMovePopup=false"
+	/>
 	<div class="flex-container">
 		<nav>
 			<button id="nav-trainer">
-				{{ patientStore.patientId }}
+				{{ patientStore.patientName }}
 			</button>
 			<button
 				id="nav-triage"
@@ -31,7 +37,7 @@
 			</button>
 			<button
 				id="nav-area-name"
-				@click="showMovePatientPopup = true"
+				@click="showMovePopup = true"
 			>
 				{{ patientStore.areaName }}
 			</button>

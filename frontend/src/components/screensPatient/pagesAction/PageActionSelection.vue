@@ -1,10 +1,12 @@
 <script setup lang="ts">
 	import {ref} from 'vue'
 	import {useAvailablesStore} from '@/stores/Availables'
-	import ActionConfig from '@/components/widgets/ActionConfig.vue'
 	import CloseButton from '@/components/widgets/CloseButton.vue'
+	import socketPatient from '@/sockets/SocketPatient'
+	import { useActionCheckStore } from '@/stores/ActionCheck'
+	import { Pages } from '../ScreenActions.vue'
 
-	const emit = defineEmits(['close-action-selection'])
+	const emit = defineEmits(['close-action-selection', 'set-page'])
 
 	const availablesStore = useAvailablesStore()
 	const availableActions = ref(availablesStore.actions)
@@ -28,21 +30,17 @@
 		}
 	}
 
+	const actionCheckStore = useActionCheckStore()
+
 	function openAction(actionName: string) {
+		actionCheckStore.$reset()
+		socketPatient.actionCheck(actionName)
 		currentAction.value = actionName
-		showAction.value = true
+		emit('set-page', Pages.ACTION_CHECK)
 	}
-
-	const showAction = ref(false)
 </script>
-
 <template>
-	<ActionConfig
-		v-if="showAction"
-		:current-action="currentAction"
-		@close-action="showAction=false"
-	/>
-	<div v-if="!showAction" class="flex-container">
+	<div class="flex-container">
 		<div class="scroll">
 			<h1>Wähle eine Aktion</h1>
 			<CloseButton @click="emit('close-action-selection')" />
@@ -55,10 +53,10 @@
 				<div
 					v-for="action in filteredActions(actionTyp)"
 					:key="action.actionName"
-					class="listItem"
+					class="list-item"
 				>
-					<button class="listItemButton" @click="openAction(action.actionName)">
-						<div class="listItemName">
+					<button class="list-item-button" @click="openAction(action.actionName)">
+						<div class="list-item-name">
 							{{ action.actionName }}
 						</div>
 					</button>
@@ -67,7 +65,6 @@
 		</div>
 	</div>
 </template>
-
 <style scoped>
 	h1 {
 		text-align: center;

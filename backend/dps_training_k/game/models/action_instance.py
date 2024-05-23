@@ -1,9 +1,9 @@
 from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
-from game.models import ScheduledEvent
+from game.models import ScheduledEvent, MaterialInstance
 from helpers.local_timable import LocalTimeable
-from template.models import Action
+from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -11,10 +11,8 @@ class ActionInstanceStateNames(models.TextChoices):
     IN_PROGRESS = "IP", "in_progress"
     ON_HOLD = "OH", "on_hold"
     FINISHED = "FI", "finished"
-    ACTIVE = "AC", "active"
+    IN_EFFECT = "IE", "in effect"
     EXPIRED = "EX", "expired"
-
-    DECLINED = "DE", "declined"
     CANCELED = "CA", "canceled"
 
 
@@ -33,8 +31,6 @@ class ActionInstanceState(models.Model):
     info_text = models.CharField(null=True, blank=True, default=None)
 
     def update(self, state_name, time, info_text=None):
-        if self.name == ActionInstanceStateNames.DECLINED:
-            raise ValueError("Once Declined, states cannot be changed")
         if state_name == self.name and not info_text:
             return None
         if state_name == self.name and info_text:
@@ -54,42 +50,53 @@ class ActionInstanceState(models.Model):
         self.save(update_fields=["info_text"])
 
     def success_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.ACTIVE]
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
 
     def completion_states():
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
 
 
 class ActionInstance(LocalTimeable, models.Model):
-    patient_instance = models.ForeignKey(
-        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
-    )
-    area = models.ForeignKey("Area", on_delete=models.CASCADE, blank=True, null=True)
-    action_template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
-    current_state = models.ForeignKey(
-        "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
-    )
-    order_id = models.IntegerField(null=True)
-
     class Meta:
         ordering = ["order_id"]
         constraints = [
             models.UniqueConstraint(
                 fields=["order_id", "patient_instance"],
                 name="unique_order_id_for_patient",
-            )
+            ),
+            one_or_more_field_not_null(["patient_instance", "lab"], "action"),
         ]
+
+    area = models.ForeignKey(
+        "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
+    )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
+    template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
+    current_state = models.ForeignKey(
+        "ActionInstanceState", on_delete=models.CASCADE, blank=True, null=True
+    )
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, blank=True, null=True)
+    order_id = models.IntegerField(null=True)
+    patient_instance = models.ForeignKey(
+        "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    @property
+    def completed(self):
+        if self.current_state in ActionInstanceState.completion_states():
+            return True
+        else:
+            return False
+
+    @property
+    def exercise(self):
+        if self.patient_instance:
+            return self.patient_instance.exercise
+        if self.lab:
+            return self.lab.exercise
 
     @property
     def name(self):
-        return self.action_template.name
-
-    @property
-    def state_name(self):
-        if self.current_state != None:
-            return self.current_state.name
-        else:
-            return None
+        return self.template.name
 
     @property
     def result(self):
@@ -102,15 +109,17 @@ class ActionInstance(LocalTimeable, models.Model):
             return None
 
     @property
-    def completed(self):
-        if self.current_state in ActionInstanceState.completion_states():
-            return True
+    def state_name(self):
+        if self.current_state != None:
+            return self.current_state.name
         else:
-            return False
+            return None
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
-        ActionInstanceDispatcher.save_and_notify(self, changes, *args, **kwargs)
+        ActionInstanceDispatcher.save_and_notify(
+            self, changes, super(), *args, **kwargs
+        )
 
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
@@ -122,35 +131,23 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, action_template, patient_instance=None, area=None):
+    def create(cls, template, patient_instance=None, area=None, lab=None):
         if not patient_instance and not area:
             raise ValueError(
-                "Either patient_instance or area must be provided - an action instance always need a context"
+                "Either patient_instance or lab must be provided - an action instance always need a context"
             )
 
-        is_applicable, context = action_template.application_status(
-            patient_instance, patient_instance.area
-        )
         action_instance = ActionInstance.objects.create(
             patient_instance=patient_instance,
             area=area,
-            action_template=action_template,
+            lab=lab,
+            template=template,
             order_id=ActionInstance.generate_order_id(patient_instance),
         )
-        if is_applicable:
-            action_instance.current_state = ActionInstanceState.objects.create(
-                action_instance=action_instance,
-                name=ActionInstanceStateNames.PLANNED,
-                t_local_begin=action_instance.get_local_time(),
-            )
-            action_instance.save(update_fields=["current_state"])
-            action_instance.place_of_application().register_to_queue(action_instance)
-            return action_instance
         action_instance.current_state = ActionInstanceState.objects.create(
             action_instance=action_instance,
-            name=ActionInstanceStateNames.DECLINED,
+            name=ActionInstanceStateNames.PLANNED,
             t_local_begin=action_instance.get_local_time(),
-            info_text=context,
         )
         action_instance.save(update_fields=["current_state"])
         return action_instance
@@ -169,48 +166,127 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        if self.state_name == ActionInstanceStateNames.DECLINED:
-            raise ValueError("Cannot start a declined action")
-
-        is_applicable, context = self.action_template.application_status(
-            self.patient_instance, self.patient_instance.area
+        is_applicable, context = self.check_conditions_and_block_resources(
+            self.attached_instance(), self.attached_instance()
         )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
-            return False
-
+            return False, context
         self._start_application()
-        return True
-
-    def place_of_application(self):
-        if self.action_template.category == Action.Category.LAB:
-            return self.patient_instance.area
-        return self.patient_instance
+        return True, None
 
     def _start_application(self):
-        ScheduledEvent.create_event(
-            self.patient_instance.exercise,
-            self.action_template.application_duration,  # ToDo: Replace with scalable local time system
-            "_application_finished",
-            action_instance=self,
-            patient_state=self.patient_instance.patient_state.data,
-        )
-        self._update_state(ActionInstanceStateNames.IN_PROGRESS)
-
-    def _application_finished(self, patient_state):
-        self._update_state(
-            ActionInstanceStateNames.FINISHED,
-            info_text=self.action_template.get_result(patient_state),
-        )
-        self.place_of_application().remove_from_queue(self)
-        if self.action_template.effect_duration != None:
+        if not self.patient_instance and not self.lab:
+            raise ValueError(
+                "An action instance always needs a patient instance or lab to be scheduled"
+            )
+        if self.patient_instance:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
-                self.action_template.effect_duration,  # ToDo: Replace with scalable local time system
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
+                "_patient_application_finished",
+                action_instance=self,
+                patient_state=self.patient_instance.patient_state.data,
+            )
+        if self.lab:
+            ScheduledEvent.create_event(
+                self.lab.exercise,
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
+                "_lab_application_finished",
+                action_instance=self,
+            )
+
+        self._update_state(ActionInstanceStateNames.IN_PROGRESS)
+        self.consume_resources()
+
+    def _patient_application_finished(self, patient_state):
+        self._update_state(
+            ActionInstanceStateNames.FINISHED,
+            info_text=self.template.get_result(patient_state),
+        )
+        self._application_finished()
+
+    def _lab_application_finished(self):
+        self._update_state(
+            ActionInstanceStateNames.FINISHED,
+            info_text=self.template.get_result(),
+        )
+        self._application_finished()
+
+    def _application_finished(self):
+        self.free_resources()
+        if self.template.produced_resources() != None:
+            MaterialInstance.generate_materials(
+                self.template.produced_resources(), self.area
+            )
+        if self.template.effect_duration != None:
+            ScheduledEvent.create_event(
+                self.patient_instance.exercise,
+                self.template.effect_duration,  # ToDo: Replace with scalable local time system
                 "_effect_expired",
                 action_instance=self,
             )
-            self._update_state(ActionInstanceStateNames.ACTIVE)
+            self._update_state(ActionInstanceStateNames.IN_EFFECT)
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
+
+    def attached_instance(self):
+        return (
+            self.patient_instance or self.lab
+        )  # first not null value determined by short-circuiting
+
+    def __str__(self):
+        return f"""ActionInstance {self.template.name} for 
+            {self.patient_instance.name + str(self.patient_instance.id) 
+             if self.patient_instance 
+             else "Lab" + str(self.lab.exercise.frontend_id)}"""
+
+    def check_conditions_and_block_resources(self, material_owner, personnel_owner):
+        """
+        If all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
+        Each element of the queryset needs to have a block method.
+        :params material_owner: Instance having a material_available method
+        :params personell_owner: Instance having a personell_available method
+        :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
+        """
+        needed_material_groups = self.template.material_needed()
+        if not needed_material_groups:
+            needed_material_groups = []
+        resources_to_block = []
+        for needed_material_group in needed_material_groups:
+            for material_condition in needed_material_group:
+                available_materials = material_owner.material_available(
+                    material_condition
+                )
+                if available_materials:
+                    resources_to_block.append(available_materials[0])
+                    break
+                else:
+                    return (
+                        False,
+                        f"Kein Material des Typs {material_condition.name} verfügbar",
+                    )
+
+        available_personnel = personnel_owner.personnel_available()
+        if len(available_personnel) < self.template.personnel_count_needed():
+            return False, f"Nicht genug Personal verfügbar"
+        for i in range(self.template.personnel_count_needed()):
+            resources_to_block.append(available_personnel[i])
+        if not resources_to_block:
+            return True, None
+        for resource in resources_to_block:
+            resource.block(self)
+        return True, None
+
+    def free_resources(self):
+        for material in self.materialinstance_set.all():
+            if material.is_reusable:
+                material.release()
+        for personnel in self.personnel_set.all():
+            personnel.release()
+
+    def consume_resources(self):
+        for material in self.materialinstance_set.all():
+            if not material.is_reusable:
+                material.consume()

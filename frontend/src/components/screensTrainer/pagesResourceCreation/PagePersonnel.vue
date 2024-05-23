@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
-	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 
@@ -44,20 +43,19 @@
 	<div class="scroll">
 		<h1>Personal</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="addPersonnel()">
+			<button v-if="currentAreaData" class="list-item-add-button" @click="addPersonnel()">
 				Personal hinzufügen
 			</button>
 			<div
 				v-for="personnel in currentAreaData?.personnel"
 				:key="personnel.personnelName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="openPopup(personnel.personnelId)">
-					<div class="listItemName">
+				<button class="list-item-button" @click="openPopup(personnel.personnelId)">
+					<div class="list-item-name">
 						{{ personnel.personnelName }}
 					</div>
 				</button>
-				<ToggleSwitchForListItems default="active" />
 			</div>
 		</div>
 	</div>

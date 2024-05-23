@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import timedelta
-from helpers.one_field_not_null import OneFieldNotNull
+from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 import json
 
 
@@ -15,8 +15,8 @@ class ScheduledEvent(models.Model):
         related_name="events",
     )
     end_date = models.DateTimeField()
-    method_name = models.CharField(max_length=100)
     kwargs = models.TextField(blank=True, null=True)
+    method_name = models.CharField(max_length=100)
 
     @classmethod
     def create_event(
@@ -38,7 +38,9 @@ class ScheduledEvent(models.Model):
             )
             scheduled_event.save()
         except TypeError as e:
-            raise ValueError("kwargs passed to create_event must be JSON serializable") from e
+            raise ValueError(
+                "kwargs passed to create_event must be JSON serializable"
+            ) from e
 
         Owner.create_owner(
             scheduled_event,
@@ -56,19 +58,26 @@ class ScheduledEvent(models.Model):
     @classmethod
     def get_time_until_completion(cls, object):
         from game.models import PatientInstance, ActionInstance, Area, Exercise
+
         try:
             # Get the related Owner instance
             if isinstance(object, PatientInstance):
-                owner_instance = Owner.objects.filter(patient_owner=object).latest('id')
+                owner_instance = Owner.objects.filter(patient_owner=object).latest("id")
             elif isinstance(object, ActionInstance):
-                owner_instance = Owner.objects.filter(action_instance_owner=object).latest('id')
+                owner_instance = Owner.objects.filter(
+                    action_instance_owner=object
+                ).latest("id")
             elif isinstance(object, Exercise):
-                owner_instance = Owner.objects.filter(exercise_owner=object).latest('id')
+                owner_instance = Owner.objects.filter(exercise_owner=object).latest(
+                    "id"
+                )
             elif isinstance(object, Area):
-                owner_instance = Owner.objects.filter(area_owner=object).latest('id')
+                owner_instance = Owner.objects.filter(area_owner=object).latest("id")
             # Retrieve ScheduledEvent associated with the Owner instance and calculate remaining time
             time_until_event = owner_instance.event.end_date - settings.CURRENT_TIME()
-            return int(time_until_event.total_seconds()) # would return float if not casted, float isn't necessary here
+            return int(
+                time_until_event.total_seconds()
+            )  # would return float if not casted, float isn't necessary here
         except Owner.DoesNotExist:
             # Handle the case where no Owner is associated with the related object, aka there is no scheduled event
             return None
@@ -78,7 +87,7 @@ class ScheduledEvent(models.Model):
         method = getattr(owner_instance, self.method_name)
         if self.kwargs:
             kwargs = json.loads(self.kwargs)
-            method(**kwargs) 
+            method(**kwargs)
         else:
             method()
         self.delete()
@@ -88,16 +97,37 @@ class ScheduledEvent(models.Model):
         return f"ScheduledEvent #{self.id}, model name {owner_instance.__class__.__name__}, instance #{owner_instance}, exercise #{self.exercise}, trigger on: {self.end_date}"
 
 
-class Owner(OneFieldNotNull, models.Model):
+class Owner(models.Model):
     """Wrapper model to avoid using GenericForeignKeys as recommended here:
     https://lukeplant.me.uk/blog/posts/avoid-django-genericforeignkey/"""
+
+    class Meta:
+        constraints = [
+            one_or_more_field_not_null(
+                [
+                    "patient_owner",
+                    "exercise_owner",
+                    "area_owner",
+                    "action_instance_owner",
+                ],
+                "owner",
+            )
+        ]
 
     event = models.OneToOneField(
         "ScheduledEvent",
         on_delete=models.CASCADE,
     )
-    patient_owner = models.ForeignKey(
-        "Patientinstance",
+
+    action_instance_owner = models.ForeignKey(
+        "ActionInstance",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="owned_events",
+    )
+    area_owner = models.ForeignKey(
+        "Area",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -110,17 +140,8 @@ class Owner(OneFieldNotNull, models.Model):
         blank=True,
         related_name="owned_events",
     )
-
-    area_owner = models.ForeignKey(
-        "Area",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="owned_events",
-    )
-
-    action_instance_owner = models.ForeignKey(
-        "ActionInstance",
+    patient_owner = models.ForeignKey(
+        "Patientinstance",
         on_delete=models.CASCADE,
         null=True,
         blank=True,

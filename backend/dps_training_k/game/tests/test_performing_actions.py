@@ -1,5 +1,10 @@
-from django.test import TestCase
+import datetime
+from unittest.mock import patch
+
 from django.conf import settings
+from django.test import TestCase
+from django.utils import timezone
+
 from game.models import (
     ScheduledEvent,
     ActionInstance,
@@ -7,26 +12,26 @@ from game.models import (
     ActionInstanceState,
 )
 from game.tasks import check_for_updates
-from .factories import PatientFactory, ActionInstanceFactory
 from template.tests.factories import ActionFactory
-from unittest.mock import patch
-from django.utils import timezone
-import datetime
+from .factories import PatientFactory, ActionInstanceFactory
+from .mixin import TestUtilsMixin
 
 
 class ActionInstanceTestCase(TestCase):
     def setUp(self):
-        self.application_status_patch = patch(
-            "template.models.Action.application_status"
+        self.check_conditions_and_block_resources_patch = patch(
+            "game.models.ActionInstance.check_conditions_and_block_resources"
         )
         self.get_local_time_patch = patch("game.models.ActionInstance.get_local_time")
-        self.application_status = self.application_status_patch.start()
+        self.check_conditions_and_block_resources = (
+            self.check_conditions_and_block_resources_patch.start()
+        )
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
-        self.application_status.return_value = True, None
+        self.check_conditions_and_block_resources.return_value = True, None
 
     def tearDown(self):
-        self.application_status_patch.stop()
+        self.check_conditions_and_block_resources_patch.stop()
         self.get_local_time_patch.stop()
 
     def test_action_creation(self):
@@ -35,10 +40,6 @@ class ActionInstanceTestCase(TestCase):
         """
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.PLANNED)
-
-        self.application_status.return_value = False, "Not applicable"
-        action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        self.assertEqual(action_instance.state_name, ActionInstanceStateNames.DECLINED)
 
     def test_action_starting(self):
         """
@@ -50,16 +51,17 @@ class ActionInstanceTestCase(TestCase):
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
 
-        self.application_status.return_value = False, "Not applicable"
-        self.assertFalse(action_instance.try_application())
+        self.check_conditions_and_block_resources.return_value = False, "Not applicable"
+        condition_succeeded, _ = action_instance.try_application()
+        self.assertFalse(condition_succeeded)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
     @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
     def test_channel_notifications_being_send(self, _notify_action_event):
         """
-        Once an action instance is started, the dispatcher detects it and detecs the actual state.
+        Once an action instance is started, the dispatcher detects it and detects the actual state.
         """
-        self.application_status.return_value = True, None
+        self.check_conditions_and_block_resources.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()
         # send action-list twice, send confirmation event once = 3
@@ -69,24 +71,26 @@ class ActionInstanceTestCase(TestCase):
         )
 
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        self.application_status.return_value = False, "Not applicable"
+        self.check_conditions_and_block_resources.return_value = False, "Not applicable"
         action_instance.try_application()
         # send action-list 4 times, send confirmation event twice = 6
         self.assertEqual(_notify_action_event.call_count, 6)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
 
-class ActionInstanceScheduledTestCase(TestCase):
-    def timezoneFromTimestamp(self, timestamp):
+class ActionInstanceScheduledTestCase(TestUtilsMixin, TestCase):
+    def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
     def setUp(self):
-        self.action_instance = ActionInstanceFactory()
+        self.action_instance = ActionInstanceFactory(patient_instance=PatientFactory())
         self.variable_backup = settings.CURRENT_TIME
-        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(0)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
+        self.deactivate_notifications()
 
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
+        self.activate_notifications()
 
     def test_action_is_scheduled(self):
         """
@@ -94,7 +98,7 @@ class ActionInstanceScheduledTestCase(TestCase):
         """
         self.action_instance._start_application()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
-        settings.CURRENT_TIME = lambda: self.timezoneFromTimestamp(10)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(10)
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 0)
         self.action_instance.refresh_from_db()  # Necessary because the check_for_updates changes happen out of scope,

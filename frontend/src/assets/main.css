@@ -4,6 +4,7 @@
   --red: #ee4035;
   --yellow: #e6cf00;
   --green: #269f42;
+  --black: black;
   --gray: gray;
   --border-color: var(--gray);
 }
@@ -49,22 +50,22 @@ button:active {
   filter: brightness(90%);
 }
 
-.leftScreen, .rightScreen {
+.left-screen, .right-screen {
   position: relative;
   float: left;
   width: 50%;
   height: 100%;
 }
 
-.leftScreen {
+.left-screen {
   border-right: 1px solid var(--border-color);
 }
 
-.rightScreen {
+.right-screen {
   border-left: 1px solid var(--border-color);
 }
 
-.fullScreen {
+.full-screen {
   position: relative;
   float: left;
   width: 100%;
@@ -103,6 +104,10 @@ button:active {
 
 .gray {
   background-color: var(--gray);
+}
+
+.black {
+  background-color: var(--black);
 }
 
 .red {
@@ -144,35 +149,39 @@ button:active {
   margin-right: 30px;
 }
 
-.listItem {
+.list-item {
   position: relative;
-  background-color: #FFFFFF;
   border: 1px solid rgb(209, 213, 219);
   display: flex;
   align-items: center;
   text-align: left;
   margin-top: -1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
-.listItemButton {
+.list-item-button {
   position: relative;
-  background-color: #FFFFFF;
+  background-color: white;
   border: none;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   font-size: 1.25rem;
   padding: 0;
   text-align: left;
   height: 50px;
-  max-width: 100%;
+  width: 100%;
   flex-grow: 1;
+  flex-wrap: nowrap;
 }
 
-.selected .listItemButton {
+.selected .list-item-button {
   filter: brightness(90%);
 }
 
-.listItemAddButton {
+.list-item-add-button {
   text-align: center;
   position: relative;
   background-color: var(--green);
@@ -186,16 +195,26 @@ button:active {
   margin-top: -1px;
 }
 
-.listItemId {
-  padding: .75rem 1rem;
-  width: fit-content;
+.list-item-icon {
+  margin-left: 16px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.listItemName {
+.list-item-id {
+  padding: .75rem 1rem;
+  width: fit-content;
+  flex-shrink: 0;
+}
+
+.list-item-name {
   padding: .75rem 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  width: 100%;
 }
 
 .scroll {

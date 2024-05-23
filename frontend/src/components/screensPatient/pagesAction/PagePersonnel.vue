@@ -1,9 +1,10 @@
 <script setup lang="ts">
-	import { useExerciseStore } from '@/stores/Exercise'
-	import { usePatientStore } from '@/stores/Patient'
-	import { useRessourceAssignmentsStore } from '@/stores/RessourceAssignments'
-	import {computed} from 'vue'
+	import {useExerciseStore} from '@/stores/Exercise'
+	import {usePatientStore} from '@/stores/Patient'
+	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
+	import {computed,ref} from 'vue'
 	import socketPatient from '@/sockets/SocketPatient'
+	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
 	const ressourceAssignmentStore = useRessourceAssignmentsStore()
@@ -18,7 +19,7 @@
 	))
 	const busyPersonnel = computed(() => assignments.value?.personnel.filter(assignment => 
 		assignment.patientId != patientStore.patientId && 
-		assignment.patientId != null
+		assignment.patientId != null && assignment.patientId != ''
 	))
 
 	function releasePersonnel(personnelId: number) {
@@ -28,9 +29,25 @@
 	function assignPersonnel(personnelId: number) {
 		socketPatient.assignPersonnel(personnelId)
 	}
+
+	const selectedPersonnel = ref(Number.NEGATIVE_INFINITY)
+	const showMovePopup = ref(false)
+
+	function openMovePopup(personnelId: number) {
+		selectedPersonnel.value = personnelId
+		showMovePopup.value = true
+	}
 </script>
 
 <template>
+	<MovePopup
+		v-if="showMovePopup"
+		:module="'Patient'"
+		:type-to-move="'Personnel'"
+		:id-of-moveable="selectedPersonnel" 
+		:current-area="patientStore.areaName"
+		@close-popup="showMovePopup=false"
+	/>
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Personal</h1>
@@ -40,13 +57,13 @@
 					<div
 						v-for="personnelAssignment in assignedPersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<button class="list-item-button">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
 							Freigeben
 						</button>
@@ -58,13 +75,13 @@
 					<div
 						v-for="personnelAssignment in freePersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
-						</div>
+						</button>
 						<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
 							Zuweisen
 						</button>
@@ -76,16 +93,16 @@
 					<div
 						v-for="personnelAssignment in busyPersonnel"
 						:key="personnelAssignment.personnelId"
-						class="listItem"
+						class="list-item"
 					>
-						<div class="listItemButton">
-							<div class="listItemName">
+						<button class="list-item-button">
+							<div class="list-item-name">
 								{{ personnelAssignment.personnelName }}
 							</div>
-							<div class="listItemName assigned-patient">
+							<div class="list-item-name assigned-patient">
 								Patient {{ personnelAssignment.patientId }}
 							</div>
-						</div>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -94,7 +111,7 @@
 </template>
 
 <style scoped>
-	.listItemButton {
+	.list-item-button {
 		padding-right: 0;
 	}
 

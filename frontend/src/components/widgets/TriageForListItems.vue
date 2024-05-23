@@ -20,13 +20,13 @@
 </script>
 
 <template>
-	<div class="patientCode" :style="{ backgroundColor: triageToColor(availablesStore.getPatient(patientCode)?.triage) }">
+	<div class="patient-code" :style="{ backgroundColor: triageToColor(availablesStore.getPatient(patientCode)?.triage) }">
 		{{ getPatientCodeLabel(props.patientCode) }}
 	</div>
 </template>
 
 <style scoped>
-	.patientCode {
+	.patient-code {
 		position: relative;
 		display: inline-block;
 		height: 50px;
@@ -35,4 +35,4 @@
 		align-items: center;
 		color: white;
 	}
-</style>@/Utils@/utils
+</style>

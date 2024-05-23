@@ -1,5 +1,8 @@
-from django.test import TestCase
+import json
 from unittest.mock import patch
+
+from django.test import TestCase
+
 from template.management.commands.import_actions import (
     Command as ImportActionsCommand,
 )
@@ -7,6 +10,10 @@ from template.management.commands.import_actions import (
 
 class TestPopulateActionsCommand(TestCase):
     def test_defaults_structure(self):
+        """
+        actions inside import_actions command according to comment in import_actions.create_action.
+        This is needed because actions were parsed with AI
+        """
         with patch(
             "template.models.Action.objects.update_or_create"
         ) as mocked_update_or_create:
@@ -35,6 +42,7 @@ class TestPopulateActionsCommand(TestCase):
                     f"{defaults['effect_duration']} is neither an int nor a NoneType",
                 )
                 conditions = defaults["conditions"]
+                conditions = json.loads(conditions)
                 self.assertTrue(
                     isinstance(conditions["required_actions"], type(None))
                     or isinstance(conditions["required_actions"], list),
@@ -99,7 +107,7 @@ class TestPopulateActionsCommand(TestCase):
                         num_personnel += value  # only add once cause a list means "or"
                     else:
                         raise Exception("role may only contain lists and dicts")
-                
+
                 self.assertEqual(
                     conditions["num_personnel"],
                     num_personnel,

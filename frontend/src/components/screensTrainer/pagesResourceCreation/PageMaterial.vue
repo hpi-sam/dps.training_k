@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import {computed, ref} from 'vue'
 	import {useExerciseStore} from '@/stores/Exercise'
-	import ToggleSwitchForListItems from '@/components/widgets/ToggleSwitchForListItems.vue'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import AddMaterialPopup from '@/components/widgets/AddMaterialPopup.vue'
@@ -19,12 +18,14 @@
 
 	const currentMaterialName = ref('No Material Name')
 	const currentMaterialType = ref('No Material Type')
+	const currentMaterialId = ref(Number.NEGATIVE_INFINITY)
 
 	const showDeletePopup = ref(false)
 	const showAddPopup = ref(false)
 
-	function openDeletePopup(materialName: string) {
+	function openDeletePopup(materialName: string, materialId: number) {
 		currentMaterialName.value = materialName
+		currentMaterialId.value = materialId
 		showDeletePopup.value = true
 	}
 
@@ -34,15 +35,15 @@
 	}
 
 	function deleteMaterial() {
-		socketTrainer.materialDelete(currentMaterialName.value)
+		socketTrainer.materialDelete(currentMaterialId.value)
 	}
 
 	const devices = computed(() => {
-		return currentAreaData.value?.material.filter(material => material.materialType === 'device') || []
+		return currentAreaData.value?.material.filter(material => material.materialType === 'DE') || []
 	})
 
 	const bloodList = computed(() => {
-		return currentAreaData.value?.material.filter(material => material.materialType === 'blood') || []
+		return currentAreaData.value?.material.filter(material => material.materialType === 'BL') || []
 	})
 </script>
 
@@ -62,37 +63,35 @@
 	<div class="scroll">
 		<h1>Material</h1>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('device')">
+			<button v-if="currentAreaData" class="list-item-add-button" @click="openAddPopup('DE')">
 				Gerät hinzufügen
 			</button>
 			<div
 				v-for="device in devices as Material[]"
 				:key="device.materialName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="openDeletePopup(device.materialName)">
-					<div class="listItemName">
+				<button class="list-item-button" @click="openDeletePopup(device.materialName, device.materialId)">
+					<div class="list-item-name">
 						{{ device.materialName }}
 					</div>
 				</button>
-				<ToggleSwitchForListItems default="active" />
 			</div>
 		</div>
 		<div class="list">
-			<button v-if="currentAreaData" class="listItemAddButton" @click="openAddPopup('blood')">
+			<button v-if="currentAreaData" class="list-item-add-button" @click="openAddPopup('BL')">
 				Blut hinzufügen
 			</button>
 			<div
 				v-for="blood in bloodList as Material[]"
 				:key="blood.materialName"
-				class="listItem"
+				class="list-item"
 			>
-				<button class="listItemButton" @click="openDeletePopup(blood.materialName)">
-					<div class="listItemName">
+				<button class="list-item-button" @click="openDeletePopup(blood.materialName, blood.materialId)">
+					<div class="list-item-name">
 						{{ blood.materialName }}
 					</div>
 				</button>
-				<ToggleSwitchForListItems default="active" />
 			</div>
 		</div>
 	</div>

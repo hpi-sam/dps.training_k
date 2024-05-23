@@ -11,7 +11,7 @@ interface MessageData {
 	areaName?: string
 	patientName?: string
 	code?: number
-	patientId?: number
+	patientId?: string
 	personnelName?: string
 	personnelId?: number
 	materialName?: string
@@ -20,12 +20,13 @@ interface MessageData {
 	logEntries?: LogEntry[]
 	availablePatients: AvailablePatient[]
 	availableActions: AvailableAction[]
-	availableMaterialList: AvailableMaterial
+	availableMaterials: AvailableMaterial[]
 	actionDeclinationReason?: string
 	ressourceAssignments: RessourceAssignments
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
+	actionCheck: ActionCheck
 }
 
 interface Exercise {
@@ -43,7 +44,7 @@ interface Area {
 }
 
 interface Patient {
-	patientId: number
+	patientId: string
 	patientName: string
 	code: number
 	triage: string
@@ -96,10 +97,6 @@ interface AvailablePatient {
 	pretreatment: string
 }
 
-interface AvailableMaterialList {
-	availableMaterialList: AvailableMaterial[],
-}
-
 interface AvailableMaterial {
 	materialName: string
 	materialType: string
@@ -118,13 +115,13 @@ interface RessourceAssignment {
 interface PersonnelAssignments {
 	personnelId: number
 	personnelName: string
-	patientId: number
+	patientId: string
 }
 
 interface MaterialAssignments {
 	materialId: number
 	materialName: string
-	patientId: number
+	patientId: string
 }
 
 interface Log {
@@ -136,8 +133,9 @@ interface LogEntry {
 	logMessage: string
 	logTime: Date
 	areaName: string
-	patientId: number
-	personnelId: number
+	patientId: string
+	personnelIds: number[]
+	materialNames: string[]
 }
 
 interface ActionOverview {
@@ -162,4 +160,45 @@ interface Injury {
 	injuryId: string
 	injuryType: string
 	position: string
+}
+
+interface ActionCheck {
+	actionName: string
+	applicationDuration: number
+	effectDuration: number
+	personnel: CheckPersonnel[]
+	material: CheckMaterial[]
+	labDevices: CheckLabDevice[]
+	requiredActions: RequiredActions
+	prohibitedActions: string[]
+}
+
+interface RequiredActions {
+	singleActions: string[]
+	actionGroups: ActionGroup[]
+}
+
+interface ActionGroup {
+	groupName: string
+	actions: string[]
+}
+
+interface CheckPersonnel {
+	name: string
+	available: number
+	assigned: number
+	needed: number
+}
+
+interface CheckMaterial {
+	name: string
+	available: number
+	assigned: number
+	needed: number
+}
+
+interface CheckLabDevice {
+	name: string
+	available: number
+	needed: number
 }

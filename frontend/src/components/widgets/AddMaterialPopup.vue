@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import socketTrainer from "@/sockets/SocketTrainer"
-	import { useAvailablesStore } from "@/stores/Availables"
-	import { computed ,ref } from "vue"
+	import {useAvailablesStore} from "@/stores/Availables"
+	import {computed, ref} from "vue"
 	import CloseButton from "./CloseButton.vue"
 
 	const emit = defineEmits(['close-popup'])
@@ -19,9 +19,9 @@
 
 	const title = computed(() => {
 		switch (props.materialType) {
-			case 'device':
+			case 'DE':
 				return 'Gerät hinzufügen'
-			case 'blood':
+			case 'BL':
 				return 'Blut hinzufügen'
 			default:
 				return 'Kein Materialtyp ausgewählt'
@@ -29,10 +29,10 @@
 	})
 
 	const availablesStore = useAvailablesStore()
-	const availableMaterialList = ref(availablesStore.material)
+	const availableMaterials = ref(availablesStore.material)
 
 	const availableMaterial = computed(() => {
-		return availableMaterialList.value.filter(availableMaterial => availableMaterial.materialType === props.materialType)
+		return availableMaterials.value.filter(availableMaterial => availableMaterial.materialType === props.materialType)
 	})
 
 	function addMaterial(materialName: string){
@@ -51,10 +51,10 @@
 					<div
 						v-for="material in availableMaterial"
 						:key="material.materialName"
-						class="listItem"
+						class="list-item"
 					>
-						<button class="listItemButton" @click="addMaterial(material.materialName)">
-							<div class="listItemName">
+						<button class="list-item-button" @click="addMaterial(material.materialName)">
+							<div class="list-item-name">
 								{{ material.materialName }}
 							</div>
 						</button>

@@ -68,6 +68,13 @@
 		<tr>
 			<td colspan="2">
 				<p class="key">
+					Mobilität
+				</p>{{ patientStore.mobility }}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p class="key">
 					Vorerkrankungen
 				</p>{{ patientStore.preexistingIllnesses }}
 			</td>
@@ -96,13 +103,6 @@
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Personalien
-				</p>{{ patientStore.personalDetails }}
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<p class="key">
 					Biometrie
 				</p>{{ patientStore.biometrics }}
 			</td>
@@ -110,15 +110,8 @@
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Mobilität
-				</p>{{ patientStore.mobility }}
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<p class="key">
-					Fortlaufende Eineindeutige Nummer
-				</p>{{ patientStore.consecutiveUniqueNumber }}
+					Patienten-ID
+				</p>{{ patientStore.patientId }}
 			</td>
 		</tr>
 		<tr>

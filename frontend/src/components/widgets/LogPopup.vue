@@ -1,7 +1,8 @@
 <script setup lang="ts">
-	import { computed } from "vue"
-    import { useLogStore } from '@/stores/Log'
+	import {computed} from "vue"
+	import {useLogStore} from '@/stores/Log'
 	import CloseButton from "./CloseButton.vue"
+	import {useExerciseStore} from "../../stores/Exercise"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -20,6 +21,27 @@
 		}
 		return null
 	})
+
+	const patientName = computed(() => {
+		if (currentLogEntry.value?.patientId) {
+			const store = useExerciseStore()
+			const patient = store.getPatient(currentLogEntry.value.patientId)
+			return patient ? patient.patientName : ''
+		}
+		return ''
+	})
+
+	const personnelNames = computed(() => {
+		let names = ''
+		if (currentLogEntry.value?.personnelIds) {
+			const store = useExerciseStore()
+			for (const personnelId of currentLogEntry.value.personnelIds) {
+				if (names !== '') names = names + ', '
+				names = names + store.getPersonnel(personnelId)?.personnelName
+			}
+		}
+		return names
+	})
 </script>
 
 <template>
@@ -30,7 +52,7 @@
 				Log-Eintrag
 			</h2>
 			<table>
-				<tr>
+				<tr v-if="currentLogEntry?.logTime">
 					<td class="key">
 						Zeitpunkt:
 					</td>
@@ -38,7 +60,7 @@
 						{{ new Date(currentLogEntry?.logTime || '').toTimeString().split(' ')[0] }}
 					</td>
 				</tr>
-				<tr>
+				<tr v-if="currentLogEntry?.areaName">
 					<td class="key">
 						Bereich:
 					</td>
@@ -46,20 +68,28 @@
 						{{ currentLogEntry?.areaName }}
 					</td>
 				</tr>
-				<tr>
+				<tr v-if="currentLogEntry?.patientId">
 					<td class="key">
 						Patient:
 					</td>
 					<td>
-						{{ currentLogEntry?.patientId }}
+						{{ currentLogEntry?.patientId }} {{ patientName }}
 					</td>
 				</tr>
-				<tr>
+				<tr v-if="currentLogEntry?.personnelNames">
 					<td class="key">
 						Personal:
 					</td>
 					<td>
-						{{ currentLogEntry?.personnelId }}
+						{{ personnelNames }}
+					</td>
+				</tr>
+				<tr v-if="currentLogEntry?.materialNames?.length">
+					<td class="key">
+						Material:
+					</td>
+					<td>
+						{{ currentLogEntry?.materialNames.join(', ') }}
 					</td>
 				</tr>
 			</table>

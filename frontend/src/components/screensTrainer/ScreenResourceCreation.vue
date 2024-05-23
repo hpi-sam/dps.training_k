@@ -39,7 +39,7 @@
 
 <template>
 	<div class="page">
-		<p v-if="!currentArea" id="noAreaText">
+		<p v-if="!currentArea" id="no-area-text">
 			Wähle einen Bereich aus
 		</p>
 		<component :is="currentPageComponent" v-if="currentArea" :current-area="currentArea" />
@@ -58,7 +58,7 @@
 </template>
 
 <style scoped>
-	#noAreaText {
+	#no-area-text {
 		text-align: center;
 		font-size: 1.8em;
 		margin-top: 40px;
