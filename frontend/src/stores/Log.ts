@@ -18,7 +18,6 @@ export const useLogStore = defineStore('log', {
 	actions: {
 		sortLogByLogTime() {
 			this.log = this.log.sort((a, b) => {
-				console.log(new Date(a.logTime).getTime() +" : "+ new Date(b.logTime).getTime())
 				return new Date(b.logTime).getTime() - new Date(a.logTime).getTime()
 			})
 		},
