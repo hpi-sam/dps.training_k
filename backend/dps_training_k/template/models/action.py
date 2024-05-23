@@ -79,41 +79,54 @@ class Action(UUIDable, models.Model):
             else 0
         )
 
-    def get_result(self, patient_state_data=None, area_materials=None):
+    def get_result(self, action_instance):
         if self.category == Action.Category.TREATMENT:
-            return self.treatment_result(patient_state_data)
+            return self.treatment_result()
         elif self.category == Action.Category.EXAMINATION:
-            return self.examination_result(patient_state_data)
+            return self.examination_result(
+                action_instance.get_patient_examination_codes()
+            )
         elif self.category == Action.Category.LAB:
-            return self.lab_result(area_materials)
+            return self.lab_result()
         elif self.category == Action.Category.PRODUCTION:
             return self.production_result()
 
-    def treatment_result(self, patient_state):
+    def treatment_result(self):
         return f"Behandlung {self.name} wurde durchgeführt"
 
-    def examination_result(self, patient_state_data):
+    def examination_result(self, examination_codes):
         result_string = f"{self.name} Ergebnis:"
-        # iterate through result map
-        results = json.loads(self.results)
-        for key, values in results.items():
-            # find correct result code for this patient
-            result_code = json.loads(patient_state_data)[key]
-            # find string value corresponding to result code
-            found = False
-            for value in values:
-                if result_code in value:
-                    result_string += f" {key}: {value[result_code]}"
-                    found = True
-            if not found:
+        for examination_type, result_dict in json.loads(self.results).items():
+            current_code = examination_codes[examination_type]
+            result_substring = result_dict.get(current_code, None)
+            if result_substring:
+                result_string += f"{examination_type}: {result_dict[current_code]}"
+            else:
                 raise ValueError(
-                    "Examination result: Couldn't find corresponding value for result code"
+                    f"Examination result: Couldn't find corresponding value for {current_code} at {examination_type}"
                 )
-
         return result_string
+        ## iterate through result map
+        # results = json.loads(self.results)
+        # for key, values in results.items():
+        #    # find correct result code for this patient
+        #    result_code = json.loads(patient_state_data)[key]
+        #    # find string value corresponding to result code
+        #    found = False
+        #    for value in values:
+        #        if result_code in value:
+        #            result_string += f" {key}: {value[result_code]}"
+        #            found = True
+        #    if not found:
+        #        raise ValueError(
+        #            "Examination result: Couldn't find corresponding value for result code"
+        #        )
 
+    #
+    # return result_string
+    #
     def production_result(self):
         return f"{self.name} wurde durchgeführt"
 
-    def lab_result(self, area_materials):
+    def lab_result(self):
         return "This is a lab result"

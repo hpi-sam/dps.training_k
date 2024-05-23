@@ -27,14 +27,14 @@ class ActionFactory(factory.django.DjangoModelFactory):
     uuid = ActionIDs.STABILE_SEITENLAGE
     results = json.dumps(
         {
-            "Hb": [
-                {ActionResultIDs.HB420: "Ergebnis1"},
-                {ActionResultIDs.HB430: "Ergebnis2"},
-            ],
-            "BZ": [
-                {ActionResultIDs.BZ920: "Ergebnis1"},
-                {ActionResultIDs.BZ930: "Ergebnis2"},
-            ],
+            "Hb": {
+                ActionResultIDs.HB420: "Ergebnis1",
+                ActionResultIDs.HB430: "Ergebnis2",
+            },
+            "BZ": {
+                ActionResultIDs.BZ920: "Ergebnis1",
+                ActionResultIDs.BZ930: "Ergebnis2",
+            },
         }
     )
 
