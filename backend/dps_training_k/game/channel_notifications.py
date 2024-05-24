@@ -165,7 +165,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 is_dirty=True,
             )
             personnel_list = models.Personnel.objects.filter(
-                action_instance=applied_action
+                patient_instance=applied_action.patient_instance,
             )
             log_entry.personnel.add(*personnel_list)
             material_list = models.MaterialInstance.objects.filter(
@@ -342,4 +342,4 @@ class PersonnelDispatcher(ChannelNotifier):
 
     @classmethod
     def get_exercise(cls, personnel):
-        return personnel.area.exercise
+        return personnel.attached_instance().exercise
