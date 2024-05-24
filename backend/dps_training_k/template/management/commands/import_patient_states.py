@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-import csv, json
+import csv
 from template.models import PatientState, Subcondition, LogicNode, StateTransition
 from django.conf import settings
 import os, re
@@ -417,18 +417,6 @@ class Command(BaseCommand):
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
 
-            # table0 = self.state_transitions["table 0"]
-            # previous_state_transition = first_state_transition_table0  # either none or transition created by guard condition
-            # # for each line of the table
-            # for i, line in enumerate(table0[1:]):
-            #     first_state_transition_table0 = self.create_transitions_for_table0(
-            #         relevant_table_id_data,
-            #         first_state_transition_table0,
-            #         table0,
-            #         previous_state_transition,
-            #         i,
-            #         line,
-            #     )
             previous_state_transition = first_state_transition_table0
             # create transitions for table 0
             table0 = self.state_transitions["table 0"]
@@ -787,7 +775,6 @@ class Command(BaseCommand):
                         table_id_data = {}  # data for one table id
                         table_id = match.group(1)
                         table_id_data["table_id"] = table_id
-                        # TODO parse to subcondition instead of string
                         extra_conditions = match.group(2)
                         table_id_data["extra_condition 1"] = extra_conditions
 
@@ -851,8 +838,6 @@ class Command(BaseCommand):
                 patient_state = {}
                 row = [field.replace("|", "\n") for field in row]
                 state_id = int(row[0])
-                # TODO: make each one dict instead of array of dicts
-                # TODO: split data into ABCDE data, rest, description; called: vital_signs, examination_codes, special_events
                 vital_signs = {}
                 examination_codes = {}
                 vital_signs_fields = [
@@ -895,8 +880,8 @@ class Command(BaseCommand):
                     i += 1
                 is_dead = state_id == 500 or state_id == 502
                 patient_state["state_id"] = state_id
-                patient_state["vital signs"] = json.dumps(vital_signs)
-                patient_state["examination codes"] = json.dumps(examination_codes)
+                patient_state["vital signs"] = vital_signs
+                patient_state["examination codes"] = examination_codes
                 patient_state["special events"] = special_events
                 patient_state["is_dead"] = is_dead
                 patient_state["table_id"] = row[-1]

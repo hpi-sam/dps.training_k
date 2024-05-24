@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from template.models import PatientState
-import json
 
 class StateSerializer(serializers.Serializer):
     airway = serializers.SerializerMethodField()
@@ -32,16 +31,16 @@ class StateSerializer(serializers.Serializer):
         read_only = fields
     
     def get_airway(self, obj):
-        return json.loads(obj.vital_signs).get('Airway', None)
+        return obj.vital_signs.get('Airway', None)
     def get_breathing(self, obj):
-        return json.loads(obj.vital_signs).get('Breathing', None)
+        return obj.vital_signs.get('Breathing', None)
     def get_circulation(self, obj):
-        return json.loads(obj.vital_signs).get('Circulation', None)
+        return obj.vital_signs.get('Circulation', None)
     def get_consciousness(self, obj):
-        return json.loads(obj.vital_signs).get('Bewusstsein', None)
+        return obj.vital_signs.get('Bewusstsein', None)
     def get_pupils(self, obj):
-        return json.loads(obj.vital_signs).get('Pupillen', None)
+        return obj.vital_signs.get('Pupillen', None)
     def get_psyche(self, obj):
-        return json.loads(obj.vital_signs).get('Psyche', None)
+        return obj.vital_signs.get('Psyche', None)
     def get_skin(self, obj):
-        return json.loads(obj.vital_signs).get('Haut', None)
+        return obj.vital_signs.get('Haut', None)
