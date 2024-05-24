@@ -144,6 +144,12 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             return True
         return False
 
+    def frontend_name(self):
+        return "Patient"
+
+    def can_receive_actions(self):
+        return not self.is_dead()
+
     def __str__(self):
         return (
             f"Patient #{self.id} called {self.name} with frontend ID {self.frontend_id}"

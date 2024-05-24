@@ -7,7 +7,7 @@
 	import SpeedSelectorPopup from "./SpeedSelectorPopup.vue"
 	import { useAvailablesStore } from "@/stores/Availables"
 	import { useLogStore } from "@/stores/Log"
-	import {Screens, setLeftScreen, setRightScreen} from "@/components/ModuleTrainer.vue"
+	import { Modules, setModule } from "@/App.vue"
 
 	const exerciseStore = useExerciseStore()
 
@@ -44,8 +44,7 @@
 		useAvailablesStore().$reset()
 		useExerciseStore().$reset()
 		useLogStore().$reset()
-		setLeftScreen(Screens.CREATE_EXERCISE)
-		setRightScreen(Screens.JOIN_EXERCISE)
+		setModule(Modules.LOGIN)
 	}
 
 	function startExercise() {
