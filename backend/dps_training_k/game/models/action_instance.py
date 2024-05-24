@@ -193,7 +193,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 self.template.application_duration,  # ToDo: Replace with scalable local time system
                 "_patient_application_finished",
                 action_instance=self,
-                patient_state=self.patient_instance.patient_state.data,
+                examination_codes=self.patient_instance.patient_state.examination_codes,
             )
         if self.lab:
             ScheduledEvent.create_event(
@@ -206,10 +206,10 @@ class ActionInstance(LocalTimeable, models.Model):
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.consume_resources()
 
-    def _patient_application_finished(self, patient_state):
+    def _patient_application_finished(self, examination_codes):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(patient_state),
+            info_text=self.template.get_result(examination_codes),
         )
         self._application_finished()
 
