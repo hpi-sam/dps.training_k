@@ -11,7 +11,7 @@ CUSTOM_MAXINT = 100000  # doesn't matter, people shouldn't be doing the same thi
 
 
 class Command(BaseCommand):
-    help = "Populates the database with patient states."
+    help = "Populates the database with patient states. Takes about 10min to complete"
 
     def handle(self, *args, **kwargs):
         self.create_subconditions()
@@ -334,7 +334,7 @@ class Command(BaseCommand):
 
             # create the other starting state, then go into recursion to create other states and all transitions
             for patient_state in self.patient_states:
-                if int(patient_state["state_id"]) == 551:
+                if int(patient_state["state_id"]) == 551:  # finds state data for id 551
                     break
             second_start_patient_state_obj, _ = PatientState.objects.get_or_create(
                 code=self.code,
@@ -367,20 +367,7 @@ class Command(BaseCommand):
         )
         return patient_state_obj, created
 
-    # TODO: remove states ending in 0, aka stop recursion at states ending in 9 or at calls that would call with table-id ""
     def create_state_transitions(self, table_id):
-        # sleep(0.2)
-        # end of recursion
-        if table_id == "":  # this is only the case if we're in a final state
-            state_transition_obj, _ = StateTransition.objects.get_or_create(
-                resulting_state=None
-            )
-            LogicNode.objects.get_or_create(
-                state_transition=state_transition_obj,
-                node_type=LogicNode.NodeType.TRUE,
-            )
-            return (state_transition_obj, state_transition_obj)
-
         for i, table_id_data in enumerate(self.state_transitions["table_results"]):
             if table_id_data["table_id"] == table_id:
                 break
@@ -417,8 +404,8 @@ class Command(BaseCommand):
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
 
-            previous_state_transition = first_state_transition_table0
             # create transitions for table 0
+            previous_state_transition = first_state_transition_table0
             table0 = self.state_transitions["table 0"]
             for i, line in enumerate(table0[1:]):  # for each line of the table
                 resulting_state_id = int(relevant_table_id_data["table_0_results"][i])
@@ -437,8 +424,9 @@ class Command(BaseCommand):
                     resulting_state_id
                 )
 
+                # only go further into recursion if resulting state didn't exist before
                 if created:
-                    # get data for next transition
+                    # get table_id for next transition
                     for patient_state in self.patient_states:
                         if patient_state["state_id"] == int(resulting_state_id):
                             table_id = patient_state["table_id"]
@@ -451,8 +439,8 @@ class Command(BaseCommand):
                     resulting_patient_state_obj.transition = resulting_state_transition
                     resulting_patient_state_obj.save()
 
-                # create transitions to resulting states
-                # the "from original state" part needs to be set by caller
+                # create transition to resulting state
+                # transition needs to be assigned to PatientState object by caller
                 state_transition, _ = StateTransition.objects.get_or_create(
                     resulting_state=resulting_patient_state_obj
                 )
@@ -462,7 +450,7 @@ class Command(BaseCommand):
                     state_transition,
                     line,
                 )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
-                # save first transition for return value
+                # save first transition to return it later
                 if not first_state_transition_table0:
                     first_state_transition_table0 = state_transition
 
@@ -472,6 +460,7 @@ class Command(BaseCommand):
                     previous_state_transition.save()
                 previous_state_transition = state_transition
 
+            # create transitions for table 1
             table1 = self.state_transitions["table 1"]
             previous_state_transition = first_state_transition_table1
             for i, line in enumerate(table1[1:]):  # for each line of the table
@@ -490,9 +479,9 @@ class Command(BaseCommand):
                 resulting_patient_state_obj, created = self.create_patient_state(
                     resulting_state_id
                 )
-
+                # only go further into recursion if resulting state didn't exist before
                 if created:
-                    # get data for next transition
+                    # get table_id for next transition
                     for patient_state in self.patient_states:
                         if patient_state["state_id"] == int(resulting_state_id):
                             table_id = patient_state["table_id"]
@@ -505,8 +494,8 @@ class Command(BaseCommand):
                     resulting_patient_state_obj.transition = resulting_state_transition
                     resulting_patient_state_obj.save()
 
-                # create transitions to resulting states
-                # the "from original state" part needs to be set by caller
+                # create transition to resulting state
+                # transition needs to be assigned to PatientState object by caller
                 state_transition, _ = StateTransition.objects.get_or_create(
                     resulting_state=resulting_patient_state_obj
                 )
@@ -517,7 +506,7 @@ class Command(BaseCommand):
                     line,
                 )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
 
-                # save first transition for return value
+                # save first transition to return it later
                 if not first_state_transition_table1:
                     first_state_transition_table1 = state_transition
 
@@ -528,6 +517,7 @@ class Command(BaseCommand):
                 previous_state_transition = state_transition
 
             # handle cases where tables are empty
+            # this is for empty table 0
             previous_state_transition = first_state_transition_table0
             if len(table0[1:]) == 0:
                 resulting_state_id = int(relevant_table_id_data["table_0_results"][0])
@@ -545,8 +535,10 @@ class Command(BaseCommand):
                 resulting_patient_state_obj, created = self.create_patient_state(
                     resulting_state_id
                 )
+
+                # only go further into recursion if resulting state didn't exist before
                 if created:
-                    # get data for next transition
+                    # get table_id for next transition
                     for patient_state in self.patient_states:
                         if patient_state["state_id"] == int(resulting_state_id):
                             table_id = patient_state["table_id"]
@@ -557,6 +549,8 @@ class Command(BaseCommand):
                     resulting_patient_state_obj.transition = resulting_state_transition
                     resulting_patient_state_obj.save()
 
+                # create transition to resulting state
+                # transition needs to be assigned to PatientState object by caller
                 state_transition, _ = StateTransition.objects.get_or_create(
                     resulting_state=resulting_patient_state_obj
                 )
@@ -567,7 +561,7 @@ class Command(BaseCommand):
                     [],
                 )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
 
-                # save first transition for return value
+                # save first transition to return it later
                 if not first_state_transition_table0:
                     first_state_transition_table0 = state_transition
 
@@ -577,6 +571,7 @@ class Command(BaseCommand):
                     previous_state_transition.save()
                 previous_state_transition = state_transition
 
+            # empty table 1
             previous_state_transition = first_state_transition_table1
             if len(table1[1:]) == 0:
                 resulting_state_id = int(relevant_table_id_data["table_1_results"][0])
@@ -594,8 +589,10 @@ class Command(BaseCommand):
                 resulting_patient_state_obj, created = self.create_patient_state(
                     resulting_state_id
                 )
+
+                # only go further into recursion if resulting state didn't exist before
                 if created:
-                    # get data for next transition
+                    # get table_id for next transition
                     for patient_state in self.patient_states:
                         if patient_state["state_id"] == int(resulting_state_id):
                             table_id = patient_state["table_id"]
@@ -603,10 +600,12 @@ class Command(BaseCommand):
                     resulting_state_transition = self.create_state_transitions(
                         table_id
                     )[1]
-                    
+
                     resulting_patient_state_obj.transition = resulting_state_transition
                     resulting_patient_state_obj.save()
 
+                # create transition to resulting state
+                # transition needs to be assigned to PatientState object by caller
                 state_transition, _ = StateTransition.objects.get_or_create(
                     resulting_state=resulting_patient_state_obj
                 )
@@ -617,9 +616,10 @@ class Command(BaseCommand):
                     [],
                 )  # deepcopy enforces pass by value which is necessary to prevent adding extra conditions multiple times
 
-                # save first transition for return value
+                # save first transition to return it later
                 if not first_state_transition_table1:
                     first_state_transition_table1 = state_transition
+
                 # link transitions to linked list
                 if previous_state_transition:
                     previous_state_transition.next_state_transition = state_transition
@@ -629,6 +629,8 @@ class Command(BaseCommand):
 
         return (first_state_transition_table0, first_state_transition_table1)
 
+    # Guard conditions can be "Immer", "keine OP", "keine Lyse", "keine Blutstillung"
+    # "Immer" has no subcondition
     def handle_guard_condition(self, relevant_table_id_data, subcondition=None):
         match = re.search(r"\d+", relevant_table_id_data["extra_condition 1"])
         if match:
@@ -636,13 +638,13 @@ class Command(BaseCommand):
         else:
             print("something went wrong while trying to find resulting state id")
 
-
         resulting_patient_state_obj, created = self.create_patient_state(
             resulting_state_id
         )
 
+        # only go further into recursion if resulting state didn't exist before
         if created:
-            # get data for next transition
+            # get table_id for next transition
             for patient_state in self.patient_states:
                 if patient_state["state_id"] == int(resulting_state_id):
                     table_id = patient_state["table_id"]
@@ -654,7 +656,7 @@ class Command(BaseCommand):
             resulting_patient_state_obj.save()
 
         # create transition to resulting state
-        # the "from original state" part needs to be set by caller
+        # transition needs to be assigned to PatientState object by caller
         state_transition, _ = StateTransition.objects.get_or_create(
             resulting_state=resulting_patient_state_obj
         )
@@ -664,6 +666,7 @@ class Command(BaseCommand):
                 node_type=LogicNode.NodeType.SUBCONDITION,
                 subcondition=subcondition,
             )
+        # This is the "Immer" case
         else:
             LogicNode.objects.get_or_create(
                 state_transition=state_transition,
@@ -701,6 +704,7 @@ class Command(BaseCommand):
             leaf_nodes.append(leaf_node)
 
         for i, entry in enumerate(current_line):
+            # we only create subconditions for the ones that are true. creating ones for false is unnecessary
             if entry == "ja":
                 subcondition = Subcondition.objects.get(name=table_subconditions[i])
                 leaf_node, _ = LogicNode.objects.get_or_create(
@@ -712,6 +716,8 @@ class Command(BaseCommand):
                 leaf_nodes.append(leaf_node)
             elif entry == "nein":
                 pass
+            # entry contains a value (may also contain chars, but these are never important)
+            # these Subconditions are split into value ranges. therefore we also need to get the next higher value for an upper bound
             elif re.search(r"\d+", entry):
                 match = re.search(r"\d+", entry)
                 value = int(match.group())
@@ -767,7 +773,7 @@ class Command(BaseCommand):
 
                 # parse data of each table id
                 if "Table-Id" in row[0]:
-                    # creates 3 groups: table-id, extra conditions (e.g. Nicht Beatmet) and resulting states + potentially another condition
+                    # creates 5 groups: table-id, extra conditions 1 (e.g. Nicht Beatmet), extra conditions 2 (e.g. Beatmet) and resulting states for both tables
                     match = re.search(
                         r"Table-Id:\s+(\d+)\s+([a-zA-Z0-9\s:']+)(.*)", row[0]
                     )
@@ -787,9 +793,12 @@ class Command(BaseCommand):
                                 results.append(field)
 
                             for index, resulting_state in enumerate(results):
-                                if "Beatmet" in resulting_state:
+                                if (
+                                    "Beatmet" in resulting_state
+                                ):  # "Beatmet is always present and the only thing in the second extra condition"
                                     break
 
+                            # split at index of beatmet to separate resulting states for first and second table
                             first_table_resulting_states = results[:index]
                             second_table_resulting_states = results[index + 1 :]
                             second_table_extra_condition = results[index]
@@ -807,10 +816,8 @@ class Command(BaseCommand):
                             table_id_data["table_0_results"] = []
                             table_id_data["table_1_results"] = []
 
-                    else:
-                        print(f"couldn't find table-id for line {row[0]}")
-
                     table_results.append(table_id_data)
+
         if table0[0][0] == "leer":
             table0[0] = []
 
@@ -868,16 +875,20 @@ class Command(BaseCommand):
                 ]
                 special_events_fields = ["Beschreibung"]
 
+                # for each field (state_id) check which part of the data it belongs to
                 i = 1
                 for field in field_names:
                     if field in vital_signs_fields:
                         vital_signs.update({field: row[i]})
                     elif field in examination_codes_fields:
-                        if row[i] != "":
+                        if (
+                            row[i] != ""
+                        ):  # empty strings can't be converted to int and are therefore ignored
                             examination_codes.update({field: int(row[i])})
                     elif field in special_events_fields:
                         special_events = row[i]
                     i += 1
+
                 is_dead = state_id == 500 or state_id == 502
                 patient_state["state_id"] = state_id
                 patient_state["vital signs"] = vital_signs
@@ -889,6 +900,7 @@ class Command(BaseCommand):
                 patient_states.append(patient_state)
 
         return patient_states
+
 
 # TODO: how do we check "freie Atemwege"? this doesn't depend on measures, instead its in the patient state data
 # TODO: which action corresponds to "Infusion"?
