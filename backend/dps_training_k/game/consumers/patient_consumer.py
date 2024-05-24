@@ -118,8 +118,10 @@ class PatientConsumer(AbstractConsumer):
             self.send_available_actions()
             self.send_available_patients()
             self.action_list_event(None)
+            self.state_change_event(None)
             if self.exercise.state == Exercise.StateTypes.RUNNING:
                 self.exercise_start_event(None)
+
         else:
             self.close()
 

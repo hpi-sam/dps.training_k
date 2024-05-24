@@ -66,10 +66,12 @@
 
 - to run tests: `docker exec -it K-dPS-django python manage.py test`
 
-### Working with Fixtures on Windows by example
-- create fixture: `docker exec -it K-dPS-django python manage.py dumpdata template > patient_states.json`
-- this creates a file in UTF-16 format (likely a Windows thing)
-- to convert it, open file in Notepad++ > Encoding -> you should see it's UTF-16
-- click "convert to UTF-8", save
-- make sure the fixture is in the "fixtures" directory
+### Working with Fixtures
+- (clear database)
+- fill database with data you want to export as fixture (e.g. `docker exec -it K-dPS-django import_patient_states`)
+- create fixture: 
+  - `docker exec -it K-dPS-django bash`
+  - `export PYTHONIOENCODING=utf8`
+  - `python manage.py dumpdata template > patient_states.json`
+- move the fixture to the "fixtures" directory
 - now you can load it: `docker exec -it K-dPS-django python manage.py loaddata patient_states.json`
