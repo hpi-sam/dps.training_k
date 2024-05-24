@@ -1,17 +1,27 @@
 import factory
 from template.models import PatientState
 from .state_transition_factory import StateTransitionFactory
-from .state_data_factory import StateDataFactory
+from .state_data_factory import VitalSignsData
 from template.models import StateTransition
+import json
 
 
 class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PatientState
-        django_get_or_create = ("transition", "data", "state_depth", "is_dead")
+        django_get_or_create = (
+            "transition",
+            "vital_signs",
+            "vital_signs",
+            "special_events",
+            "state_depth",
+            "is_dead",
+        )
 
     transition = factory.SubFactory(StateTransitionFactory)
-    data = factory.LazyFunction(lambda: StateDataFactory())
+    vital_signs = json.dumps({})
+    vital_signs = json.dumps({})
+    special_events = None
     state_depth = 1
     is_dead = False
 
