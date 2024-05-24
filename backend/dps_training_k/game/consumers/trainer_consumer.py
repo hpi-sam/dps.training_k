@@ -226,13 +226,13 @@ class TrainerConsumer(AbstractConsumer):
             )
 
     def handle_update_personnel(self, exercise, personnelId, personnelName):
-        personnel = Personnel.objects.get(id=personnelId)
+        personnel = Personnel.objects.get(pk=personnelId)
         personnel.name = personnelName
         personnel.save()
 
     def handle_delete_personnel(self, exercise, personnel_id):
         try:
-            personnel = Personnel.objects.get(id=personnel_id)
+            personnel = Personnel.objects.get(pk=personnel_id)
             personnel.delete()
         except Personnel.DoesNotExist:
             self.send_failure(

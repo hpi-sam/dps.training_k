@@ -36,8 +36,10 @@ class PatientConsumer(AbstractConsumer):
         ACTION_CHECK = "action-check"
         ACTION_CHECK_STOP = "action-check-stop"
         ACTION_ADD = "action-add"
-        MATERIAL_RELEASE = "material-release"
         MATERIAL_ASSIGN = "material-assign"
+        MATERIAL_RELEASE = "material-release"
+        PERSONNEL_ASSIGN = "personnel-assign"
+        PERSONNEL_RELEASE = "personnel-release"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
@@ -80,13 +82,21 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_action_add,
                 "actionName",
             ),
+            self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
+                self.handle_material_assign,
+                "materialId",
+            ),
             self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
                 self.handle_material_release,
                 "materialId",
             ),
-            self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
-                self.handle_material_assign,
-                "materialId",
+            self.PatientIncomingMessageTypes.PERSONNEL_ASSIGN: (
+                self.handle_personnel_assign,
+                "personnelId",
+            ),
+            self.PatientIncomingMessageTypes.PERSONNEL_RELEASE: (
+                self.handle_personnel_release,
+                "personnelId",
             ),
         }
 
@@ -197,6 +207,23 @@ class PatientConsumer(AbstractConsumer):
         if not succeeded:
             self.send_failure(
                 message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
+    def handle_personnel_release(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(pk=personnel_id)
+        area = patient_instance.area
+        succeeded = personnel.try_moving_to(area)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
+    def handle_personnel_assign(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(pk=personnel_id)
+        succeeded = personnel.try_moving_to(patient_instance)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
             )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
