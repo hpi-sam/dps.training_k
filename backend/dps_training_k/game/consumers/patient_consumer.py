@@ -128,9 +128,9 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-            self.action_list_event(None)
             if self.exercise.state == Exercise.StateTypes.RUNNING:
                 self.exercise_start_event(None)
+                self.action_list_event(None)
                 self.resource_assignment_event(None)
         else:
             self.close()
