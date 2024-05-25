@@ -196,10 +196,6 @@ class SocketPatient {
 			'messageType': 'patient-move',
 			'areaId': areaId,
 		}))
-		console.log('Patient Websocket patient-move event', JSON.stringify({
-			'messageType': 'patient-move',
-			'areaId': areaId,
-		}))
 	}
 
 	movePersonnel(personnelId: number, areaId: number) {
@@ -208,20 +204,10 @@ class SocketPatient {
 			'personnelId': personnelId,
 			'areaId': areaId,
 		}))
-		console.log('Patient Websocket personnel-move event', JSON.stringify({
-			'messageType': 'personnel-move',
-			'personnelId': personnelId,
-			'areaId': areaId,
-		}))
 	}
 
 	moveMaterial(materialId: number, areaId: number) {
 		this.sendMessage(JSON.stringify({
-			'messageType': 'material-move',
-			'materialId': materialId,
-			'areaId': areaId,
-		}))
-		console.log('Patient Websocket material-move event', JSON.stringify({
 			'messageType': 'material-move',
 			'materialId': materialId,
 			'areaId': areaId,
