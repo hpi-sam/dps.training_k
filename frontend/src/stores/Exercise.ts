@@ -10,8 +10,8 @@ export const useExerciseStore = defineStore('exercise', {
 	getters: {
 		getExerciseId: (state) => state.exerciseId,
 		getArea: (state) => {
-			return (areaName: string): Area | null => {
-				return state.areas?.find(area => area.areaName === areaName) ?? null
+			return (areaId: number): Area | null => {
+				return state.areas?.find(area => area.areaId === areaId) ?? null
 			}
 		},
 		getAreaOfPatient: (state) => {
@@ -21,8 +21,14 @@ export const useExerciseStore = defineStore('exercise', {
 				) ?? null
 			}
 		},
-		getAreaNames: (state) => {
-			return state.areas?.map(area => area.areaName) ?? []
+		getAreaIds: (state) => {
+			return state.areas?.map(area => area.areaId) ?? []
+		},
+		getAreaName: (state) => {
+			return (areaId: number): string | null => {
+				const area = state.areas?.find(area => area.areaId === areaId)
+				return area?.areaName ?? null
+			}
 		},
 		getPatient: (state) => {
 			return (patientId: string): Patient | null => {
@@ -39,14 +45,14 @@ export const useExerciseStore = defineStore('exercise', {
 			}
 		},
 		getPersonnelOfArea: (state) => {
-			return (areaName: string): Personnel[] | null => {
-				const area = state.areas?.find(area => area.areaName === areaName)
+			return (areaId: number): Personnel[] | null => {
+				const area = state.areas?.find(area => area.areaId === areaId)
 				return area?.personnel ?? null
 			}
 		},
 		getMaterialOfArea: (state) => {
-			return (areaName: string): Material[] | null => {
-				const area = state.areas?.find(area => area.areaName === areaName)
+			return (areaId: number): Material[] | null => {
+				const area = state.areas?.find(area => area.areaId === areaId)
 				return area?.material ?? null
 			}
 		}

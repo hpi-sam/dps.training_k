@@ -191,30 +191,27 @@ class SocketPatient {
 		}))
 	}
 
-	movePatient(areaName: string) {
+	movePatient(areaId: number) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'patient-move',
-			'areaName': areaName,
+			'areaId': areaId,
 		}))
-		console.log('Move Patient to ' + areaName)
 	}
 
-	movePersonnel(personnelId: number, areaName: string) {
+	movePersonnel(personnelId: number, areaId: number) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'personnel-move',
 			'personnelId': personnelId,
-			'areaName': areaName,
+			'areaId': areaId,
 		}))
-		console.log('Move Personnel ' + personnelId + ' to ' + areaName)
 	}
 
-	moveMaterial(materialId: number, areaName: string) {
+	moveMaterial(materialId: number, areaId: number) {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'material-move',
 			'materialId': materialId,
-			'areaName': areaName,
+			'areaId': areaId,
 		}))
-		console.log('Move Material ' + materialId + ' to ' + areaName)
 	}
 
 	actionCheck(actionName: string) {
@@ -268,7 +265,7 @@ export const serverMockEvents = [
 	{
 		id: 'ressource-assignments',
 		data: '{"messageType":"ressource-assignments","ressourceAssignments":{"ressourceAssignments":[' +
-			'{"areaName":"Intensiv",' +
+			'{"areaId":1,' +
 			'"personnel":[' +
 			'{"personnelId":1,"personnelName":"Albert Spahn","patientId":"5"},' +
 			'{"personnelId":2,"personnelName":"Anna Neumann","patientId":"3"}' +
@@ -277,7 +274,7 @@ export const serverMockEvents = [
 			'{"materialId":1,"materialName":"Beatmungsgerät","patientId":"3"},' +
 			'{"materialId":2,"materialName":"Defibrillator","patientId":"5"}' +
 			']},' +
-			'{"areaName":"ZNA",' +
+			'{"areaId":2,' +
 			'"personnel":[' +
 			'{"personnelId":3,"personnelName":"Jens Schweizer","patientId":"123456"},' +
 			'{"personnelId":4,"personnelName":"Lena Schulze","patientId":"6"},' +
@@ -289,7 +286,7 @@ export const serverMockEvents = [
 			'{"materialId":4,"materialName":"EKG-Monitor","patientId":"123456"},' +
 			'{"materialId":9,"materialName":"Narkosegerät","patientId":"9"}' +
 			']},' +
-			'{"areaName":"Wagenhalle",' +
+			'{"areaId":3,' +
 			'"personnel":[' +
 			'{"personnelId":5,"personnelName":"Finn Heizmann","patientId":"1"},' +
 			'{"personnelId":6,"personnelName":"Ursula Seiler","patientId":"4"}' +

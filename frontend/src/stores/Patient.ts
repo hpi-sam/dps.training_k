@@ -9,7 +9,7 @@ export const usePatientStore = defineStore('patient', {
 		code: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',
-		areaName: '',
+		areaId: Number.NEGATIVE_INFINITY,
 		airway: '',
 		breathing: '',
 		circulation: '',
@@ -43,7 +43,7 @@ export const usePatientStore = defineStore('patient', {
 			const exerciseStore = useExerciseStore()
 			this.patientName = exerciseStore.getPatient(this.patientId)?.patientName || ''
 			this.code = exerciseStore.getPatient(this.patientId)?.code || Number.NEGATIVE_INFINITY
-			this.areaName = exerciseStore.getAreaOfPatient(this.patientId)?.areaName || ''
+			this.areaId = exerciseStore.getAreaOfPatient(this.patientId)?.areaId || Number.NEGATIVE_INFINITY
 			this.triage = exerciseStore.getPatient(this.patientId)?.triage || '-'
 
 			if (useAvailablesStore().getPatient(this.code)) this.initializePatientFromAvailablePatients()

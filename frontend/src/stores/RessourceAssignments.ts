@@ -6,10 +6,10 @@ export const useRessourceAssignmentsStore = defineStore('ressourceAssignments', 
 	}),
     getters: {
         getRessourceAssignmentsOfArea: (state) => {
-            return (areaName: string) : RessourceAssignment | null => {
+            return (areaId: number) : RessourceAssignment | null => {
                 let foundRessourceAssignment = null
                 state.ressourceAssignments.forEach((ressourceAssignment) => {
-                    if (ressourceAssignment.areaName === areaName) {
+                    if (ressourceAssignment.areaId === areaId) {
                         foundRessourceAssignment = ressourceAssignment
                     }
                 })

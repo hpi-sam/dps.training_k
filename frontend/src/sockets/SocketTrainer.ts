@@ -134,17 +134,17 @@ class SocketTrainer {
 		this.#sendMessage(JSON.stringify({'messageType': 'area-add'}))
 	}
 
-	areaDelete(areaName: string) {
+	areaDelete(areaId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'area-delete',
-			'areaName': areaName
+			'areaId': areaId
 		}))
 	}
 
-	patientAdd(areaName: string, patientName: string, code: number) {
+	patientAdd(areaId: number, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-add',
-			'areaName': areaName,
+			'areaId': areaId,
 			'patientName': patientName,
 			'code': code
 		}))
@@ -166,10 +166,10 @@ class SocketTrainer {
 		}))
 	}
 
-	personnelAdd(areaName: string) {
+	personnelAdd(areaId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'personnel-add',
-			'areaName': areaName
+			'areaId': areaId
 		}))
 	}
 
@@ -180,10 +180,10 @@ class SocketTrainer {
 		}))
 	}
 
-	materialAdd(areaName: string, materialName: string) {
+	materialAdd(areaId: number, materialName: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'material-add',
-			'areaName': areaName,
+			'areaId': areaId,
 			'materialName': materialName
 		}))
 	}
@@ -202,26 +202,26 @@ class SocketTrainer {
 		}))
 	}
 
-	movePatient(areaName: string) {
+	movePatient(areaId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-move',
-			'areaName': areaName,
+			'areaId': areaId,
 		}))
 	}
 
-	movePersonnel(personnelId: number, areaName: string) {
+	movePersonnel(personnelId: number, areaId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'personnel-move',
 			'personnelId': personnelId,
-			'areaName': areaName,
+			'areaId': areaId,
 		}))
 	}
 
-	moveMaterial(materialId: number, areaName: string) {
+	moveMaterial(materialId: number, areaId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'material-move',
 			'materialId': materialId,
-			'areaName': areaName,
+			'areaId': areaId,
 		}))
 	}
 }
@@ -254,15 +254,15 @@ export const serverMockEvents = [
 			'{"logId":"0","logMessage":"Patient wurde ins Krankenhaus eingeliefert. ' +
 			'Der Patient befindet sich in einem kritischen Zustand und benötigt sofortige Aufmerksamkeit.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 32, 20, 0) +
-			',"areaName":"ZNA","patientId":"123456","personnelIds":[]},' +
+			',"areaId":2,"patientId":"123456","personnelIds":[]},' +
 			'{"logId":"1","logMessage":"Behandlung des Patienten begonnen. ' +
 			'Dem Patienten werden die notwendigen Medikamente verabreicht und er steht unter ständiger Überwachung.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 31, 46, 0) +
-			',"areaName":"Intensiv","patientId":"123456","personnelIds":[11, 12]},' +
+			',"areaId":1,"patientId":"123456","personnelIds":[11, 12]},' +
 			'{"logId":"2","logMessage":"Patient nach der Erstbehandlung stabilisiert. ' +
 			'Der Patient reagiert nun gut auf die Behandlung und wird beobachtet.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
-			',"areaName":"ZNA","patientId":"754262","personnelIds":[13]}]}'
+			',"areaId":2,"patientId":"754262","personnelIds":[13]}]}'
 	},
 	{
 		id: 'log-update-2',
@@ -270,15 +270,15 @@ export const serverMockEvents = [
 			'{"logId":"4","logMessage":"Patient zur Zentralen Notaufnahme transportiert. ' +
 			'Der Patient wird für weitere Tests und Behandlungen verlegt.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 31, 10, 0) +
-			',"areaName":"Intensiv","patientId":"623422","personnelIds":[14]},' +
+			',"areaId":1,"patientId":"623422","personnelIds":[14]},' +
 			'{"logId":"5","logMessage":"Behandlung aufgrund unvorhergesehener Komplikationen abgebrochen. ' +
 			'Der Patient wird auf einen alternativen Behandlungsplan vorbereitet.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 33, 8, 0) +
-			',"areaName":"ZNA","patientId":"123456","personnelIds":[]},' +
+			',"areaId":2,"patientId":"123456","personnelIds":[]},' +
 			'{"logId":"6","logMessage":"Blut für den Patienten angefordert. ' +
 			'Der Patient benötigt eine Bluttransfusion, um seinen Zustand zu stabilisieren.",' +
 			'"logTime":' + Date.UTC(2024, 2, 20, 14, 32, 8, 0) +
-			',"areaName":"Intensiv","patientId":"623422","personnelIds":[15, 11]}]}'
+			',"areaId":1,"patientId":"623422","personnelIds":[15, 11]}]}'
 	},
 	{
 		id: 'set-speed',
