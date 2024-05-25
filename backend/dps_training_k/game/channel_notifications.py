@@ -272,13 +272,13 @@ class MaterialInstanceDispatcher(ChannelNotifier):
         changes_set = set(changes) if changes is not None else set()
         assignment_changes = {"patient_instance", "area", "lab"}
 
+        if changes_set - assignment_changes or not changes:
+            cls._notify_exercise_update(cls.get_exercise(material))
+
         if changes_set & assignment_changes or not changes:
             channel = cls.get_group_name(material.attached_instance().exercise)
             event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
             cls._notify_group(channel, event)
-
-        if changes_set - assignment_changes or not changes:
-            cls._notify_exercise_update(cls.get_exercise(material))
 
     @classmethod
     def delete_and_notify(cls, material, *args, **kwargs):
@@ -348,13 +348,13 @@ class PersonnelDispatcher(ChannelNotifier):
         changes_set = set(changes) if changes is not None else set()
         assignment_changes = {"patient_instance", "area", "lab"}
 
+        if changes_set - assignment_changes or not changes:
+            cls._notify_exercise_update(cls.get_exercise(personnel))
+
         if changes_set & assignment_changes or not changes:
             channel = cls.get_group_name(personnel.attached_instance().exercise)
             event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
             cls._notify_group(channel, event)
-
-        if changes_set - assignment_changes or not changes:
-            cls._notify_exercise_update(cls.get_exercise(personnel))
 
     @classmethod
     def delete_and_notify(cls, personnel, *args, **kwargs):

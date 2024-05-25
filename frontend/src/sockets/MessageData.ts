@@ -22,7 +22,7 @@ interface MessageData {
 	availableActions: AvailableAction[]
 	availableMaterials: AvailableMaterial[]
 	actionDeclinationReason?: string
-	ressourceAssignments: ResourceAssignment[]
+	resourceAssignments: ResourceAssignment[]
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
