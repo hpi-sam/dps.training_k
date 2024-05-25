@@ -215,7 +215,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_add_personnel(self, _, areaId):
         try:
             area = Area.objects.get(pk=areaId)
-            Personnel.create_personnel(area=area, name="Personnel")
+            Personnel.create_personnel(area=area, name="Personal")
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the pk '{areaId}'",
