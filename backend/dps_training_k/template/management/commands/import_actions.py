@@ -6,6 +6,14 @@ from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
 from template.models import Action
 
 
+def is_json(myjson):
+    try:
+        json_object = json.loads(myjson)
+    except ValueError as e:
+        return False
+    return True
+
+
 class Command(BaseCommand):
     help = "Populates the database with minimal action list"
 
@@ -1364,15 +1372,13 @@ class Command(BaseCommand):
                         ],
                     },
                 ),
-                "results": [
-                    json.dumps(
-                        {
-                            "produced_material": {
-                                str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
-                            }
+                "results": json.dumps(
+                    {
+                        "produced_material": {
+                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
                         }
-                    )
-                ],
+                    }
+                ),
             },
         )
         Action.objects.update_or_create(
@@ -1625,7 +1631,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": str(MaterialIDs.EKG_GERAET),
+                        "material": [str(MaterialIDs.EKG_GERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
