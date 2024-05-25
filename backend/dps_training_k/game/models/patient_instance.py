@@ -70,10 +70,12 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             )  # Properly hash the password
             self.user.save()
 
-            self.patient_state = PatientStateFactory(
-                10, 2
-            )  # temporary state for testing - should later take static_information into account
-            self.triage = self.static_information.triage
+            if not self.patient_state:
+                self.patient_state = PatientStateFactory(
+                    10, 2
+                )  # temporary state for testing - should later take static_information into account
+            if not self.triage:
+                self.triage = self.static_information.triage
 
         changes = kwargs.get("update_fields", None)
 
