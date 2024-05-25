@@ -7,6 +7,7 @@
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
+	import { Screens, setRightScreen } from '../ModuleTrainer.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -16,6 +17,7 @@
 
 	function openArea(areaName: string) {
 		setArea(areaName)
+		setRightScreen(Screens.RESOURCE_CREATION)
 		currentArea.value = areaName
 	}
 
@@ -32,6 +34,11 @@
 		socketTrainer.areaDelete(currentArea.value)
 	}
 
+	function openLog() {
+		setRightScreen(Screens.LOG)
+		currentArea.value = 'Kein Bereich ausgewählt'
+	}
+
 	const showPopup = ref(false)
 </script>
 
@@ -41,6 +48,10 @@
 		<TopBarTrainer />
 		<div class="scroll">
 			<div class="list">
+				<p v-if="exerciseStore?.status !== 'not-started'">
+					<i>Die Bearbeitung der Übung nach Übungsstart ist noch nicht vollständig implementiert.</i>
+				</p>
+				<br v-if="exerciseStore?.status !== 'not-started'">
 				<button id="add-area-button" class="list-item-add-button" @click="addArea()">
 					Bereich hinzufügen
 				</button>
@@ -68,6 +79,11 @@
 				</div>
 			</div>
 		</div>
+		<div>
+			<button v-if="exerciseStore?.status !== 'not-started'" class="main-button" @click="openLog()">
+				Log öffnen
+			</button>
+		</div>
 		<ExerciseControlPanel />
 	</div>
 </template>
@@ -82,6 +98,12 @@
 	}
 
 	.scroll {
-		margin-bottom: 50px;
+		margin-bottom: 110px;
+	}
+
+	.main-button {
+		background-color: var(--green);
+		color: white;
+		margin-bottom: 80px;
 	}
 </style>

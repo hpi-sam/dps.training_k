@@ -1,8 +1,7 @@
 <script setup lang="ts">
 	import {ref} from 'vue'
 	import {useTrainerStore} from '@/stores/Trainer'
-	import {Modules, setModule} from "@/App.vue"
-	import {svg} from "@/assets/Svg"
+	import socketTrainer from '@/sockets/SocketTrainer'
 
 	const usernameInput = ref("")
 	const passwordInput = ref("")
@@ -10,8 +9,7 @@
 	function submit() {
 		const trainerStore = useTrainerStore()
 		trainerStore.username = usernameInput.value
-
-		setModule(Modules.TRAINER)
+		socketTrainer.connect()
 		return
 
 		// Will be used when trainer login is implemented in the backend
@@ -56,14 +54,12 @@
 			<input id="trainer-login-username" v-model="usernameInput" placeholder="Nutzername">
 			<input id="trainer-login-password" v-model="passwordInput" type="password" placeholder="Passwort">
 			<button id="trainer-login" @click="submit()">
-				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-					<path :d="svg.loginIcon" />
-				</svg>
+				Übung erstellen
 			</button>
 		</div>
 	</div>
 </template>
 
 <style scoped>
-	@import url(../../assets/login.css);
+	@import url(../../assets/login.css)
 </style>

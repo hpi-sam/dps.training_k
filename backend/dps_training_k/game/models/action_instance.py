@@ -169,12 +169,19 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        is_applicable, context = self.check_conditions_and_block_resources(
-            self.attached_instance(), self.attached_instance()
-        )
+        if not self.attached_instance().can_receive_actions():
+            is_applicable, context = (
+                False,
+                f"{self.attached_instance().frontend_name()} kann keine Aktionen mehr empfangen",
+            )
+        else:
+            is_applicable, context = self.check_conditions_and_block_resources(
+                self.attached_instance(), self.attached_instance()
+            )
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False, context
+
         self._start_application()
         return True, None
 

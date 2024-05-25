@@ -6,6 +6,7 @@ import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as 
 import {useAvailablesStore} from "@/stores/Availables"
 import {useLogStore} from "@/stores/Log"
 import {commonMockEvents} from "./commonMockEvents"
+import {Modules, setModule} from "@/App.vue"
 
 class SocketTrainer {
 	private readonly url: string
@@ -23,6 +24,7 @@ class SocketTrainer {
 		this.socket.onopen = () => {
 			console.log('Trainer WebSocket connection established')
 			connection.trainerConnected = true
+			socketTrainer.exerciseCreate()
 		}
 
 		this.socket.onclose = () => {
@@ -61,36 +63,26 @@ class SocketTrainer {
 					useAvailablesStore().loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					break
 				case 'exercise':
+					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					if (exerciseStore.status == '') {
 						exerciseStore.status = 'not-started'
-						moduleTrainerSetLeftScreen(Screens.EXERCISE_CREATION)
-						moduleTrainerSetRightScreen(Screens.RESOURCE_CREATION)
+						setModule(Modules.TRAINER)
 					}
-					useExerciseStore().createFromJSON(data.exercise as Exercise)
 					break
 				case 'exercise-start':
 					exerciseStore.status = 'running'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-pause':
 					exerciseStore.status = 'paused'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-resume':
 					exerciseStore.status = 'running'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'exercise-end':
 					exerciseStore.status = 'ended'
-					moduleTrainerSetLeftScreen(Screens.SCENARIO)
-					moduleTrainerSetRightScreen(Screens.LOG)
 					break
 				case 'log-update':
 					useLogStore().addLogEntries(data.logEntries as LogEntry[])
-					console.log('Socket Log ', data)
 					break
 				case 'set-speed':
 					useExerciseStore().speed = data.speed
