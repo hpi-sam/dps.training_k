@@ -44,6 +44,13 @@ export const useExerciseStore = defineStore('exercise', {
 				)?.personnel?.find(personnel => personnel.personnelId === personnelId) ?? null
 			}
 		},
+		getMaterial: (state) => {
+			return (materialId: number): Material | null => {
+				return state.areas?.find(area =>
+					area.material.find(material => material.materialId === materialId)
+				)?.material?.find(material => material.materialId === materialId) ?? null
+			}
+		},
 		getPersonnelOfArea: (state) => {
 			return (areaId: number): Personnel[] | null => {
 				const area = state.areas?.find(area => area.areaId === areaId)

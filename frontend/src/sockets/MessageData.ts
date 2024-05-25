@@ -22,7 +22,7 @@ interface MessageData {
 	availableActions: AvailableAction[]
 	availableMaterials: AvailableMaterial[]
 	actionDeclinationReason?: string
-	ressourceAssignments: RessourceAssignments
+	ressourceAssignments: ResourceAssignment[]
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
@@ -103,11 +103,11 @@ interface AvailableMaterial {
 	materialType: string
 }
 
-interface RessourceAssignments {
-	ressourceAssignments: RessourceAssignment[]
+interface ResourceAssignments {
+	resourceAssignments: ResourceAssignment[]
 }
 
-interface RessourceAssignment {
+interface ResourceAssignment {
 	areaId: number
 	personnel: PersonnelAssignments[]
 	material: MaterialAssignments[]
@@ -115,13 +115,11 @@ interface RessourceAssignment {
 
 interface PersonnelAssignments {
 	personnelId: number
-	personnelName: string
 	patientId: string
 }
 
 interface MaterialAssignments {
 	materialId: number
-	materialName: string
 	patientId: string
 }
 
