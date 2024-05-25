@@ -97,12 +97,9 @@ class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes, is_updated):
         applied_action = obj
-        if changes and not ("current_state" in changes or "order_id" in changes):
-            raise ValueError(
-                "There has to be a state change or order id change whenever updating an ActionInstance."
-            )
-        # state change events
         if changes:
+            if "historic_patient_state" in changes:
+                return
             if "current_state" in changes:
                 if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
                     cls._notify_action_event(
@@ -130,6 +127,8 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def create_trainer_log(cls, applied_action, changes, is_updated):
+        if changes and "historic_patient_state" in changes:
+            return
         if applied_action == models.ActionInstanceStateNames.PLANNED:
             return
 

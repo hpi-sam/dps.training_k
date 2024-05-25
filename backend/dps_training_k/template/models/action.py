@@ -100,31 +100,13 @@ class Action(UUIDable, models.Model):
             current_code = examination_codes[examination_type]
             result_substring = result_dict.get(current_code, None)
             if result_substring:
-                result_string += f"{examination_type}: {result_dict[current_code]}"
+                result_string += f" {examination_type}: {result_dict[current_code]}"
             else:
                 raise ValueError(
                     f"Examination result: Couldn't find corresponding value for {current_code} at {examination_type}"
                 )
         return result_string
-        ## iterate through result map
-        # results = json.loads(self.results)
-        # for key, values in results.items():
-        #    # find correct result code for this patient
-        #    result_code = json.loads(patient_state_data)[key]
-        #    # find string value corresponding to result code
-        #    found = False
-        #    for value in values:
-        #        if result_code in value:
-        #            result_string += f" {key}: {value[result_code]}"
-        #            found = True
-        #    if not found:
-        #        raise ValueError(
-        #            "Examination result: Couldn't find corresponding value for result code"
-        #        )
 
-    #
-    # return result_string
-    #
     def production_result(self):
         return f"{self.name} wurde durchgeführt"
 

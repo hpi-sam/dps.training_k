@@ -220,7 +220,7 @@ class ActionInstance(LocalTimeable, models.Model):
     def _lab_application_finished(self):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(),
+            info_text=self.template.get_result(self),
         )
         self._application_finished()
 
@@ -303,7 +303,9 @@ class ActionInstance(LocalTimeable, models.Model):
                 material.consume()
 
     def get_patient_examination_codes(self):
+        import json
+
         return {
-            **self.historic_patient_state.examination_codes,
+            **json.loads(self.historic_patient_state.examination_codes),
             **self.patient_instance.static_information.examination_codes,
         }
