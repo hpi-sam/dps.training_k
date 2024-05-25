@@ -28,12 +28,12 @@ class ActionFactory(factory.django.DjangoModelFactory):
     results = json.dumps(
         {
             "Hb": {
-                ActionResultIDs.HB420: "Ergebnis1",
-                ActionResultIDs.HB430: "Ergebnis2",
+                400: "Ergebnis1",
+                401: "Ergebnis2",
             },
             "BZ": {
-                ActionResultIDs.BZ920: "Ergebnis1",
-                ActionResultIDs.BZ930: "Ergebnis2",
+                900: "Ergebnis1",
+                901: "Ergebnis2",
             },
         }
     )

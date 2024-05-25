@@ -94,18 +94,23 @@ class ActionInstanceScheduledTestCase(TestUtilsMixin, TestCase):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
     def setUp(self):
+        self.deactivate_notifications()
+        self.deactivate_results()
+
         self.action_instance = ActionInstanceFactory(patient_instance=PatientFactory())
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
-        self.deactivate_notifications()
 
     def tearDown(self):
-        settings.CURRENT_TIME = self.variable_backup
         self.activate_notifications()
+        self.activate_results()
 
-    def test_action_is_scheduled(self):
+        settings.CURRENT_TIME = self.variable_backup
+
+    def test_action_scheduling(self):
         """
-        Once an action instance is started, it changes its state to finished after the scheduled time.
+        Iff running, an action has a corresponding scheduled event.
+        Once it stopped running, it changes it's state to finished.
         """
         self.action_instance._start_application()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
