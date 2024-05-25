@@ -22,7 +22,7 @@ class PatientInstanceSerializer(serializers.ModelSerializer):
 
 
 class PersonnelSerializer(serializers.ModelSerializer):
-    personnelId = serializers.IntegerField(source="pk")
+    personnelId = serializers.IntegerField(source="id")
     personnelName = serializers.CharField(source="name")
 
     class Meta:
@@ -61,6 +61,7 @@ class AreaSerializer(serializers.ModelSerializer):
         )
         return PersonnelSerializer(personnel, many=True).data
 
+    areaId = serializers.IntegerField(source="id")
     areaName = serializers.CharField(source="name")
     patients = PatientInstanceSerializer(source="patientinstance_set", many=True)
     personnel = serializers.SerializerMethodField(method_name="get_personnel")
@@ -68,7 +69,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = a.Area
-        fields = ["areaName", "patients", "personnel", "material"]
+        fields = ["areaId", "areaName", "patients", "personnel", "material"]
         read_only = fields
 
 

@@ -3,15 +3,15 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
 	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
-	import {computed,ref} from 'vue'
+	import {computed, ref} from 'vue'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
-	const ressourceAssignmentStore = useRessourceAssignmentsStore()
-	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaName))
-
 	const exerciseStore = useExerciseStore()
-	const material = computed(() => exerciseStore.getMaterialOfArea(patientStore.areaName))
+	const ressourceAssignmentStore = useRessourceAssignmentsStore()
+
+	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaId))
+	const material = computed(() => exerciseStore.getMaterialOfArea(patientStore.areaId))
 
 	const assignedMaterial = computed(() => assignments.value?.material.filter(assignment => assignment.patientId === patientStore.patientId))
 	const freeMaterial = computed(() => material.value?.filter(material => 
@@ -45,7 +45,7 @@
 		:module="'Patient'"
 		:type-to-move="'Material'"
 		:id-of-moveable="selectedMaterial" 
-		:current-area="patientStore.areaName"
+		:current-area="patientStore.areaId"
 		@close-popup="showMovePopup=false"
 	/>
 	<div class="flex-container">

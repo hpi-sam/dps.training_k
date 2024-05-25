@@ -1,7 +1,9 @@
 <script setup lang="ts">
 	import {usePatientStore} from "@/stores/Patient"
+	import {useExerciseStore} from "@/stores/Exercise"
 
 	const patientStore = usePatientStore()
+	const exerciseStore = useExerciseStore()
 </script>
 
 <template>
@@ -12,7 +14,7 @@
 			</div>
 			<div class="inactive-patient-details">
 				<div>Patient: {{ patientStore.patientName }} | {{ patientStore.patientId }}</div>
-				<div>Bereich: {{ patientStore.areaName }}</div>
+				<div>Bereich: {{ exerciseStore.getAreaName(patientStore.areaId) }}</div>
 			</div>
 		</div>
 	</div>

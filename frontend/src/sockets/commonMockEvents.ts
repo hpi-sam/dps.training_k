@@ -505,7 +505,7 @@ export const commonMockEvents = [
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":"abcdef","areas":[' +
-			'{"areaName":"Intensiv",' +
+			'{"areaId":1,"areaName":"Intensiv",' +
 				'"patients":[' +
 					'{"patientId":"145345","patientName":"Anna Müller","code":1007,"triage":"1"},' +
 					'{"patientId":"256443","patientName":"Frank Huber","code":1008,"triage":"1"}' +
@@ -521,7 +521,7 @@ export const commonMockEvents = [
 					'{"materialId":2,"materialName":"Blut B positiv","materialType":"BL"}' +
 				']' +
 			'},' +
-			'{"areaName":"ZNA",' +
+			'{"areaId":2,"areaName":"ZNA",' +
 				'"patients":[' +
 					'{"patientId":"123456","patientName":"Ludger Göhlke","code":1009,"triage":"1"},' +
 					'{"patientId":"623422","patientName":"Friedrich Gerhard","code":1007,"triage":"1"},' +
@@ -570,7 +570,7 @@ export const commonMockEvents = [
 					'{"materialId":22,"materialName":"Blut 0 negativ","materialType":"BL"}' +
 				']' +
 			'},' +
-			'{"areaName":"Wagenhalle",' +
+			'{"areaId":3,"areaName":"Wagenhalle",' +
 				'"patients":[' +
 					'{"patientId":"126143","patientName":"Isabelle Busch","code":1020,"triage":"3"},' +
 					'{"patientId":"462455","patientName":"Jasper Park","code":1016,"triage":"2"}' +

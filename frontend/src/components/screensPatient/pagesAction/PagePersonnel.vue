@@ -2,16 +2,16 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
 	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
-	import {computed,ref} from 'vue'
+	import {computed, ref} from 'vue'
 	import socketPatient from '@/sockets/SocketPatient'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
-	const ressourceAssignmentStore = useRessourceAssignmentsStore()
-	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaName))
-	
 	const exerciseStore = useExerciseStore()
-	const personnel = computed(() => exerciseStore.getPersonnelOfArea(patientStore.areaName))
+	const ressourceAssignmentStore = useRessourceAssignmentsStore()
+
+	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaId))
+	const personnel = computed(() => exerciseStore.getPersonnelOfArea(patientStore.areaId))
 
 	const assignedPersonnel = computed(() => assignments.value?.personnel.filter(assignment => assignment.patientId === patientStore.patientId))
 	const freePersonnel = computed(() => personnel.value?.filter(personnel => 
@@ -45,7 +45,7 @@
 		:module="'Patient'"
 		:type-to-move="'Personnel'"
 		:id-of-moveable="selectedPersonnel" 
-		:current-area="patientStore.areaName"
+		:current-area="patientStore.areaId"
 		@close-popup="showMovePopup=false"
 	/>
 	<div class="flex-container">
