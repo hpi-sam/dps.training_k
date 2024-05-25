@@ -98,7 +98,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
     def dispatch_event(cls, obj, changes, is_updated):
         applied_action = obj
         if changes:
-            if "historic_patient_state" in changes:
+            if ["historic_patient_state"] == changes:
                 return
             if "current_state" in changes:
                 if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:

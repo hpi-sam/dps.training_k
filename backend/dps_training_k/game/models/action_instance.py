@@ -190,15 +190,7 @@ class ActionInstance(LocalTimeable, models.Model):
             raise ValueError(
                 "An action instance always needs a patient instance or lab to be scheduled"
             )
-        if self.patient_instance:
-            self.historic_patient_state = self.patient_instance.patient_state
-            self.save(update_fields=["historic_patient_state"])
-            ScheduledEvent.create_event(
-                self.patient_instance.exercise,
-                self.template.application_duration,  # ToDo: Replace with scalable local time system
-                "_patient_application_finished",
-                action_instance=self,
-            )
+
         if self.lab:
             ScheduledEvent.create_event(
                 self.lab.exercise,
@@ -206,7 +198,17 @@ class ActionInstance(LocalTimeable, models.Model):
                 "_lab_application_finished",
                 action_instance=self,
             )
+        else:
+            ScheduledEvent.create_event(
+                self.patient_instance.exercise,
+                self.template.application_duration,  # ToDo: Replace with scalable local time system
+                "_patient_application_finished",
+                action_instance=self,
+            )
 
+        if self.patient_instance:
+            self.historic_patient_state = self.patient_instance.patient_state
+            self.save(update_fields=["historic_patient_state"])
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.consume_resources()
 

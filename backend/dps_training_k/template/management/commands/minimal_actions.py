@@ -71,8 +71,8 @@ class Command(BaseCommand):
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
                 "category": "EX",
-                "application_duration": 120,
-                "effect_duration": None,  # None means permanent
+                "application_duration": 10,  # For debugging purposes
+                "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
@@ -83,18 +83,83 @@ class Command(BaseCommand):
                         "area": None,
                         "role": [
                             [
-                                {role_map[RoleIDs.LABORASSISTENT]: 1},
                                 {role_map[RoleIDs.ARZT]: 1},
-                            ]
+                                {role_map[RoleIDs.LABORASSISTENT]: 1},
+                            ],
                         ],
-                    }
+                    },
                 ),
                 "results": json.dumps(
                     {
-                        "Hb": [
-                            {ActionResultIDs.HB420: "Ergebnis1"},
-                            {ActionResultIDs.HB430: "Ergebnis2"},
-                        ]
+                        "Hb": {
+                            400: 9.5,
+                            401: 12,
+                            402: 16,
+                            403: 11,
+                            404: 5.5,
+                            405: 13,
+                            406: 7.5,
+                            407: 6,
+                            408: 9,
+                            409: 3.5,
+                            410: 3,
+                            411: 13,
+                            412: 17,
+                            413: 8,
+                            414: 2.5,
+                            415: 8.5,
+                            416: 17,
+                            417: 6.5,
+                            418: 12,
+                            419: 7,
+                            420: 11,
+                            421: 14,
+                            422: 10,
+                            423: 15,
+                            424: 16,
+                            425: 4,
+                            426: 2,
+                            427: 15,
+                            428: 5,
+                            429: 4.5,
+                            430: 14,
+                        }
+                    }
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Blutgruppe bestimmen",
+            uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
+            defaults={
+                "category": "EX",
+                "application_duration": 10,  # For debugging purposes
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {
+                        "Blutgruppe": {
+                            1: "A Rh pos",
+                            2: "B Rh pos",
+                            3: "A rh neg",
+                            4: "0 Rh pos",
+                            5: "B rh neg",
+                            6: "AB rh neg",
+                            7: "O rh neg",
+                            8: "AB Rh pos",
+                        }
                     }
                 ),
             },
