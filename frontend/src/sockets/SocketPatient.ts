@@ -107,7 +107,7 @@ class SocketPatient {
 					console.log('Patient Websocket ToDo: handle action-result event ', data)
 					break
 				case 'resource-assignments':
-					resourceAssignmentsStore.setResourceAssignments(data.resourceAssignments as ResourceAssignments)
+					resourceAssignmentsStore.setResourceAssignments(data.resourceAssignments as ResourceAssignment[])
 					break
 				case 'action-list':
 					actionOverview.loadActions(data.actions as Action[])
