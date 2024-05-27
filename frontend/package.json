@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode dev",
+    "prod": "npm run build-only && npx serve -s dist -l 5173",
     "build": "run-p type-check \"build-only {@}\" --",
-    "build-only": "vite build",
+    "build-only": "vite build --mode prod",
     "preview": "vite preview",
     "type-check": "vue-tsc --build --force"
   },
@@ -28,6 +29,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-vue": "^9.20.0",
     "npm-run-all2": "^6.1.1",
+    "serve": "^14.2.3",
     "typescript": "~5.3.0",
     "vite": "^5.0.10",
     "vue-tsc": "^1.8.27"
