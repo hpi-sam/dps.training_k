@@ -86,23 +86,16 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
     def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
-    def setUp(self):
-        self.variable_backup = settings.CURRENT_TIME
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
-        self.deactivate_notifications()
-        self.deactivate_condition_checking()
-
-    def tearDown(self):
-        settings.CURRENT_TIME = self.variable_backup
-        self.activate_notifications()
-        self.activate_condition_checking()
-
     def test_action_production_lifecycle(self):
         """
         Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
         """
         call_command("minimal_actions")
         call_command("minimal_material")
+        self.variable_backup = settings.CURRENT_TIME
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
+        self.deactivate_notifications()
+        self.deactivate_condition_checking()
         action_template = Action.objects.get(
             name="Fresh Frozen Plasma (0 positiv) auftauen"
         )
@@ -128,6 +121,9 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
                 area=area,
             )
         )
+        settings.CURRENT_TIME = self.variable_backup
+        self.activate_notifications()
+        self.activate_condition_checking()
 
     @patch(
         "game.channel_notifications.MaterialInstanceDispatcher._notify_exercise_update"
