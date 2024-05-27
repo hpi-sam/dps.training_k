@@ -47,7 +47,7 @@ class PatientConsumer(AbstractConsumer):
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
         ACTION_CHECK = "action-check"
-        PHASE_UPDATE = "state"
+        STATE_CHANGE = "state"
 
 
     def __init__(self, *args, **kwargs):
@@ -236,7 +236,7 @@ class PatientConsumer(AbstractConsumer):
     def state_change_event(self, event):
         serialized_state = StateSerializer(self.get_patient_instance.patient_state).data
         self.send_event(
-            self.PatientOutgoingMessageTypes.PHASE_UPDATE,
+            self.PatientOutgoingMessageTypes.STATE_CHANGE,
             state=serialized_state,
         )
 

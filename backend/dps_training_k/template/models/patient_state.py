@@ -12,7 +12,7 @@ class PatientState(models.Model):
         default=0,
     )
     transition = models.ForeignKey(
-        "StateTransition", on_delete=models.CASCADE, null=True, blank=True
+        "StateTransition", on_delete=models.CASCADE
     )
     vital_signs = models.JSONField(help_text="data for patient in current phase")
     examination_codes = models.JSONField(
