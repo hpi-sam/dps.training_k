@@ -1,21 +1,18 @@
-from django.core.exceptions import ImproperlyConfigured
+from django.db import models
 
 
-class Assignable:
+class Assignable(models.Model):
+    class Meta:
+        abstract = True
 
-    def save(self, *args, **kwargs):
-        # hasattr -> checks if the object has all needed fields.
-        if (
-            not hasattr(self, "action_instance")
-            or not hasattr(self, "patient_instance")
-            or not hasattr(self, "area")
-            or not hasattr(self, "lab")
-            or not hasattr(self, "exercise")
-        ):
-            raise ImproperlyConfigured(
-                f"{self.__class__.__name__} must define all necessary assignable fields."
-            )
-        super().save(*args, **kwargs)
+    action_instance = models.ForeignKey(
+        "ActionInstance", on_delete=models.SET_NULL, null=True, blank=True
+    )
+    patient_instance = models.ForeignKey(
+        "PatientInstance", on_delete=models.CASCADE, null=True, blank=True
+    )
+    area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
 
     def try_moving_to(self, obj):
         from game.models import PatientInstance, Area, Lab

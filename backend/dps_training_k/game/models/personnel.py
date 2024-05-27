@@ -4,17 +4,9 @@ from game.assignable import Assignable
 from game.channel_notifications import PersonnelDispatcher
 
 
-class Personnel(models.Model, Assignable):
+class Personnel(Assignable):
 
-    action_instance = models.ForeignKey(
-        "ActionInstance", on_delete=models.SET_NULL, null=True, blank=True
-    )
-    area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
-    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100, blank=True)
-    patient_instance = models.ForeignKey(
-        "PatientInstance", on_delete=models.CASCADE, null=True, blank=True
-    )
 
     @classmethod
     def create_personnel(cls, area, name):
