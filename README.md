@@ -9,19 +9,24 @@ is an internal document and therefore neither formulated for others to understan
 written in English)
 
 ## Deployment process
+The described deployment process here is for setting up the frontend and backend at the same time via docker. If you want to deploy just one via 
+docker or want to run the frontend without docker, please refer to the respective Readmes in the frontend and backend folders.
+
 The deployment process is automatically started on each release and can be manually triggered by running the GitHub action `deploy`.
 This uploads the needed images to [GitHub Packages](https://github.com/orgs/hpi-sam/packages?repo_name=dps.training_k) and saves the needed 
 environment variables as well as the docker-compose file as 
 [Actions Artifacts](https://github.com/hpi-sam/dps.training_k/actions/workflows/deploy.yml).
-For deployment on the server following steps are needed:
+There are two environment files provided with the docker-compose file in the artifacts: `.env.prod` and `.env.dev`.
+The `.env.prod` file is used for the production version on a server and the `.env.dev` file is used for the development version locally.
+Replace `<prod/dev>` with `prod` or `dev` in the following commands to use the respective environment file.
 1. Download the action artifacts and extract them in a folder
-2. Run following command in that folder if you want to deploy the production version (for external use on the server):
+2. Optional: If you want a clean start, run following command in that folder in order to recreate the database:
 ```bash
-docker-compose --env-file .env.prod up -d
+docker-compose --env-file .env.<prod/dev> down --volumes
 ```
-3. Or alternatively run following command in that folder if you want to deploy the development version (for testing purposes):
+Run following command to deploy the application:
 ```bash
-docker-compose --env-file .env.dev up -d
+docker-compose --env-file .env.<prod/dev> up --pull always -d
 ```
 
 The website should now be running on port 5173.
