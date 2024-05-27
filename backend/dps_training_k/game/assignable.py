@@ -15,6 +15,7 @@ class Assignable(models.Model):
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
 
     def try_moving_to(self, obj):
+        # prone to race conditions, we don't care as highly unlikely
         from game.models import PatientInstance, Area, Lab
 
         if self.is_blocked():
