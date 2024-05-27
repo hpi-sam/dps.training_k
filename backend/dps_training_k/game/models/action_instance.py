@@ -293,10 +293,20 @@ class ActionInstance(LocalTimeable, models.Model):
             if not material.is_reusable:
                 material.consume()
 
-    def get_patient_examination_codes(self):
-        import json
-
-        return {
-            **json.loads(self.historic_patient_state.examination_codes),
-            **self.patient_instance.static_information.examination_codes,
-        }
+    def get_patient_examination_codes(self) -> dict[str, str]:
+        codes = {}
+        if self.historic_patient_state:
+            codes.update(
+                {
+                    str(k): str(v)
+                    for k, v in self.historic_patient_state.examination_codes.items()
+                }
+            )
+        if self.patient_instance and self.patient_instance.static_information:
+            codes.update(
+                {
+                    str(k): str(v)
+                    for k, v in self.patient_instance.static_information.examination_codes.items()
+                }
+            )
+        return codes

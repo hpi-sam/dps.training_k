@@ -1,7 +1,11 @@
+import json
+import logging
+import uuid
+
 from django.db import models
-from .material import Material
+
 from helpers.models import UUIDable
-import json, uuid
+from .material import Material
 
 
 class Action(UUIDable, models.Model):
@@ -95,20 +99,24 @@ class Action(UUIDable, models.Model):
         return f"Behandlung {self.name} wurde durchgeführt"
 
     def examination_result(self, examination_codes):
+        results_dict = json.loads(self.results)
         result_string = f"{self.name} Ergebnis:"
-        for examination_type, result_dict in json.loads(self.results).items():
-            current_code = examination_codes[examination_type]
-            result_substring = result_dict.get(current_code, None)
+        for examination_type, result_dict in results_dict.items():
+            current_code = examination_codes.get(examination_type, "")
+            result_substring = result_dict.get(current_code)
+
             if result_substring:
-                result_string += f" {examination_type}: {result_dict[current_code]}"
+                result_string += f" {examination_type}: {result_substring}"
             else:
-                raise ValueError(
-                    f"Examination result: Couldn't find corresponding value for {current_code} at {examination_type}"
-                )
+                error_msg = f"Could not find corresponding value for code {current_code} in {examination_type}"
+                logging.error(error_msg)
+                continue  # skip to avoid crashing
+
         return result_string
 
     def production_result(self):
         return f"{self.name} wurde durchgeführt"
 
-    def lab_result(self):
+    @staticmethod
+    def lab_result():
         return "This is a lab result"
