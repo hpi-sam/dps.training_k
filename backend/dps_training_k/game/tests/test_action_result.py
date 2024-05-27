@@ -19,7 +19,11 @@ from game.tests.factories import (
 )
 from template.constants import MaterialIDs
 from template.models import Material, Action
-from template.tests.factories.action_factory import ActionFactoryWithProduction
+from template.tests.factories import (
+    ActionFactoryWithProduction,
+    ExaminationCodesData,
+    EmptyPatientStateFactory,
+)
 from .mixin import TestUtilsMixin
 
 
@@ -42,7 +46,13 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         """
         an action of category examination has a result that is set by translating the result codes in its results field.
         """
-        action_instance = ActionInstanceFactory(patient_instance=PatientFactory())
+        action_instance = ActionInstanceFactory(
+            patient_instance=PatientFactory(
+                patient_state=EmptyPatientStateFactory(
+                    examination_codes=ExaminationCodesData.generate()
+                )
+            )
+        )
         action_instance._start_application()
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
@@ -53,7 +63,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
         self.assertEqual(
             action_instance.result,
-            "Recovery Position wurde durchgeführt",
+            "Recovery Position Ergebnis: Hb: Ergebnis1 BZ: Ergebnis2",
         )
 
     def test_action_production(self):

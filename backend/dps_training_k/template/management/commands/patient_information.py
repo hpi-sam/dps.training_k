@@ -33,6 +33,7 @@ def import_patients(file_path):
             PatientInformation.objects.update_or_create(
                 code=row["Pat-Nr."].strip(),
                 personal_details=row["Personalien"].strip(),
+                blood_type=row["Blutgruppe"].strip(),
                 injury=row["Verletzungen"].strip(),
                 biometrics=biometrics,
                 triage=triage,

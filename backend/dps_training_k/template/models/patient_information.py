@@ -8,6 +8,7 @@ class PatientInformation(models.Model):
 
     code = models.IntegerField(unique=True, help_text="Sensen Code")  # Pat-Nr.
     personal_details = models.CharField(max_length=300, default="-")  # Personalien
+    blood_type = models.CharField(max_length=1, default="-")  # Blutgruppe
     injury = models.CharField(max_length=300, default="-")  # Verletzungen
     biometrics = models.CharField(
         max_length=300, default="-"
@@ -36,3 +37,7 @@ class PatientInformation(models.Model):
     start_location = models.CharField(max_length=100, default="-")  # Start-Ort
     op = models.CharField(max_length=300, default="-")  # OP / Interventions-Verlauf
     """Step by step description of the operation/intervention process. Each step is separated by a | symbol."""
+
+    @property
+    def examination_codes(self):
+        return {"Blutgruppe": self.blood_type}

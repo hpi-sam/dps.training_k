@@ -90,3 +90,12 @@ class TestUtilsMixin:
 
     def activate_live_updates(self):
         self._deactivate_live_updates_patch.stop()
+
+    def deactivate_results(self):
+        self._deactivate_result_patch = patch(
+            "template.models.Action.get_result", return_value=None
+        )
+        self._deactivate_result = self._deactivate_result_patch.start()
+
+    def activate_results(self):
+        self._deactivate_result_patch.stop()

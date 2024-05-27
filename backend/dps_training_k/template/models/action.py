@@ -1,7 +1,11 @@
+import json
+import logging
+import uuid
+
 from django.db import models
-from .material import Material
+
 from helpers.models import UUIDable
-import json, uuid
+from .material import Material
 
 
 class Action(UUIDable, models.Model):
@@ -79,43 +83,40 @@ class Action(UUIDable, models.Model):
             else 0
         )
 
-    def get_result(self, patient_state_data=None, area_materials=None):
+    def get_result(self, action_instance):
         if self.category == Action.Category.TREATMENT:
-            return self.treatment_result(patient_state_data)
+            return self.treatment_result()
         elif self.category == Action.Category.EXAMINATION:
-            return self.examination_result(patient_state_data)
+            return self.examination_result(
+                action_instance.get_patient_examination_codes()
+            )
         elif self.category == Action.Category.LAB:
-            return self.lab_result(area_materials)
+            return self.lab_result()
         elif self.category == Action.Category.PRODUCTION:
             return self.production_result()
 
-    def treatment_result(self, patient_state):
+    def treatment_result(self):
         return f"Behandlung {self.name} wurde durchgeführt"
 
-    def examination_result(self, patient_state_data):
-        return f"{self.name} wurde durchgeführt"
-        # result_string = f"{self.name} Ergebnis:"
-        # # iterate through result map
-        # results = json.loads(self.results)
-        # for key, values in results.items():
-        #    # find correct result code for this patient
-        #    result_code = json.loads(patient_state_data)[key]
-        #    # find string value corresponding to result code
-        #    found = False
-        #    for value in values:
-        #        if result_code in value:
-        #            result_string += f" {key}: {value[result_code]}"
-        #            found = True
-        #    if not found:
-        #        raise ValueError(
-        #            "Examination result: Couldn't find corresponding value for result code"
-        #        )
+    def examination_result(self, examination_codes):
+        results_dict = json.loads(self.results)
+        result_string = f"{self.name} Ergebnis:"
+        for examination_type, result_dict in results_dict.items():
+            current_code = examination_codes.get(examination_type, "")
+            result_substring = result_dict.get(current_code)
 
-    
-        # return result_string
+            if result_substring:
+                result_string += f" {examination_type}: {result_substring}"
+            else:
+                error_msg = f"Could not find corresponding value for code {current_code} in {examination_type}"
+                logging.error(error_msg)
+                continue  # skip to avoid crashing
+
+        return result_string
 
     def production_result(self):
         return f"{self.name} wurde durchgeführt"
 
-    def lab_result(self, area_materials):
+    @staticmethod
+    def lab_result():
         return "This is a lab result"
