@@ -7,7 +7,6 @@ from game.models import (
     MaterialInstance,
     ActionInstance,
     ScheduledEvent,
-    Exercise,
     Personnel,
     ActionInstanceStateNames,
 )
@@ -102,7 +101,6 @@ class PatientConsumer(AbstractConsumer):
             ),
         }
 
-    @property
     def get_patient_instance(self):
         # this enforces that we always work with up to date data from the database
         # if you want to update values, copy the instance this function returns and work with that.
@@ -128,7 +126,7 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-            if self.exercise.state == Exercise.StateTypes.RUNNING:
+            if self.exercise.is_running():
                 self.exercise_start_event(None)
                 self.action_list_event(None)
                 self.resource_assignment_event(None)
@@ -261,7 +259,9 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
-        serialized_state = StateSerializer(self.get_patient_instance.patient_state).data
+        serialized_state = StateSerializer(
+            self.get_patient_instance().patient_state
+        ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             **serialized_state,
@@ -290,10 +290,10 @@ class PatientConsumer(AbstractConsumer):
         """all action_instances where either the patient_instance is self.patient_instance or 
         the category is production and the area is the same as the patient_instance.area"""
         action_instances = ActionInstance.objects.filter(
-            Q(patient_instance=self.get_patient_instance)
+            Q(patient_instance=self.get_patient_instance())
             | Q(
                 template__category=Action.Category.PRODUCTION,
-                area=self.get_patient_instance.area,
+                area=self.get_patient_instance().area,
             )
         ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
         # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
@@ -320,7 +320,7 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def resource_assignment_event(self, event):
-        patient_instance = self.get_patient_instance
+        patient_instance = self.get_patient_instance()
         area = patient_instance.area
 
         # Fetch personnel assigned to the patient or the patient's area

@@ -10,6 +10,7 @@ class Assignable:
             or not hasattr(self, "patient_instance")
             or not hasattr(self, "area")
             or not hasattr(self, "lab")
+            or not hasattr(self, "exercise")
         ):
             raise ImproperlyConfigured(
                 f"{self.__class__.__name__} must define all necessary assignable fields."

@@ -269,7 +269,7 @@ class LogEntryDispatcher(ChannelNotifier):
 class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, material, changes, is_updated):
-        changes_set = set(changes) if changes is not None else set()
+        changes_set = set(changes) if changes else set()
         assignment_changes = {"patient_instance", "area", "lab"}
 
         if changes_set - assignment_changes or not changes:
@@ -298,9 +298,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
         if changes and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (
-            changes is not None and len(changes) == 1 and "patient_state" in changes
-        ):
+        if not (changes and len(changes) == 1 and "patient_state" in changes):
             cls._notify_exercise_update(cls.get_exercise(patient_instance))
 
     @classmethod
@@ -345,7 +343,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
 class PersonnelDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, personnel, changes, is_updated):
-        changes_set = set(changes) if changes is not None else set()
+        changes_set = set(changes) if changes else set()
         assignment_changes = {"patient_instance", "area", "lab"}
 
         if changes_set - assignment_changes or not changes:
