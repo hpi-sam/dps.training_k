@@ -69,11 +69,11 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
                 self.exercise.frontend_id
             )  # Properly hash the password
             self.user.save()
-
-            self.patient_state = PatientState.objects.get(
-                code=self.static_information.code,
-                state_id=self.static_information.start_status
-            )
+            if not self.patient_state: # factory already has it set so we don't wanna overwrite that here
+                self.patient_state = PatientState.objects.get(
+                    code=self.static_information.code,
+                    state_id=self.static_information.start_status
+                )
             self.triage = self.static_information.triage
 
         changes = kwargs.get("update_fields", None)

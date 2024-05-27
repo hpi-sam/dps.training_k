@@ -93,24 +93,26 @@ class Action(UUIDable, models.Model):
         return f"Behandlung {self.name} wurde durchgeführt"
 
     def examination_result(self, patient_state_data):
-        result_string = f"{self.name} Ergebnis:"
-        # iterate through result map
-        results = json.loads(self.results)
-        for key, values in results.items():
-            # find correct result code for this patient
-            result_code = json.loads(patient_state_data)[key]
-            # find string value corresponding to result code
-            found = False
-            for value in values:
-                if result_code in value:
-                    result_string += f" {key}: {value[result_code]}"
-                    found = True
-            if not found:
-                raise ValueError(
-                    "Examination result: Couldn't find corresponding value for result code"
-                )
+        return f"{self.name} wurde durchgeführt"
+        # result_string = f"{self.name} Ergebnis:"
+        # # iterate through result map
+        # results = json.loads(self.results)
+        # for key, values in results.items():
+        #    # find correct result code for this patient
+        #    result_code = json.loads(patient_state_data)[key]
+        #    # find string value corresponding to result code
+        #    found = False
+        #    for value in values:
+        #        if result_code in value:
+        #            result_string += f" {key}: {value[result_code]}"
+        #            found = True
+        #    if not found:
+        #        raise ValueError(
+        #            "Examination result: Couldn't find corresponding value for result code"
+        #        )
 
-        return result_string
+    
+        # return result_string
 
     def production_result(self):
         return f"{self.name} wurde durchgeführt"
