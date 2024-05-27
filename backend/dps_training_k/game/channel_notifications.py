@@ -93,6 +93,25 @@ class ChannelNotifier:
         event = {"type": ChannelEventTypes.ACTION_CHECK_CHANGED_EVENT}
         cls._notify_group(channel, event)
 
+    @classmethod
+    def type_to_notifier(cls):
+        return {
+            models.PatientInstance: PatientInstanceDispatcher,
+            models.Area: AreaDispatcher,
+            models.Lab: LabDispatcher,
+            models.MaterialInstance: MaterialInstanceDispatcher,
+            models.Personnel: PersonnelDispatcher,
+        }
+
+    @classmethod
+    def get_exercise_from_instance(cls, instance):
+        notifier_class = cls.type_to_notifier().get(type(instance))
+        if notifier_class:
+            return notifier_class.get_exercise(instance)
+        raise NotImplementedError(
+            f"No exercise getter implemented for type {type(instance).__name__}"
+        )
+
 
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
@@ -252,7 +271,6 @@ class LogEntryDispatcher(ChannelNotifier):
 
     @classmethod
     def dispatch_event(cls, log_entry, changes, is_updated):
-
         if log_entry.is_valid():
             cls._notify_log_update_event(log_entry)
 
@@ -276,19 +294,19 @@ class MaterialInstanceDispatcher(ChannelNotifier):
             cls._notify_exercise_update(cls.get_exercise(material))
 
         if changes_set & assignment_changes or not changes:
-            channel = cls.get_group_name(material.attached_instance().exercise)
+            channel = cls.get_group_name(cls.get_exercise(material))
             event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
             cls._notify_group(channel, event)
 
     @classmethod
     def delete_and_notify(cls, material, *args, **kwargs):
-        exercise = material.attached_instance().exercise
+        exercise = cls.get_exercise(material)
         super(material.__class__, material).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)
 
     @classmethod
     def get_exercise(cls, material):
-        return material.attached_instance().exercise
+        return cls.get_exercise_from_instance(material.attached_instance())
 
 
 class PatientInstanceDispatcher(ChannelNotifier):
@@ -350,7 +368,7 @@ class PersonnelDispatcher(ChannelNotifier):
             cls._notify_exercise_update(cls.get_exercise(personnel))
 
         if changes_set & assignment_changes or not changes:
-            channel = cls.get_group_name(personnel.attached_instance().exercise)
+            channel = cls.get_group_name(cls.get_exercise(personnel))
             event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
             cls._notify_group(channel, event)
 
@@ -362,4 +380,10 @@ class PersonnelDispatcher(ChannelNotifier):
 
     @classmethod
     def get_exercise(cls, personnel):
-        return personnel.attached_instance().exercise
+        return cls.get_exercise_from_instance(personnel.attached_instance())
+
+
+class LabDispatcher(ChannelNotifier):
+    @classmethod
+    def get_exercise(cls, lab):
+        return lab.exercise
