@@ -7,7 +7,7 @@ from game.models import (
     MaterialInstance,
     ActionInstance,
     ScheduledEvent,
-    Exercise,
+    Personnel,
     ActionInstanceStateNames,
 )
 from game.serializers.action_check_serializers import (
@@ -22,6 +22,7 @@ from ..channel_notifications import (
     PersonnelDispatcher,
     MaterialInstanceDispatcher,
 )
+from ..serializers.resource_assignment_serializer import AreaResourceSerializer
 
 
 class PatientConsumer(AbstractConsumer):
@@ -36,8 +37,10 @@ class PatientConsumer(AbstractConsumer):
         ACTION_CHECK = "action-check"
         ACTION_CHECK_STOP = "action-check-stop"
         ACTION_ADD = "action-add"
-        MATERIAL_RELEASE = "material-release"
         MATERIAL_ASSIGN = "material-assign"
+        MATERIAL_RELEASE = "material-release"
+        PERSONNEL_ASSIGN = "personnel-assign"
+        PERSONNEL_RELEASE = "personnel-release"
 
     class PatientOutgoingMessageTypes:
         RESPONSE = "response"
@@ -47,8 +50,8 @@ class PatientConsumer(AbstractConsumer):
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
         ACTION_CHECK = "action-check"
+        RESOURCE_ASSIGNMENTS = "resource-assignments"
         STATE_CHANGE = "state"
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -81,17 +84,24 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_action_add,
                 "actionName",
             ),
-            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
-                self.handle_material_release,
-                "materialId",
-            ),
             self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
                 self.handle_material_assign,
                 "materialId",
             ),
+            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
+                self.handle_material_release,
+                "materialId",
+            ),
+            self.PatientIncomingMessageTypes.PERSONNEL_ASSIGN: (
+                self.handle_personnel_assign,
+                "personnelId",
+            ),
+            self.PatientIncomingMessageTypes.PERSONNEL_RELEASE: (
+                self.handle_personnel_release,
+                "personnelId",
+            ),
         }
 
-    @property
     def get_patient_instance(self):
         # this enforces that we always work with up to date data from the database
         # if you want to update values, copy the instance this function returns and work with that.
@@ -117,10 +127,11 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-            self.action_list_event(None)
             self.state_change_event(None)
-            if self.exercise.state == Exercise.StateTypes.RUNNING:
+            if self.exercise.is_running():
                 self.exercise_start_event(None)
+                self.action_list_event(None)
+                self.resource_assignment_event(None)
 
         else:
             self.close()
@@ -202,6 +213,23 @@ class PatientConsumer(AbstractConsumer):
                 message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
             )
 
+    def handle_personnel_release(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(pk=personnel_id)
+        area = patient_instance.area
+        succeeded = personnel.try_moving_to(area)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
+    def handle_personnel_assign(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(pk=personnel_id)
+        succeeded = personnel.try_moving_to(patient_instance)
+        if not succeeded:
+            self.send_failure(
+                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
+            )
+
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -234,7 +262,9 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def state_change_event(self, event):
-        serialized_state = StateSerializer(self.get_patient_instance.patient_state).data
+        serialized_state = StateSerializer(
+            self.get_patient_instance().patient_state
+        ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
             state=serialized_state,
@@ -263,10 +293,10 @@ class PatientConsumer(AbstractConsumer):
         """all action_instances where either the patient_instance is self.patient_instance or 
         the category is production and the area is the same as the patient_instance.area"""
         action_instances = ActionInstance.objects.filter(
-            Q(patient_instance=self.get_patient_instance)
+            Q(patient_instance=self.get_patient_instance())
             | Q(
                 template__category=Action.Category.PRODUCTION,
-                area=self.get_patient_instance.area,
+                area=self.get_patient_instance().area,
             )
         ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
         # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
@@ -290,4 +320,24 @@ class PatientConsumer(AbstractConsumer):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_LIST,
             actions=actions,
+        )
+
+    def resource_assignment_event(self, event):
+        patient_instance = self.get_patient_instance()
+
+        if not patient_instance:
+            return
+
+        area = patient_instance.area
+
+        if not area:
+            self.send_event(
+                self.PatientOutgoingMessageTypes.RESOURCE_ASSIGNMENTS,
+                resourceAssignments=[],
+            )
+
+        area_data = AreaResourceSerializer(area).data
+        self.send_event(
+            self.PatientOutgoingMessageTypes.RESOURCE_ASSIGNMENTS,
+            resourceAssignments=[area_data],
         )
