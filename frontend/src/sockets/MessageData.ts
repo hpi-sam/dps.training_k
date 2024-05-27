@@ -8,7 +8,7 @@ interface MessageData {
 	patientHistory?: string
 	patientPersonalDetails?: string
 	patientBiometrics?: string
-	areaName?: string
+	areaId?: number
 	patientName?: string
 	code?: number
 	patientId?: string
@@ -22,7 +22,7 @@ interface MessageData {
 	availableActions: AvailableAction[]
 	availableMaterials: AvailableMaterial[]
 	actionDeclinationReason?: string
-	ressourceAssignments: RessourceAssignments
+	resourceAssignments: ResourceAssignment[]
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
@@ -37,6 +37,7 @@ interface Exercise {
 }
 
 interface Area {
+	areaId: number
 	areaName: string
 	patients: Patient[]
 	personnel: Personnel[]
@@ -102,25 +103,23 @@ interface AvailableMaterial {
 	materialType: string
 }
 
-interface RessourceAssignments {
-	ressourceAssignments: RessourceAssignment[]
+interface ResourceAssignments {
+	resourceAssignments: ResourceAssignment[]
 }
 
-interface RessourceAssignment {
-	areaName: string
+interface ResourceAssignment {
+	areaId: number
 	personnel: PersonnelAssignments[]
 	material: MaterialAssignments[]
 }
 
 interface PersonnelAssignments {
 	personnelId: number
-	personnelName: string
 	patientId: string
 }
 
 interface MaterialAssignments {
 	materialId: number
-	materialName: string
 	patientId: string
 }
 
@@ -132,7 +131,7 @@ interface LogEntry {
 	logId: number
 	logMessage: string
 	logTime: Date
-	areaName: string
+	areaId: number
 	patientId: string
 	personnelIds: number[]
 	materialNames: string[]

@@ -1,0 +1,42 @@
+Tabelle 0:
+O2,Nitrat,Analgesie,Lyse
+ja,ja,ja,ja
+ja,ja,ja,nein
+ja,ja,nein,ja
+ja,ja,nein,nein
+ja,nein,ja,ja
+ja,nein,ja,nein
+ja,nein,nein,ja
+ja,nein,nein,nein
+nein,ja,ja,ja
+nein,ja,ja,nein
+nein,ja,nein,ja
+nein,ja,nein,nein
+nein,nein,ja,ja
+nein,nein,ja,nein
+nein,nein,nein,ja
+nein,nein,nein,nein
+Tabelle 1:
+Nitrat,Lyse
+ja,ja
+ja,nein
+nein,ja
+nein,nein
+Table-Id: 0 Immer: 102
+Table-Id: 1 Immer: 103
+Table-Id: 2 Immer: 104
+Table-Id: 3 Immer: 105
+"Table-Id: 4 'Nicht beatmet:', '205', '215', '225', '235', '245', '255', '265', '275', '285', '295', '305', '315', '325', '335', '345', '355', 'Beatmet:', '705', '715', '745', '755'"
+"Table-Id: 5 'Nicht beatmet:', '206', '216', '226', '236', '246', '256', '266', '276', '286', '296', '306', '316', '326', '336', '346', '356', 'Beatmet:', '706', '716', '746', '756'"
+"Table-Id: 6 'Nicht beatmet:', '207', '217', '227', '237', '247', '257', '267', '277', '287', '297', '307', '317', '327', '337', '347', '357', 'Beatmet:', '707', '717', '747', '757'"
+"Table-Id: 7 'Nicht beatmet:', '208', '218', '228', '238', '248', '258', '268', '278', '288', '298', '308', '318', '328', '338', '348', '358', 'Beatmet:', '708', '718', '748', '758'"
+"Table-Id: 8 'Nicht beatmet:', '209', '219', '229', '239', '249', '259', '269', '279', '289', '299', '309', '319', '329', '339', '349', '359', 'Beatmet:', '709', '719', '749', '759'"
+"Table-Id: 9 'Nicht beatmet:', '210', '220', '230', '240', '250', '260', '270', '280', '290', '300', '310', '320', '330', '340', '350', '360', 'Beatmet:', '710', '720', '750', '760'"
+"Table-Id: 10 keine Lyse: 500'Nicht beatmet:', '209', '219', '229', '239', '249', '259', '269', '279', '289', '299', '309', '319', '329', '339', '349', '359', 'Beatmet:', '709', '719', '749', '759'"
+"Table-Id: 11 keine Lyse: 500'Nicht beatmet:', '210', '220', '230', '240', '250', '260', '270', '280', '290', '300', '310', '320', '330', '340', '350', '360', 'Beatmet:', '710', '720', '750', '760'"
+Table-Id: 12 Immer: 552
+Table-Id: 13 Immer: 553
+Table-Id: 14 Immer: 554
+Table-Id: 15 Immer: 555
+"Table-Id: 16 keine Lyse: 502'Nicht beatmet:', '209', '219', '229', '239', '249', '259', '269', '279', '289', '299', '309', '319', '329', '339', '349', '359', 'Beatmet:', '709', '719', '749', '759'"
+"Table-Id: 17 keine Lyse: 502'Nicht beatmet:', '210', '220', '230', '240', '250', '260', '270', '280', '290', '300', '310', '320', '330', '340', '350', '360', 'Beatmet:', '710', '720', '750', '760'"

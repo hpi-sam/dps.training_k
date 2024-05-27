@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from asgiref.sync import sync_to_async
 from channels.testing import WebsocketCommunicator
 from django.core.management import call_command
@@ -7,12 +9,12 @@ from configuration import settings
 from configuration.asgi import application
 from template.models import PatientInformation
 from ..models import PatientInstance, Exercise, Area
-from unittest.mock import patch
 
 
 class TestUtilsMixin:
     async def create_patient_communicator_and_authenticate(self):
         await sync_to_async(call_command)("patient_information")
+        await sync_to_async(call_command)("loaddata", "patient_state_1004.json")
 
         self.exercise = await sync_to_async(Exercise.createExercise)()
         self.patient_information = await sync_to_async(PatientInformation.objects.get)(
@@ -44,7 +46,6 @@ class TestUtilsMixin:
         await communicator.receive_json_from()  # fetch exercise
         await communicator.receive_json_from()  # fetch actions
         await communicator.receive_json_from()  # fetch patients
-        await communicator.receive_json_from()  # fetch action list
 
     def deactivate_notifications(self):
         @classmethod

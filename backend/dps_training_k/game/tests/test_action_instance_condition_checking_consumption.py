@@ -1,7 +1,9 @@
 import uuid
 from unittest.mock import patch
-from django.test import TestCase
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.test import TestCase
+
 from template.tests.factories import MaterialFactory, ConditionFactory, ActionFactory
 from .factories import (
     ActionInstanceFactory,
@@ -9,8 +11,8 @@ from .factories import (
     PatientFactory,
     PersonnelFactory,
 )
-from ..models import MaterialInstance
 from .mixin import TestUtilsMixin
+from ..models import MaterialInstance
 
 
 class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
@@ -70,7 +72,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             action_instance.attached_instance(), action_instance.attached_instance()
         )
         self.assertEqual(conditions_satisfied, False)
-        personnel = PersonnelFactory(assigned_patient=action_instance.patient_instance)
+        personnel = PersonnelFactory(patient_instance=action_instance.patient_instance)
         material_instance_1 = MaterialInstanceFactory(
             template=self.material_1,
             patient_instance=action_instance.patient_instance,
@@ -96,7 +98,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
         )
-        personnel = PersonnelFactory(assigned_patient=action_instance.patient_instance)
+        personnel = PersonnelFactory(patient_instance=action_instance.patient_instance)
         material_instance_1 = MaterialInstanceFactory(
             template=self.material_1,
             patient_instance=action_instance.patient_instance,
@@ -129,7 +131,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
         )
-        personnel = PersonnelFactory(assigned_patient=action_instance.patient_instance)
+        personnel = PersonnelFactory(patient_instance=action_instance.patient_instance)
         self.material_1.is_reusable = False
         self.material_1.save(update_fields=["is_reusable"])
 

@@ -1,6 +1,6 @@
 import asyncio
 import datetime
-import unittest.mock as mock
+from unittest.mock import patch
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -63,7 +63,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
         self.assertEqual(
             action_instance.result,
-            "Recovery Position Ergebnis: Hb: Ergebnis1 BZ: Ergebnis2",
+            "Recovery Position wurde durchgeführt",
         )
 
     def test_action_production(self):
@@ -91,12 +91,21 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         ).count()
         self.assertEqual(count_before + 1, count_after)
 
+
+class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
+    def timezone_from_timestamp(self, timestamp):
+        return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
+
     def test_action_production_lifecycle(self):
         """
         Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
         """
         call_command("minimal_actions")
         call_command("minimal_material")
+        self.variable_backup = settings.CURRENT_TIME
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
+        self.deactivate_notifications()
+        self.deactivate_condition_checking()
         action_template = Action.objects.get(
             name="Fresh Frozen Plasma (0 positiv) auftauen"
         )
@@ -122,6 +131,32 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
                 area=area,
             )
         )
+        settings.CURRENT_TIME = self.variable_backup
+        self.activate_notifications()
+        self.activate_condition_checking()
+
+    @patch(
+        "game.channel_notifications.MaterialInstanceDispatcher._notify_exercise_update"
+    )
+    def test_action_production_notification(self, _notify_exercise_update):
+        """
+        Integration Test: If production action is finished, a notification is send to the consumer.
+        """
+
+        call_command("minimal_actions")
+        call_command("minimal_material")
+        action_template = Action.objects.get(
+            name="Fresh Frozen Plasma (0 positiv) auftauen"
+        )
+        area = AreaFactory()
+        lab = LabFactory()
+        action_instance = ActionInstance.create(
+            action_template,
+            lab=lab,
+            area=area,
+        )
+        action_instance._application_finished()
+        self.assertEqual(_notify_exercise_update.call_count, 1)
 
 
 class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
@@ -140,7 +175,7 @@ class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
         self.activate_notifications()
         self.activate_condition_checking()
 
-    @mock.patch("game.models.MaterialInstance.generate_materials")
+    @patch("game.models.MaterialInstance.generate_materials")
     async def test_action_production_dispatching(self, generate_materials):
         """
         when a production action was added via websockets, check whether action instance steps through the production routine

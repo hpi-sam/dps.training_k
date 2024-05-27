@@ -4,10 +4,12 @@
 	import TriagePopup from '@/components/widgets/TriagePopup.vue'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 	import PatientStatus from '@/components/widgets/PatientStatus.vue'
-	import { triageToColor } from '@/utils'
+	import {triageToColor} from '@/utils'
 	import PatientModel from '../widgets/PatientModel.vue'
+	import {useExerciseStore} from "@/stores/Exercise"
 
 	const patientStore = usePatientStore()
+	const exerciseStore = useExerciseStore()
 
 	const showTriagePopup = ref(false)
 
@@ -20,7 +22,7 @@
 		v-if="showMovePopup"
 		:module="'Patient'"
 		:type-to-move="'Patient'"
-		:current-area="patientStore.areaName"
+		:current-area="patientStore.areaId"
 		@close-popup="showMovePopup=false"
 	/>
 	<div class="flex-container">
@@ -39,7 +41,7 @@
 				id="nav-area-name"
 				@click="showMovePopup = true"
 			>
-				{{ patientStore.areaName }}
+				{{ exerciseStore.getAreaName(patientStore.areaId) }}
 			</button>
 		</nav>
 		<div class="scroll">

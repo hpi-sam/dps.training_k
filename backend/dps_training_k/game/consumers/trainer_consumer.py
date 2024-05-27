@@ -74,11 +74,11 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.AREA_ADD: (self.handle_add_area,),
             self.TrainerIncomingMessageTypes.AREA_DELETE: (
                 self.handle_delete_area,
-                "areaName",
+                "areaId",
             ),
             self.TrainerIncomingMessageTypes.PATIENT_ADD: (
                 self.handle_add_patient,
-                "areaName",
+                "areaId",
                 "patientName",
                 "code",
             ),
@@ -94,7 +94,7 @@ class TrainerConsumer(AbstractConsumer):
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
-                "areaName",
+                "areaId",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_DELETE: (
                 self.handle_delete_personnel,
@@ -107,7 +107,7 @@ class TrainerConsumer(AbstractConsumer):
             ),
             self.TrainerIncomingMessageTypes.MATERIAL_ADD: (
                 self.handle_add_material,
-                "areaName",
+                "areaId",
                 "materialName",
             ),
             self.TrainerIncomingMessageTypes.MATERIAL_DELETE: (
@@ -150,8 +150,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_start_exercise(self, exercise):
         owned_patients = PatientInstance.objects.filter(exercise=exercise)
         for patient in owned_patients:
-            # patient.schedule_state_change() ToDo: Uncomment once Patient State is integrated
-            pass
+            patient.schedule_state_change()
         exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_end_exercise(self, exercise):
@@ -167,18 +166,18 @@ class TrainerConsumer(AbstractConsumer):
     def handle_add_area(self, exercise):
         Area.create_area(name="Bereich", exercise=exercise, isPaused=False)
 
-    def handle_delete_area(self, exercise, areaName):
+    def handle_delete_area(self, _, areaId):
         try:
-            area = Area.objects.get(exercise=exercise, name=areaName)
+            area = Area.objects.get(pk=areaId)
             area.delete()
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the name '{areaName}'",
+                f"No area found with the pk '{areaId}'",
             )
 
-    def handle_add_patient(self, exercise, areaName, patientName, code):
+    def handle_add_patient(self, _, areaId, patientName, code):
         try:
-            area = Area.objects.get(name=areaName, exercise=exercise)
+            area = Area.objects.get(pk=areaId)
             patient_information = PatientInformation.objects.get(code=code)
             PatientInstance.objects.create(
                 name=patientName,
@@ -189,11 +188,11 @@ class TrainerConsumer(AbstractConsumer):
             )
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the name '{areaName}'",
+                f"No area found with the pk '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the name '{areaName}'",
+                f"Multiple areas found with the pk '{areaId}'",
             )
 
     def handle_update_patient(self, exercise, patientFrontendId, patientName, code):
@@ -212,25 +211,25 @@ class TrainerConsumer(AbstractConsumer):
                 f"No patient found with the patientId '{patientFrontendId}'",
             )
 
-    def handle_add_personnel(self, exercise, areaName):
+    def handle_add_personnel(self, _, areaId):
         try:
-            area = Area.objects.get(name=areaName, exercise=exercise)
-            Personnel.create_personnel(area=area, name="Personnel")
+            area = Area.objects.get(pk=areaId)
+            Personnel.create_personnel(area=area, name="Personal")
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the name '{areaName}'",
+                f"No area found with the pk '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the name '{areaName}'",
+                f"Multiple areas found with the pk '{areaId}'",
             )
 
-    def handle_update_personnel(self, exercise, personnelId, personnelName):
+    def handle_update_personnel(self, _, personnelId, personnelName):
         personnel = Personnel.objects.get(id=personnelId)
         personnel.name = personnelName
         personnel.save()
 
-    def handle_delete_personnel(self, exercise, personnel_id):
+    def handle_delete_personnel(self, _, personnel_id):
         try:
             personnel = Personnel.objects.get(id=personnel_id)
             personnel.delete()
@@ -239,12 +238,21 @@ class TrainerConsumer(AbstractConsumer):
                 f"No personnel found with the pk '{personnel_id}'",
             )
 
-    def handle_add_material(self, exercise, areaName, materialName):
-        area = Area.objects.get(name=areaName)
-        template = Material.objects.get(name=materialName)
-        MaterialInstance.objects.create(template=template, area=area)
+    def handle_add_material(self, _, areaId, materialName):
+        try:
+            area = Area.objects.get(id=areaId)
+            template = Material.objects.get(name=materialName)
+            MaterialInstance.objects.create(template=template, area=area)
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the pk '{areaId}'",
+            )
+        except Area.MultipleObjectsReturned:
+            self.send_failure(
+                f"Multiple areas found with the pk '{areaId}'",
+            )
 
-    def handle_delete_material(self, exercise, materialId):
+    def handle_delete_material(self, _, materialId):
         try:
             material = MaterialInstance.objects.get(id=materialId)
             material.delete()

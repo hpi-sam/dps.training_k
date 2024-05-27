@@ -1,26 +1,23 @@
 <script setup lang="ts">
-	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
-	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
-	import {computed,ref} from 'vue'
+	import {useResourceAssignmentsStore} from '@/stores/ResourceAssignments'
+	import {computed, ref} from 'vue'
 	import socketPatient from '@/sockets/SocketPatient'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
+	import {useExerciseStore} from "@/stores/Exercise"
 
 	const patientStore = usePatientStore()
-	const ressourceAssignmentStore = useRessourceAssignmentsStore()
-	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaName))
-	
+	const resourceAssignmentStore = useResourceAssignmentsStore()
 	const exerciseStore = useExerciseStore()
-	const personnel = computed(() => exerciseStore.getPersonnelOfArea(patientStore.areaName))
+
+	const assignments = computed(() => resourceAssignmentStore.getResourceAssignmentsOfArea(patientStore.areaId))
 
 	const assignedPersonnel = computed(() => assignments.value?.personnel.filter(assignment => assignment.patientId === patientStore.patientId))
-	const freePersonnel = computed(() => personnel.value?.filter(personnel => 
-		!assignments.value?.personnel.some(assignment => assignment.personnelId === personnel.personnelId)
-	))
-	const busyPersonnel = computed(() => assignments.value?.personnel.filter(assignment => 
-		assignment.patientId != patientStore.patientId && 
+	const busyPersonnel = computed(() => assignments.value?.personnel.filter(assignment =>
+		assignment.patientId != patientStore.patientId &&
 		assignment.patientId != null && assignment.patientId != ''
 	))
+	const freePersonnel = computed(() => assignments.value?.personnel.filter(personnelAssignment => personnelAssignment.patientId === null))
 
 	function releasePersonnel(personnelId: number) {
 		socketPatient.releasePersonnel(personnelId)
@@ -45,7 +42,7 @@
 		:module="'Patient'"
 		:type-to-move="'Personnel'"
 		:id-of-moveable="selectedPersonnel" 
-		:current-area="patientStore.areaName"
+		:current-area="patientStore.areaId"
 		@close-popup="showMovePopup=false"
 	/>
 	<div class="flex-container">
@@ -61,7 +58,7 @@
 					>
 						<button class="list-item-button">
 							<div class="list-item-name">
-								{{ personnelAssignment.personnelName }}
+								{{ exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName }}
 							</div>
 						</button>
 						<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
@@ -79,7 +76,7 @@
 					>
 						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
 							<div class="list-item-name">
-								{{ personnelAssignment.personnelName }}
+								{{ exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName }}
 							</div>
 						</button>
 						<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
@@ -97,10 +94,11 @@
 					>
 						<button class="list-item-button">
 							<div class="list-item-name">
-								{{ personnelAssignment.personnelName }}
+								{{ exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName }}
 							</div>
 							<div class="list-item-name assigned-patient">
-								Patient {{ personnelAssignment.patientId }}
+								{{ exerciseStore.getPatient(personnelAssignment.patientId)?.patientName }}
+								({{ personnelAssignment.patientId }})
 							</div>
 						</button>
 					</div>

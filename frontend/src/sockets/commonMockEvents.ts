@@ -505,7 +505,7 @@ export const commonMockEvents = [
 	{
 		id: 'exercise',
 		data: '{"messageType":"exercise","exercise":{"exerciseId":"abcdef","areas":[' +
-			'{"areaName":"Intensiv",' +
+			'{"areaId":1,"areaName":"Intensiv",' +
 				'"patients":[' +
 					'{"patientId":"145345","patientName":"Anna Müller","code":1007,"triage":"1"},' +
 					'{"patientId":"256443","patientName":"Frank Huber","code":1008,"triage":"1"}' +
@@ -516,12 +516,10 @@ export const commonMockEvents = [
 				'],' +
 				'"material":[' +
 					'{"materialId":1,"materialName":"Beatmungsgerät","materialType":"DE"},' +
-					'{"materialId":2,"materialName":"Defibrillator","materialType":"DE"},' +
-					'{"materialId":2,"materialName":"Blut 0 negativ","materialType":"BL"},' +
-					'{"materialId":2,"materialName":"Blut B positiv","materialType":"BL"}' +
+					'{"materialId":2,"materialName":"Defibrillator","materialType":"DE"}' +
 				']' +
 			'},' +
-			'{"areaName":"ZNA",' +
+			'{"areaId":2,"areaName":"ZNA",' +
 				'"patients":[' +
 					'{"patientId":"123456","patientName":"Ludger Göhlke","code":1009,"triage":"1"},' +
 					'{"patientId":"623422","patientName":"Friedrich Gerhard","code":1007,"triage":"1"},' +
@@ -549,6 +547,10 @@ export const commonMockEvents = [
 				'],' +
 				'"material":[' +
 					'{"materialId":3,"materialName":"EKG-Maschine","materialType":"DE"},' +
+					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"DE"},' +
+					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"DE"},' +
+					'{"materialId":8,"materialName":"EEG","materialType":"DE"},' +
+					'{"materialId":9,"materialName":"Narkosegerät","materialType":"DE"},' +
 					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"},' +
 					'{"materialId":11,"materialName":"Defibrillator","materialType":"DE"},' +
 					'{"materialId":12,"materialName":"Anästhesiegerät","materialType":"DE"},' +
@@ -560,17 +562,13 @@ export const commonMockEvents = [
 					'{"materialId":18,"materialName":"MRT-Gerät","materialType":"DE"},' +
 					'{"materialId":19,"materialName":"Röntgengerät","materialType":"DE"},' +
 					'{"materialId":20,"materialName":"CT-Scanner","materialType":"DE"},' +
-					'{"materialId":4,"materialName":"EKG-Monitor","materialType":"DE"},' +
-					'{"materialId":7,"materialName":"Pulsoximeter","materialType":"DE"},' +
-					'{"materialId":8,"materialName":"EEG","materialType":"DE"},' +
-					'{"materialId":9,"materialName":"Narkosegerät","materialType":"DE"},' +
 					'{"materialId":21,"materialName":"Blut AB positiv","materialType":"BL"},' +
 					'{"materialId":21,"materialName":"Blut A positiv","materialType":"BL"},' +
 					'{"materialId":21,"materialName":"Blut 0 positiv","materialType":"BL"},' +
 					'{"materialId":22,"materialName":"Blut 0 negativ","materialType":"BL"}' +
 				']' +
 			'},' +
-			'{"areaName":"Wagenhalle",' +
+			'{"areaId":3,"areaName":"Wagenhalle",' +
 				'"patients":[' +
 					'{"patientId":"126143","patientName":"Isabelle Busch","code":1020,"triage":"3"},' +
 					'{"patientId":"462455","patientName":"Jasper Park","code":1016,"triage":"2"}' +
@@ -582,7 +580,6 @@ export const commonMockEvents = [
 				'"material":[' +
 					'{"materialId":5,"materialName":"EKG-Gerät","materialType":"DE"},' +
 					'{"materialId":6,"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
-					'{"materialId":10,"materialName":"Beatmungsgerät","materialType":"DE"},' +
 					'{"materialId":23,"materialName":"Blut A negativ","materialType":"BL"},' +
 					'{"materialId":24,"materialName":"Blut A positiv","materialType":"BL"}' +
 				']' +

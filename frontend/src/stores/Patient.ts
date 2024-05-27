@@ -9,12 +9,11 @@ export const usePatientStore = defineStore('patient', {
 		code: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',
-		areaName: '',
+		areaId: Number.NEGATIVE_INFINITY,
 		airway: '',
 		breathing: '',
 		circulation: '',
 		consciousness: '',
-		phaseNumber: 0,
 		psyche: '',
 		pupils: '',
 		skin: '',
@@ -30,7 +29,6 @@ export const usePatientStore = defineStore('patient', {
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
-			this.phaseNumber = state.phaseNumber
 			this.airway = state.airway
 			this.breathing = state.breathing
 			this.circulation = state.circulation
@@ -43,7 +41,7 @@ export const usePatientStore = defineStore('patient', {
 			const exerciseStore = useExerciseStore()
 			this.patientName = exerciseStore.getPatient(this.patientId)?.patientName || ''
 			this.code = exerciseStore.getPatient(this.patientId)?.code || Number.NEGATIVE_INFINITY
-			this.areaName = exerciseStore.getAreaOfPatient(this.patientId)?.areaName || ''
+			this.areaId = exerciseStore.getAreaOfPatient(this.patientId)?.areaId || Number.NEGATIVE_INFINITY
 			this.triage = exerciseStore.getPatient(this.patientId)?.triage || '-'
 
 			if (useAvailablesStore().getPatient(this.code)) this.initializePatientFromAvailablePatients()

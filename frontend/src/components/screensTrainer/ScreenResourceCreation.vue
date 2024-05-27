@@ -30,9 +30,9 @@
 </script>
 
 <script lang="ts">
-	const currentArea = ref("")
+	const currentArea = ref(0)
 
-	export const setArea = (newArea: string) => {
+	export const setArea = (newArea: number) => {
 		currentArea.value = newArea
 	}
 </script>
