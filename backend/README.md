@@ -65,3 +65,13 @@
 ## Development
 
 - to run tests: `docker exec -it K-dPS-django python manage.py test`
+
+### Working with Fixtures
+- (clear database)
+- fill database with data you want to export as fixture (e.g. `docker exec -it K-dPS-django import_patient_states`)
+- create fixture: 
+  - `docker exec -it K-dPS-django bash`
+  - `export PYTHONIOENCODING=utf8`
+  - `python manage.py dumpdata template > patient_states.json`
+- move the fixture to the "fixtures" directory
+- now you can load it: `docker exec -it K-dPS-django python manage.py loaddata patient_states.json`

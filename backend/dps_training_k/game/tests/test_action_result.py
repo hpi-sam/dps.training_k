@@ -53,7 +53,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
         self.assertEqual(
             action_instance.result,
-            "Recovery Position Ergebnis: Hb: Ergebnis1 BZ: Ergebnis2",
+            "Recovery Position wurde durchgeführt",
         )
 
     def test_action_production(self):

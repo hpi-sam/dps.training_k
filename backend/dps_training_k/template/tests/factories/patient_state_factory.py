@@ -1,18 +1,30 @@
 import factory
 from template.models import PatientState
 from .state_transition_factory import StateTransitionFactory
-from .state_data_factory import StateDataFactory
+from .state_data_factory import VitalSignsData, ExaminationCodesData
 from template.models import StateTransition
+import json
 
 
 class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = PatientState
-        django_get_or_create = ("transition", "data", "state_depth", "is_dead")
-
+        django_get_or_create = (
+            "code",
+            "state_id",
+            "transition",
+            "vital_signs",
+            "examination_codes",
+            "special_events",
+            "is_dead",
+        )
+    
+    code = factory.Sequence(lambda n: n + 1000)
+    state_id = factory.Sequence(lambda n: n + 100)
     transition = factory.SubFactory(StateTransitionFactory)
-    data = factory.LazyFunction(lambda: StateDataFactory())
-    state_depth = 1
+    vital_signs = json.dumps({})
+    examination_codes = factory.LazyFunction(ExaminationCodesData)
+    special_events = None
     is_dead = False
 
 
@@ -43,10 +55,9 @@ class PatientStateFactory:
         states = [initial_state]
         old_transitions = self._generate_chained_transitions()
         states[0].transition = old_transitions[0]
-        states[0].depth = 1
         states[0].save()
         for i in range(2, self.depth + 2):
-            states = self._generate_Patient_States(i)
+            states = self._generate_Patient_States()
             new_transitions = self._generate_chained_transitions()
             for j in range(self.transition_count):
                 states[j].transition = new_transitions[j]
@@ -69,8 +80,8 @@ class PatientStateFactory:
 
         return current_state_transitions
 
-    def _generate_Patient_States(self, current_depth):
+    def _generate_Patient_States(self):
         return [
-            EmptyPatientStateFactory.build(transition=None, state_depth=current_depth)
+            EmptyPatientStateFactory.build(transition=None)
             for i in range(self.transition_count)
         ]

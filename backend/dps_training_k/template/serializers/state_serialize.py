@@ -1,21 +1,18 @@
 from rest_framework import serializers
 from template.models import PatientState
 
-
 class StateSerializer(serializers.Serializer):
-    phaseNumber = serializers.IntegerField(source="state_depth")
-    airway = serializers.CharField(source="data.airway")
-    breathing = serializers.CharField(source="data.breathing")
-    circulation = serializers.CharField(source="data.circulation")
-    consciousness = serializers.CharField(source="data.consciousness")
-    pupils = serializers.CharField(source="data.pupils")
-    psyche = serializers.CharField(source="data.psyche")
-    skin = serializers.CharField(source="data.skin")
+    airway = serializers.CharField(source="vital_signs.Airway")
+    breathing = serializers.CharField(source="vital_signs.Breathing")
+    circulation = serializers.CharField(source="vital_signs.Circulation")
+    consciousness = serializers.CharField(source="vital_signs.Bewusstsein")
+    pupils = serializers.CharField(source="vital_signs.Pupillen")
+    psyche = serializers.CharField(source="vital_signs.Psyche")
+    skin = serializers.CharField(source="vital_signs.Haut")
 
     class Meta:
         model = PatientState
         fields = [
-            "phaseNumber",
             "airway",
             "breathing",
             "circulation",
@@ -25,3 +22,4 @@ class StateSerializer(serializers.Serializer):
             "skin",
         ]
         read_only = fields
+    

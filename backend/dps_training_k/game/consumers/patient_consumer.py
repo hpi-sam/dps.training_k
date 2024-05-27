@@ -46,12 +46,12 @@ class PatientConsumer(AbstractConsumer):
         RESPONSE = "response"
         EXERCISE = "exercise"
         TEST_PASSTHROUGH = "test-passthrough"
-        STATE_CHANGE = "state-change"
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
         ACTION_CHECK = "action-check"
         RESOURCE_ASSIGNMENTS = "resource-assignments"
+        STATE_CHANGE = "state"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -127,10 +127,12 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
+            self.state_change_event(None)
             if self.exercise.is_running():
                 self.exercise_start_event(None)
                 self.action_list_event(None)
                 self.resource_assignment_event(None)
+
         else:
             self.close()
 
@@ -265,7 +267,7 @@ class PatientConsumer(AbstractConsumer):
         ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
-            **serialized_state,
+            state=serialized_state,
         )
 
     def action_check_changed_event(self, event):
