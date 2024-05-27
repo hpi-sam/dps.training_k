@@ -70,23 +70,22 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             )  # Properly hash the password
             self.user.save()
 
-            if not self.patient_state: # factory already has it set so we don't wanna overwrite that here
+            if (
+                not self.patient_state
+            ):  # factory already has it set, so we don't want to overwrite that here
                 self.patient_state = PatientState.objects.get(
                     code=self.static_information.code,
-                    state_id=self.static_information.start_status
+                    state_id=self.static_information.start_status,
                 )
-            if not self.triage:
-                self.triage = self.static_information.triage
 
         changes = kwargs.get("update_fields", None)
 
         if (
-            changes
-            and "static_information" in changes
-            and self.triage is not self.static_information.triage
-        ):
+            not self.pk or (changes and "static_information" in changes)
+        ) and self.triage is not self.static_information.triage:
             self.triage = self.static_information.triage
-            changes.append("triage")
+            if changes:
+                changes.append("triage")
 
         PatientInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
@@ -100,6 +99,7 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
 
     def schedule_state_change(self):
         from game.models import ScheduledEvent
+
         if self.patient_state.is_dead:
             return False
         if self.patient_state.is_final():
