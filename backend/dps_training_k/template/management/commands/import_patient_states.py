@@ -683,7 +683,6 @@ class Command(BaseCommand):
             node_type=LogicNode.NodeType.AND,
         )
         table_lines = table[1:]
-        leaf_nodes = []
         if "Nicht beatmet" in extra_conditions:
             subcondition = Subcondition.objects.get(name="Nicht beatmet")
             leaf_node, _ = LogicNode.objects.get_or_create(
@@ -692,7 +691,6 @@ class Command(BaseCommand):
                 subcondition=subcondition,
                 parent=root_node,
             )
-            leaf_nodes.append(leaf_node)
         elif "Beatmet" in extra_conditions:
             subcondition = Subcondition.objects.get(name="Beatmet")
             leaf_node, _ = LogicNode.objects.get_or_create(
@@ -701,7 +699,6 @@ class Command(BaseCommand):
                 subcondition=subcondition,
                 parent=root_node,
             )
-            leaf_nodes.append(leaf_node)
 
         for i, entry in enumerate(current_line):
             # we only create subconditions for the ones that are true. creating ones for false is unnecessary
@@ -713,7 +710,6 @@ class Command(BaseCommand):
                     subcondition=subcondition,
                     parent=root_node,
                 )
-                leaf_nodes.append(leaf_node)
             elif entry == "nein":
                 pass
             # entry contains a value (may also contain chars, but these are never important)
@@ -734,7 +730,6 @@ class Command(BaseCommand):
                     subcondition=subcondition,
                     parent=root_node,
                 )
-                leaf_nodes.append(leaf_node)
 
     def find_next_higher_value(self, current_value, table, line_index):
         for line in table:
