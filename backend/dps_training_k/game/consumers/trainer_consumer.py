@@ -150,8 +150,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_start_exercise(self, exercise):
         owned_patients = PatientInstance.objects.filter(exercise=exercise)
         for patient in owned_patients:
-            # patient.schedule_state_change() ToDo: Uncomment once Patient State is integrated
-            pass
+            patient.schedule_state_change()
         exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_end_exercise(self, exercise):

@@ -13,6 +13,7 @@ from unittest.mock import patch
 class TestUtilsMixin:
     async def create_patient_communicator_and_authenticate(self):
         await sync_to_async(call_command)("patient_information")
+        await sync_to_async(call_command)("loaddata", "patient_state_1004.json")
 
         self.exercise = await sync_to_async(Exercise.createExercise)()
         self.patient_information = await sync_to_async(PatientInformation.objects.get)(

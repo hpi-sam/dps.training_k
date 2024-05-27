@@ -1,0 +1,19 @@
+Tabelle 0:
+O2,freie Atemwege
+ja,ja
+ja,nein
+nein,ja
+nein,nein
+Tabelle 1:
+leer
+"Table-Id: 0 'Nicht beatmet:', '231', '271', '311', '351', 'Beatmet:', '711'"
+"Table-Id: 1 'Nicht beatmet:', '232', '272', '312', '352', 'Beatmet:', '712'"
+"Table-Id: 2 'Nicht beatmet:', '233', '273', '313', '353', 'Beatmet:', '713'"
+"Table-Id: 3 'Nicht beatmet:', '234', '274', '314', '354', 'Beatmet:', '714'"
+"Table-Id: 4 'Nicht beatmet:', '235', '275', '315', '355', 'Beatmet:', '715'"
+"Table-Id: 5 'Nicht beatmet:', '236', '276', '316', '356', 'Beatmet:', '716'"
+"Table-Id: 6 'Nicht beatmet:', '237', '277', '317', '357', 'Beatmet:', '717'"
+"Table-Id: 7 'Nicht beatmet:', '238', '278', '318', '358', 'Beatmet:', '718'"
+"Table-Id: 8 'Nicht beatmet:', '239', '279', '319', '359', 'Beatmet:', '719'"
+"Table-Id: 9 'Nicht beatmet:', '240', '280', '320', '360', 'Beatmet:', '720'"
+Table-Id: 10 Immer: 500

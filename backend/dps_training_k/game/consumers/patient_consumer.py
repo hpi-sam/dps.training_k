@@ -43,11 +43,12 @@ class PatientConsumer(AbstractConsumer):
         RESPONSE = "response"
         EXERCISE = "exercise"
         TEST_PASSTHROUGH = "test-passthrough"
-        STATE_CHANGE = "state-change"
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
         ACTION_CHECK = "action-check"
+        STATE_CHANGE = "state"
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -117,8 +118,10 @@ class PatientConsumer(AbstractConsumer):
             self.send_available_actions()
             self.send_available_patients()
             self.action_list_event(None)
+            self.state_change_event(None)
             if self.exercise.state == Exercise.StateTypes.RUNNING:
                 self.exercise_start_event(None)
+
         else:
             self.close()
 
@@ -234,7 +237,7 @@ class PatientConsumer(AbstractConsumer):
         serialized_state = StateSerializer(self.get_patient_instance.patient_state).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
-            **serialized_state,
+            state=serialized_state,
         )
 
     def action_check_changed_event(self, event):
