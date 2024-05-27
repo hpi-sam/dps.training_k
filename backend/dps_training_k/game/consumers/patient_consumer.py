@@ -22,6 +22,7 @@ from ..channel_notifications import (
     PersonnelDispatcher,
     MaterialInstanceDispatcher,
 )
+from ..serializers.resource_assignment_serializer import AreaResourceSerializer
 
 
 class PatientConsumer(AbstractConsumer):
@@ -321,48 +322,20 @@ class PatientConsumer(AbstractConsumer):
 
     def resource_assignment_event(self, event):
         patient_instance = self.get_patient_instance()
+
+        if not patient_instance:
+            return
+
         area = patient_instance.area
 
-        # Fetch personnel assigned to the patient or the patient's area
-        personnel_qs = Personnel.objects.filter(
-            Q(patient_instance__area=area) | Q(area=area)
-        )
-        personnel_data = [
-            {
-                "personnelId": personnel.id,
-                "patientId": (
-                    personnel.patient_instance.frontend_id
-                    if personnel.patient_instance
-                    else None
-                ),
-            }
-            for personnel in personnel_qs
-        ]
+        if not area:
+            self.send_event(
+                self.PatientOutgoingMessageTypes.RESOURCE_ASSIGNMENTS,
+                resourceAssignments=[],
+            )
 
-        # Fetch materials assigned to the patient or the patient's area
-        material_qs = MaterialInstance.objects.filter(
-            Q(patient_instance__area=area) | Q(area=area)
-        )
-        material_data = [
-            {
-                "materialId": material.id,
-                "patientId": (
-                    material.patient_instance.frontend_id
-                    if material.patient_instance
-                    else None
-                ),
-            }
-            for material in material_qs
-        ]
-
-        resource_assignments = [
-            {
-                "areaId": area.id,
-                "personnel": personnel_data,
-                "material": material_data,
-            }
-        ]
+        area_data = AreaResourceSerializer(area).data
         self.send_event(
             self.PatientOutgoingMessageTypes.RESOURCE_ASSIGNMENTS,
-            resourceAssignments=resource_assignments,
+            resourceAssignments=[area_data],
         )
