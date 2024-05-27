@@ -17,12 +17,12 @@ class EmptyPatientStateFactory(factory.django.DjangoModelFactory):
             "special_events",
             "is_dead",
         )
-    
+
     code = factory.Sequence(lambda n: n + 1000)
     state_id = factory.Sequence(lambda n: n + 100)
     transition = factory.SubFactory(StateTransitionFactory)
     vital_signs = factory.LazyFunction(VitalSignsData)
-    examination_codes = factory.LazyFunction(ExaminationCodesData)
+    examination_codes = factory.LazyFunction(ExaminationCodesData.generate)
     special_events = None
     is_dead = False
 

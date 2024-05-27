@@ -49,7 +49,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         action_instance = ActionInstanceFactory(
             patient_instance=PatientFactory(
                 patient_state=EmptyPatientStateFactory(
-                    examination_codes=ExaminationCodesData(bz="901", hb="400")
+                    examination_codes=ExaminationCodesData.generate()
                 )
             )
         )
@@ -63,7 +63,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
         self.assertEqual(
             action_instance.result,
-            "Recovery Position wurde durchgeführt",
+            "Recovery Position Ergebnis: Hb: Ergebnis1 BZ: Ergebnis2",
         )
 
     def test_action_production(self):

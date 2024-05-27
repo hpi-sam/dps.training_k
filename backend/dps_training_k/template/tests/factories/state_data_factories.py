@@ -18,12 +18,12 @@ class VitalSignsData(JSONFactory):
 
 
 class ExaminationCodesData(JSONFactory):
-    def __new__(
-        cls,
+    @staticmethod
+    def generate(
         bga_oxy="600",
         bga_sbh="650",
         ekg="701",
-        bz="900",
+        bz="901",
         zvd="800",
         ro_extremitaeten="511",
         ro_thorax="305",
@@ -37,8 +37,7 @@ class ExaminationCodesData(JSONFactory):
         niere="120",
         infarkt="130",
     ):
-        """Needed to copy interface of factory"""
-        state_data_dict = {
+        return {
             "BGA-Oxy": bga_oxy,
             "BGA-SBH": bga_sbh,
             "EKG": ekg,
@@ -56,4 +55,3 @@ class ExaminationCodesData(JSONFactory):
             "Niere": niere,
             "Infarkt": infarkt,
         }
-        return super().__new__(cls, state_data_dict)
