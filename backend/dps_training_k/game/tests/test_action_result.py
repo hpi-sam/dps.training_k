@@ -82,16 +82,20 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(count_before + 1, count_after)
 
 
-class ActionResultIntegrationTestCase(TransactionTestCase):
+class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
     def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
     def setUp(self):
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
+        self.deactivate_notifications()
+        self.deactivate_condition_checking()
 
     def tearDown(self):
         settings.CURRENT_TIME = self.variable_backup
+        self.activate_notifications()
+        self.activate_condition_checking()
 
     def test_action_production_lifecycle(self):
         """
