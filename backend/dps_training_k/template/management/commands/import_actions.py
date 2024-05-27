@@ -6,14 +6,6 @@ from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
 from template.models import Action
 
 
-def is_json(myjson):
-    try:
-        json_object = json.loads(myjson)
-    except ValueError as e:
-        return False
-    return True
-
-
 class Command(BaseCommand):
     help = "Populates the database with minimal action list"
 

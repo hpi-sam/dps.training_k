@@ -1,6 +1,4 @@
 from .JSON_factory import JSONFactory
-from template.constants import ActionResultIDs
-import traceback
 
 
 class VitalSignsData(JSONFactory):

@@ -1,9 +1,8 @@
 import factory
+
 from template.models import PatientState
+from .state_data_factories import VitalSignsData, ExaminationCodesData
 from .state_transition_factory import StateTransitionFactory
-from .state_data_factory import VitalSignsData, ExaminationCodesData
-from template.models import StateTransition
-import json
 
 
 class EmptyPatientStateFactory(factory.django.DjangoModelFactory):

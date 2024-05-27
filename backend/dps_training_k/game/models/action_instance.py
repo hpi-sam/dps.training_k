@@ -191,20 +191,18 @@ class ActionInstance(LocalTimeable, models.Model):
                 "An action instance always needs a patient instance or lab to be scheduled"
             )
 
-        if self.lab:
-            ScheduledEvent.create_event(
-                self.lab.exercise,
-                self.template.application_duration,  # ToDo: Replace with scalable local time system
-                "_lab_application_finished",
-                action_instance=self,
-            )
-        else:
-            ScheduledEvent.create_event(
-                self.patient_instance.exercise,
-                self.template.application_duration,  # ToDo: Replace with scalable local time system
-                "_patient_application_finished",
-                action_instance=self,
-            )
+        exercise = (
+            self.patient_instance.exercise
+            if self.patient_instance
+            else self.lab.exercise
+        )
+
+        ScheduledEvent.create_event(
+            exercise,
+            self.template.application_duration,  # ToDo: Replace with scalable local time system
+            "_application_finished",
+            action_instance=self,
+        )
 
         if self.patient_instance:
             self.historic_patient_state = self.patient_instance.patient_state
@@ -212,21 +210,12 @@ class ActionInstance(LocalTimeable, models.Model):
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.consume_resources()
 
-    def _patient_application_finished(self):
-        self._update_state(
-            ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(self),
-        )
-        self._application_finished()
-
-    def _lab_application_finished(self):
-        self._update_state(
-            ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(self),
-        )
-        self._application_finished()
-
     def _application_finished(self):
+        self._update_state(
+            ActionInstanceStateNames.FINISHED,
+            info_text=self.template.get_result(self),
+        )
+
         self.free_resources()
         if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
