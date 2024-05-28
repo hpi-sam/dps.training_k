@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,6 +37,8 @@ services:
       - redis
     env_file:
       - .env
+    environment:
+      - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
       - static_volume:/app/staticfiles
       - .:/app:z
@@ -86,6 +88,6 @@ services:
       - django
 
 volumes:
-  local_postgres_data: {}
-  local_postgres_data_backups: {}
-  static_volume: {}
+  local_postgres_data: { }
+  local_postgres_data_backups: { }
+  static_volume: { }

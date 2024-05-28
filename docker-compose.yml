@@ -31,6 +31,8 @@ services:
       - redis
     env_file:
       - .env.${RUN_CONFIG}
+    environment:
+      - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
       - static_volume:/app/staticfiles
     expose:
