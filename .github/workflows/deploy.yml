@@ -25,7 +25,7 @@ jobs:
       - name: Build and push frontend Docker images
         run: |
           cd ./frontend/
-          docker-compose build
+          docker-compose --env-file .env.prod up -d
           docker tag dps_training_k-frontend ghcr.io/hpi-sam/dps_training_k-frontend:latest
           docker push ghcr.io/hpi-sam/dps_training_k-frontend:latest
 
@@ -48,9 +48,9 @@ jobs:
       - name: Prepare deployment files
         run: |
           mkdir deployment_files
-          cp docker-compose.template.yml deployment_files/
-          cp frontend/env.d.ts deployment_files/
-          cp backend/dps_training_k/.env deployment_files/
+          cp docker-compose.yml deployment_files/
+          cp ./.env.prod deployment_files/
+          cp ./.env.dev deployment_files/
 
       - name: Archive deployment files
         uses: actions/upload-artifact@v2

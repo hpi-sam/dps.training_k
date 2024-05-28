@@ -22,7 +22,7 @@ class Exercise(NonEventable, models.Model):
     )
     frontend_id = models.CharField(
         unique=True,
-        editable=settings.DEBUG,
+        editable=False,
     )
     state = models.CharField(
         choices=StateTypes.choices,
