@@ -9,6 +9,10 @@ class Lab(MoveableTo):
         on_delete=models.CASCADE,
     )
 
+    @property
+    def name(self):
+        return self.exercise.frontend_id
+
     def can_receive_actions(self):
         return True
 

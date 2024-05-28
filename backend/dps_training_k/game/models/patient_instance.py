@@ -132,7 +132,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
 
     @staticmethod
     def frontend_model_name():
-        return "Patient"
+        return "Patient*in"
 
     def can_receive_actions(self):
         return not self.is_dead()
