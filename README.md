@@ -20,16 +20,26 @@ There are two environment files provided with the docker-compose file in the art
 The `.env.prod` file is used for the production version on a server and the `.env.dev` file is used for the development version locally.
 Replace `<prod/dev>` with `prod` or `dev` in the following commands to use the respective environment file.
 1. Download the action artifacts and extract them in a folder
-2. Optional: If you want a clean start, run following command in that folder in order to recreate the database:
+2. Recommended: As the env files are probably stored in a public repository, it is strongly encouraged to change the SECRET_KEY and the 
+   POSTGRES_PASSWORD variables in the used `.env.<prod/dev>` file.
+3. Optional: If you want a clean start, run following command in that folder in order to recreate the database:
 ```bash
 docker-compose --env-file .env.<prod/dev> down --volumes
 ```
-Run following command to deploy the application:
+4. Run following command to pull the newest images and build and run the containers:
 ```bash
 docker-compose --env-file .env.<prod/dev> up --pull always -d
 ```
 
-The website should now be running on port 5173.
+The application is now deployed and the website should be accessible on port 5173.
+
+## Changing the project configuration
+If you want to change the configuration of the project by e.g. updating a docker-compose or env file, you need to keep following aspects in mind:
+- If you change the docker-compose file of the backend or frontend, you may need to also adjust the main docker-composer file in the root folder.
+- The environment variables are backed in the image for the Frontend. Meaning you need to rebuild and re-upload e.g. a new Backend IP Address if you 
+  want to change it.
+- The environment variables are loaded during the container initialization for the backend. Therefore, you need to copy changes of the backend env 
+  file to the env files in the root folder.
 
 ## MoSCoW and future plans
 We follow this [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4) (note that this is an internal 
