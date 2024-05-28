@@ -172,7 +172,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if not self.attached_instance().can_receive_actions():
             is_applicable, context = (
                 False,
-                f"{self.attached_instance().frontend_name()} kann keine Aktionen mehr empfangen",
+                f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
         else:
             is_applicable, context = self.check_conditions_and_block_resources(

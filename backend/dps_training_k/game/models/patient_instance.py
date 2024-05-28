@@ -6,6 +6,7 @@ from django.db import models
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
+from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
 from template.models import PatientState
 
@@ -18,11 +19,11 @@ def validate_patient_frontend_id(value):
         )
 
 
-class PatientInstance(Eventable, ActionsQueueable, models.Model):
     area = models.ForeignKey(
         "Area",
         on_delete=models.CASCADE,
     )
+class PatientInstance(Eventable, MoveableTo, ActionsQueueable, models.Model):
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, default="Max Mustermann")
     frontend_id = models.CharField(
@@ -125,28 +126,13 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         self.schedule_state_change()
         return True
 
-    def material_assigned(self, material_template):
-        return list(self.materialinstance_set.filter(template=material_template))
-
-    def material_available(self, material_template):
-        return list(
-            self.materialinstance_set.filter(
-                template=material_template, action_instance=None
-            )
-        )
-
-    def personel_assigned(self):
-        return list(self.personnel_set.all())
-
-    def personnel_available(self):
-        return list(self.personnel_set.filter(action_instance=None))
-
     def is_dead(self):
         if self.patient_state.is_dead:
             return True
         return False
 
-    def frontend_name(self):
+    @staticmethod
+    def frontend_model_name():
         return "Patient"
 
     def can_receive_actions(self):
