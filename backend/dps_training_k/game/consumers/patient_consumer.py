@@ -9,6 +9,7 @@ from game.models import (
     ScheduledEvent,
     Personnel,
     ActionInstanceStateNames,
+    Area,
 )
 from game.serializers.action_check_serializers import (
     PatientInstanceActionCheckSerializer,
@@ -39,6 +40,7 @@ class PatientConsumer(AbstractConsumer):
         ACTION_ADD = "action-add"
         MATERIAL_ASSIGN = "material-assign"
         MATERIAL_RELEASE = "material-release"
+        PATIENT_MOVE = "patient-move"
         PERSONNEL_ASSIGN = "personnel-assign"
         PERSONNEL_RELEASE = "personnel-release"
 
@@ -91,6 +93,10 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
                 self.handle_material_release,
                 "materialId",
+            ),
+            self.PatientIncomingMessageTypes.PATIENT_MOVE: (
+                self.handle_patient_move,
+                "areaId",
             ),
             self.PatientIncomingMessageTypes.PERSONNEL_ASSIGN: (
                 self.handle_personnel_assign,
@@ -199,36 +205,42 @@ class PatientConsumer(AbstractConsumer):
     def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
         area = patient_instance.area
-        succeeded = material_instance.try_moving_to(area)
+        succeeded, msg = material_instance.try_moving_to(area)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+            self.send_failure(message=msg)
 
     def handle_material_assign(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded = material_instance.try_moving_to(patient_instance)
+        succeeded, msg = material_instance.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            self.send_failure(message=msg)
+
+    def handle_patient_move(self, patient_instance, area_id):
+        area = Area.objects.get(pk=area_id)
+        succeeded, msg = patient_instance.try_moving_to(area)
+
+        if not succeeded:
+            self.send_failure(message=msg)
+            return
+
+        self.resource_assignment_event(None)
+        if msg is not None and msg != "":
+            self.send_warning(
+                message=msg,
             )
 
     def handle_personnel_release(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
         area = patient_instance.area
-        succeeded = personnel.try_moving_to(area)
+        succeeded, msg = personnel.try_moving_to(area)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+            self.send_failure(message=msg)
 
     def handle_personnel_assign(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
-        succeeded = personnel.try_moving_to(patient_instance)
+        succeeded, msg = personnel.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+            self.send_failure(message=msg)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
