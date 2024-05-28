@@ -2,8 +2,8 @@ from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
 from game.models import ScheduledEvent, MaterialInstance
+from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
-from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
