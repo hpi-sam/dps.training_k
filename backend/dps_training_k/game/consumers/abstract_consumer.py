@@ -26,6 +26,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
 
     class OutgoingMessageTypes:
         FAILURE = "failure"
+        WARNING = "warning"
         SUCCESS = "success"
         EXERCISE = "exercise"
         EXERCISE_START = "exercise-start"
@@ -64,6 +65,15 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def send_failure(self, message="unknown failure", **kwargs):
         message_dict = {
             "messageType": self.OutgoingMessageTypes.FAILURE,
+            "message": message,
+        }
+        for key, value in kwargs.items():
+            message_dict[key] = value
+        self.send_json(message_dict)
+
+    def send_warning(self, message="unknown warning", **kwargs):
+        message_dict = {
+            "messageType": self.OutgoingMessageTypes.WARNING,
             "message": message,
         }
         for key, value in kwargs.items():
