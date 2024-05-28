@@ -92,7 +92,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
 
     def test_blocking(self):
         """
-        If a conditon is satisfied, the materials and the personnel used for satisfiction are blocked
+        If a condition is satisfied, the materials and the personnel used for satisfaction are blocked
         """
         action_template = ActionFactory(conditions=self.material_personnel_condition)
         action_instance = ActionInstanceFactory(

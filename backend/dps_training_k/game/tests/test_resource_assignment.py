@@ -37,7 +37,7 @@ class ResourceAssignmentTestCase(TestCase, TestUtilsMixin):
         self, _notify_group, _notify_exercise_update
     ):
         """
-        After a resource is assigned, a resource assignment event is send to the consumer.
+        After a resource is assigned, a resource assignment event is sent to the consumer.
         """
         self.deactivate_live_updates()
         self.material_instance.try_moving_to(self.area)

@@ -140,7 +140,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
     )
     def test_action_production_notification(self, _notify_exercise_update):
         """
-        Integration Test: If production action is finished, a notification is send to the consumer.
+        Integration Test: If production action is finished, a notification is sent to the consumer.
         """
 
         call_command("minimal_actions")
