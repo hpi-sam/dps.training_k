@@ -1,35 +1,7 @@
 version: '3.8'
 
-volumes:
-  local_postgres_data: { }
-  local_postgres_data_backups: { }
-  static_volume: { }
-
 services:
-  django:
-    build:
-      context: .
-      dockerfile: ./deployment/django/Dockerfile
-    image: dps_training_k-django
-    container_name: K-dPS-django
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - .env
-    environment:
-      - RUN_MIGRATIONS=1
-    volumes:
-      - static_volume:/app/staticfiles
-      - .:/app:z
-    expose:
-      - 8000
-    command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
-    stdin_open: true
-    tty: true
-
-
+  # Database service
   postgres:
     build:
       context: .
@@ -42,41 +14,68 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Caching service
   redis:
     image: redis:latest
     container_name: K-dPS-redis
 
+  # Backend service
+  django:
+    build:
+      context: .
+      dockerfile: ./deployment/django/Dockerfile
+    image: dps_training_k-django
+    container_name: K-dPS-django
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
+    volumes:
+      - static_volume:/app/staticfiles
+      - .:/app:z
+    expose:
+      - 8000
+    command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
+    stdin_open: true
+    tty: true
+
+  # Celery worker service (e.g. scheduled tasks)
   celeryworker:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
-    env_file:
-      - .env
     image: dps_training_k-celeryworker
     container_name: K-dPS-celeryworker
+    env_file:
+      - .env
     command: /start-celeryworker
     depends_on:
       - django
 
+  # Celery beat service (e.g. scheduled tasks)
   celerybeat:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
-    env_file:
-      - .env
     image: dps_training_k-celerybeat
     container_name: K-dPS-celerybeat
+    env_file:
+      - .env
     command: /start-celerybeat
     depends_on:
       - django
 
+  # Nginx service (reverse proxy for Backend)
   nginx:
-    build: deployment/nginx
+    build:
+      context: deployment/nginx
     image: dps_training_k-nginx
     container_name: K-dPS-nginx
     volumes:
@@ -85,3 +84,8 @@ services:
       - "8000:80"
     depends_on:
       - django
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+  static_volume: {}

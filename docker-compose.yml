@@ -1,40 +1,12 @@
 version: '3.8'
 
-volumes:
-  local_postgres_data: { }
-  local_postgres_data_backups: { }
-  static_volume: { }
-
 services:
-  web:
-    image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
-    container_name: K-dPS-frontend
-    ports:
-      - "5173:5173"
-
-  django:
-    env_file:
-      - .env.${RUN_CONFIG}
-    image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
-    container_name: K-dPS-django
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - redis
-    environment:
-      - RUN_MIGRATIONS=1
-    volumes:
-      - static_volume:/app/staticfiles
-    expose:
-      - 8000
-    command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
-
-
+  # Database service
   postgres:
-    env_file:
-      - .env.${RUN_CONFIG}
     image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
     container_name: K-dPS-postgres
+    env_file:
+      - .env.${RUN_CONFIG}
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -44,34 +16,66 @@ services:
       timeout: 5s
       retries: 5
 
+  # Caching service
   redis:
     image: redis:latest
     container_name: K-dPS-redis
 
-  celeryworker:
+  # Backend service
+  django:
+    image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
+    container_name: K-dPS-django
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
     env_file:
       - .env.${RUN_CONFIG}
+    volumes:
+      - static_volume:/app/staticfiles
+    expose:
+      - 8000
+    command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
+
+  # Celery worker service (e.g. scheduled tasks)
+  celeryworker:
     image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
     container_name: K-dPS-celeryworker
-    command: /start-celeryworker
     depends_on:
       - django
-
-  celerybeat:
     env_file:
       - .env.${RUN_CONFIG}
+    command: /start-celeryworker
+
+  # Celery beat service (e.g. scheduled tasks)
+  celerybeat:
     image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
     container_name: K-dPS-celerybeat
-    command: /start-celerybeat
     depends_on:
       - django
+    env_file:
+      - .env.${RUN_CONFIG}
+    command: /start-celerybeat
 
+  # Nginx service (reverse proxy for Backend)
   nginx:
     image: ghcr.io/hpi-sam/dps_training_k-nginx:${IMAGE_TAG}
     container_name: K-dPS-nginx
+    depends_on:
+      - django
     volumes:
       - static_volume:/app/staticfiles
     ports:
       - "8000:80"
-    depends_on:
-      - django
+
+  # Frontend service
+  web:
+    image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
+    container_name: K-dPS-frontend
+    ports:
+      - "5173:5173"
+
+volumes:
+  local_postgres_data: { }
+  local_postgres_data_backups: { }
+  static_volume: { }
