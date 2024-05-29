@@ -68,6 +68,9 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div class="scroll">
 				<h2>{{ title }}</h2>
+				<p v-if="!areas.length">
+					Keine Bereiche vorhanden in die verlegt werden kann.
+				</p>
 				<CustomList>
 					<ListItem
 						v-for="areaId in areas"
