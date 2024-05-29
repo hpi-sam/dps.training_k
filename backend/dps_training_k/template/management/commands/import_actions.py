@@ -41,7 +41,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BEATMUNG,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -179,7 +179,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.GUEDELTUBUS,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -201,7 +201,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.WENDELTUBUS,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -248,7 +248,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.ANALGETIKUM,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -270,7 +270,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.ANTIASTHMATIKUM,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -292,7 +292,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.KORTIKOSTEROID,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 1800,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -314,7 +314,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.NITRAT,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -336,7 +336,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.DIURETIKUM,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 1200,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -358,7 +358,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.KATECHOLAMIN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 60,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -382,7 +382,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.SEDATIVUM,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -404,7 +404,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.REGIONAL_NARKOTIKUM,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # "Freifeld", dunno how do handle that
                 "conditions": json.dumps(
                     {
@@ -426,7 +426,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.TETANUSPROPHYLAXE,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -448,7 +448,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.ANTIKOAGULANZ,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -470,7 +470,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.NARKOTIKUM,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
                     {
@@ -493,7 +493,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.VOLLELEKTROLYT,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 120,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
                     {
@@ -515,7 +515,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.PLASMAEXPANDER,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 120,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
                     {
@@ -673,7 +673,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.DRUCKVERBAND,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -695,7 +695,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.TURNIQUET,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -717,7 +717,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.WUNDVERSORGUNG,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -761,7 +761,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.STIFNECK,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -805,7 +805,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BECKENSCHLINGE,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -850,7 +850,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.STABILE_SEITENLAGE,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -872,7 +872,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.SCHOCKLAGE,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -894,7 +894,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.DEFI_TRANSCUTANER_PACER,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -920,7 +920,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BEATMUNGSGERAET_ANBRINGEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -951,7 +951,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.SAUERSTOFF_ANBRINGEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -973,7 +973,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BLUTDRUCK_MESSGERAET_ANBRINGEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1143,7 +1143,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.SAETTIGUNGSMESSGERAET_ANBRINGEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1165,7 +1165,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.MONITOR_ANBRINGEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1187,7 +1187,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.PASSAGEREN_PACER_ANBRINGEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1213,7 +1213,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.PERFUSORPUMPE_AKTIVIEREN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1237,7 +1237,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.PERFUSORPUMPE_MIT_WIRKSTOFF_BESTUECKEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1259,7 +1259,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.GLUCOSE_VERABREICHEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1283,7 +1283,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.LYSE_VERARBREICHEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1307,7 +1307,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.PATIENT_IN_BENACHBARTE_STATION_VERSCHIEBEN,
             defaults={
                 "category": "OT",
-                "application_duration": 0,  # Dunno, nothing given
+                "application_duration": 15,  # Dunno, nothing given
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1329,7 +1329,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.GERAET_IN_ANDERE_STATION_VERSCHIEBEN,
             defaults={
                 "category": "OT",
-                "application_duration": 0,  # Dunno, nothing given
+                "application_duration": 15,  # Dunno, nothing given
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1402,7 +1402,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
             defaults={
                 "category": "EX",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1446,7 +1446,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
             defaults={
                 "category": "EX",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1510,7 +1510,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.BLUTZUCKER_ANALYSIEREN,
             defaults={
                 "category": "EX",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1619,7 +1619,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.EKG_ABLESEN,
             defaults={
                 "category": "EX",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -1667,7 +1667,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.ZENTRALEN_VENENDRUCK_MESSEN,
             defaults={
                 "category": "EX",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -2346,7 +2346,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_ANWENDEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
                     {
@@ -2368,7 +2368,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
                     {
@@ -2390,7 +2390,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.ENTHROZYTENKONZENTRATE_JEGLICHE_BLUTGRUPPE_ANWENDEN,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
