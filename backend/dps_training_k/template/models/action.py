@@ -12,8 +12,9 @@ class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
         TREATMENT = "TR", "treatment"
         EXAMINATION = "EX", "examination"
-        LAB = "LA", "lab"
         PRODUCTION = "PR", "production"
+        IMAGING = "IM", "imaging"
+        LAB = "LA", "lab"
         OTHER = "OT", "other"
 
     name = models.CharField(max_length=100, unique=True)
@@ -90,10 +91,12 @@ class Action(UUIDable, models.Model):
             return self.examination_result(
                 action_instance.get_patient_examination_codes()
             )
+        elif self.category == Action.Category.IMAGING:
+            return self.examination_result(
+                action_instance.get_patient_examination_codes()
+            )
         elif self.category == Action.Category.LAB:
             return self.lab_result()
-        elif self.category == Action.Category.PRODUCTION:
-            return self.production_result()
 
     def treatment_result(self):
         return f"Behandlung {self.name} wurde durchgeführt"
@@ -114,9 +117,5 @@ class Action(UUIDable, models.Model):
 
         return result_string
 
-    def production_result(self):
+    def lab_result(self):
         return f"{self.name} wurde durchgeführt"
-
-    @staticmethod
-    def lab_result():
-        return "This is a lab result"

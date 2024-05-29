@@ -235,7 +235,7 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def attached_instance(self):
         return (
-            self.patient_instance or self.lab
+            self.lab or self.patient_instance
         )  # first not null value determined by short-circuiting
 
     def __str__(self):
