@@ -311,8 +311,10 @@ class MaterialInstanceDispatcher(ChannelNotifier):
             log_entry = models.LogEntry.objects.create(
                 exercise=cls.get_exercise(material),
                 message=message,
+                is_dirty=True,
             )
             log_entry.materials.add(material)
+            log_entry.set_dirty(False)
             return
 
         if changes_set & assignment_changes:
@@ -326,6 +328,7 @@ class MaterialInstanceDispatcher(ChannelNotifier):
                     exercise=cls.get_exercise(material),
                     message=message,
                     patient_instance=current_location,
+                    is_dirty=True,
                 )
             if isinstance(current_location, models.Area):
                 message += f" zu {current_location.frontend_model_name()} {current_location.name}"
@@ -333,14 +336,18 @@ class MaterialInstanceDispatcher(ChannelNotifier):
                     exercise=cls.get_exercise(material),
                     message=message,
                     area=current_location,
+                    is_dirty=True,
                 )
             if isinstance(current_location, models.Lab):
                 message += f" zu {current_location.frontend_model_name()} {current_location.name}"
                 log_entry = models.LogEntry.objects.create(
                     exercise=cls.get_exercise(material),
                     message=message,
+                    is_dirty=True,
                 )
-            log_entry.materials.add(material) if log_entry else None
+            if log_entry:
+                log_entry.materials.add(material)
+                log_entry.set_dirty(False)
 
     @classmethod
     def delete_and_notify(cls, material, *args, **kwargs):
@@ -463,8 +470,10 @@ class PersonnelDispatcher(ChannelNotifier):
             log_entry = models.LogEntry.objects.create(
                 exercise=cls.get_exercise(personnel),
                 message=message,
+                is_dirty=True,
             )
             log_entry.personnel.add(personnel)
+            log_entry.set_dirty(False)
             return
 
         if changes_set & cls.assignment_changes:
@@ -478,6 +487,7 @@ class PersonnelDispatcher(ChannelNotifier):
                     exercise=cls.get_exercise(personnel),
                     message=message,
                     patient_instance=current_location,
+                    is_dirty=True,
                 )
             if isinstance(current_location, models.Area):
                 message += f" zu {current_location.frontend_model_name()} {current_location.name}"
@@ -485,14 +495,18 @@ class PersonnelDispatcher(ChannelNotifier):
                     exercise=cls.get_exercise(personnel),
                     message=message,
                     area=current_location,
+                    is_dirty=True,
                 )
             if isinstance(current_location, models.Lab):
                 message += f" zu {current_location.frontend_model_name()} {current_location.name}"
                 log_entry = models.LogEntry.objects.create(
                     exercise=cls.get_exercise(personnel),
                     message=message,
+                    is_dirty=True,
                 )
-            log_entry.personnel.add(personnel) if log_entry else None
+            if log_entry:
+                log_entry.personnel.add(personnel)
+                log_entry.set_dirty(False)
 
     @classmethod
     def delete_and_notify(cls, personnel, *args, **kwargs):
