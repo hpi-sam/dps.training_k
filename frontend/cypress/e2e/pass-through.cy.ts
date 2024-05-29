@@ -28,7 +28,7 @@ describe('pass-through tests', () => {
 		cy.get('#nav-exercise-code').invoke('text').then((exerciseId) => {
 			Cypress.env('exercise-id', exerciseId.trim())
 		})
-		cy.contains('.list-item-button', '1001').find('.list-item-id').invoke('text').then((patientId) => {
+		cy.contains('.list-item-button', '1001').find('.list-item-left').invoke('text').then((patientId) => {
 			Cypress.env('patient-id', patientId.trim())
 		})
 	})
