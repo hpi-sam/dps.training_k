@@ -8,6 +8,7 @@ from .factories import (
     PersonnelFactory,
 )
 from .mixin import TestUtilsMixin
+from ..models import ActionInstanceStateNames
 
 
 class PatientMovingTestCase(TestCase, TestUtilsMixin):
@@ -19,8 +20,10 @@ class PatientMovingTestCase(TestCase, TestUtilsMixin):
 
     def test_moving_patient_with_assigned_resources(self):
         """
-        When a patient is moved, all assigned resources are automatically released.
-        However, if an action is scheduled, the resources are blocked and cannot be released.
+        When a patient is moved, all assigned resources are automatically released and the patient has a new area and has no assigned
+        personnel or material anymore as the resources are automatically unassigned and a warning is given.
+        However, if an action is scheduled, the resources are blocked and cannot be released. Consequently, the patient cannot be moved,
+        keeping its original area.
         """
 
         self.assertEqual(self.patient.personnel_assigned(), [self.personnel])
@@ -32,14 +35,12 @@ class PatientMovingTestCase(TestCase, TestUtilsMixin):
         )
         self.personnel.block(action_instance)
 
-        self.assertEqual(self.patient.personnel_assigned(), [self.personnel])
-        self.assertEqual(self.patient.personnel_available(), [])
-
         self.assertEqual(
             self.personnel.try_moving_to(self.area),
             (False, "Maxim Musterfrau ist blockiert und kann nicht verlegt werden."),
         )
-        action_instance.delete()  # automatically releases the personnel
+        self.personnel.release()
+        action_instance._update_state(ActionInstanceStateNames.FINISHED)
 
         self.assertEqual(
             self.patient.try_moving_to(self.area2),

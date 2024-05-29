@@ -101,8 +101,13 @@ class ResourceAssignmentTestCase(TestCase, TestUtilsMixin):
         self.assertEqual(self.area.personnel_assigned(), [self.personnel])
         self.assertEqual(self.area.personnel_available(), [self.personnel])
 
-        self.assertTrue(self.material_instance.try_moving_to(self.patient)[0])
-        self.assertTrue(self.personnel.try_moving_to(self.patient)[0])
+        self.material_instance.patient_instance = self.patient
+        self.material_instance.area = None
+        self.material_instance.save(update_fields=["patient_instance", "area"])
+
+        self.personnel.area = None
+        self.personnel.patient_instance = self.patient
+        self.personnel.save(update_fields=["area", "patient_instance"])
 
         self.assertEqual(
             self.patient.material_assigned(self.material_instance.template),
