@@ -169,7 +169,6 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
-        destination_area = None
         if not self.attached_instance().can_receive_actions():
             is_applicable, context = (
                 False,
@@ -179,19 +178,13 @@ class ActionInstance(LocalTimeable, models.Model):
             is_applicable, context = self.check_conditions_and_block_resources(
                 self.attached_instance(), self.attached_instance()
             )
-            if (
-                is_applicable
-                and self.template.category == self.template.Category.IMAGING
-            ):
-                destination_area = self.patient_instance.area
-                is_applicable, context = self.patient_instance.perform_move(self.lab)
+            if is_applicable:
+                is_applicable, context = self._try_imaging_setup()
+
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False, context
 
-        if destination_area:
-            self.destination_area = destination_area
-            self.save(update_fields=["destination_area"])
         self._start_application()
         return True, None
 
@@ -200,13 +193,11 @@ class ActionInstance(LocalTimeable, models.Model):
             raise ValueError(
                 "An action instance always needs a patient instance or lab to be scheduled"
             )
-
         exercise = (
             self.patient_instance.exercise
             if self.patient_instance
             else self.lab.exercise
         )
-
         ScheduledEvent.create_event(
             exercise,
             self.template.application_duration,  # ToDo: Replace with scalable local time system
@@ -225,12 +216,63 @@ class ActionInstance(LocalTimeable, models.Model):
             ActionInstanceStateNames.FINISHED,
             info_text=self.template.get_result(self),
         )
-
         self.free_resources()
+        self._try_resource_production()
+        self._try_imaging_finalization()
+        self._try_starting_action_effects()
+
+    def attached_instance(self):
+        return (
+            self.lab or self.patient_instance
+        )  # first not null value determined by short-circuiting
+
+    def _try_imaging_setup(self):
+        """
+        iff the action is an imaging action, the patient is moved to the lab
+        """
+        is_applicable = True
+        context = None
+        destination_area = None
+        if self.template.category == self.template.Category.IMAGING:
+            if ActionInstance.objects.filter(
+                patient_instance=self.patient_instance,
+                template__category=self.template.Category.IMAGING,
+                current_state__name__in=[
+                    ActionInstanceStateNames.PLANNED,
+                    ActionInstanceStateNames.IN_PROGRESS,
+                ],
+            ).exists():
+                is_applicable, context = (
+                    False,
+                    "Patient hat bereits eine Untersuchung",
+                )
+            else:
+                destination_area = self.patient_instance.area
+                is_applicable, context = self.patient_instance.perform_move(self.lab)
+                breakpoint()
+        if is_applicable and destination_area:
+            self.destination_area = destination_area
+            self.save(update_fields=["destination_area"])
+        return is_applicable, context
+
+    def _try_imaging_finalization(self):
+        """
+        iff the action is an imaging action, the patient is moved back to the destination area
+        """
+        if self.template.category == self.template.Category.IMAGING:
+            self.patient_instance.perform_move(self.destination_area)
+            return True
+        return False
+
+    def _try_resource_production(self):
         if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
                 self.template.produced_resources(), self.destination_area
             )
+            return True
+        return False
+
+    def _try_starting_action_effects(self):
         if self.template.effect_duration != None:
             ScheduledEvent.create_event(
                 self.patient_instance.exercise,
@@ -239,14 +281,11 @@ class ActionInstance(LocalTimeable, models.Model):
                 action_instance=self,
             )
             self._update_state(ActionInstanceStateNames.IN_EFFECT)
+            return True
+        return False
 
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
-
-    def attached_instance(self):
-        return (
-            self.lab or self.patient_instance
-        )  # first not null value determined by short-circuiting
 
     def __str__(self):
         return f"""ActionInstance {self.template.name} for 
