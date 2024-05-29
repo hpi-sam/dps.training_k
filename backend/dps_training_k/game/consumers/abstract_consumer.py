@@ -212,10 +212,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def exercise_start_event(self, event):
+    def exercise_start_event(self, event=None):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
 
-    def exercise_end_event(self, event):
+    def exercise_end_event(self, event=None):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
         self.close()
 

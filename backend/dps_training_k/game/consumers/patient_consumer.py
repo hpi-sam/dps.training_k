@@ -133,11 +133,11 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-            self.state_change_event(None)
+            self.state_change_event()
             if self.exercise.is_running():
-                self.exercise_start_event(None)
-                self.action_list_event(None)
-                self.resource_assignment_event(None)
+                self.exercise_start_event()
+                self.action_list_event()
+                self.resource_assignment_event()
 
         else:
             self.close()
@@ -273,7 +273,7 @@ class PatientConsumer(AbstractConsumer):
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def state_change_event(self, event):
+    def state_change_event(self, event=None):
         serialized_state = StateSerializer(
             self.get_patient_instance().patient_state
         ).data
@@ -282,7 +282,7 @@ class PatientConsumer(AbstractConsumer):
             state=serialized_state,
         )
 
-    def action_check_changed_event(self, event):
+    def action_check_changed_event(self, event=None):
         if self.currently_inspected_action:
             self.receive_json(
                 {
@@ -299,7 +299,7 @@ class PatientConsumer(AbstractConsumer):
             actionName=action_instance.name,
         )
 
-    def action_list_event(self, event):
+    def action_list_event(self, event=None):
         actions = []
 
         """all action_instances where either the patient_instance is self.patient_instance or 
@@ -334,7 +334,7 @@ class PatientConsumer(AbstractConsumer):
             actions=actions,
         )
 
-    def resource_assignment_event(self, event):
+    def resource_assignment_event(self, event=None):
         patient_instance = self.get_patient_instance()
 
         if not patient_instance:
