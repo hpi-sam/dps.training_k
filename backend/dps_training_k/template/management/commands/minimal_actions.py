@@ -1,14 +1,14 @@
+import json
+
 from django.core.management.base import BaseCommand
 
 from template.constants import (
     ActionIDs,
     MaterialIDs,
     RoleIDs,
-    ActionResultIDs,
     role_map,
 )
 from template.models import Action
-import json
 
 
 class Command(BaseCommand):
@@ -49,7 +49,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.VOLLELEKTROLYT,
             defaults={
                 "category": "TR",
-                "application_duration": 0,
+                "application_duration": 5,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
                     {
