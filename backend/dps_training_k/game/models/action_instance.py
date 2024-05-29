@@ -124,6 +124,9 @@ class ActionInstance(LocalTimeable, models.Model):
             self, changes, super(), *args, **kwargs
         )
 
+    def delete(self, using=None, keep_parents=False):
+        ActionInstanceDispatcher.delete_and_notify(self)
+
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
             state_name, self.get_local_time(), info_text
