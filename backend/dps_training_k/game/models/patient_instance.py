@@ -162,18 +162,20 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
     def perform_move(self, obj):
         from game.models import Area, Lab
 
-        show_warning_msg = False
+        show_warning_message = False
 
         for material_instance in self.materialinstance_set.all():
-            show_warning_msg = True
-            succeeded, msg = material_instance.try_moving_to(self.attached_instance())
+            show_warning_message = True
+            succeeded, message = material_instance.try_moving_to(
+                self.attached_instance()
+            )
             if not succeeded:
-                return False, "Fehler beim Freigeben der Ressourcen: " + msg
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
         for personnel in self.personnel_set.all():
-            show_warning_msg = True
-            succeeded, msg = personnel.try_moving_to(self.attached_instance())
+            show_warning_message = True
+            succeeded, message = personnel.try_moving_to(self.attached_instance())
             if not succeeded:
-                return False, "Fehler beim Freigeben der Ressourcen: " + msg
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
 
         if isinstance(obj, Area):
             if self.area == obj:
@@ -189,7 +191,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
 
         return True, (
             ""
-            if not show_warning_msg
+            if not show_warning_message
             else "Warnung: Ressourcen wurden automatisch freigegeben"
         )
 

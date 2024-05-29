@@ -108,8 +108,8 @@ class Action(UUIDable, models.Model):
             if result_substring:
                 result_string += f" {examination_type}: {result_substring}"
             else:
-                error_msg = f"Could not find corresponding value for code {current_code} in {examination_type}"
-                logging.error(error_msg)
+                error_message = f"Could not find corresponding value for code {current_code} in {examination_type}"
+                logging.error(error_message)
                 continue  # skip to avoid crashing
 
         return result_string

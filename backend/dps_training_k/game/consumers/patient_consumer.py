@@ -205,42 +205,41 @@ class PatientConsumer(AbstractConsumer):
     def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
         area = patient_instance.area
-        succeeded, msg = material_instance.try_moving_to(area)
+        succeeded, message = material_instance.try_moving_to(area)
         if not succeeded:
-            self.send_failure(message=msg)
+            self.send_failure(message=message)
 
     def handle_material_assign(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded, msg = material_instance.try_moving_to(patient_instance)
+        succeeded, message = material_instance.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(message=msg)
+            self.send_failure(message=message)
 
     def handle_patient_move(self, patient_instance, area_id):
         area = Area.objects.get(pk=area_id)
-        succeeded, msg = patient_instance.try_moving_to(area)
+        succeeded, message = patient_instance.try_moving_to(area)
 
         if not succeeded:
-            self.send_failure(message=msg)
+            self.send_failure(message=message)
             return
 
-        self.resource_assignment_event(None)
-        if msg is not None and msg != "":
+        if message is not None and message != "":
             self.send_warning(
-                message=msg,
+                message=message,
             )
 
     def handle_personnel_release(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
         area = patient_instance.area
-        succeeded, msg = personnel.try_moving_to(area)
+        succeeded, message = personnel.try_moving_to(area)
         if not succeeded:
-            self.send_failure(message=msg)
+            self.send_failure(message=message)
 
     def handle_personnel_assign(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
-        succeeded, msg = personnel.try_moving_to(patient_instance)
+        succeeded, message = personnel.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(message=msg)
+            self.send_failure(message=message)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
