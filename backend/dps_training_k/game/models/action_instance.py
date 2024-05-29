@@ -328,10 +328,10 @@ class ActionInstance(LocalTimeable, models.Model):
         if not self.current_state.is_cancelable:
             return (
                 False,
-                f"Aktionen mit dem Status {self.current_state.name} können nicht abgebrochen werden.",
+                f"Aktionen mit dem Status {self.current_state.get_name_display()} können nicht abgebrochen werden.",
             )
 
-        template_cancelable = False
+        template_cancelable = True
         if not template_cancelable:
             # ToDo: Claas: check if action template says it is cancelable
             return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
