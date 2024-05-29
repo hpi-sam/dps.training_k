@@ -67,7 +67,7 @@ class ActionInstance(LocalTimeable, models.Model):
             one_or_more_field_not_null(["patient_instance", "lab"], "action"),
         ]
 
-    area = models.ForeignKey(
+    destination_area = models.ForeignKey(
         "Area", on_delete=models.CASCADE, blank=True, null=True, related_name="+"
     )  # querying Area.objects.actioninstance_set is not supported atm as area field is also set for production/shifting actions
     template = models.ForeignKey("template.Action", on_delete=models.CASCADE)
@@ -134,15 +134,15 @@ class ActionInstance(LocalTimeable, models.Model):
         return self.current_state
 
     @classmethod
-    def create(cls, template, patient_instance=None, area=None, lab=None):
-        if not patient_instance and not area:
+    def create(cls, template, patient_instance=None, destination_area=None, lab=None):
+        if not patient_instance and not lab:
             raise ValueError(
                 "Either patient_instance or lab must be provided - an action instance always need a context"
             )
 
         action_instance = ActionInstance.objects.create(
             patient_instance=patient_instance,
-            area=area,
+            destination_area=destination_area,
             lab=lab,
             template=template,
             order_id=ActionInstance.generate_order_id(patient_instance),
@@ -169,6 +169,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
+        destination_area = None
         if not self.attached_instance().can_receive_actions():
             is_applicable, context = (
                 False,
@@ -178,10 +179,19 @@ class ActionInstance(LocalTimeable, models.Model):
             is_applicable, context = self.check_conditions_and_block_resources(
                 self.attached_instance(), self.attached_instance()
             )
+            if (
+                is_applicable
+                and self.template.category == self.template.Category.IMAGING
+            ):
+                destination_area = self.patient_instance.area
+                is_applicable, context = self.patient_instance.perform_move(self.lab)
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
             return False, context
 
+        if destination_area:
+            self.destination_area = destination_area
+            self.save(update_fields=["destination_area"])
         self._start_application()
         return True, None
 
@@ -219,7 +229,7 @@ class ActionInstance(LocalTimeable, models.Model):
         self.free_resources()
         if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
-                self.template.produced_resources(), self.area
+                self.template.produced_resources(), self.destination_area
             )
         if self.template.effect_duration != None:
             ScheduledEvent.create_event(

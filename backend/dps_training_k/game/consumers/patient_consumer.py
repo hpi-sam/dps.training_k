@@ -172,7 +172,7 @@ class PatientConsumer(AbstractConsumer):
             action_instance = ActionInstance.create(
                 template=action_template,
                 lab=self.exercise.lab,
-                area=patient_instance.area,
+                destination_area=patient_instance.area,
             )
         else:
             action_instance = ActionInstance.create(
@@ -307,7 +307,7 @@ class PatientConsumer(AbstractConsumer):
             Q(patient_instance=self.get_patient_instance())
             | Q(
                 template__category=Action.Category.PRODUCTION,
-                area=self.get_patient_instance().area,
+                destination_area=self.get_patient_instance().area,
             )
         ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
         # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD

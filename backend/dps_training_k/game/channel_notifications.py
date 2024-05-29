@@ -180,7 +180,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 exercise=applied_action.exercise,
                 message=message,
                 patient_instance=applied_action.patient_instance,
-                area=applied_action.area,
+                area=applied_action.destination_area,
                 is_dirty=True,
             )
             personnel_list = models.Personnel.objects.filter(
