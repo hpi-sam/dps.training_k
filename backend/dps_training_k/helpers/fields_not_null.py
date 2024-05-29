@@ -2,7 +2,7 @@ from django.db.models import CheckConstraint, Q
 
 
 def one_or_more_field_not_null(fields, suffix):
-    """Suffix is used to make the constraint name unique - e.g. the model name could be used."""
+    """:params suffix: used to make the constraint name unique - e.g. the model name could be used."""
     checks = [Q(**{f"{field}__isnull": False}) for field in fields]
 
     check_condition = checks.pop()
@@ -16,7 +16,7 @@ def one_or_more_field_not_null(fields, suffix):
 
 
 def exactly_one_field_not_null(fields, suffix):
-    """Suffix is used to make the constraint name unique - e.g., the model name could be used."""
+    """:params suffix: used to make the constraint name unique - e.g., the model name could be used."""
     # Create a list of Q objects where each checks if one field is non-null and others are null
     checks = []
     for i in range(len(fields)):

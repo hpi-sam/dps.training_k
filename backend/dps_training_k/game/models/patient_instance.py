@@ -12,6 +12,10 @@ from helpers.triage import Triage
 from template.models import PatientState
 
 
+# from game.models import Area, Lab  # moved into function to avoid circular imports
+# from game.models import ActionInstance, ActionInstanceStateNames  # moved into function to avoid circular imports
+
+
 def validate_patient_frontend_id(value):
     if not re.fullmatch(r"^\d{6}$", value):
         raise ValidationError(

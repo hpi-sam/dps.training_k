@@ -19,6 +19,7 @@ class Assignable(
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
 
     def __init_subclass__(cls, **kwargs):
+        """Needed to create unique name for each constraint given to the subclasses of Assignable, but I can already define the constraint here."""
         super().__init_subclass__(**kwargs)
         # Add a unique constraint for each subclass of Assignable
         constraint_name = (

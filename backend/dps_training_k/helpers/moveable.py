@@ -12,9 +12,9 @@ class Moveable(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.check_name_attribute()
+        self.check_name_attribute_exists()
 
-    def check_name_attribute(self):
+    def check_name_attribute_exists(self):
         """Ensure that the name attribute is implemented (either as property or field)."""
         if not hasattr(self, "name"):
             raise ImproperlyConfigured(
