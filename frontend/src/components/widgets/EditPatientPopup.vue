@@ -70,7 +70,6 @@
 						<PatientInfo
 							:injury="currentPatient?.injury"
 							:biometrics="currentPatient?.biometrics"
-							:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
 							:mobility="currentPatient?.mobility"
 							:preexisting-illnesses="currentPatient?.preexistingIllnesses"
 							:permanent-medication="currentPatient?.permanentMedication"

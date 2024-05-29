@@ -3,7 +3,6 @@
 		personalDetails: {type: String, default: '-'},
 		injury: {type: String, default: '-'},
 		biometrics: {type: String, default: '-'},
-		consecutiveUniqueNumber: {type: Number, default: 0},
 		mobility: {type: String, default: '-'},
 		preexistingIllnesses: {type: String, default: '-'},
 		permanentMedication: {type: String, default: '-'},
@@ -40,10 +39,6 @@
 	<p class="key">
 		Mobilität
 	</p>{{ props.mobility }}
-	<br>
-	<p class="key">
-		Fortlaufende Eineindeutige Nummer
-	</p>{{ props.consecutiveUniqueNumber }}
 </template>
 
 <style scoped>

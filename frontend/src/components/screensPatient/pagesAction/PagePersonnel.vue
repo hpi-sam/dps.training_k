@@ -5,8 +5,7 @@
 	import socketPatient from '@/sockets/SocketPatient'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 	import {useExerciseStore} from "@/stores/Exercise"
-	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
-import ListItemRight from '@/components/widgets/ListItemRight.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemRight} from "@/components/widgets/List"
 
 	const patientStore = usePatientStore()
 	const resourceAssignmentStore = useResourceAssignmentsStore()
