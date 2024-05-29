@@ -52,7 +52,8 @@
 		showDeletePopup.value = false
 	}
 
-	function openDeletePopup(actionName: string) {
+	function openDeletePopup(actionId: string, actionName: string) {
+		currentActionId.value = actionId
 		currentActionName.value = actionName
 		showDeletePopup.value = true
 	}
@@ -90,7 +91,7 @@
 					:key="action.actionId"
 					class="list-item"
 				>
-					<button class="list-item-button" @click="openDeletePopup(action.actionName)">
+					<button class="list-item-button" @click="openDeletePopup(action.actionId, action.actionName)">
 						<div class="list-item-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(action.actionStatus)" />
