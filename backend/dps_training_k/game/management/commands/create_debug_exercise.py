@@ -45,14 +45,12 @@ class Command(BaseCommand):
         Personnel.objects.update_or_create(
             name="Pflegekraft 1",
             defaults={
-                "area": self.area,
                 "patient_instance": self.patient,
             },
         )
         Personnel.objects.update_or_create(
             name="Pflegekraft 2",
             defaults={
-                "area": self.area,
                 "patient_instance": self.patient,
             },
         )

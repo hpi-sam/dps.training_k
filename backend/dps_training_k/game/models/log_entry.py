@@ -1,6 +1,7 @@
 from django.db import models
-from game.channel_notifications import LogEntryDispatcher
 from django.utils import timezone
+
+from game.channel_notifications import LogEntryDispatcher
 
 
 class LogEntry(models.Model):
@@ -59,3 +60,7 @@ class LogEntry(models.Model):
         if self.timestamp and self.local_id and not self.is_dirty:
             return True
         return False
+
+    def set_dirty(self, new_dirty):
+        self.is_dirty = new_dirty
+        self.save(update_fields=["is_dirty"])

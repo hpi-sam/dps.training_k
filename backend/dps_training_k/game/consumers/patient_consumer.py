@@ -9,6 +9,7 @@ from game.models import (
     ScheduledEvent,
     Personnel,
     ActionInstanceStateNames,
+    Area,
 )
 from game.serializers.action_check_serializers import (
     PatientInstanceActionCheckSerializer,
@@ -39,6 +40,7 @@ class PatientConsumer(AbstractConsumer):
         ACTION_ADD = "action-add"
         MATERIAL_ASSIGN = "material-assign"
         MATERIAL_RELEASE = "material-release"
+        PATIENT_MOVE = "patient-move"
         PERSONNEL_ASSIGN = "personnel-assign"
         PERSONNEL_RELEASE = "personnel-release"
 
@@ -92,6 +94,10 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_material_release,
                 "materialId",
             ),
+            self.PatientIncomingMessageTypes.PATIENT_MOVE: (
+                self.handle_patient_move,
+                "areaId",
+            ),
             self.PatientIncomingMessageTypes.PERSONNEL_ASSIGN: (
                 self.handle_personnel_assign,
                 "personnelId",
@@ -127,11 +133,11 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-            self.state_change_event(None)
+            self.state_change_event()
             if self.exercise.is_running():
-                self.exercise_start_event(None)
-                self.action_list_event(None)
-                self.resource_assignment_event(None)
+                self.exercise_start_event()
+                self.action_list_event()
+                self.resource_assignment_event()
 
         else:
             self.close()
@@ -199,36 +205,41 @@ class PatientConsumer(AbstractConsumer):
     def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
         area = patient_instance.area
-        succeeded = material_instance.try_moving_to(area)
+        succeeded, message = material_instance.try_moving_to(area)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+            self.send_failure(message=message)
 
     def handle_material_assign(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded = material_instance.try_moving_to(patient_instance)
+        succeeded, message = material_instance.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            self.send_failure(message=message)
+
+    def handle_patient_move(self, patient_instance, area_id):
+        area = Area.objects.get(pk=area_id)
+        succeeded, message = patient_instance.try_moving_to(area)
+
+        if not succeeded:
+            self.send_failure(message=message)
+            return
+
+        if message is not None and message != "":
+            self.send_warning(
+                message=message,
             )
 
     def handle_personnel_release(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
         area = patient_instance.area
-        succeeded = personnel.try_moving_to(area)
+        succeeded, message = personnel.try_moving_to(area)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+            self.send_failure(message=message)
 
     def handle_personnel_assign(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
-        succeeded = personnel.try_moving_to(patient_instance)
+        succeeded, message = personnel.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Personal wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+            self.send_failure(message=message)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
@@ -261,7 +272,7 @@ class PatientConsumer(AbstractConsumer):
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def state_change_event(self, event):
+    def state_change_event(self, event=None):
         serialized_state = StateSerializer(
             self.get_patient_instance().patient_state
         ).data
@@ -270,7 +281,7 @@ class PatientConsumer(AbstractConsumer):
             state=serialized_state,
         )
 
-    def action_check_changed_event(self, event):
+    def action_check_changed_event(self, event=None):
         if self.currently_inspected_action:
             self.receive_json(
                 {
@@ -287,7 +298,7 @@ class PatientConsumer(AbstractConsumer):
             actionName=action_instance.name,
         )
 
-    def action_list_event(self, event):
+    def action_list_event(self, event=None):
         actions = []
 
         """all action_instances where either the patient_instance is self.patient_instance or 
@@ -322,7 +333,7 @@ class PatientConsumer(AbstractConsumer):
             actions=actions,
         )
 
-    def resource_assignment_event(self, event):
+    def resource_assignment_event(self, event=None):
         patient_instance = self.get_patient_instance()
 
         if not patient_instance:

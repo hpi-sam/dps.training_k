@@ -1,13 +1,16 @@
-from django.test import TestCase
 from unittest.mock import patch
-from .mixin import TestUtilsMixin
+
+from django.test import TestCase
+
 from .factories import (
     AreaFactory,
     LabFactory,
     PatientFactory,
     MaterialInstanceFactory,
     ActionInstanceFactory,
+    PersonnelFactory,
 )
+from .mixin import TestUtilsMixin
 
 
 class ResourceAssignmentTestCase(TestCase, TestUtilsMixin):
@@ -16,6 +19,7 @@ class ResourceAssignmentTestCase(TestCase, TestUtilsMixin):
         self.lab = LabFactory()
         self.patient = PatientFactory()
         self.material_instance = MaterialInstanceFactory(area=self.area)
+        self.personnel = PersonnelFactory(area=self.area)
 
     def test_assigning_resources(self):
         """
@@ -37,32 +41,89 @@ class ResourceAssignmentTestCase(TestCase, TestUtilsMixin):
         self, _notify_group, _notify_exercise_update
     ):
         """
-        After a resource is assigned, a resource assignment event is send to the consumer.
+        After a resource is assigned, a resource assignment event is sent to the consumer.
         """
         self.deactivate_live_updates()
         self.material_instance.try_moving_to(self.area)
         self.assertEqual(_notify_exercise_update.call_count, 0)
-        self.assertEqual(_notify_group.call_count, 1)
+        self.assertEqual(
+            _notify_group.call_count, 0
+        )  # as the resource is already assigned to the area, no notification should be sent
 
         self.material_instance.try_moving_to(self.lab)
         self.assertEqual(_notify_exercise_update.call_count, 0)
-        self.assertEqual(_notify_group.call_count, 2)
+        self.assertEqual(_notify_group.call_count, 1)
 
         self.material_instance.try_moving_to(self.patient)
         self.assertEqual(_notify_exercise_update.call_count, 0)
-        self.assertEqual(_notify_group.call_count, 3)
+        self.assertEqual(_notify_group.call_count, 2)
         self.activate_live_updates()
 
-    def test_resource_assignment_during_running_action(self):
+    def test_resource_block_and_release(self):
         """
         Iff an action is running, the resources cannot be reassigned.
         """
         action_instance = ActionInstanceFactory(patient_instance=self.patient)
         self.material_instance.block(action_instance)
-        self.assertFalse(self.material_instance.try_moving_to(self.area))
-        self.assertFalse(self.material_instance.try_moving_to(self.lab))
-        self.assertFalse(self.material_instance.try_moving_to(self.patient))
+        self.assertFalse(self.material_instance.try_moving_to(self.area)[0])
+        self.assertFalse(self.material_instance.try_moving_to(self.lab)[0])
+        self.assertFalse(self.material_instance.try_moving_to(self.patient)[0])
         self.material_instance.release()
-        self.assertTrue(self.material_instance.try_moving_to(self.area))
-        self.assertTrue(self.material_instance.try_moving_to(self.lab))
-        self.assertTrue(self.material_instance.try_moving_to(self.patient))
+        # moving directly to the area won't work as it is already there
+        self.assertTrue(self.material_instance.try_moving_to(self.lab)[0])
+        self.assertTrue(self.material_instance.try_moving_to(self.area)[0])
+        self.assertTrue(self.material_instance.try_moving_to(self.patient)[0])
+
+    def test_resource_availability(self):
+        """
+        Resource holder can be checked for assigned and available resources.
+        """
+
+        # fails here
+        self.assertEqual(
+            self.patient.material_assigned(self.material_instance.template),
+            [],
+        )
+        self.assertEqual(
+            self.patient.material_available(self.material_instance.template),
+            [],
+        )
+        self.assertEqual(self.patient.personnel_assigned(), [])
+        self.assertEqual(self.patient.personnel_available(), [])
+        self.assertEqual(
+            self.area.material_assigned(self.material_instance.template),
+            [self.material_instance],
+        )
+        self.assertEqual(
+            self.area.material_available(self.material_instance.template),
+            [self.material_instance],
+        )
+        self.assertEqual(self.area.personnel_assigned(), [self.personnel])
+        self.assertEqual(self.area.personnel_available(), [self.personnel])
+
+        self.material_instance.patient_instance = self.patient
+        self.material_instance.area = None
+        self.material_instance.save(update_fields=["patient_instance", "area"])
+
+        self.personnel.area = None
+        self.personnel.patient_instance = self.patient
+        self.personnel.save(update_fields=["area", "patient_instance"])
+
+        self.assertEqual(
+            self.patient.material_assigned(self.material_instance.template),
+            [self.material_instance],
+        )
+        self.assertEqual(
+            self.patient.material_available(self.material_instance.template),
+            [self.material_instance],
+        )
+        self.assertEqual(self.patient.personnel_assigned(), [self.personnel])
+        self.assertEqual(self.patient.personnel_available(), [self.personnel])
+        self.assertEqual(
+            self.area.material_assigned(self.material_instance.template), []
+        )
+        self.assertEqual(
+            self.area.material_available(self.material_instance.template), []
+        )
+        self.assertEqual(self.area.personnel_assigned(), [])
+        self.assertEqual(self.area.personnel_available(), [])
