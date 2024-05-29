@@ -136,13 +136,16 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         template_action_count = defaultdict(int)
         for action_instance in action_instances:
             template_action_count[action_instance.template.uuid] += 1
-
-        fulfilled_subconditions = []
+        #TODO: add handling for OP if it's not an action
+        fulfilled_subconditions = set()
 
         for subcondition in subconditions:
             fulfilling_measures = subcondition.fulfilling_measures
-            for key, value in fulfilling_measures.items():
-                if template_action_count[key] >= value:
+            if subcondition.name == "freie Atemwege" and "freie Atemwege" in self.patient_state.vital_signs["Airway"]:
+                fulfilled_subconditions.append(subcondition)
+            
+            for action in fulfilling_measures:
+                if subcondition.lower_limit <= template_action_count[action] and template_action_count[action] <= subcondition.upper_limit:
                     fulfilled_subconditions.append(subcondition)
 
         return fulfilled_subconditions
