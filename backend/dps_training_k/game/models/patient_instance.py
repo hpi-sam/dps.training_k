@@ -6,8 +6,14 @@ from django.db import models
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
+from helpers.moveable import Moveable
+from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
 from template.models import PatientState
+
+
+# from game.models import Area, Lab  # moved into function to avoid circular imports
+# from game.models import ActionInstance, ActionInstanceStateNames  # moved into function to avoid circular imports
 
 
 def validate_patient_frontend_id(value):
@@ -18,11 +24,9 @@ def validate_patient_frontend_id(value):
         )
 
 
-class PatientInstance(Eventable, ActionsQueueable, models.Model):
-    area = models.ForeignKey(
-        "Area",
-        on_delete=models.CASCADE,
-    )
+class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.Model):
+    area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
+    lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, default="Max Mustermann")
     frontend_id = models.CharField(
@@ -125,32 +129,78 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
         self.schedule_state_change()
         return True
 
-    def material_assigned(self, material_template):
-        return list(self.materialinstance_set.filter(template=material_template))
-
-    def material_available(self, material_template):
-        return list(
-            self.materialinstance_set.filter(
-                template=material_template, action_instance=None
-            )
-        )
-
-    def personel_assigned(self):
-        return list(self.personnel_set.all())
-
-    def personnel_available(self):
-        return list(self.personnel_set.filter(action_instance=None))
-
     def is_dead(self):
         if self.patient_state.is_dead:
             return True
         return False
 
-    def frontend_name(self):
-        return "Patient"
+    @staticmethod
+    def frontend_model_name():
+        return "Patient*in"
 
     def can_receive_actions(self):
         return not self.is_dead()
+
+    def is_blocked(self):
+        from game.models import ActionInstance, ActionInstanceStateNames
+
+        scheduled_states = {
+            ActionInstanceStateNames.PLANNED,
+            # do not include currently as on_hold actions are currently not shown in frontend and will never be rescheduled
+            # ActionInstanceStateNames.ON_HOLD,
+            ActionInstanceStateNames.IN_PROGRESS,
+        }
+
+        scheduled_actions_exist = ActionInstance.objects.filter(
+            patient_instance=self, current_state__name__in=scheduled_states
+        ).exists()
+
+        return scheduled_actions_exist
+
+    @staticmethod
+    def can_move_to(obj):
+        from game.models import Area, Lab
+
+        return isinstance(obj, Area) or isinstance(obj, Lab)
+
+    def perform_move(self, obj):
+        from game.models import Area, Lab
+
+        show_warning_message = False
+
+        for material_instance in self.materialinstance_set.all():
+            show_warning_message = True
+            succeeded, message = material_instance.try_moving_to(
+                self.attached_instance()
+            )
+            if not succeeded:
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
+        for personnel in self.personnel_set.all():
+            show_warning_message = True
+            succeeded, message = personnel.try_moving_to(self.attached_instance())
+            if not succeeded:
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
+
+        if isinstance(obj, Area):
+            if self.area == obj:
+                return False
+            self.area = obj
+            self.lab = None
+        elif isinstance(obj, Lab):
+            if self.lab == obj:
+                return False
+            self.area = None
+            self.lab = obj
+        self.save(update_fields=["area", "lab"])
+
+        return True, (
+            ""
+            if not show_warning_message
+            else "Warnung: Ressourcen wurden automatisch freigegeben"
+        )
+
+    def attached_instance(self):
+        return self.area or self.lab
 
     def __str__(self):
         return (

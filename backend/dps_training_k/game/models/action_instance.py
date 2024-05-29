@@ -2,8 +2,8 @@ from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
 from game.models import ScheduledEvent, MaterialInstance
+from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
-from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -172,7 +172,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if not self.attached_instance().can_receive_actions():
             is_applicable, context = (
                 False,
-                f"{self.attached_instance().frontend_name()} kann keine Aktionen mehr empfangen",
+                f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
         else:
             is_applicable, context = self.check_conditions_and_block_resources(

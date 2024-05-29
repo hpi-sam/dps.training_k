@@ -1,8 +1,10 @@
-from django.db import models
-from django.conf import settings
-from datetime import timedelta
-from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 import json
+from datetime import timedelta
+
+from django.conf import settings
+from django.db import models
+
+from helpers.fields_not_null import one_or_more_field_not_null
 
 
 class ScheduledEvent(models.Model):

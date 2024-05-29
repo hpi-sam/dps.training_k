@@ -37,6 +37,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         FAILURE = "failure"
         SUCCESS = "success"
         TEST_PASSTHROUGH = "test-passthrough"
+        WARNING = "warning"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -68,6 +69,15 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def send_failure(self, message="unknown failure", **kwargs):
         message_dict = {
             "messageType": self.OutgoingMessageTypes.FAILURE,
+            "message": message,
+        }
+        for key, value in kwargs.items():
+            message_dict[key] = value
+        self.send_json(message_dict)
+
+    def send_warning(self, message="unknown warning", **kwargs):
+        message_dict = {
+            "messageType": self.OutgoingMessageTypes.WARNING,
             "message": message,
         }
         for key, value in kwargs.items():
@@ -219,11 +229,11 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def exercise_end_event(self, event):
+    def exercise_end_event(self, event=None):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
         self.close()
 
-    def exercise_start_event(self, event):
+    def exercise_start_event(self, event=None):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
 
     def resource_assignment_event(self, event):

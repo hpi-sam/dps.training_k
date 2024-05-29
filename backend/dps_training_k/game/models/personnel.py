@@ -1,10 +1,11 @@
 from django.db import models
 
-from game.assignable import Assignable
 from game.channel_notifications import PersonnelDispatcher
+from helpers.assignable import Assignable
+from helpers.moveable import Moveable
 
 
-class Personnel(Assignable):
+class Personnel(Assignable, Moveable, models.Model):
 
     name = models.CharField(max_length=100, blank=True)
 
