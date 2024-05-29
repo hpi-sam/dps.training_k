@@ -354,19 +354,24 @@ class MaterialInstanceDispatcher(ChannelNotifier):
 
 
 class PatientInstanceDispatcher(ChannelNotifier):
+    location_changes = {"patient_instance", "area", "lab"}
 
     @classmethod
     def dispatch_event(cls, patient_instance, changes, is_updated):
+        changes_set = set(changes) if changes else set()
+
         if changes and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
         if not (changes and len(changes) == 1 and "patient_state" in changes):
             cls._notify_exercise_update(cls.get_exercise(patient_instance))
 
+        if changes and changes_set & cls.location_changes:
+            cls._notify_patient_move(patient_instance)
+
     @classmethod
     def create_trainer_log(cls, patient_instance, changes, is_updated):
         changes_set = set(changes) if changes else set()
-        location_changes = {"patient_instance", "area", "lab"}
         message = None
 
         if not is_updated:
@@ -379,7 +384,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
         elif changes and "triage" in changes:
             # get_triage_display gets the long version of a ChoiceField
             message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"
-        elif changes and changes_set & location_changes:
+        elif changes and changes_set & cls.location_changes:
             message = f"Patient*in {patient_instance.name} wurde verlegt"
             current_location = patient_instance.attached_instance()
 
@@ -416,6 +421,14 @@ class PatientInstanceDispatcher(ChannelNotifier):
         cls._notify_group(channel, event)
 
     @classmethod
+    def _notify_patient_move(cls, patient_instance):
+        channel = cls.get_group_name(patient_instance.exercise)
+        event = {
+            "type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT,
+        }
+        cls._notify_group(channel, event)
+
+    @classmethod
     def delete_and_notify(cls, patient, *args, **kwargs):
         exercise = patient.exercise
         super(patient.__class__, patient).delete(*args, **kwargs)
@@ -423,15 +436,16 @@ class PatientInstanceDispatcher(ChannelNotifier):
 
 
 class PersonnelDispatcher(ChannelNotifier):
+    assignment_changes = {"patient_instance", "area", "lab"}
+
     @classmethod
     def dispatch_event(cls, personnel, changes, is_updated):
         changes_set = set(changes) if changes else set()
-        assignment_changes = {"patient_instance", "area", "lab"}
 
-        if changes_set - assignment_changes or not changes:
+        if changes_set - cls.assignment_changes or not changes:
             cls._notify_exercise_update(cls.get_exercise(personnel))
 
-        if changes_set & assignment_changes or not changes:
+        if changes_set & cls.assignment_changes or not changes:
             channel = cls.get_group_name(cls.get_exercise(personnel))
             event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
             cls._notify_group(channel, event)
@@ -439,7 +453,6 @@ class PersonnelDispatcher(ChannelNotifier):
     @classmethod
     def create_trainer_log(cls, personnel, changes, is_updated):
         changes_set = set(changes) if changes else set()
-        assignment_changes = {"patient_instance", "area", "lab"}
 
         if not is_updated:
             message = f"{personnel.name} ist eingetroffen"
@@ -454,7 +467,7 @@ class PersonnelDispatcher(ChannelNotifier):
             log_entry.personnel.add(personnel)
             return
 
-        if changes_set & assignment_changes:
+        if changes_set & cls.assignment_changes:
             message = f"{personnel.name} wurde zugewiesen"
             current_location = personnel.attached_instance()
             log_entry = None
