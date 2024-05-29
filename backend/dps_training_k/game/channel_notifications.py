@@ -118,30 +118,35 @@ class ActionInstanceDispatcher(ChannelNotifier):
     def dispatch_event(cls, obj, changes, is_updated):
         applied_action = obj
         if changes:
+            channel = cls.get_group_name(applied_action.attached_instance())
             if ["historic_patient_state"] == changes:
                 return
             if "current_state" in changes:
                 if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
                     cls._notify_action_event(
-                        applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
+                        ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
+                        channel,
+                        applied_action,
                     )
 
             # always send action list event
-            cls._notify_action_event(
-                applied_action, ChannelEventTypes.ACTION_LIST_EVENT
-            )
+            cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
 
     @classmethod
-    def _notify_action_event(cls, applied_action, event_type):
-        if not applied_action.patient_instance and not applied_action.lab:
+    def _notify_action_event(cls, event_type, channel, applied_action=None):
+        # ACTION_LIST_EVENT is a special case, as it does not need an associated applied_Action
+        if (
+            not event_type == ChannelEventTypes.ACTION_LIST_EVENT
+            and not applied_action.patient_instance
+            and not applied_action.lab
+        ):
             raise ValueError(
                 "ActionInstance must be associated with a patient_instance or lab."
             )
-        channel = cls.get_group_name(applied_action.attached_instance())
 
         event = {
             "type": event_type,
-            "action_instance_pk": applied_action.id,
+            "action_instance_pk": applied_action.id if applied_action else None,
         }
         cls._notify_group(channel, event)
 
@@ -194,6 +199,14 @@ class ActionInstanceDispatcher(ChannelNotifier):
             log_entry.materials.add(*material_list)
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
+
+    @classmethod
+    def delete_and_notify(cls, action_instance, *args, **kwargs):
+        attached_instance = action_instance.attached_instance()
+        super(action_instance.__class__, action_instance).delete(*args, **kwargs)
+        cls._notify_action_event(
+            ChannelEventTypes.ACTION_LIST_EVENT, cls.get_group_name(attached_instance)
+        )
 
     @classmethod
     def get_exercise(cls, applied_action):
