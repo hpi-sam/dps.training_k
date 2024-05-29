@@ -2,7 +2,7 @@
 	import {useLogStore} from "@/stores/Log"
 	import LogPopup from "../widgets/LogPopup.vue"
 	import {ref} from "vue"
-	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemLeft} from "@/components/widgets/List"
 
 	const logStore = useLogStore()
 
@@ -41,3 +41,9 @@
 		</div>
 	</div>
 </template>
+
+<style scoped>
+	.list-item-left {
+		margin-right: 16px;
+	}
+</style>
