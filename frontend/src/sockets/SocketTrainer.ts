@@ -1,12 +1,10 @@
 import {connection} from "@/stores/Connection"
 import {useTrainerStore} from "@/stores/Trainer"
 import {useExerciseStore} from "@/stores/Exercise"
-import {showErrorToast, showWarningToast} from "@/App.vue"
-import {Screens, setLeftScreen as moduleTrainerSetLeftScreen, setRightScreen as moduleTrainerSetRightScreen} from "@/components/ModuleTrainer.vue"
+import {Modules, setModule, showErrorToast, showWarningToast} from "@/App.vue"
 import {useAvailablesStore} from "@/stores/Availables"
 import {useLogStore} from "@/stores/Log"
 import {commonMockEvents} from "./commonMockEvents"
-import {Modules, setModule} from "@/App.vue"
 
 class SocketTrainer {
 	private readonly url: string
@@ -49,6 +47,9 @@ class SocketTrainer {
 			switch (data.messageType) {
 				case 'failure':
 					showErrorToast(data.message || '')
+					break
+				case 'warning':
+					showWarningToast(data.message || '')
 					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
@@ -226,7 +227,7 @@ class SocketTrainer {
 	}
 }
 
-const socketTrainer = new SocketTrainer('ws://localhost:8000/ws/trainer/?token=')
+const socketTrainer = new SocketTrainer('ws://' + import.meta.env.VITE_SERVER_URL + ':8000/ws/trainer/?token=')
 export default socketTrainer
 
 export const serverMockEvents = [

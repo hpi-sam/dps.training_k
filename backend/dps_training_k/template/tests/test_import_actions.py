@@ -9,6 +9,14 @@ from template.management.commands.import_actions import (
 
 
 class TestPopulateActionsCommand(TestCase):
+
+    def is_json(self, myjson):
+        try:
+            json_object = json.loads(myjson)
+        except ValueError as e:
+            return False
+        return True
+
     def test_defaults_structure(self):
         """
         actions inside import_actions command according to comment in import_actions.create_action.
@@ -76,6 +84,11 @@ class TestPopulateActionsCommand(TestCase):
                     isinstance(conditions["role"], list),
                     f"{conditions['role']} is not a list ",
                 )
+                if defaults.get("results", None):
+                    self.assertTrue(
+                        self.is_json(defaults["results"]),
+                        f"{defaults['results']} is not a json",
+                    )
                 num_personnel = 0
                 for entry in conditions["role"]:
                     if isinstance(entry, dict):

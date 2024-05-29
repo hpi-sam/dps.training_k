@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-from .config import *
+
 from environ import Env
+
 from helpers import DateTimeNameGenerator
+from .config import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +32,7 @@ Env.read_env(os.path.join(BASE_DIR, ".env"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ALLOWED_ORIGINS = ["http://" + env.str("FRONTEND_URL") + ":5173"]
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 

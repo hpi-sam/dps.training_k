@@ -2,8 +2,8 @@ from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
 from game.models import ScheduledEvent, MaterialInstance
+from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
-from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -78,6 +78,9 @@ class ActionInstance(LocalTimeable, models.Model):
     order_id = models.IntegerField(null=True)
     patient_instance = models.ForeignKey(
         "PatientInstance", on_delete=models.CASCADE, blank=True, null=True
+    )
+    historic_patient_state = models.ForeignKey(
+        "template.PatientState", on_delete=models.CASCADE, blank=True, null=True
     )
 
     @property
@@ -169,7 +172,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if not self.attached_instance().can_receive_actions():
             is_applicable, context = (
                 False,
-                f"{self.attached_instance().frontend_name()} kann keine Aktionen mehr empfangen",
+                f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
         else:
             is_applicable, context = self.check_conditions_and_block_resources(
@@ -187,40 +190,32 @@ class ActionInstance(LocalTimeable, models.Model):
             raise ValueError(
                 "An action instance always needs a patient instance or lab to be scheduled"
             )
-        if self.patient_instance:
-            ScheduledEvent.create_event(
-                self.patient_instance.exercise,
-                self.template.application_duration,  # ToDo: Replace with scalable local time system
-                "_patient_application_finished",
-                action_instance=self,
-                examination_codes=self.patient_instance.patient_state.examination_codes,
-            )
-        if self.lab:
-            ScheduledEvent.create_event(
-                self.lab.exercise,
-                self.template.application_duration,  # ToDo: Replace with scalable local time system
-                "_lab_application_finished",
-                action_instance=self,
-            )
 
+        exercise = (
+            self.patient_instance.exercise
+            if self.patient_instance
+            else self.lab.exercise
+        )
+
+        ScheduledEvent.create_event(
+            exercise,
+            self.template.application_duration,  # ToDo: Replace with scalable local time system
+            "_application_finished",
+            action_instance=self,
+        )
+
+        if self.patient_instance:
+            self.historic_patient_state = self.patient_instance.patient_state
+            self.save(update_fields=["historic_patient_state"])
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
         self.consume_resources()
 
-    def _patient_application_finished(self, examination_codes):
-        self._update_state(
-            ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(examination_codes),
-        )
-        self._application_finished()
-
-    def _lab_application_finished(self):
-        self._update_state(
-            ActionInstanceStateNames.FINISHED,
-            info_text=self.template.get_result(),
-        )
-        self._application_finished()
-
     def _application_finished(self):
+        self._update_state(
+            ActionInstanceStateNames.FINISHED,
+            info_text=self.template.get_result(self),
+        )
+
         self.free_resources()
         if self.template.produced_resources() != None:
             MaterialInstance.generate_materials(
@@ -297,3 +292,21 @@ class ActionInstance(LocalTimeable, models.Model):
         for material in self.materialinstance_set.all():
             if not material.is_reusable:
                 material.consume()
+
+    def get_patient_examination_codes(self) -> dict[str, str]:
+        codes = {}
+        if self.historic_patient_state:
+            codes.update(
+                {
+                    str(k): str(v)
+                    for k, v in self.historic_patient_state.examination_codes.items()
+                }
+            )
+        if self.patient_instance and self.patient_instance.static_information:
+            codes.update(
+                {
+                    str(k): str(v)
+                    for k, v in self.patient_instance.static_information.examination_codes.items()
+                }
+            )
+        return codes

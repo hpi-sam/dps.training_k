@@ -23,6 +23,7 @@ class ChannelEventTypes:
     ACTION_LIST_EVENT = "action.list.event"
     ACTION_CHECK_CHANGED_EVENT = "action.check.changed.event"
     LOG_UPDATE_EVENT = "log.update.event"
+    RESOURCE_ASSIGNMENT_EVENT = "resource.assignment.event"
 
 
 class ChannelNotifier:
@@ -92,17 +93,33 @@ class ChannelNotifier:
         event = {"type": ChannelEventTypes.ACTION_CHECK_CHANGED_EVENT}
         cls._notify_group(channel, event)
 
+    @classmethod
+    def type_to_notifier(cls):
+        return {
+            models.PatientInstance: PatientInstanceDispatcher,
+            models.Area: AreaDispatcher,
+            models.Lab: LabDispatcher,
+            models.MaterialInstance: MaterialInstanceDispatcher,
+            models.Personnel: PersonnelDispatcher,
+        }
+
+    @classmethod
+    def get_exercise_from_instance(cls, instance):
+        notifier_class = cls.type_to_notifier().get(type(instance))
+        if notifier_class:
+            return notifier_class.get_exercise(instance)
+        raise NotImplementedError(
+            f"No exercise getter implemented for type {type(instance).__name__}"
+        )
+
 
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, obj, changes, is_updated):
         applied_action = obj
-        if changes and not ("current_state" in changes or "order_id" in changes):
-            raise ValueError(
-                "There has to be a state change or order id change whenever updating an ActionInstance."
-            )
-        # state change events
         if changes:
+            if ["historic_patient_state"] == changes:
+                return
             if "current_state" in changes:
                 if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
                     cls._notify_action_event(
@@ -130,6 +147,8 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
     @classmethod
     def create_trainer_log(cls, applied_action, changes, is_updated):
+        if changes and "historic_patient_state" in changes:
+            return
         if applied_action == models.ActionInstanceStateNames.PLANNED:
             return
 
@@ -165,7 +184,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 is_dirty=True,
             )
             personnel_list = models.Personnel.objects.filter(
-                action_instance=applied_action
+                patient_instance=applied_action.patient_instance,
             )
             log_entry.personnel.add(*personnel_list)
             material_list = models.MaterialInstance.objects.filter(
@@ -230,6 +249,9 @@ class ExerciseDispatcher(ChannelNotifier):
         event = {"type": ChannelEventTypes.EXERCISE_START_EVENT}
         cls._notify_group(channel, event)
 
+        event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
+        cls._notify_group(channel, event)
+
     @classmethod
     def _notify_exercise_end_event(cls, exercise):
         channel = cls.get_group_name(exercise)
@@ -248,7 +270,6 @@ class LogEntryDispatcher(ChannelNotifier):
 
     @classmethod
     def dispatch_event(cls, log_entry, changes, is_updated):
-
         if log_entry.is_valid():
             cls._notify_log_update_event(log_entry)
 
@@ -265,34 +286,101 @@ class LogEntryDispatcher(ChannelNotifier):
 class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, material, changes, is_updated):
-        cls._notify_exercise_update(material.attached_instance().exercise)
+        changes_set = set(changes) if changes else set()
+        assignment_changes = {"patient_instance", "area", "lab"}
+
+        if changes_set - assignment_changes or not changes:
+            cls._notify_exercise_update(cls.get_exercise(material))
+
+        if changes_set & assignment_changes or not changes:
+            channel = cls.get_group_name(cls.get_exercise(material))
+            event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
+            cls._notify_group(channel, event)
+
+    @classmethod
+    def create_trainer_log(cls, material, changes, is_updated):
+        changes_set = set(changes) if changes else set()
+        assignment_changes = {"patient_instance", "area", "lab"}
+
+        if not is_updated:
+            message = f"{material.name} ist erschienen"
+            if material.area:
+                message += f" in {material.area}"
+            if material.lab:
+                message += f" in {material.lab}"
+            log_entry = models.LogEntry.objects.create(
+                exercise=cls.get_exercise(material),
+                message=message,
+                is_dirty=True,
+            )
+            log_entry.materials.add(material)
+            log_entry.set_dirty(False)
+            return
+
+        if changes_set & assignment_changes:
+            message = f"{material.name} wurde zugewiesen"
+            current_location = material.attached_instance()
+            log_entry = None
+
+            if isinstance(current_location, models.PatientInstance):
+                message += f" zu {current_location.frontend_model_name()} {current_location.name}"
+                log_entry = models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(material),
+                    message=message,
+                    patient_instance=current_location,
+                    is_dirty=True,
+                )
+            if isinstance(current_location, models.Area):
+                message += f" zu {current_location.frontend_model_name()} {current_location.name}"
+                log_entry = models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(material),
+                    message=message,
+                    area=current_location,
+                    is_dirty=True,
+                )
+            if isinstance(current_location, models.Lab):
+                message += f" zu {current_location.frontend_model_name()} {current_location.name}"
+                log_entry = models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(material),
+                    message=message,
+                    is_dirty=True,
+                )
+            if log_entry:
+                log_entry.materials.add(material)
+                log_entry.set_dirty(False)
 
     @classmethod
     def delete_and_notify(cls, material, *args, **kwargs):
-        exercise = material.attached_instance().exercise
+        exercise = cls.get_exercise(material)
         super(material.__class__, material).delete(*args, **kwargs)
         cls._notify_exercise_update(exercise)
 
     @classmethod
     def get_exercise(cls, material):
-        return material.attached_instance().exercise
+        return cls.get_exercise_from_instance(material.attached_instance())
 
 
 class PatientInstanceDispatcher(ChannelNotifier):
+    location_changes = {"patient_instance", "area", "lab"}
 
     @classmethod
     def dispatch_event(cls, patient_instance, changes, is_updated):
+        changes_set = set(changes) if changes else set()
+
         if changes and "patient_state" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (
-            changes is not None and len(changes) == 1 and "patient_state" in changes
-        ):
+        if not (changes and len(changes) == 1 and "patient_state" in changes):
             cls._notify_exercise_update(cls.get_exercise(patient_instance))
+
+        if changes and changes_set & cls.location_changes:
+            cls._notify_patient_move(patient_instance)
 
     @classmethod
     def create_trainer_log(cls, patient_instance, changes, is_updated):
+        changes_set = set(changes) if changes else set()
         message = None
+
         if not is_updated:
             message = f"Patient*in {patient_instance.name}({patient_instance.code}) wurde eingeliefert."
             if (
@@ -301,13 +389,30 @@ class PatientInstanceDispatcher(ChannelNotifier):
             ):
                 message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
         elif changes and "triage" in changes:
-            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"  # get_triage_display gets the long version of a ChoiceField
+            # get_triage_display gets the long version of a ChoiceField
+            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"
+        elif changes and changes_set & cls.location_changes:
+            message = f"Patient*in {patient_instance.name} wurde verlegt"
+            current_location = patient_instance.attached_instance()
+
+            if isinstance(current_location, models.Area):
+                message += f" nach {current_location.frontend_model_name()} {current_location.name}"
+            if isinstance(current_location, models.Lab):
+                message += f" nach {current_location.frontend_model_name()} {current_location.name}"
         if message:
-            models.LogEntry.objects.create(
-                exercise=cls.get_exercise(patient_instance),
-                message=message,
-                patient_instance=patient_instance,
-            )
+            if patient_instance.area:
+                models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(patient_instance),
+                    message=message,
+                    patient_instance=patient_instance,
+                    area=patient_instance.area,
+                )
+            else:
+                models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(patient_instance),
+                    message=message,
+                    patient_instance=patient_instance,
+                )
 
     @classmethod
     def get_exercise(cls, patient_instance):
@@ -323,6 +428,14 @@ class PatientInstanceDispatcher(ChannelNotifier):
         cls._notify_group(channel, event)
 
     @classmethod
+    def _notify_patient_move(cls, patient_instance):
+        channel = cls.get_group_name(patient_instance.exercise)
+        event = {
+            "type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT,
+        }
+        cls._notify_group(channel, event)
+
+    @classmethod
     def delete_and_notify(cls, patient, *args, **kwargs):
         exercise = patient.exercise
         super(patient.__class__, patient).delete(*args, **kwargs)
@@ -330,9 +443,70 @@ class PatientInstanceDispatcher(ChannelNotifier):
 
 
 class PersonnelDispatcher(ChannelNotifier):
+    assignment_changes = {"patient_instance", "area", "lab"}
+
     @classmethod
     def dispatch_event(cls, personnel, changes, is_updated):
-        cls._notify_exercise_update(cls.get_exercise(personnel))
+        changes_set = set(changes) if changes else set()
+
+        if changes_set - cls.assignment_changes or not changes:
+            cls._notify_exercise_update(cls.get_exercise(personnel))
+
+        if changes_set & cls.assignment_changes or not changes:
+            channel = cls.get_group_name(cls.get_exercise(personnel))
+            event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
+            cls._notify_group(channel, event)
+
+    @classmethod
+    def create_trainer_log(cls, personnel, changes, is_updated):
+        changes_set = set(changes) if changes else set()
+
+        if not is_updated:
+            message = f"{personnel.name} ist eingetroffen"
+            if personnel.area:
+                message += f" in {personnel.area}"
+            if personnel.lab:
+                message += f" in {personnel.lab}"
+            log_entry = models.LogEntry.objects.create(
+                exercise=cls.get_exercise(personnel),
+                message=message,
+                is_dirty=True,
+            )
+            log_entry.personnel.add(personnel)
+            log_entry.set_dirty(False)
+            return
+
+        if changes_set & cls.assignment_changes:
+            message = f"{personnel.name} wurde zugewiesen"
+            current_location = personnel.attached_instance()
+            log_entry = None
+
+            if isinstance(current_location, models.PatientInstance):
+                message += f" zu {current_location.frontend_model_name()} {current_location.name}"
+                log_entry = models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(personnel),
+                    message=message,
+                    patient_instance=current_location,
+                    is_dirty=True,
+                )
+            if isinstance(current_location, models.Area):
+                message += f" zu {current_location.frontend_model_name()} {current_location.name}"
+                log_entry = models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(personnel),
+                    message=message,
+                    area=current_location,
+                    is_dirty=True,
+                )
+            if isinstance(current_location, models.Lab):
+                message += f" zu {current_location.frontend_model_name()} {current_location.name}"
+                log_entry = models.LogEntry.objects.create(
+                    exercise=cls.get_exercise(personnel),
+                    message=message,
+                    is_dirty=True,
+                )
+            if log_entry:
+                log_entry.personnel.add(personnel)
+                log_entry.set_dirty(False)
 
     @classmethod
     def delete_and_notify(cls, personnel, *args, **kwargs):
@@ -342,4 +516,10 @@ class PersonnelDispatcher(ChannelNotifier):
 
     @classmethod
     def get_exercise(cls, personnel):
-        return personnel.area.exercise
+        return cls.get_exercise_from_instance(personnel.attached_instance())
+
+
+class LabDispatcher(ChannelNotifier):
+    @classmethod
+    def get_exercise(cls, lab):
+        return lab.exercise

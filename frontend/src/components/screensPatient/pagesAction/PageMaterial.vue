@@ -2,25 +2,22 @@
 	import socketPatient from '@/sockets/SocketPatient'
 	import {useExerciseStore} from '@/stores/Exercise'
 	import {usePatientStore} from '@/stores/Patient'
-	import {useRessourceAssignmentsStore} from '@/stores/RessourceAssignments'
+	import {useResourceAssignmentsStore} from '@/stores/ResourceAssignments'
 	import {computed, ref} from 'vue'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 
 	const patientStore = usePatientStore()
+	const resourceAssignmentStore = useResourceAssignmentsStore()
 	const exerciseStore = useExerciseStore()
-	const ressourceAssignmentStore = useRessourceAssignmentsStore()
 
-	const assignments = computed(() => ressourceAssignmentStore.getRessourceAssignmentsOfArea(patientStore.areaId))
-	const material = computed(() => exerciseStore.getMaterialOfArea(patientStore.areaId))
+	const assignments = computed(() => resourceAssignmentStore.getResourceAssignmentsOfArea(patientStore.areaId))
 
 	const assignedMaterial = computed(() => assignments.value?.material.filter(assignment => assignment.patientId === patientStore.patientId))
-	const freeMaterial = computed(() => material.value?.filter(material => 
-		!assignments.value?.material.some(assignment => assignment.materialId === material.materialId)
-	))
-	const busyMaterial = computed(() => assignments.value?.material.filter(assignment => 
-		assignment.patientId != patientStore.patientId && 
+	const busyMaterial = computed(() => assignments.value?.material.filter(assignment =>
+		assignment.patientId != patientStore.patientId &&
 		assignment.patientId != null && assignment.patientId != ''
 	))
+	const freeMaterial = computed(() => assignments.value?.material.filter(personnelAssignment => personnelAssignment.patientId === null))
 
 	function releaseMaterial(materialId: number) {
 		socketPatient.releaseMaterial(materialId)
@@ -61,7 +58,7 @@
 					>
 						<button class="list-item-button">
 							<div class="list-item-name">
-								{{ materialAssignment.materialName }}
+								{{ exerciseStore.getMaterial(materialAssignment.materialId)?.materialName }}
 							</div>
 						</button>
 						<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
@@ -79,7 +76,7 @@
 					>
 						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
 							<div class="list-item-name">
-								{{ materialAssignment.materialName }}
+								{{ exerciseStore.getMaterial(materialAssignment.materialId)?.materialName }}
 							</div>
 						</button>
 						<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
@@ -97,10 +94,11 @@
 					>
 						<button class="list-item-button">
 							<div class="list-item-name">
-								{{ materialAssignment.materialName }}
+								{{ exerciseStore.getMaterial(materialAssignment.materialId)?.materialName }}
 							</div>
 							<div class="list-item-name assigned-patient">
-								Patient {{ materialAssignment.patientId }}
+								{{ exerciseStore.getPatient(materialAssignment.patientId)?.patientName }}
+								({{ materialAssignment.patientId }})
 							</div>
 						</button>
 					</div>

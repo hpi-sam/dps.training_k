@@ -77,7 +77,7 @@
 						{{ currentLogEntry?.patientId }} {{ patientName }}
 					</td>
 				</tr>
-				<tr v-if="currentLogEntry?.personnelNames">
+				<tr v-if="currentLogEntry?.personnelIds">
 					<td class="key">
 						Personal:
 					</td>
