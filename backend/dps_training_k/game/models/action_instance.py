@@ -2,8 +2,8 @@ from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
 from game.models import ScheduledEvent, MaterialInstance
+from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
-from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -29,6 +29,14 @@ class ActionInstanceState(models.Model):
         null=True,
     )
     info_text = models.CharField(null=True, blank=True, default=None)
+
+    @property
+    def is_cancelable(self):
+        return self.name in [
+            ActionInstanceStateNames.PLANNED,
+            ActionInstanceStateNames.IN_PROGRESS,
+            ActionInstanceStateNames.ON_HOLD,
+        ]
 
     def update(self, state_name, time, info_text=None):
         if state_name == self.name and not info_text:
@@ -124,6 +132,9 @@ class ActionInstance(LocalTimeable, models.Model):
             self, changes, super(), *args, **kwargs
         )
 
+    def delete(self, using=None, keep_parents=False):
+        ActionInstanceDispatcher.delete_and_notify(self)
+
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
             state_name, self.get_local_time(), info_text
@@ -172,7 +183,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if not self.attached_instance().can_receive_actions():
             is_applicable, context = (
                 False,
-                f"{self.attached_instance().frontend_name()} kann keine Aktionen mehr empfangen",
+                f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
         else:
             is_applicable, context = self.check_conditions_and_block_resources(
@@ -310,3 +321,26 @@ class ActionInstance(LocalTimeable, models.Model):
                 }
             )
         return codes
+
+    def cancel(self) -> tuple[bool, str]:
+        """Returns whether the object was canceled successfully and an error message if not."""
+
+        if not self.current_state.is_cancelable:
+            return (
+                False,
+                f"Aktionen mit dem Status {self.current_state.get_name_display()} können nicht abgebrochen werden.",
+            )
+
+        template_cancelable = True
+        if not template_cancelable:
+            # ToDo: Claas: check if action template says it is cancelable
+            return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
+
+        self.owned_events.all().delete()
+        self.free_resources()
+
+        self._update_state(
+            ActionInstanceStateNames.CANCELED, "Aktion wurde abgebrochen."
+        )
+
+        return True, ""

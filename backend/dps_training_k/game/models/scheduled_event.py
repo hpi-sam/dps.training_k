@@ -1,8 +1,12 @@
-from django.db import models
-from django.conf import settings
-from datetime import timedelta
-from helpers.one_or_more_field_not_null import one_or_more_field_not_null
 import json
+from datetime import timedelta
+
+from django.conf import settings
+from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+from helpers.fields_not_null import one_or_more_field_not_null
 
 
 class ScheduledEvent(models.Model):
@@ -141,7 +145,7 @@ class Owner(models.Model):
         related_name="owned_events",
     )
     patient_owner = models.ForeignKey(
-        "Patientinstance",
+        "PatientInstance",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -177,3 +181,9 @@ class Owner(models.Model):
             return self.action_instance_owner
         else:
             raise Exception("This owner instance was created without an actual owner")
+
+
+@receiver(post_delete, sender=Owner)
+def delete_patient(sender, instance, **kwargs):
+    if instance.event:
+        instance.event.delete()

@@ -1,32 +1,23 @@
 from django.db import models
 
+from helpers.moveable_to import MoveableTo
 
-class Lab(models.Model):
+
+class Lab(MoveableTo):
     exercise = models.OneToOneField(
         "Exercise",
         on_delete=models.CASCADE,
     )
 
-    def material_assigned(self, material_template):
-        return list(self.materialinstance_set.filter(template=material_template))
-
-    def material_available(self, material_template):
-        return list(
-            self.materialinstance_set.filter(
-                template=material_template, action_instance=None
-            )
-        )
-
-    def personel_assigned(self):
-        return []
-
-    def personnel_available(self):
-        return []
+    @property
+    def name(self):
+        return self.exercise.frontend_id
 
     def can_receive_actions(self):
         return True
 
-    def frontend_name(self):
+    @staticmethod
+    def frontend_model_name():
         return "Labor"
 
     def __str__(self):

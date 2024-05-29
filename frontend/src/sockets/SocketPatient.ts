@@ -59,6 +59,9 @@ class SocketPatient {
 				case 'failure':
 					showErrorToast(data.message || '')
 					break
+				case 'warning':
+					showWarningToast(data.message || '')
+					break
 				case 'test-passthrough':
 					showWarningToast(data.message || '')
 					break
@@ -184,9 +187,9 @@ class SocketPatient {
 		}))
 	}
 
-	deleteAction(actionId: number) {
+	cancelAction(actionId: number) {
 		this.sendMessage(JSON.stringify({
-			'messageType': 'action-delete',
+			'messageType': 'action-cancel',
 			'actionId': actionId,
 		}))
 	}

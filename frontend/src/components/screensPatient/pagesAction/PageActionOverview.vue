@@ -49,11 +49,12 @@
 	const showResultPopup = ref(false)
 
 	function deleteAction() {
-		socketPatient.deleteAction(currentActionId.value)
+		socketPatient.cancelAction(currentActionId.value)
 		showDeletePopup.value = false
 	}
 
-	function openDeletePopup(actionName: string) {
+	function openDeletePopup(actionId: string, actionName: string) {
+		currentActionId.value = actionId
 		currentActionName.value = actionName
 		showDeletePopup.value = true
 	}
@@ -90,7 +91,7 @@
 					v-for="action in actionsNotFinished"
 					:key="action.actionId"
 				>
-					<ListItemButton @click="openDeletePopup(action.actionName)">
+					<ListItemButton @click="openDeletePopup(action.actionId, action.actionName)">
 						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(action.actionStatus)" />
