@@ -33,6 +33,7 @@ class PatientConsumer(AbstractConsumer):
 
     class PatientIncomingMessageTypes:
         ACTION_ADD = "action-add"
+        ACTION_CANCEL = "action-cancel"
         ACTION_CHECK = "action-check"
         ACTION_CHECK_STOP = "action-check-stop"
         EXAMPLE = "example"
@@ -66,6 +67,10 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.ACTION_ADD: (
                 self.handle_action_add,
                 "actionName",
+            ),
+            self.PatientIncomingMessageTypes.ACTION_CANCEL: (
+                self.handle_action_cancel,
+                "actionId",
             ),
             self.PatientIncomingMessageTypes.ACTION_CHECK: (
                 self.handle_action_check,
@@ -161,7 +166,13 @@ class PatientConsumer(AbstractConsumer):
         if not application_succeded:
             self._send_action_declination(action_name=action_name, message=context)
 
-    def handle_action_check(self, patient_instance, action_name):
+    def handle_action_cancel(self, _, action_id):
+        action_instance = ActionInstance.objects.get(id=action_id)
+        success, message = action_instance.cancel()
+        if not success:
+            self.send_failure(message=message)
+
+    def handle_action_check(self, _, action_name):
         self._start_inspecting_action(action_name)
         action_template = Action.objects.get(name=action_name)
         if action_template.category == Action.Category.PRODUCTION:
@@ -177,12 +188,10 @@ class PatientConsumer(AbstractConsumer):
             **action_check_message,
         )
 
-    def handle_action_check_stop(self, patient_instance):
+    def handle_action_check_stop(self, _):
         self._stop_inspecting_action(self.currently_inspected_action)
 
-    def handle_example(
-        self, patient_instance, exercise_frontend_id, patient_frontend_id
-    ):
+    def handle_example(self, _, exercise_frontend_id, patient_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
         self.patient_frontend_id = patient_frontend_id
         self.send_event(
@@ -295,13 +304,17 @@ class PatientConsumer(AbstractConsumer):
 
         """all action_instances where either the patient_instance is self.patient_instance or 
         the category is production and the area is the same as the patient_instance.area"""
-        action_instances = ActionInstance.objects.filter(
-            Q(patient_instance=self.get_patient_instance())
-            | Q(
-                template__category=Action.Category.PRODUCTION,
-                area=self.get_patient_instance().area,
+        action_instances = (
+            ActionInstance.objects.filter(
+                Q(patient_instance=self.get_patient_instance())
+                | Q(
+                    template__category=Action.Category.PRODUCTION,
+                    area=self.get_patient_instance().area,
+                )
             )
-        ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+            .exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+            .exclude(current_state__name=ActionInstanceStateNames.CANCELED)
+        )
         # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
 
         for action_instance in action_instances:

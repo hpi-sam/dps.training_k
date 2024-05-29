@@ -48,7 +48,7 @@
 	const showResultPopup = ref(false)
 
 	function deleteAction() {
-		socketPatient.deleteAction(currentActionId.value)
+		socketPatient.cancelAction(currentActionId.value)
 		showDeletePopup.value = false
 	}
 
