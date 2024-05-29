@@ -143,58 +143,6 @@ button:active {
 		border-radius: 8px;
 }
 
-.list {
-  margin-top: 30px;
-  margin-left: 30px;
-  margin-right: 30px;
-}
-
-.list-item {
-  position: relative;
-  border: 1px solid rgb(209, 213, 219);
-  display: flex;
-  align-items: center;
-  text-align: left;
-  margin-top: -1px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-}
-
-.list-item-button {
-  position: relative;
-  background-color: white;
-  border: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1.25rem;
-  padding: 0;
-  text-align: left;
-  height: 50px;
-  width: 100%;
-  flex-grow: 1;
-  flex-wrap: nowrap;
-}
-
-.selected .list-item-button {
-  filter: brightness(90%);
-}
-
-.list-item-add-button {
-  text-align: center;
-  position: relative;
-  background-color: var(--green);
-  color: white;
-  border: 1px solid rgb(209, 213, 219);
-  box-sizing: border-box;
-  width: 100%;
-  font-size: 1.25rem;
-  line-height: 1.25rem;
-  padding: .75rem 1rem;
-  margin-top: -1px;
-}
-
 .list-item-icon {
   margin-left: 16px;
   display: flex;
@@ -206,15 +154,6 @@ button:active {
   padding: .75rem 1rem;
   width: fit-content;
   flex-shrink: 0;
-}
-
-.list-item-name {
-  padding: .75rem 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  width: 100%;
 }
 
 .scroll {

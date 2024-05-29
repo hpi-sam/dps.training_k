@@ -3,6 +3,7 @@
 	import {useAvailablesStore} from "@/stores/Availables"
 	import {computed, ref} from "vue"
 	import CloseButton from "./CloseButton.vue"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -12,8 +13,8 @@
 			default: 'Kein Materialtyp ausgewählt'
 		},
 		currentArea: {
-			type: String,
-			default: 'Kein Bereich ausgewählt'
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
@@ -47,19 +48,16 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div class="scroll">
 				<h2>{{ title }}</h2>
-				<div class="list">
-					<div
+				<CustomList>
+					<ListItem
 						v-for="material in availableMaterial"
 						:key="material.materialName"
-						class="list-item"
 					>
-						<button class="list-item-button" @click="addMaterial(material.materialName)">
-							<div class="list-item-name">
-								{{ material.materialName }}
-							</div>
-						</button>
-					</div>
-				</div>
+						<ListItemButton @click="addMaterial(material.materialName)">
+							<ListItemName :name="material.materialName" />
+						</ListItemButton>
+					</ListItem>
+				</CustomList>
 			</div>
 		</div>
 	</div>

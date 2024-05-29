@@ -5,6 +5,8 @@
 	import socketPatient from '@/sockets/SocketPatient'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 	import {useExerciseStore} from "@/stores/Exercise"
+	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
+import ListItemRight from '@/components/widgets/ListItemRight.vue'
 
 	const patientStore = usePatientStore()
 	const resourceAssignmentStore = useResourceAssignmentsStore()
@@ -48,62 +50,48 @@
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Personal</h1>
-			<div class="list">
-				<div v-if="assignedPersonnel?.length">
-					<p>Diesem Patienten zugeordnet</p>
-					<div
-						v-for="personnelAssignment in assignedPersonnel"
-						:key="personnelAssignment.personnelId"
-						class="list-item"
-					>
-						<button class="list-item-button">
-							<div class="list-item-name">
-								{{ exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName }}
-							</div>
-						</button>
-						<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
-							Freigeben
-						</button>
-					</div>
-				</div>
-				<div v-if="freePersonnel?.length">
-					<br>
-					<p>Freies Personal</p>
-					<div
-						v-for="personnelAssignment in freePersonnel"
-						:key="personnelAssignment.personnelId"
-						class="list-item"
-					>
-						<button class="list-item-button" @click="openMovePopup(personnelAssignment.personnelId)">
-							<div class="list-item-name">
-								{{ exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName }}
-							</div>
-						</button>
-						<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
-							Zuweisen
-						</button>
-					</div>
-				</div>
-				<div v-if="busyPersonnel?.length">
-					<br>
-					<p>Anderen Patienten zugeordnet</p>
-					<div
-						v-for="personnelAssignment in busyPersonnel"
-						:key="personnelAssignment.personnelId"
-						class="list-item"
-					>
-						<button class="list-item-button">
-							<div class="list-item-name">
-								{{ exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName }}
-							</div>
-							<div class="list-item-name assigned-patient">
-								{{ exerciseStore.getPatient(personnelAssignment.patientId)?.patientName }}
-								({{ personnelAssignment.patientId }})
-							</div>
-						</button>
-					</div>
-				</div>
-			</div>
+			<CustomList v-if="assignedPersonnel?.length">
+				<p>Diesem Patienten zugeordnet</p>
+				<ListItem
+					v-for="personnelAssignment in assignedPersonnel"
+					:key="personnelAssignment.personnelId"
+				>
+					<ListItemButton>
+						<ListItemName :name="exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName" />
+					</ListItemButton>
+					<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
+						Freigeben
+					</button>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="freePersonnel?.length">
+				<p>Freies Personal</p>
+				<ListItem
+					v-for="personnelAssignment in freePersonnel"
+					:key="personnelAssignment.personnelId"
+				>
+					<ListItemButton @click="openMovePopup(personnelAssignment.personnelId)">
+						<ListItemName :name="exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName" />
+					</ListItemButton>
+					<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
+						Zuweisen
+					</button>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="busyPersonnel?.length">
+				<p>Anderen Patienten zugeordnet</p>
+				<ListItem
+					v-for="personnelAssignment in busyPersonnel"
+					:key="personnelAssignment.personnelId"
+				>
+					<ListItemButton>
+						<ListItemName :name="exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName" />
+						<ListItemRight>
+							{{ exerciseStore.getPatient(personnelAssignment.patientId)?.patientName }}
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 	</div>
 </template>

@@ -3,11 +3,12 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton} from "@/components/widgets/List"
 
 	const props = defineProps({
 		currentArea: {
-			type: String,
-			default: "Kein Bereich ausgewählt"
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
@@ -40,23 +41,16 @@
 		@close-popup="showPopup=false"
 		@delete="deletePersonnel"
 	/>
-	<div class="scroll">
-		<h1>Personal</h1>
-		<div class="list">
-			<button v-if="currentAreaData" class="list-item-add-button" @click="addPersonnel()">
-				Personal hinzufügen
-			</button>
-			<div
-				v-for="personnel in currentAreaData?.personnel"
-				:key="personnel.personnelName"
-				class="list-item"
-			>
-				<button class="list-item-button" @click="openPopup(personnel.personnelId)">
-					<div class="list-item-name">
-						{{ personnel.personnelName }}
-					</div>
-				</button>
-			</div>
-		</div>
-	</div>
+	<h1>Personal</h1>
+	<CustomList>
+		<ListItemAddButton v-if="currentAreaData" text="Personal hinzufügen" @click="addPersonnel()" />
+		<ListItem
+			v-for="personnel in currentAreaData?.personnel"
+			:key="personnel.personnelName"
+		>
+			<ListItemButton @click="openPopup(personnel.personnelId)">
+				<ListItemName :name="personnel.personnelName" />
+			</ListItemButton>
+		</ListItem>
+	</CustomList>
 </template>

@@ -5,6 +5,7 @@
 	import socketPatient from '@/sockets/SocketPatient'
 	import { useActionCheckStore } from '@/stores/ActionCheck'
 	import { Pages } from '../ScreenActions.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-action-selection', 'set-page'])
 
@@ -44,30 +45,20 @@
 		<div class="scroll">
 			<h1>Wähle eine Aktion</h1>
 			<CloseButton @click="emit('close-action-selection')" />
-			<div
+			<CustomList
 				v-for="actionTyp in availablesStore.getActionCategories"
 				:key="actionTyp"
-				class="list"
 			>
 				<h2>{{ getTypeLabel(actionTyp) }}</h2>
-				<div
+				<ListItem
 					v-for="action in filteredActions(actionTyp)"
 					:key="action.actionName"
-					class="list-item"
 				>
-					<button class="list-item-button" @click="openAction(action.actionName)">
-						<div class="list-item-name">
-							{{ action.actionName }}
-						</div>
-					</button>
-				</div>
-			</div>
+					<ListItemButton @click="openAction(action.actionName)">
+						<ListItemName :name="action.actionName" />
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 	</div>
 </template>
-<style scoped>
-	h1 {
-		text-align: center;
-		margin-top: 30px;
-	}
-</style>

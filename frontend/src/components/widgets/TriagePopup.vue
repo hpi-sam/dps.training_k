@@ -7,6 +7,7 @@
 
 	function setTriage(triage: string) {
 		socketPatient.triage(triage)
+		emit('close-popup')
 	}
 
 	const triageButtons = ref([

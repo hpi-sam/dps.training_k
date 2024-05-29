@@ -2,6 +2,7 @@
 	import {useLogStore} from "@/stores/Log"
 	import LogPopup from "../widgets/LogPopup.vue"
 	import {ref} from "vue"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const logStore = useLogStore()
 
@@ -20,26 +21,23 @@
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Log</h1>
-			<div class="list">
-				<div
-					v-for="logEntry in logStore.log"
-					:key="logEntry.logId"
-					class="list-item"
-				>
-					<button class="list-item-button" @click="openPopup(logEntry.logId)">
-						<div class="list-item-id">
-							{{ new Date(logEntry.logTime).toTimeString().split(' ')[0] }}
-						</div>
-						&#x2223;
-						<div class="list-item-name">
-							{{ logEntry.logMessage }}
-						</div>
-					</button>
-				</div>
+			<CustomList>
 				<h2 v-if="!logStore.log.length">
 					Keine Log-Einträge vorhanden
 				</h2>
-			</div>
+				<ListItem
+					v-for="logEntry in logStore.log"
+					:key="logEntry.logId"
+				>
+					<ListItemButton @click="openPopup(logEntry.logId)">
+						<ListItemLeft>
+							{{ new Date(logEntry.logTime).toTimeString().split(' ')[0] }}
+						</ListItemLeft>
+						&#x2223;
+						<ListItemName :name="logEntry.logMessage || 'Keine Nachricht'" />
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 	</div>
 </template>

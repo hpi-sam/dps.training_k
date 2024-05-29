@@ -5,6 +5,7 @@
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketPatient from '@/sockets/SocketPatient'
 	import ResultPopup from '@/components/widgets/ResultPopup.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const emit = defineEmits(['add-action', 'close-action-selection'])
 
@@ -81,83 +82,67 @@
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Übersicht</h1>
-			<div class="list">
-				<button class="list-item-add-button" @click="emit('add-action')">
-					Aktion hinzufügen
-				</button>
-				<div
+			<CustomList>
+				<ListItemAddButton text="Aktion hinzufügen" @click="emit('add-action')" />
+			</CustomList>
+			<CustomList v-if="actionsNotFinished.length">
+				<ListItem
 					v-for="action in actionsNotFinished"
 					:key="action.actionId"
-					class="list-item"
 				>
-					<button class="list-item-button" @click="openDeletePopup(action.actionName)">
-						<div class="list-item-icon">
+					<ListItemButton @click="openDeletePopup(action.actionName)">
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(action.actionStatus)" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ action.actionName }}
-						</div>
-						<div class="time">
+						</ListItemLeft>
+						<ListItemName :name="action.actionName" />
+						<ListItemRight>
 							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
-						</div>
-					</button>
-				</div>
-			</div>
-			<div v-if="actionsInEffect.length" class="list">
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="actionsInEffect.length">
 				<p>Wirkende Effekte</p>
-				<div
+				<ListItem
 					v-for="action in actionsInEffect"
 					:key="action.actionId"
-					class="list-item"
 				>
-					<button class="list-item-button" @click="openResultPopup(action.actionName, action.actionResult)">
-						<div class="list-item-icon">
+					<ListItemButton @click="openResultPopup(action.actionName, action.actionResult)">
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(action.actionStatus)" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ action.actionName }}
-						</div>
-						<div v-if="action.timeUntilCompletion > 0" class="time">
+						</ListItemLeft>
+						<ListItemName :name="action.actionName" />
+						<ListItemRight v-if="action.timeUntilCompletion > 0">
 							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
-						</div>
-					</button>
-				</div>
-			</div>
-			<div v-if="actionsFinished.length" class="list">
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="actionsFinished.length">
 				<p>Abgeschlossene Aktionen</p>
-				<div
+				<ListItem
 					v-for="action in actionsFinished"
 					:key="action.actionId"
-					class="list-item"
 				>
-					<button class="list-item-button" @click="openResultPopup(action.actionName, action.actionResult)">
-						<div class="list-item-icon">
+					<ListItemButton @click="openResultPopup(action.actionName, action.actionResult)">
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(action.actionStatus)" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ action.actionName }}
-						</div>
-						<div v-if="action.actionResult" class="time">
+						</ListItemLeft>
+						<ListItemName :name="action.actionName" />
+						<ListItemRight v-if="action.actionResult">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.descriptionIcon" />
 							</svg>
-						</div>
-					</button>
-				</div>
-			</div>
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 	</div>
 </template>
-
-<style scoped>
-	.time {
-		margin-left: auto;
-		margin-right: 16px;
-	}
-</style>

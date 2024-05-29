@@ -39,10 +39,12 @@
 
 <template>
 	<div class="page">
-		<p v-if="!currentArea" id="no-area-text">
-			Wähle einen Bereich aus
-		</p>
-		<component :is="currentPageComponent" v-if="currentArea" :current-area="currentArea" />
+		<div class="scroll">
+			<p v-if="!currentArea" id="no-area-text">
+				Wähle einen Bereich aus
+			</p>
+			<component :is="currentPageComponent" v-if="currentArea" :current-area="currentArea" />
+		</div>
 	</div>
 	<nav>
 		<button id="nav-patients" :class="{ 'selected': currentPage === Pages.PATIENTS }" @click="setPage(Pages.PATIENTS)">
