@@ -182,3 +182,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 DATA_ROOT = os.path.join(BASE_DIR, "data")
+
+# Redis connection settings
+REDIS_HOST = 'K-dPS-redis'
+REDIS_PORT = 6379
+REDIS_DB = 0

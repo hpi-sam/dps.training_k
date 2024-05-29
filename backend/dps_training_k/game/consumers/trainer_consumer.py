@@ -149,8 +149,9 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_start_exercise(self, exercise):
         owned_patients = PatientInstance.objects.filter(exercise=exercise)
-        for patient in owned_patients:
-            patient.schedule_state_change()
+        for time_offset, patient in enumerate(owned_patients):
+            # we don't start all patients at once to balance out the work for our celery workers
+            patient.schedule_state_change(time_offset)
         exercise.update_state(Exercise.StateTypes.RUNNING)
 
     def handle_end_exercise(self, exercise):
