@@ -36,12 +36,6 @@ class Command(BaseCommand):
         )
         # corresponds to "4 EK´s"
         Subcondition.objects.update_or_create(
-            name="keine 4 EK´s",
-            upper_limit=3,
-            lower_limit=0,
-            fulfilling_measures={str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN): 0},
-        )
-        Subcondition.objects.update_or_create(
             name="4 EK´s",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=4,
@@ -52,49 +46,34 @@ class Command(BaseCommand):
             name="0-999 Infusion",
             upper_limit=999,
             lower_limit=0,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.VOLLELEKTROLYT): 0},
         )
         Subcondition.objects.update_or_create(
             name="1000-1999 Infusion",
             upper_limit=1999,
             lower_limit=1000,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.VOLLELEKTROLYT): 1},
         )
         Subcondition.objects.update_or_create(
             name="2000-2999 Infusion",
             upper_limit=2999,
             lower_limit=2000,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.VOLLELEKTROLYT): 2},
         )
         Subcondition.objects.update_or_create(
             name="3000-inf Infusion",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=3000,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.VOLLELEKTROLYT): 3},
         )
         # corresponds to "2l Infusion"
-        Subcondition.objects.update_or_create(
-            name="keine 2l Infusion",
-            upper_limit=1999,
-            lower_limit=0,
-            fulfilling_measures={},
-        )
         Subcondition.objects.update_or_create(
             name="2l Infusion",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=2000,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.VOLLELEKTROLYT): 2},
         )
         # corresponds to "Thoraxdrainage/ Pleurapunktion"
-        Subcondition.objects.update_or_create(
-            name="keine Thoraxdrainage/ Pleurapunktion",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={
-                str(ActionIDs.THORAXDRAINAGE): 0,
-                str(ActionIDs.PLEURAPUNKTION): 0,
-            },
-        )
         Subcondition.objects.update_or_create(
             name="Thoraxdrainage/ Pleurapunktion",
             upper_limit=CUSTOM_MAXINT,
@@ -106,24 +85,12 @@ class Command(BaseCommand):
         )
         # corresponds to "Glucose"
         Subcondition.objects.update_or_create(
-            name="keine Glucose",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={str(ActionIDs.GLUCOSE_VERABREICHEN): 0},
-        )
-        Subcondition.objects.update_or_create(
             name="Glucose",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={str(ActionIDs.GLUCOSE_VERABREICHEN): 1},
         )
         # corresponds to "Nitrat"
-        Subcondition.objects.update_or_create(
-            name="kein Nitrat",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={str(ActionIDs.NITRAT): 0},
-        )
         Subcondition.objects.update_or_create(
             name="Nitrat",
             upper_limit=CUSTOM_MAXINT,
@@ -132,16 +99,10 @@ class Command(BaseCommand):
         )
         # corresponds to O2
         Subcondition.objects.update_or_create(
-            name="kein O2",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={},
-        )
-        Subcondition.objects.update_or_create(
             name="O2",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.SAUERSTOFF_ANBRINGEN): 1},
         )
         # corresponds to "OP läuft / ist gelaufen" as well as "keine OP"
         Subcondition.objects.update_or_create(
@@ -158,12 +119,6 @@ class Command(BaseCommand):
         )
         # corresponds to "Analgesie"
         Subcondition.objects.update_or_create(
-            name="keine Analgesie",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={str(ActionIDs.ANALGETIKUM): 0},
-        )
-        Subcondition.objects.update_or_create(
             name="Analgesie",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
@@ -171,37 +126,19 @@ class Command(BaseCommand):
         )
         # corresponds to "O2 Inhalation"
         Subcondition.objects.update_or_create(
-            name="keine O2 Inhalation",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={},
-        )
-        Subcondition.objects.update_or_create(
             name="O2 Inhalation",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.SAUERSTOFF_ANBRINGEN): 1},
         )
         # corresponds to "CPAP"
-        Subcondition.objects.update_or_create(
-            name="kein CPAP",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={},
-        )
         Subcondition.objects.update_or_create(
             name="CPAP",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={},
+            fulfilling_measures={str(ActionIDs.BEATMUNG): 1},
         )
         # corresponds to "Antiasthmatikum"
-        Subcondition.objects.update_or_create(
-            name="kein Antiasthmatikum",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={str(ActionIDs.ANTIASTHMATIKUM): 0},
-        )
         Subcondition.objects.update_or_create(
             name="Antiasthmatikum",
             upper_limit=CUSTOM_MAXINT,
@@ -210,24 +147,12 @@ class Command(BaseCommand):
         )
         # corresponds to "Sedativum"
         Subcondition.objects.update_or_create(
-            name="kein Sedativum",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={str(ActionIDs.SEDATIVUM): 0},
-        )
-        Subcondition.objects.update_or_create(
             name="Sedativum",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={str(ActionIDs.SEDATIVUM): 1},
         )
         # corresponds to "freie Atemwege"
-        Subcondition.objects.update_or_create(
-            name="keine freien Atemwege",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={},
-        )
         Subcondition.objects.update_or_create(
             name="freie Atemwege",
             upper_limit=CUSTOM_MAXINT,
@@ -287,16 +212,6 @@ class Command(BaseCommand):
         )
         # corresponds to "Regional-/ Vollnarkose"
         Subcondition.objects.update_or_create(
-            name="keine Regional-/ Vollnarkose",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures={
-                str(ActionIDs.REGIONAL_NARKOSE): 1,
-                str(ActionIDs.REGIONAL_NARKOTIKUM): 1,
-                str(ActionIDs.NARKOTIKUM): 1,
-            },
-        )
-        Subcondition.objects.update_or_create(
             name="Regional-/ Vollnarkose",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
@@ -346,7 +261,7 @@ class Command(BaseCommand):
             )
             first_state_transition = self.create_state_transitions(
                 patient_state["table_id"]
-            )[1]
+            )[0]
             # finally, set the transition for the patient (first one of the linked list)
             second_start_patient_state_obj.transition = first_state_transition
             second_start_patient_state_obj.save()
@@ -462,7 +377,6 @@ class Command(BaseCommand):
 
             # create transitions for table 1
             table1 = self.state_transitions["table 1"]
-            previous_state_transition = first_state_transition_table1
             for i, line in enumerate(table1[1:]):  # for each line of the table
                 resulting_state_id = int(relevant_table_id_data["table_1_results"][i])
                 # end of recursion
@@ -490,7 +404,7 @@ class Command(BaseCommand):
                     # recursive call to create transitions and resulting states for state created above
                     resulting_state_transition = self.create_state_transitions(
                         table_id
-                    )[1]
+                    )[0]
                     resulting_patient_state_obj.transition = resulting_state_transition
                     resulting_patient_state_obj.save()
 
@@ -518,7 +432,6 @@ class Command(BaseCommand):
 
             # handle cases where tables are empty
             # this is for empty table 0
-            previous_state_transition = first_state_transition_table0
             if len(table0[1:]) == 0:
                 resulting_state_id = int(relevant_table_id_data["table_0_results"][0])
                 # end of recursion
@@ -572,7 +485,6 @@ class Command(BaseCommand):
                 previous_state_transition = state_transition
 
             # empty table 1
-            previous_state_transition = first_state_transition_table1
             if len(table1[1:]) == 0:
                 resulting_state_id = int(relevant_table_id_data["table_1_results"][0])
                 # end of recursion
@@ -599,7 +511,7 @@ class Command(BaseCommand):
                             break
                     resulting_state_transition = self.create_state_transitions(
                         table_id
-                    )[1]
+                    )[0]
 
                     resulting_patient_state_obj.transition = resulting_state_transition
                     resulting_patient_state_obj.save()
@@ -678,38 +590,35 @@ class Command(BaseCommand):
         self, table, extra_conditions, state_transition, current_line
     ):
         table_subconditions = table[0]
-        root_node, _ = LogicNode.objects.get_or_create(
-            state_transition=state_transition,
-            node_type=LogicNode.NodeType.AND,
-        )
+        nodes = []
         table_lines = table[1:]
         if "Nicht beatmet" in extra_conditions:
             subcondition = Subcondition.objects.get(name="Nicht beatmet")
-            leaf_node, _ = LogicNode.objects.get_or_create(
+            node, _ = LogicNode.objects.get_or_create(
                 state_transition=state_transition,
                 node_type=LogicNode.NodeType.SUBCONDITION,
                 subcondition=subcondition,
-                parent=root_node,
             )
+            nodes.append(node)
         elif "Beatmet" in extra_conditions:
             subcondition = Subcondition.objects.get(name="Beatmet")
-            leaf_node, _ = LogicNode.objects.get_or_create(
+            node, _ = LogicNode.objects.get_or_create(
                 state_transition=state_transition,
                 node_type=LogicNode.NodeType.SUBCONDITION,
                 subcondition=subcondition,
-                parent=root_node,
             )
+            nodes.append(node)
 
         for i, entry in enumerate(current_line):
             # we only create subconditions for the ones that are true. creating ones for false is unnecessary
             if entry == "ja":
                 subcondition = Subcondition.objects.get(name=table_subconditions[i])
-                leaf_node, _ = LogicNode.objects.get_or_create(
+                node, _ = LogicNode.objects.get_or_create(
                     state_transition=state_transition,
                     node_type=LogicNode.NodeType.SUBCONDITION,
                     subcondition=subcondition,
-                    parent=root_node,
                 )
+                nodes.append(node)
             elif entry == "nein":
                 pass
             # entry contains a value (may also contain chars, but these are never important)
@@ -724,12 +633,20 @@ class Command(BaseCommand):
                     lower_limit=value,
                     upper_limit=next_higher_value - 1,
                 )
-                leaf_node, _ = LogicNode.objects.get_or_create(
+                node, _ = LogicNode.objects.get_or_create(
                     state_transition=state_transition,
                     node_type=LogicNode.NodeType.SUBCONDITION,
                     subcondition=subcondition,
-                    parent=root_node,
                 )
+                nodes.append(node)
+        if len(nodes) > 1:
+            root_node, _ = LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.AND,
+            )
+            for node in nodes:
+                node.parent = root_node
+                node.save()
 
     def find_next_higher_value(self, current_value, table, line_index):
         for line in table:
@@ -903,5 +820,4 @@ class Command(BaseCommand):
 # TODO: which action corresponds to "O2 Inhalation", same for O2?
 # TODO: which action corresponds to "CPAP"?
 # TODO: are there more "Blutstillungen" than "Chir. Blutstillung"?
-# TODO: fix state_depth removal in patient_state_factory
 # TODO: patient 1036 has no value for ZVD

@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -7,7 +8,7 @@ from game.channel_notifications import PatientInstanceDispatcher
 from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.triage import Triage
-from template.models import PatientState
+from template.models import PatientState, Subcondition
 
 
 def validate_patient_frontend_id(value):
@@ -69,10 +70,12 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
                 self.exercise.frontend_id
             )  # Properly hash the password
             self.user.save()
-            if not self.patient_state: # factory already has it set so we don't wanna overwrite that here
+            if (
+                not self.patient_state
+            ):  # factory already has it set so we don't wanna overwrite that here
                 self.patient_state = PatientState.objects.get(
                     code=self.static_information.code,
-                    state_id=self.static_information.start_status
+                    state_id=self.static_information.start_status,
                 )
             self.triage = self.static_information.triage
 
@@ -96,15 +99,16 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
             self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 
-    def schedule_state_change(self):
+    def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
+
         if self.patient_state.is_dead:
             return False
         if self.patient_state.is_final():
             return False
         ScheduledEvent.create_event(
             exercise=self.exercise,
-            t_sim_delta=10,
+            t_sim_delta=60 + time_offset,
             method_name="execute_state_change",
             patient=self,
         )
@@ -112,16 +116,36 @@ class PatientInstance(Eventable, ActionsQueueable, models.Model):
     def execute_state_change(self):
         if self.patient_state.is_dead or self.patient_state.is_final():
             raise Exception(
-                "Patient is dead or in final state, state change should have never been scheduled"
+                f"Patient is dead or in final state, state change should have never been scheduled\n code: {self.patient_state.code}, state_id: {self.patient_state.state_id}"
             )
-        state_change_requirements = {"self.condition_checker.now()": ""}
-        future_state = self.patient_state.transition.activate(state_change_requirements)
+        fulfilled_subconditions = self.get_fulfilled_subconditions()
+        future_state = self.patient_state.transition.activate(fulfilled_subconditions)
         if not future_state:
             return False
         self.patient_state = future_state
         self.save(update_fields=["patient_state"])
         self.schedule_state_change()
         return True
+
+    def get_fulfilled_subconditions(self):
+        # Fetch all necessary data in a single query for performance
+        action_instances = self.actioninstance_set.select_related("template").all()
+        subconditions = Subcondition.objects.all()
+
+        # This dict approach is much faster than filter, hence we use this
+        template_action_count = defaultdict(int)
+        for action_instance in action_instances:
+            template_action_count[action_instance.template.uuid] += 1
+
+        fulfilled_subconditions = []
+
+        for subcondition in subconditions:
+            fulfilling_measures = subcondition.fulfilling_measures
+            for key, value in fulfilling_measures.items():
+                if template_action_count[key] >= value:
+                    fulfilled_subconditions.append(subcondition)
+
+        return fulfilled_subconditions
 
     def material_assigned(self, material_template):
         return list(self.materialinstance_set.filter(template=material_template))
