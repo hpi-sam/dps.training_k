@@ -8,6 +8,7 @@
 	import {showErrorToast} from "@/App.vue"
 	import CloseButton from "./CloseButton.vue"
 	import {generateName} from "@/utils"
+	import {ListItem} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -22,7 +23,7 @@
 	patientName.value = generateName()
 
 	function addPatient() {
-		if (!patientCodeChanged) {
+		if (!patientCodeChanged.value) {
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
@@ -41,11 +42,11 @@
 		return null
 	})
 
-	let patientCodeChanged = false
+	const patientCodeChanged = ref(false)
 
 	function changePatientCode(patientCode: number) {
 		currentPatientCode.value = patientCode
-		patientCodeChanged = true
+		patientCodeChanged.value = true
 	}
 
 </script>
@@ -61,17 +62,16 @@
 				</div>
 			</div>
 			<div id="right-side">
-				<div class="list-item">
-					<TriageForListItems :patient-code="currentPatient?.code" />
+				<ListItem>
+					<TriageForListItems v-if="patientCodeChanged" :patient-code="currentPatient?.code" />
 					<div class="patient-name">
 						{{ patientName }}
 					</div>
-				</div>
+				</ListItem>
 				<div class="scroll">
 					<PatientInfo
 						:injury="currentPatient?.injury"
 						:biometrics="currentPatient?.biometrics"
-						:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
 						:mobility="currentPatient?.mobility"
 						:preexisting-illnesses="currentPatient?.preexistingIllnesses"
 						:permanent-medication="currentPatient?.permanentMedication"
@@ -143,5 +143,9 @@
 
 	.patient-id, .patient-name {
 		padding: .75rem 1rem;
+	}
+
+	.patient-code {
+		margin-left: 0px;
 	}
 </style>

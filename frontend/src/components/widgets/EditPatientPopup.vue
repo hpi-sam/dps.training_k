@@ -7,6 +7,7 @@
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import CloseButton from "./CloseButton.vue"
+	import {ListItem, ListItemName, ListItemLeft} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -58,20 +59,17 @@
 			</div>
 			<div id="right-side">
 				<div class="flex-container">
-					<div class="list-item">
-						<div class="patient-id">
+					<ListItem>
+						<ListItemLeft>
 							{{ props.patientId }}
-						</div>
+						</ListItemLeft>
 						<TriageForListItems :patient-code="currentPatient?.code" />
-						<div class="patient-name">
-							{{ currentPatientName }}
-						</div>
-					</div>
+						<ListItemName :name="currentPatientName" />
+					</ListItem>
 					<div class="scroll">
 						<PatientInfo
 							:injury="currentPatient?.injury"
 							:biometrics="currentPatient?.biometrics"
-							:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
 							:mobility="currentPatient?.mobility"
 							:preexisting-illnesses="currentPatient?.preexistingIllnesses"
 							:permanent-medication="currentPatient?.permanentMedication"
@@ -141,13 +139,5 @@
 
 	.list-item {
 		margin-right: 40px;
-		font-size: 1.25rem;
-		text-align: left;
-		height: 50px;
-		padding-left: 0;
-	}
-
-	.patient-id, .patient-name {
-		padding: .75rem 1rem;
 	}
 </style>

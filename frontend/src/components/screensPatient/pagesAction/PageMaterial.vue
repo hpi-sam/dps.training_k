@@ -5,6 +5,7 @@
 	import {useResourceAssignmentsStore} from '@/stores/ResourceAssignments'
 	import {computed, ref} from 'vue'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemRight} from "@/components/widgets/List"
 
 	const patientStore = usePatientStore()
 	const resourceAssignmentStore = useResourceAssignmentsStore()
@@ -48,62 +49,48 @@
 	<div class="flex-container">
 		<div class="scroll">
 			<h1>Material</h1>
-			<div class="list">
-				<div v-if="assignedMaterial?.length">
-					<p>Diesem Patienten zugeordnet</p>
-					<div
-						v-for="materialAssignment in assignedMaterial"
-						:key="materialAssignment.materialId"
-						class="list-item"
-					>
-						<button class="list-item-button">
-							<div class="list-item-name">
-								{{ exerciseStore.getMaterial(materialAssignment.materialId)?.materialName }}
-							</div>
-						</button>
-						<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
-							Freigeben
-						</button>
-					</div>
-				</div>
-				<div v-if="freeMaterial?.length">
-					<br>
-					<p>Freies Material</p>
-					<div
-						v-for="materialAssignment in freeMaterial"
-						:key="materialAssignment.materialId"
-						class="list-item"
-					>
-						<button class="list-item-button" @click="openMovePopup(materialAssignment.materialId)">
-							<div class="list-item-name">
-								{{ exerciseStore.getMaterial(materialAssignment.materialId)?.materialName }}
-							</div>
-						</button>
-						<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
-							Zuweisen
-						</button>
-					</div>
-				</div>
-				<div v-if="busyMaterial?.length">
-					<br>
-					<p>Anderen Patienten zugeordnet</p>
-					<div
-						v-for="materialAssignment in busyMaterial"
-						:key="materialAssignment.materialId"
-						class="list-item"
-					>
-						<button class="list-item-button">
-							<div class="list-item-name">
-								{{ exerciseStore.getMaterial(materialAssignment.materialId)?.materialName }}
-							</div>
-							<div class="list-item-name assigned-patient">
-								{{ exerciseStore.getPatient(materialAssignment.patientId)?.patientName }}
-								({{ materialAssignment.patientId }})
-							</div>
-						</button>
-					</div>
-				</div>
-			</div>
+			<CustomList v-if="assignedMaterial?.length">
+				<p>Diesem Patienten zugeordnet</p>
+				<ListItem
+					v-for="materialAssignment in assignedMaterial"
+					:key="materialAssignment.materialId"
+				>
+					<ListItemButton>
+						<ListItemName :name="exerciseStore.getMaterial(materialAssignment.materialId)?.materialName" />
+					</ListItemButton>
+					<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
+						Freigeben
+					</button>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="freeMaterial?.length">
+				<p>Freies Material</p>
+				<ListItem
+					v-for="materialAssignment in freeMaterial"
+					:key="materialAssignment.materialId"
+				>
+					<ListItemButton @click="openMovePopup(materialAssignment.materialId)">
+						<ListItemName :name="exerciseStore.getMaterial(materialAssignment.materialId)?.materialName" />
+					</ListItemButton>
+					<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
+						Zuweisen
+					</button>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="busyMaterial?.length">
+				<p>Anderen Patienten zugeordnet</p>
+				<ListItem
+					v-for="materialAssignment in busyMaterial"
+					:key="materialAssignment.materialId"
+				>
+					<ListItemButton>
+						<ListItemName :name="exerciseStore.getMaterial(materialAssignment.materialId)?.materialName" />
+						<ListItemRight>
+							{{ exerciseStore.getPatient(materialAssignment.patientId)?.patientName }}
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 	</div>
 </template>

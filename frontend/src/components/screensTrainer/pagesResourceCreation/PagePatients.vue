@@ -4,6 +4,7 @@
 	import EditPatientPopup from '@/components/widgets/EditPatientPopup.vue'
 	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
 	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemLeft} from "@/components/widgets/List"
 
 	const props = defineProps({
 		currentArea: {
@@ -34,27 +35,20 @@
 <template>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
 	<AddPatientPopup v-if="showAddPatientPopup" :area-id="currentArea" @close-popup="showAddPatientPopup=false" />
-	<div class="scroll">
-		<h1>Patienten</h1>
-		<div class="list">
-			<button v-if="currentAreaData" id="create-patient-button" class="list-item-add-button" @click="addPatient()">
-				Patient hinzufügen
-			</button>
-			<div
-				v-for="patient in currentAreaData?.patients"
-				:key="patient.patientName"
-				class="list-item"
-			>
-				<button class="list-item-button" @click="editPatient(patient.patientId)">
-					<div class="list-item-id">
-						{{ patient.patientId }}
-					</div>
-					<TriageForListItems :patient-code="patient.code" />
-					<div class="list-item-name">
-						{{ patient.patientName }}
-					</div>
-				</button>
-			</div>
-		</div>
-	</div>
+	<h1>Patienten</h1>
+	<CustomList>
+		<ListItemAddButton v-if="currentAreaData" id="create-patient-button" text="Patient hinzufügen" @click="addPatient()" />
+		<ListItem
+			v-for="patient in currentAreaData?.patients"
+			:key="patient.patientName"
+		>
+			<ListItemButton @click="editPatient(patient.patientId)">
+				<ListItemLeft>
+					{{ patient.patientId }}
+				</ListItemLeft>
+				<TriageForListItems :patient-code="patient.code" />
+				<ListItemName :name="patient.patientName" />
+			</ListItemButton>
+		</ListItem>
+	</CustomList>
 </template>
