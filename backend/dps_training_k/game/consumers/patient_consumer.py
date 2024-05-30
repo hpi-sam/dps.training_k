@@ -168,17 +168,21 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_action_add(self, patient_instance, action_name):
         action_template = Action.objects.get(name=action_name)
-        if action_template.category == Action.Category.PRODUCTION:
-            action_instance = ActionInstance.create(
-                template=action_template,
-                lab=self.exercise.lab,
-                destination_area=patient_instance.area,
-            )
-        else:
-            action_instance = ActionInstance.create(
-                template=action_template,
-                patient_instance=patient_instance,
-            )
+        kwargs = {}
+        if action_template.location == Action.Location.LAB:
+            kwargs["lab"] = self.exercise.lab
+        if (
+            action_template.location == Action.Location.BEDSIDE
+            or action_template.category == Action.Category.EXAMINATION
+        ):
+            kwargs["patient_instance"] = patient_instance
+
+        if (
+            action_template.category == Action.Category.PRODUCTION
+            or action_template.category == Action.Category.IMAGING
+        ):
+            kwargs["destination_area"] = patient_instance.area
+        action_instance = ActionInstance.create(action_template, **kwargs)
         application_succeded, context = action_instance.try_application()
         if not application_succeded:
             self._send_action_declination(action_name=action_name, message=context)

@@ -12,6 +12,7 @@ class ActionFactory(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "name",
             "category",
+            "location",
             "application_duration",
             "effect_duration",
             "conditions",
@@ -21,6 +22,7 @@ class ActionFactory(factory.django.DjangoModelFactory):
 
     name = "Recovery Position"
     category = Action.Category.EXAMINATION
+    location = Action.Location.BEDSIDE
     application_duration = 10
     effect_duration = None
     conditions = ConditionFactory()
@@ -45,6 +47,7 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "name",
             "category",
+            "location",
             "application_duration",
             "effect_duration",
             "conditions",
@@ -54,6 +57,7 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
 
     name = "Recovery Position"
     category = Action.Category.TREATMENT
+    location = Action.Location.BEDSIDE
     application_duration = 10
     effect_duration = 10
     conditions = ConditionFactory()
@@ -67,6 +71,7 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "name",
             "category",
+            "location",
             "application_duration",
             "effect_duration",
             "conditions",
@@ -76,6 +81,7 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
 
     name = "Fresh Frozen Plasma (0 positiv) auftauen"
     category = Action.Category.PRODUCTION
+    location = Action.Location.LAB
     application_duration = 10
     effect_duration = None
     conditions = ConditionFactory()

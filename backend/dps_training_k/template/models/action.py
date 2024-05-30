@@ -14,11 +14,18 @@ class Action(UUIDable, models.Model):
         EXAMINATION = "EX", "examination"
         PRODUCTION = "PR", "production"
         IMAGING = "IM", "imaging"
-        LAB = "LA", "lab"
         OTHER = "OT", "other"
+
+    class Location(models.TextChoices):
+        LAB = "LA", "lab"
+        BEDSIDE = "BE", "bedside"
+        STATION = "ST", "station"
 
     name = models.CharField(max_length=100, unique=True)
     category = models.CharField(choices=Category.choices, max_length=2)
+    location = models.CharField(
+        choices=Location.choices, max_length=2, default=Location.BEDSIDE
+    )
     application_duration = models.IntegerField(
         default=10,
         help_text="Duration in seconds in realtime. Might be scaled by external factors.",
@@ -73,6 +80,8 @@ class Action(UUIDable, models.Model):
         return needed_material_groups + needed_single_material
 
     def personnel_count_needed(self):
+        if self.location == Action.Location.LAB:
+            return 0  # ToDo: remove once we use personnel for labs
         if not self.conditions:
             return 0
         parsed_condition = json.loads(self.conditions)
@@ -85,21 +94,15 @@ class Action(UUIDable, models.Model):
         )
 
     def get_result(self, action_instance):
-        if self.category == Action.Category.TREATMENT:
-            return self.treatment_result()
-        elif self.category == Action.Category.EXAMINATION:
+        if (
+            self.category == Action.Category.EXAMINATION
+            or self.category == Action.Category.IMAGING
+        ):
             return self.examination_result(
                 action_instance.get_patient_examination_codes()
             )
-        elif self.category == Action.Category.IMAGING:
-            return self.examination_result(
-                action_instance.get_patient_examination_codes()
-            )
-        elif self.category == Action.Category.LAB:
-            return self.lab_result()
-
-    def treatment_result(self):
-        return f"Behandlung {self.name} wurde durchgeführt"
+        else:
+            return self.generic_result()
 
     def examination_result(self, examination_codes):
         results_dict = json.loads(self.results)
@@ -117,5 +120,5 @@ class Action(UUIDable, models.Model):
 
         return result_string
 
-    def lab_result(self):
+    def generic_result(self):
         return f"{self.name} wurde durchgeführt"

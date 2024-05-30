@@ -205,7 +205,7 @@ class ActionInstance(LocalTimeable, models.Model):
             action_instance=self,
         )
 
-        if self.patient_instance:
+        if self.template.category == self.template.Category.EXAMINATION:
             self.historic_patient_state = self.patient_instance.patient_state
             self.save(update_fields=["historic_patient_state"])
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
@@ -222,9 +222,12 @@ class ActionInstance(LocalTimeable, models.Model):
         self._try_starting_action_effects()
 
     def attached_instance(self):
-        return (
-            self.lab or self.patient_instance
-        )  # first not null value determined by short-circuiting
+        if self.template.location == self.template.Location.BEDSIDE:
+            return self.patient_instance
+        if self.template.location == self.template.Location.LAB:
+            return self.lab
+        else:
+            raise ValueError("No attached instance found")
 
     def _try_imaging_setup(self):
         """
@@ -265,7 +268,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return False
 
     def _try_resource_production(self):
-        if self.template.produced_resources() != None:
+        if self.template.category == self.template.Category.PRODUCTION:
             MaterialInstance.generate_materials(
                 self.template.produced_resources(), self.destination_area
             )
