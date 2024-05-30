@@ -972,7 +972,7 @@ class Command(BaseCommand):
             name="Blutdruckmessgerät anbringen",
             uuid=ActionIDs.BLUTDRUCK_MESSGERAET_ANBRINGEN,
             defaults={
-                "category": "TR",
+                "category": "EX",
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1398,15 +1398,37 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
-            uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
+            name="Blut abnehmen",
+            uuid=ActionIDs.BLUTABNAHME,
             defaults={
-                "category": "EX",
+                "category": "TR",
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": [str(ActionIDs.ART_KANUELE)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
+            uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
+            defaults={
+                "category": "LA",
+                "application_duration": 15,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -1445,14 +1467,12 @@ class Command(BaseCommand):
             name="Blutgaseanalyse für Säure-Base-Haushalt durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": [
-                            [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
-                        ],
+                        "required_actions": None,
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -1733,7 +1753,7 @@ class Command(BaseCommand):
             name="Extremitäten Röntgen",
             uuid=ActionIDs.EXTREMITAETEN_ROENTGEN,
             defaults={
-                "category": "EX",
+                "category": "IM",
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1800,7 +1820,7 @@ class Command(BaseCommand):
             name="Thorax Röntgen",
             uuid=ActionIDs.THORAX_ROENTGEN,
             defaults={
-                "category": "EX",
+                "category": "IM",
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1868,7 +1888,7 @@ class Command(BaseCommand):
             name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
-                "category": "EX",
+                "category": "IM",
                 "application_duration": 300,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1938,7 +1958,7 @@ class Command(BaseCommand):
             name="Ultraschall Abdomen",
             uuid=ActionIDs.ULTRASCHALL_ABDOMEN,
             defaults={
-                "category": "EX",
+                "category": "IM",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1989,7 +2009,7 @@ class Command(BaseCommand):
             name="Ultraschall Thorax",
             uuid=ActionIDs.ULTRASCHALL_THORAX,
             defaults={
-                "category": "EX",
+                "category": "IM",
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2062,7 +2082,7 @@ class Command(BaseCommand):
             name="Blutgruppe bestimmen",
             uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 180,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2098,7 +2118,7 @@ class Command(BaseCommand):
             name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2160,7 +2180,7 @@ class Command(BaseCommand):
             name="Lactatanalyse",
             uuid=ActionIDs.LACTATANALYSE,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2197,7 +2217,7 @@ class Command(BaseCommand):
             name="Gerinnungsanalyse",
             uuid=ActionIDs.GERINNUNGSANALYSE,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2234,7 +2254,7 @@ class Command(BaseCommand):
             name="Leberanalyse",
             uuid=ActionIDs.LEBERANALYSE,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2271,7 +2291,7 @@ class Command(BaseCommand):
             name="Nierenanalyse",
             uuid=ActionIDs.NIERENANALYSE,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2308,7 +2328,7 @@ class Command(BaseCommand):
             name="Infarktanalyse",
             uuid=ActionIDs.INFARKTANALYSE,
             defaults={
-                "category": "EX",
+                "category": "LA",
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
