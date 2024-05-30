@@ -3,12 +3,12 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
-	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
 	import {Screens, setRightScreen} from '../ModuleTrainer.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
+	import BinButton from '@/components/widgets/BinButton.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -22,8 +22,7 @@
 		currentArea.value = areaId
 	}
 
-	function openPopup(areaId: number) {
-		openArea(areaId)
+	function openPopup() {
 		showPopup.value = true
 	}
 
@@ -62,16 +61,7 @@
 					<ListItemButton @click="openArea(area.areaId)">
 						<ListItemName :name="area.areaName" />
 						<ListItemRight>
-							<button class="settings-button" @click="openPopup(area.areaId)">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24"
-									viewBox="0 -960 960 960"
-									width="24"
-								>
-									<path :d="svg.settingsIcon" />
-								</svg>
-							</button>
+							<BinButton @click="openPopup()" />
 						</ListItemRight>
 					</ListItemButton>
 				</ListItem>
@@ -87,14 +77,6 @@
 </template>
 
 <style scoped>
-	.settings-button {
-		height: 50px;
-		width: 50px;
-		border: none;
-		background-color: white;
-		margin-left: auto;
-	}
-
 	.scroll {
 		margin-bottom: 110px;
 	}

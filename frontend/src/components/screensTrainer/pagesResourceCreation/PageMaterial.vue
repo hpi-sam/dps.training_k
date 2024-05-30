@@ -4,7 +4,8 @@
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import AddMaterialPopup from '@/components/widgets/AddMaterialPopup.vue'
-	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton} from "@/components/widgets/List"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
+	import BinButton from '@/components/widgets/BinButton.vue'
 
 	const props = defineProps({
 		currentArea: {
@@ -68,8 +69,11 @@
 			v-for="device in devices"
 			:key="device.materialName"
 		>
-			<ListItemButton @click="openDeletePopup(device.materialName, device.materialId)">
+			<ListItemButton>
 				<ListItemName :name="device.materialName" />
+				<ListItemRight>
+					<BinButton @click="openDeletePopup(device.materialName, device.materialId)" />
+				</ListItemRight>
 			</ListItemButton>
 		</ListItem>
 	</CustomList>
@@ -79,8 +83,11 @@
 			v-for="blood in bloodList"
 			:key="blood.materialName"
 		>
-			<ListItemButton @click="openDeletePopup(blood.materialName, blood.materialId)">
+			<ListItemButton>
 				<ListItemName :name="blood.materialName" />
+				<ListItemRight>
+					<BinButton @click="openDeletePopup(blood.materialName, blood.materialId)" />
+				</ListItemRight>
 			</ListItemButton>
 		</ListItem>
 	</CustomList>

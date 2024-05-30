@@ -26,5 +26,8 @@
         line-height: 1.25rem;
         padding: .75rem 1rem;
         margin-top: -1px;
+        min-height: 50px;
+        border-radius: 10px 10px 0px 0px;
+        box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
     }
 </style>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 	const props = defineProps({
 		personalDetails: {type: String, default: '-'},
 		injury: {type: String, default: '-'},
@@ -9,40 +11,37 @@
 		currentCaseHistory: {type: String, default: '-'},
 		pretreatment: {type: String, default: '-'},
 	})
+
+	const infos = computed(() => [
+		{name: 'Verletzungen', value: props.injury},
+		{name: 'Biometrie', value: props.biometrics},
+		{name: 'Mobilität', value: props.mobility},
+		{name: 'Vorerkrankungen', value: props.preexistingIllnesses},
+		{name: 'Dauer-Medikation', value: props.permanentMedication},
+		{name: 'Aktuelle Anamnese / Rettungsdienst-Übergabe', value: props.currentCaseHistory},
+		{name: 'Vorbehandlung', value: props.pretreatment},
+	])
 </script>
 
 <template>
-	<p class="key">
-		Verletzungen
-	</p>{{ props.injury }}
-	<br>
-	<p class="key">
-		Biometrie
-	</p>{{ props.biometrics }}
-	<br>
-	<p class="key">
-		Vorerkrankungen
-	</p>{{ props.preexistingIllnesses }}
-	<br>
-	<p class="key">
-		Dauer-Medikation
-	</p>{{ props.permanentMedication }}
-	<br>
-	<p class="key">
-		Aktuelle Anamnese / Rettungsdienst-Übergabe
-	</p>{{ props.currentCaseHistory }}
-	<br>
-	<p class="key">
-		Vorbehandlung
-	</p>{{ props.pretreatment }}
-	<br>
-	<p class="key">
-		Mobilität
-	</p>{{ props.mobility }}
+	<table>
+		<tr v-for="info in infos" :key="info.name">
+			<td colspan="2">
+				<br>
+				<b>{{ info.name }}</b>
+				<br>
+				{{ info.value }}
+			</td>
+		</tr>
+	</table>
 </template>
 
 <style scoped>
-	.key {
+	b {
 		font-weight: bold;
+	}
+
+	td {
+		text-align: left;
 	}
 </style>
