@@ -3,7 +3,7 @@ import csv
 from template.models import PatientState, Subcondition, LogicNode, StateTransition
 from django.conf import settings
 import os, re
-from template.constants import ActionIDs
+from template.constants import ActionIDs, MaterialIDs
 from time import sleep
 from copy import deepcopy
 
@@ -24,203 +24,245 @@ class Command(BaseCommand):
     def create_subconditions(self):
         # corresponds to "Lyse"
         Subcondition.objects.update_or_create(
-            name="keine Lyse",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures=[str(ActionIDs.LYSE_VERARBREICHEN)],
-        )
-        Subcondition.objects.update_or_create(
             name="Lyse",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.LYSE_VERARBREICHEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.LYSE_VERARBREICHEN)],
+                "materials": [],
+            },
         )
         # corresponds to "4 EK´s"
         Subcondition.objects.update_or_create(
             name="4 EK´s",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=4,
-            fulfilling_measures=[str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "materials": [],
+            },
         )
         # corresponds to "Infusion"
         Subcondition.objects.update_or_create(
             name="0-1l Infusion",
             upper_limit=0,
             lower_limit=0,
-            fulfilling_measures=[str(ActionIDs.VOLLELEKTROLYT)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
+                "materials": [],
+            },
         )
         Subcondition.objects.update_or_create(
             name="1-2l Infusion",
             upper_limit=1,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.VOLLELEKTROLYT)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
+                "materials": [],
+            },
         )
         Subcondition.objects.update_or_create(
             name="2-3l Infusion",
             upper_limit=2,
             lower_limit=2,
-            fulfilling_measures=[str(ActionIDs.VOLLELEKTROLYT)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
+                "materials": [],
+            },
         )
         Subcondition.objects.update_or_create(
             name="3l-inf Infusion",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=3,
-            fulfilling_measures=[str(ActionIDs.VOLLELEKTROLYT)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
+                "materials": [],
+            },
         )
         # corresponds to "2l Infusion"
         Subcondition.objects.update_or_create(
             name="2l Infusion",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=2,
-            fulfilling_measures=[str(ActionIDs.VOLLELEKTROLYT)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
+                "materials": [],
+            },
         )
         # corresponds to "Thoraxdrainage/ Pleurapunktion"
         Subcondition.objects.update_or_create(
             name="Thoraxdrainage/ Pleurapunktion",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[
-                str(ActionIDs.THORAXDRAINAGE),
-                str(ActionIDs.PLEURAPUNKTION),
-            ],
+            fulfilling_measures={
+                "actions": [
+                    str(ActionIDs.THORAXDRAINAGE),
+                    str(ActionIDs.PLEURAPUNKTION),
+                ],
+                "materials": [],
+            },
         )
         # corresponds to "Glucose"
         Subcondition.objects.update_or_create(
             name="Glucose",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.GLUCOSE_VERABREICHEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.GLUCOSE_VERABREICHEN)],
+                "materials": [],
+            },
         )
         # corresponds to "Nitrat"
         Subcondition.objects.update_or_create(
             name="Nitrat",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.NITRAT)],
+            fulfilling_measures={"actions": [str(ActionIDs.NITRAT)], "materials": []},
         )
         # corresponds to O2
         Subcondition.objects.update_or_create(
             name="O2",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.SAUERSTOFF_ANBRINGEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.SAUERSTOFF_ANBRINGEN)],
+                "materials": [],
+            },
         )
         # corresponds to "OP läuft / ist gelaufen" as well as "keine OP"
-        Subcondition.objects.update_or_create(
-            name="keine OP läuft / ist gelaufen",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures=[],
-        )
         Subcondition.objects.update_or_create(
             name="OP läuft / ist gelaufen",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[],
+            fulfilling_measures={"actions": [], "materials": []},
         )
         # corresponds to "Analgesie"
         Subcondition.objects.update_or_create(
             name="Analgesie",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.ANALGETIKUM)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ANALGETIKUM)],
+                "materials": [],
+            },
         )
         # corresponds to "O2 Inhalation"
         Subcondition.objects.update_or_create(
             name="O2 Inhalation",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.SAUERSTOFF_ANBRINGEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.SAUERSTOFF_ANBRINGEN)],
+                "materials": [],
+            },
         )
         # corresponds to "CPAP"
         Subcondition.objects.update_or_create(
             name="CPAP",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.BEATMUNG)],
+            fulfilling_measures={"actions": [str(ActionIDs.BEATMUNG)], "materials": []},
         )
         # corresponds to "Antiasthmatikum"
         Subcondition.objects.update_or_create(
             name="Antiasthmatikum",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.ANTIASTHMATIKUM)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ANTIASTHMATIKUM)],
+                "materials": [],
+            },
         )
         # corresponds to "Sedativum"
         Subcondition.objects.update_or_create(
             name="Sedativum",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.SEDATIVUM)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.SEDATIVUM)],
+                "materials": [],
+            },
         )
         # corresponds to "freie Atemwege"
         Subcondition.objects.update_or_create(
             name="freie Atemwege",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[],  # add "Tubus" things here?
+            fulfilling_measures={
+                "actions": [],
+                "materials": [],
+            },  # add "Tubus" things here?
         )
         # corresponds to "EK´s"
         Subcondition.objects.update_or_create(
             name="0-1 EK´s",
             upper_limit=1,
             lower_limit=0,
-            fulfilling_measures=[str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "materials": [],
+            },
         )
         Subcondition.objects.update_or_create(
             name="2-3 EK´s",
             upper_limit=3,
             lower_limit=2,
-            fulfilling_measures=[str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "materials": [],
+            },
         )
         Subcondition.objects.update_or_create(
             name="4-5 EK´s",
             upper_limit=5,
             lower_limit=4,
-            fulfilling_measures=[str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "materials": [],
+            },
         )
         Subcondition.objects.update_or_create(
             name="6-inf EK´s",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=6,
-            fulfilling_measures=[str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "materials": [],
+            },
         )
         # corresponds to "Beatmet"
-        Subcondition.objects.update_or_create(
-            name="Nicht beatmet",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures=[str(ActionIDs.BEATMUNG)],
-        )
         Subcondition.objects.update_or_create(
             name="Beatmet",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.BEATMUNG)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.BEATMUNG)],
+                "materials": [str(MaterialIDs.BEATMUNGSGERAET)],
+            },
         )
         # corresponds to Blutstillung
-        Subcondition.objects.update_or_create(
-            name="keine Blutstillung",
-            upper_limit=0,
-            lower_limit=0,
-            fulfilling_measures=[str(ActionIDs.CHIR_BLUTSTILLUNG)],
-        )
         Subcondition.objects.update_or_create(
             name="Blutstillung",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[str(ActionIDs.CHIR_BLUTSTILLUNG)],
+            fulfilling_measures={
+                "actions": [str(ActionIDs.CHIR_BLUTSTILLUNG)],
+                "materials": [],
+            },
         )
         # corresponds to "Regional-/ Vollnarkose"
         Subcondition.objects.update_or_create(
             name="Regional-/ Vollnarkose",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures=[
-                str(ActionIDs.REGIONAL_NARKOSE),
-                str(ActionIDs.REGIONAL_NARKOTIKUM),
-                str(ActionIDs.NARKOTIKUM),
-            ],
+            fulfilling_measures={
+                "actions": [
+                    str(ActionIDs.REGIONAL_NARKOSE),
+                    str(ActionIDs.REGIONAL_NARKOTIKUM),
+                    str(ActionIDs.NARKOTIKUM),
+                ],
+                "materials": [],
+            },
         )
 
     def create_patient_states_and_transitions(self):
@@ -303,19 +345,19 @@ class Command(BaseCommand):
 
         else:
             if "keine Lyse:" in relevant_table_id_data["extra_condition 1"]:
-                subcondition = Subcondition.objects.get(name="keine Lyse")
+                subcondition = Subcondition.objects.get(name="Lyse")
                 first_state_transition_table0 = first_state_transition_table1 = (
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
             if "keine OP:" in relevant_table_id_data["extra_condition 1"]:
                 subcondition = Subcondition.objects.get(
-                    name="keine OP läuft / ist gelaufen"
+                    name="OP läuft / ist gelaufen"
                 )
                 first_state_transition_table0 = first_state_transition_table1 = (
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
             if "keine Blutstillung:" in relevant_table_id_data["extra_condition 1"]:
-                subcondition = Subcondition.objects.get(name="keine Blutstillung")
+                subcondition = Subcondition.objects.get(name="Blutstillung")
                 first_state_transition_table0 = first_state_transition_table1 = (
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
@@ -574,10 +616,15 @@ class Command(BaseCommand):
             resulting_state=resulting_patient_state_obj
         )
         if subcondition is not None:
+            parent_node, _ = LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.NOT,
+            )
             LogicNode.objects.get_or_create(
                 state_transition=state_transition,
                 node_type=LogicNode.NodeType.SUBCONDITION,
                 subcondition=subcondition,
+                parent=parent_node,
             )
         # This is the "Immer" case
         else:
@@ -594,13 +641,18 @@ class Command(BaseCommand):
         nodes = []
         table_lines = table[1:]
         if "Nicht beatmet" in extra_conditions:
-            subcondition = Subcondition.objects.get(name="Nicht beatmet")
+            subcondition = Subcondition.objects.get(name="Beatmet")
+            parent_node, _ = LogicNode.objects.get_or_create(
+                state_transition=state_transition,
+                node_type=LogicNode.NodeType.NOT,
+            )
             node, _ = LogicNode.objects.get_or_create(
                 state_transition=state_transition,
                 node_type=LogicNode.NodeType.SUBCONDITION,
                 subcondition=subcondition,
+                parent=parent_node,
             )
-            nodes.append(node)
+            nodes.append(parent_node)
         elif "Beatmet" in extra_conditions:
             subcondition = Subcondition.objects.get(name="Beatmet")
             node, _ = LogicNode.objects.get_or_create(
