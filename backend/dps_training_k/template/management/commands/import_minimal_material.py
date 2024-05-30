@@ -22,22 +22,27 @@ class Command(BaseCommand):
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,
+            used=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BLUTAUFTAU_SLOT,
             name="Blutauftau-Slot",
-            category=Material.Category.DEVICE,
+            category=Material.Category.LABOR,
             is_reusable=True,
+            used=False,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.BEATMUNGSGERAET,
-            name="Beatmungsgerät",
+            uuid=MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+            name="Tragbares Beatmungsgerät",
             category=Material.Category.DEVICE,
             is_reusable=True,
+            moveable=True,
+            used=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
             name="Wärmegerät",
             category=Material.Category.DEVICE,
             is_reusable=True,
+            used=True,
         )

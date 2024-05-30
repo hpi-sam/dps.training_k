@@ -1,11 +1,13 @@
-from django.core.management.base import BaseCommand
 import csv
-from template.models import PatientState, Subcondition, LogicNode, StateTransition
-from django.conf import settings
-import os, re
-from template.constants import ActionIDs, MaterialIDs
-from time import sleep
+import os
+import re
 from copy import deepcopy
+
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
+from template.constants import ActionIDs, MaterialIDs
+from template.models import PatientState, Subcondition, LogicNode, StateTransition
 
 CUSTOM_MAXINT = 100000  # doesn't matter, people shouldn't be doing the same thing 100000 times anyway
 
@@ -161,7 +163,10 @@ class Command(BaseCommand):
             name="CPAP",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={"actions": [str(ActionIDs.BEATMUNG)], "materials": []},
+            fulfilling_measures={
+                "actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
+                "materials": [],
+            },
         )
         # corresponds to "Antiasthmatikum"
         Subcondition.objects.update_or_create(
@@ -236,8 +241,13 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.BEATMUNG)],
-                "materials": [str(MaterialIDs.BEATMUNGSGERAET)],
+                "actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
+                "materials": [
+                    [
+                        str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                        str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                    ]
+                ],
             },
         )
         # corresponds to Blutstillung
@@ -350,9 +360,7 @@ class Command(BaseCommand):
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
             if "keine OP:" in relevant_table_id_data["extra_condition 1"]:
-                subcondition = Subcondition.objects.get(
-                    name="OP läuft / ist gelaufen"
-                )
+                subcondition = Subcondition.objects.get(name="OP läuft / ist gelaufen")
                 first_state_transition_table0 = first_state_transition_table1 = (
                     self.handle_guard_condition(relevant_table_id_data, subcondition)
                 )
@@ -668,7 +676,9 @@ class Command(BaseCommand):
                 try:
                     subcondition = Subcondition.objects.get(name=table_subconditions[i])
                 except:
-                    print(f"found multiple Subconditions with name equals {table_subconditions[i]}")
+                    print(
+                        f"found multiple Subconditions with name equals {table_subconditions[i]}"
+                    )
                 node, _ = LogicNode.objects.get_or_create(
                     state_transition=state_transition,
                     node_type=LogicNode.NodeType.SUBCONDITION,
@@ -694,8 +704,10 @@ class Command(BaseCommand):
                         lower_limit=value,
                         upper_limit=next_higher_value - 1,
                     )
-                except: 
-                    print(f"couldn't find Subcondition, name: {subcondition_name}, lower limit: {value}, upper limit: {next_higher_value}")
+                except:
+                    print(
+                        f"couldn't find Subcondition, name: {subcondition_name}, lower limit: {value}, upper limit: {next_higher_value}"
+                    )
                 node, _ = LogicNode.objects.get_or_create(
                     state_transition=state_transition,
                     node_type=LogicNode.NodeType.SUBCONDITION,

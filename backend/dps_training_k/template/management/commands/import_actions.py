@@ -37,29 +37,6 @@ class Command(BaseCommand):
         """
 
         Action.objects.update_or_create(
-            name="Beatmung",
-            uuid=ActionIDs.BEATMUNG,
-            defaults={
-                "category": "TR",
-                "application_duration": 15,
-                "effect_duration": None,  # None means permanent
-                "conditions": json.dumps(
-                    {
-                        "required_actions": [str(ActionIDs.TRACHEALTUBUS)],
-                        "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.BEATMUNGSGERAET)],
-                        "num_personnel": 2,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                            {role_map[RoleIDs.ARZT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
             name="Thoraxdrainage",
             uuid=ActionIDs.THORAXDRAINAGE,
             defaults={
@@ -476,7 +453,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.IV_ZUGANG)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.NARKOSEGERAET)],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -494,7 +471,7 @@ class Command(BaseCommand):
             defaults={
                 "category": "TR",
                 "application_duration": 15,
-                "effect_duration": 120,  # Depends of type of "Zugang"
+                "effect_duration": None,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
                     {
                         "required_actions": [str(ActionIDs.IV_ZUGANG)],
@@ -903,7 +880,7 @@ class Command(BaseCommand):
                             [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
                         ],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.DEFIBRILATOR)],
+                        "material": [str(MaterialIDs.DEFI_TRANSCUTANER_PACER)],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -925,8 +902,6 @@ class Command(BaseCommand):
                 "conditions": json.dumps(
                     {
                         "required_actions": [
-                            str(ActionIDs.IV_ZUGANG),
-                            str(ActionIDs.NARKOTIKUM),
                             [
                                 str(ActionIDs.TRACHEALTUBUS),
                                 str(ActionIDs.LARYNXTUBUS),
@@ -934,7 +909,12 @@ class Command(BaseCommand):
                             ],
                         ],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.BEATMUNGSGERAET)],
+                        "material": [
+                            [
+                                str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                                str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                            ]
+                        ],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -957,7 +937,12 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [
+                            [
+                                str(MaterialIDs.SAUERSTOFF_TRAGBAR),
+                                str(MaterialIDs.SAUERSTOFF_STATIONAER),
+                            ]
+                        ],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1171,7 +1156,12 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [
+                            [
+                                str(MaterialIDs.MONITOR_STATIONAER),
+                                str(MaterialIDs.MONITOR_TRAGBAR),
+                            ]
+                        ],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1196,7 +1186,7 @@ class Command(BaseCommand):
                             str(ActionIDs.ANALGETIKUM),
                         ],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.DEFIBRILATOR)],
+                        "material": [str(MaterialIDs.PASSAGERER_PACER)],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -1221,7 +1211,7 @@ class Command(BaseCommand):
                             [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
                         ],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.PERFUSORPUMPE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1243,7 +1233,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.PERFUSORPUMPE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1516,7 +1506,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.BZ_MESSGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1603,7 +1593,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.EKG)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1625,7 +1615,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.EKG_GERAET)],
+                        "material": [str(MaterialIDs.EKG)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1673,7 +1663,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.ZVK)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ZVD_MESSGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2107,7 +2097,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [MaterialIDs.LAB_GERAET_1],
                         "area": None,
                         "role": [
                             [
