@@ -24,6 +24,8 @@ class ChannelEventTypes:
     ACTION_CHECK_CHANGED_EVENT = "action.check.changed.event"
     LOG_UPDATE_EVENT = "log.update.event"
     RESOURCE_ASSIGNMENT_EVENT = "resource.assignment.event"
+    IMAGING_ACTION_START_EVENT = "imaging.action.start.event"
+    IMAGING_ACTION_END_EVENT = "imaging.action.end.event"
 
 
 class ChannelNotifier:
@@ -125,6 +127,23 @@ class ActionInstanceDispatcher(ChannelNotifier):
                     cls._notify_action_event(
                         applied_action, ChannelEventTypes.ACTION_CONFIRMATION_EVENT
                     )
+                elif (
+                    applied_action.template.category == template.Action.Category.IMAGING
+                ):
+                    if (
+                        applied_action.state_name
+                        == models.ActionInstanceStateNames.IN_PROGRESS
+                    ):
+                        cls._notify_action_event(
+                            applied_action, ChannelEventTypes.IMAGING_ACTION_START_EVENT
+                        )
+                    elif (
+                        applied_action.state_name
+                        == models.ActionInstanceStateNames.FINISHED
+                    ):
+                        cls._notify_action_event(
+                            applied_action, ChannelEventTypes.ACTION_LIST_EVENT
+                        )
 
             # always send action list event
             cls._notify_action_event(

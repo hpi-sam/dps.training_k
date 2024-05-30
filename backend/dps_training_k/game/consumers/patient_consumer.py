@@ -24,6 +24,9 @@ from ..channel_notifications import (
     MaterialInstanceDispatcher,
 )
 from ..serializers.resource_assignment_serializer import AreaResourceSerializer
+from ..serializers.exercise_imaging_serializer import (
+    ExerciseImagingSerializer,
+)
 
 
 class PatientConsumer(AbstractConsumer):
@@ -54,6 +57,8 @@ class PatientConsumer(AbstractConsumer):
         ACTION_CHECK = "action-check"
         RESOURCE_ASSIGNMENTS = "resource-assignments"
         STATE_CHANGE = "state"
+        IMAGING_START = "imaging-start"
+        IMAGING_END = "imaging-end"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -174,6 +179,7 @@ class PatientConsumer(AbstractConsumer):
         if (
             action_template.location == Action.Location.BEDSIDE
             or action_template.category == Action.Category.EXAMINATION
+            or action_template.category == Action.Category.IMAGING
         ):
             kwargs["patient_instance"] = patient_instance
 
@@ -335,6 +341,16 @@ class PatientConsumer(AbstractConsumer):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_LIST,
             actions=actions,
+        )
+
+    def imaging_action_start_event(self, event=None):
+        self.send_event(
+            self.PatientOutgoingMessageTypes.IMAGING_START,
+        )
+
+    def imaging_action_end_event(self, event=None):
+        self.send_event(
+            self.PatientOutgoingMessageTypes.IMAGING_END,
         )
 
     def resource_assignment_event(self, event=None):
