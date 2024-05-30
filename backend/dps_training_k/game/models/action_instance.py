@@ -232,27 +232,33 @@ class ActionInstance(LocalTimeable, models.Model):
     def _try_imaging_setup(self):
         """
         iff the action is an imaging action, the patient is moved to the lab
+        :return bool, str: True if the moving is legal, either by not requiring movements or by succeeding a required movement.
+        If False, the str contains the reason why the action is not applicable.
         """
+        if self.template.category != self.template.Category.IMAGING:
+            return True, ""
         is_applicable = True
         context = None
         destination_area = None
-        if self.template.category == self.template.Category.IMAGING:
-            if ActionInstance.objects.filter(
+        if (
+            ActionInstance.objects.filter(
                 patient_instance=self.patient_instance,
                 template__category=self.template.Category.IMAGING,
                 current_state__name__in=[
                     ActionInstanceStateNames.PLANNED,
                     ActionInstanceStateNames.IN_PROGRESS,
                 ],
-            ).exists():
-                is_applicable, context = (
-                    False,
-                    "Patient hat bereits eine Untersuchung",
-                )
-            else:
-                destination_area = self.patient_instance.area
-                is_applicable, context = self.patient_instance.perform_move(self.lab)
-                breakpoint()
+            ).count()
+            > 1
+        ):
+            is_applicable, context = (
+                False,
+                "Patient hat bereits eine Untersuchung",
+            )
+        else:
+            destination_area = self.patient_instance.area
+            is_applicable, context = self.patient_instance.perform_move(self.lab)
+
         if is_applicable and destination_area:
             self.destination_area = destination_area
             self.save(update_fields=["destination_area"])
