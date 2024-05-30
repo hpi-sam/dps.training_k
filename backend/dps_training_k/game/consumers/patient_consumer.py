@@ -24,9 +24,6 @@ from ..channel_notifications import (
     MaterialInstanceDispatcher,
 )
 from ..serializers.resource_assignment_serializer import AreaResourceSerializer
-from ..serializers.exercise_imaging_serializer import (
-    ExerciseImagingSerializer,
-)
 
 
 class PatientConsumer(AbstractConsumer):
