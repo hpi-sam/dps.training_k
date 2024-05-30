@@ -9,8 +9,9 @@ from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
-from template.models import PatientState
+from template.models import PatientState, Action
 
+# from game.models import ActionInstanceStateNames moved into function to avoid circular imports
 
 # from game.models import Area, Lab  # moved into function to avoid circular imports
 # from game.models import ActionInstance, ActionInstanceStateNames  # moved into function to avoid circular imports
@@ -201,6 +202,14 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
 
     def attached_instance(self):
         return self.area or self.lab
+
+    def is_in_imaging(self):
+        from game.models import ActionInstanceStateNames
+
+        return self.actioninstance_set.filter(
+            template__category=Action.Category.IMAGING,
+            current_state__name=ActionInstanceStateNames.IN_PROGRESS,
+        ).exists()
 
     def __str__(self):
         return (

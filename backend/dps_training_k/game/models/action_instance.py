@@ -174,6 +174,11 @@ class ActionInstance(LocalTimeable, models.Model):
                 False,
                 f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
+        elif self.patient_instance and self.patient_instance.is_in_imaging():
+            is_applicable, context = (
+                False,
+                f"{self.patient_instance.name} ist bereits in einer Bildgebung",
+            )
         else:
             is_applicable, context = self.check_conditions_and_block_resources(
                 self.attached_instance(), self.attached_instance()
@@ -205,7 +210,10 @@ class ActionInstance(LocalTimeable, models.Model):
             action_instance=self,
         )
 
-        if self.template.category == self.template.Category.EXAMINATION:
+        if (
+            self.template.category == self.template.Category.EXAMINATION
+            or self.template.category == self.template.Category.IMAGING
+        ):
             self.historic_patient_state = self.patient_instance.patient_state
             self.save(update_fields=["historic_patient_state"])
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
@@ -237,27 +245,9 @@ class ActionInstance(LocalTimeable, models.Model):
         """
         if self.template.category != self.template.Category.IMAGING:
             return True, ""
-        is_applicable = True
-        context = None
-        destination_area = None
-        if (
-            ActionInstance.objects.filter(
-                patient_instance=self.patient_instance,
-                template__category=self.template.Category.IMAGING,
-                current_state__name__in=[
-                    ActionInstanceStateNames.PLANNED,
-                    ActionInstanceStateNames.IN_PROGRESS,
-                ],
-            ).count()
-            > 1
-        ):
-            is_applicable, context = (
-                False,
-                "Patient hat bereits eine Untersuchung",
-            )
-        else:
-            destination_area = self.patient_instance.area
-            is_applicable, context = self.patient_instance.perform_move(self.lab)
+
+        destination_area = self.patient_instance.area
+        is_applicable, context = self.patient_instance.perform_move(self.lab)
 
         if is_applicable and destination_area:
             self.destination_area = destination_area
@@ -300,7 +290,7 @@ class ActionInstance(LocalTimeable, models.Model):
         return f"""ActionInstance {self.template.name} for 
             {self.patient_instance.name + str(self.patient_instance.id) 
              if self.patient_instance 
-             else "Lab" + str(self.lab.exercise.frontend_id)}"""
+             else "Lab " + str(self.lab.exercise.frontend_id)}"""
 
     def check_conditions_and_block_resources(self, material_owner, personnel_owner):
         """
