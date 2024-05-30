@@ -118,7 +118,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def execute_state_change(self):
         if self.patient_state.is_dead or self.patient_state.is_final():
             raise Exception(
-                f"Patient is dead or in final state, state change should have never been scheduled\n code: {self.patient_state.code}, state_id: {self.patient_state.state_id}"
+                f"Patient is dead or in final state, state change should have never been scheduled"
             )
         fulfilled_subconditions = self.get_fulfilled_subconditions()
         future_state = self.patient_state.transition.activate(fulfilled_subconditions)
@@ -130,6 +130,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
         return True
 
     def get_fulfilled_subconditions(self):
+        from game.models import ActionInstanceState
         # Fetch all necessary data in a single query for performance
         action_instances = self.actioninstance_set.select_related("template").all()
         subconditions = Subcondition.objects.all()
@@ -138,7 +139,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
         # This dict approach is much faster than filter, hence we use this
         template_action_count = defaultdict(int)
         for action_instance in action_instances:
-            if action_instance.completed:
+            if action_instance.current_state.name in ActionInstanceState.success_states():
                 template_action_count[str(action_instance.template.uuid)] += 1
         # TODO: add handling for OP if it's not an action
         fulfilled_subconditions = set()
@@ -181,7 +182,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
         return "Patient*in"
 
     def can_receive_actions(self):
-        return not (self.patient_state.is_dead or self.patient_state.is_final()) 
+        return not (self.patient_state.is_dead or self.patient_state.is_final())
 
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames
