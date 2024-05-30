@@ -44,14 +44,14 @@ class LogicNode(models.Model):
     def is_root(self):
         return self.parent is None
 
-    def evaluate_tree(self, subconditions_dict):
+    def evaluate_tree(self, fulfilled_subconditions):
         """
         Evaluates the evaluation tree starting with self
-        :param subconditions_dict: A Dictionary of all Sub-Conditions that shows if they are fulfilled
+        :param fulfilled_subconditions: A list of all fulfilled Subconditions
         :return: Boolean
         """
         children_values = [
-            child.evaluate_tree(subconditions_dict)
+            child.evaluate_tree(fulfilled_subconditions)
             for child in self.children.select_related("subcondition").all()
         ]
         if self.node_type == LogicNode.NodeType.TRUE:
@@ -71,4 +71,4 @@ class LogicNode(models.Model):
                 )
             return all(children_values)
         if self.node_type == LogicNode.NodeType.SUBCONDITION:
-            return subconditions_dict[self.subcondition.id]
+            return self.subcondition in fulfilled_subconditions
