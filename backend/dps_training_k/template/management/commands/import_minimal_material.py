@@ -1,15 +1,18 @@
 from django.core.management.base import BaseCommand
-from template.models import Material
+
 from template.constants import MaterialIDs
+from template.models import Material
 
 
 class Command(BaseCommand):
-    help = "Populates the database with minimal resources list"
+    help = "Populates the database with minimal material list"
 
     def handle(self, *args, **kwargs):
         self.create_resources()
         self.stdout.write(
-            self.style.SUCCESS("Successfully added resources to the database")
+            self.style.SUCCESS(
+                "Successfully added minimal material list to the database"
+            )
         )
 
     @staticmethod

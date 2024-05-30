@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.create_actions()
         self.stdout.write(
-            self.style.SUCCESS("Successfully added minimal actions to the database")
+            self.style.SUCCESS("Successfully added minimal action list to the database")
         )
 
     @staticmethod
