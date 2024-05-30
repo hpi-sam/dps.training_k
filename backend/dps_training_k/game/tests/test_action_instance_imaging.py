@@ -46,21 +46,19 @@ class RelocationTestCase(TestUtilsMixin, TestCase):
         self.assertTrue(is_applicable)
         self.assertIsNone(self.action_instance.destination_area)
 
-    def test_moving_to_lab_with_active_imiging_action(self):
+    def test_moving_to_lab_with_active_imaging_action(self):
         """
         Iff there is already an active imaging action for the patient_instance, the _try_imaging_setup just returns a (False, some_string) tuple
         """
-        imaging_instance_1 = ActionInstance.create(
-            self.action_template,
+        is_applicable, context = self.action_instance._try_imaging_setup()
+        non_imaging_template = Action.objects.exclude(
+            category=Action.Category.IMAGING
+        ).first()
+        non_image_action_instance = ActionInstance.create(
+            non_imaging_template,
             patient_instance=self.patient_instance,
             lab=self.patient_instance.exercise.lab,
         )
-        is_applicable, context = imaging_instance_1._try_imaging_setup()
-        imaging_instance_2 = ActionInstance.create(
-            self.action_template,
-            patient_instance=self.patient_instance,
-            lab=self.patient_instance.exercise.lab,
-        )
-        is_applicable, context = imaging_instance_2._try_imaging_setup()
+        is_applicable, context = non_image_action_instance.try_application()
         self.assertFalse(is_applicable)
-        self.assertIsNone(imaging_instance_2.destination_area)
+        self.assertIsNotNone(context)

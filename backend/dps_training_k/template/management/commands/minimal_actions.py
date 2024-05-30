@@ -194,7 +194,7 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        "CT": {
+                        "Trauma-CT": {
                             100: "deutlich vergrößertes Herz, Aorta elongiert, Belüftung oB. Extremitäten: Normalbefund; keine Frakturzeichen;",
                             105: "inhomogene Verschattungen, bds zentrale Infiltrate, Zwerchfellhochstand Extremitäten: Normalbefund; keine Frakturzeichen; Lunge wie bei ARDS; zentrales vermutlich gekapseltes Hämatom abdominal ca 2 L",
                             106: "Thorax: Normalbefund; Spiralfraktur rechter Oberarm; sonst keine Frakturen HWS: oB.; Becken: oB; Abdomen: oB.; Schädel: oB.;",
