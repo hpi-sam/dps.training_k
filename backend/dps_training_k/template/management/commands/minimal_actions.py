@@ -27,7 +27,8 @@ class Command(BaseCommand):
             name="i.V. Zugang",
             uuid=ActionIDs.IV_ZUGANG,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
                 "application_duration": 60,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -38,10 +39,11 @@ class Command(BaseCommand):
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
-                        "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    }
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
                 ),
-                "results": json.dumps({}),
             },
         )
         Action.objects.update_or_create(
@@ -70,8 +72,9 @@ class Command(BaseCommand):
             name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
-                "category": "EX",
-                "application_duration": 10,  # For debugging purposes
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "application_duration": 10,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -132,8 +135,9 @@ class Command(BaseCommand):
             name="Blutgruppe bestimmen",
             uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
             defaults={
-                "category": "EX",
-                "application_duration": 10,  # For debugging purposes
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "application_duration": 10,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
@@ -169,7 +173,8 @@ class Command(BaseCommand):
             name="Fresh Frozen Plasma (0 positiv) auftauen",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
             defaults={
-                "category": "PR",
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
                 "application_duration": 20,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -177,11 +182,13 @@ class Command(BaseCommand):
                         "required_actions": None,
                         "prohibitive_actions": None,
                         "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 0,  # TODo: Add back once personnel for labs is being used
+                        "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
-                        "role": [],  # TODo: Add back once personnel for labs is being used
-                    }
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
                 ),
                 "results": json.dumps(
                     {

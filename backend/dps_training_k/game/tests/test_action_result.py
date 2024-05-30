@@ -117,13 +117,13 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
             destination_area=area,
         )
         action_instance.try_application()
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
         self.assertRaises(
             MaterialInstance.DoesNotExist,
             MaterialInstance.objects.get,
             template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
             area=area,
         )
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
