@@ -1,9 +1,9 @@
 from celery import shared_task
 from django.conf import settings
 from game.models.scheduled_event import ScheduledEvent
-
 from redis import Redis
 from redis.exceptions import LockError
+import logging
 
 redis_client = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -23,6 +23,6 @@ def check_for_updates():
             finally:
                 lock.release()
         else:
-            print("Task is already running")
+            logging.info("Task is already running")
     except LockError as e:
-        print(f"Could not acquire lock: {e}")
+        logging.warning(f"Could not acquire lock: {e}")

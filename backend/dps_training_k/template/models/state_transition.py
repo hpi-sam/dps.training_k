@@ -1,5 +1,4 @@
 from django.db import models
-from typing import List
 
 
 class StateTransition(models.Model):
@@ -13,14 +12,14 @@ class StateTransition(models.Model):
         "StateTransition", on_delete=models.CASCADE, null=True, blank=True
     )
 
-    def activate(self, conditions: List):
+    def activate(self, conditions):
         if self.resulting_state is None:
             return None
         if not self.is_valid(conditions):
             return self.next_state_transition.activate(conditions)
         return self.resulting_state
 
-    def is_valid(self, conditions: List):
+    def is_valid(self, conditions):
         return self.get_root_logic_node().evaluate_tree(conditions)
 
     def is_final(self):

@@ -182,10 +182,8 @@ class TrainerConsumer(AbstractConsumer):
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(template__uuid=MaterialIDs.BEATMUNGSGERAET)
-                    print(material_instances)
                     succeeded = False
                     for material_instance in material_instances:
-                        print(material_instance.attached_instance())
                         if material_instance.attached_instance() == area:
                             succeeded = True
                             break
