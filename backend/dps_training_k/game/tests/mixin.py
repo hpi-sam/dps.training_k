@@ -99,3 +99,12 @@ class TestUtilsMixin:
 
     def activate_results(self):
         self._deactivate_result_patch.stop()
+
+    def deactivate_moving(self):
+        self._deactivate_moving_patch = patch(
+            "game.models.PatientInstance.perform_move"
+        )
+        self._deactivate_moving = self._deactivate_moving_patch.start()
+
+    def activate_moving(self):
+        self._deactivate_moving_patch.stop()
