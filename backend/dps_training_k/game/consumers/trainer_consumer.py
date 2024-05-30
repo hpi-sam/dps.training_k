@@ -13,31 +13,26 @@ class TrainerConsumer(AbstractConsumer):
     """
 
     class TrainerIncomingMessageTypes:
-        EXAMPLE = "example"
-        EXERCISE_CREATE = "exercise-create"
-        TEST_PASSTHROUGH = "test-passthrough"
-        EXERCISE_START = "exercise-start"
-        EXERCISE_END = "exercise-end"
-        EXERCISE_PAUSE = "exercise-pause"
-        EXERCISE_RESUME = "exercise-resume"
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        EXAMPLE = "example"
+        EXERCISE_CREATE = "exercise-create"
+        EXERCISE_END = "exercise-end"
+        EXERCISE_START = "exercise-start"
+        MATERIAL_ADD = "material-add"
+        MATERIAL_DELETE = "material-delete"
         PATIENT_ADD = "patient-add"
-        PATIENT_UPDATE = "patient-update"
         PATIENT_DELETE = "patient-delete"
+        PATIENT_UPDATE = "patient-update"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_UPDATE = "personnel-update"
-        MATERIAL_ADD = "material-add"
-        MATERIAL_DELETE = "material-delete"
 
     class TrainerOutgoingMessageTypes:
-        RESPONSE = "response"
         EXERCISE_CREATED = "trainer-exercise-create"
-        TEST_PASSTHROUGH = "test-passthrough"
-        AREA_ADD = "area-add"
-        AREA_DELETE = "area-delete"
         LOG_UPDATE = "log-update"
+        RESPONSE = "response"
+        TEST_PASSTHROUGH = "test-passthrough"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,7 +45,12 @@ class TrainerConsumer(AbstractConsumer):
         ]
         self.exercise_frontend_id = None
         self.exercise = None
-        self.REQUESTS_MAP = {
+        trainer_request_map = {
+            self.TrainerIncomingMessageTypes.AREA_ADD: (self.handle_add_area,),
+            self.TrainerIncomingMessageTypes.AREA_DELETE: (
+                self.handle_delete_area,
+                "areaId",
+            ),
             self.TrainerIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
                 "exerciseId",
@@ -58,23 +58,18 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.EXERCISE_CREATE: (
                 self.handle_create_exercise,
             ),
-            self.TrainerIncomingMessageTypes.TEST_PASSTHROUGH: (
-                self.handle_test_passthrough,
-            ),
+            self.TrainerIncomingMessageTypes.EXERCISE_END: (self.handle_end_exercise,),
             self.TrainerIncomingMessageTypes.EXERCISE_START: (
                 self.handle_start_exercise,
             ),
-            self.TrainerIncomingMessageTypes.EXERCISE_END: (self.handle_end_exercise,),
-            self.TrainerIncomingMessageTypes.EXERCISE_PAUSE: (
-                self.handle_pause_exercise,
-            ),
-            self.TrainerIncomingMessageTypes.EXERCISE_RESUME: (
-                self.handle_resume_exercise,
-            ),
-            self.TrainerIncomingMessageTypes.AREA_ADD: (self.handle_add_area,),
-            self.TrainerIncomingMessageTypes.AREA_DELETE: (
-                self.handle_delete_area,
+            self.TrainerIncomingMessageTypes.MATERIAL_ADD: (
+                self.handle_add_material,
                 "areaId",
+                "materialName",
+            ),
+            self.TrainerIncomingMessageTypes.MATERIAL_DELETE: (
+                self.handle_delete_material,
+                "materialId",
             ),
             self.TrainerIncomingMessageTypes.PATIENT_ADD: (
                 self.handle_add_patient,
@@ -82,15 +77,15 @@ class TrainerConsumer(AbstractConsumer):
                 "patientName",
                 "code",
             ),
+            self.TrainerIncomingMessageTypes.PATIENT_DELETE: (
+                self.handle_delete_patient,
+                "patientId",
+            ),
             self.TrainerIncomingMessageTypes.PATIENT_UPDATE: (
                 self.handle_update_patient,
                 "patientId",
                 "patientName",
                 "code",
-            ),
-            self.TrainerIncomingMessageTypes.PATIENT_DELETE: (
-                self.handle_delete_patient,
-                "patientId",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
@@ -105,16 +100,8 @@ class TrainerConsumer(AbstractConsumer):
                 "personnelId",
                 "personnelName",
             ),
-            self.TrainerIncomingMessageTypes.MATERIAL_ADD: (
-                self.handle_add_material,
-                "areaId",
-                "materialName",
-            ),
-            self.TrainerIncomingMessageTypes.MATERIAL_DELETE: (
-                self.handle_delete_material,
-                "materialId",
-            ),
         }
+        self.REQUESTS_MAP.update(trainer_request_map)
 
     def connect(self):
         self.accept()
@@ -125,7 +112,20 @@ class TrainerConsumer(AbstractConsumer):
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
+    # These methods are not allowed to be called directly. If you want to call them from the backend, go via self.receive_json()
     # ------------------------------------------------------------------------------------------------------------------------------------------------
+    def handle_add_area(self, exercise):
+        Area.create_area(name="Bereich", exercise=exercise, isPaused=False)
+
+    def handle_delete_area(self, _, areaId):
+        try:
+            area = Area.objects.get(pk=areaId)
+            area.delete()
+        except Area.DoesNotExist:
+            self.send_failure(
+                f"No area found with the pk '{areaId}'",
+            )
+
     def handle_example(self, exercise, exercise_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
         self.send_event(
@@ -141,11 +141,9 @@ class TrainerConsumer(AbstractConsumer):
         self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.subscribe(LogEntryDispatcher.get_group_name(self.exercise))
 
-    def handle_test_passthrough(self, exercise):
-        self.send_event(
-            self.TrainerOutgoingMessageTypes.TEST_PASSTHROUGH,
-            message="received test event",
-        )
+    def handle_end_exercise(self, exercise):
+        exercise.update_state(Exercise.StateTypes.FINISHED)
+        exercise.delete()
 
     def handle_start_exercise(self, exercise):
         owned_patients = PatientInstance.objects.filter(exercise=exercise)
@@ -154,26 +152,27 @@ class TrainerConsumer(AbstractConsumer):
             patient.schedule_state_change(time_offset)
         exercise.update_state(Exercise.StateTypes.RUNNING)
 
-    def handle_end_exercise(self, exercise):
-        exercise.update_state(Exercise.StateTypes.FINISHED)
-        exercise.delete()
-
-    def handle_pause_exercise(self, exercise):
-        pass
-
-    def handle_resume_exercise(self, exercise):
-        pass
-
-    def handle_add_area(self, exercise):
-        Area.create_area(name="Bereich", exercise=exercise, isPaused=False)
-
-    def handle_delete_area(self, _, areaId):
+    def handle_add_material(self, _, areaId, materialName):
         try:
-            area = Area.objects.get(pk=areaId)
-            area.delete()
+            area = Area.objects.get(id=areaId)
+            template = Material.objects.get(name=materialName)
+            MaterialInstance.objects.create(template=template, area=area)
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the pk '{areaId}'",
+            )
+        except Area.MultipleObjectsReturned:
+            self.send_failure(
+                f"Multiple areas found with the pk '{areaId}'",
+            )
+
+    def handle_delete_material(self, _, materialId):
+        try:
+            material = MaterialInstance.objects.get(id=materialId)
+            material.delete()
+        except MaterialInstance.DoesNotExist:
+            self.send_failure(
+                f"No material found with the pk '{materialId}'",
             )
 
     def handle_add_patient(self, _, areaId, patientName, code):
@@ -240,7 +239,7 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No patient found with the patientId '{patientFrontendId}'",
             )
-
+    
     def handle_add_personnel(self, _, areaId):
         try:
             area = Area.objects.get(pk=areaId)
@@ -254,11 +253,6 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the pk '{areaId}'",
             )
 
-    def handle_update_personnel(self, _, personnelId, personnelName):
-        personnel = Personnel.objects.get(id=personnelId)
-        personnel.name = personnelName
-        personnel.save()
-
     def handle_delete_personnel(self, _, personnel_id):
         try:
             personnel = Personnel.objects.get(id=personnel_id)
@@ -268,29 +262,14 @@ class TrainerConsumer(AbstractConsumer):
                 f"No personnel found with the pk '{personnel_id}'",
             )
 
-    def handle_add_material(self, _, areaId, materialName):
-        try:
-            area = Area.objects.get(id=areaId)
-            template = Material.objects.get(name=materialName)
-            MaterialInstance.objects.create(template=template, area=area)
-        except Area.DoesNotExist:
-            self.send_failure(
-                f"No area found with the pk '{areaId}'",
-            )
-        except Area.MultipleObjectsReturned:
-            self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
-            )
+    def handle_update_personnel(self, _, personnelId, personnelName):
+        personnel = Personnel.objects.get(id=personnelId)
+        personnel.name = personnelName
+        personnel.save()
 
-    def handle_delete_material(self, _, materialId):
-        try:
-            material = MaterialInstance.objects.get(id=materialId)
-            material.delete()
-        except MaterialInstance.DoesNotExist:
-            self.send_failure(
-                f"No material found with the pk '{materialId}'",
-            )
-
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # methods used internally
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
     def send_past_logs(self, exercise):
         log_entry_objects = LogEntry.objects.filter(exercise=exercise)
         log_entry_objects = filter(

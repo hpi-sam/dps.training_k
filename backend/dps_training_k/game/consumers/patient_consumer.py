@@ -32,27 +32,27 @@ class PatientConsumer(AbstractConsumer):
     """
 
     class PatientIncomingMessageTypes:
-        EXAMPLE = "example"
-        TEST_PASSTHROUGH = "test-passthrough"
-        TRIAGE = "triage"
+        ACTION_ADD = "action-add"
+        ACTION_CANCEL = "action-cancel"
         ACTION_CHECK = "action-check"
         ACTION_CHECK_STOP = "action-check-stop"
-        ACTION_ADD = "action-add"
+        EXAMPLE = "example"
         MATERIAL_ASSIGN = "material-assign"
         MATERIAL_RELEASE = "material-release"
         PATIENT_MOVE = "patient-move"
         PERSONNEL_ASSIGN = "personnel-assign"
         PERSONNEL_RELEASE = "personnel-release"
+        TEST_PASSTHROUGH = "test-passthrough"
+        TRIAGE = "triage"
 
     class PatientOutgoingMessageTypes:
-        RESPONSE = "response"
-        EXERCISE = "exercise"
-        TEST_PASSTHROUGH = "test-passthrough"
+        ACTION_CHECK = "action-check"
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
-        ACTION_CHECK = "action-check"
+        EXERCISE = "exercise"
         RESOURCE_ASSIGNMENTS = "resource-assignments"
+        RESPONSE = "response"
         STATE_CHANGE = "state"
 
     def __init__(self, *args, **kwargs):
@@ -62,18 +62,15 @@ class PatientConsumer(AbstractConsumer):
         ]
         self.patient_frontend_id = ""
         self.currently_inspected_action = None
-        self.REQUESTS_MAP = {
-            self.PatientIncomingMessageTypes.EXAMPLE: (
-                self.handle_example,
-                "exerciseId",
-                "patientId",
+
+        patient_request_map = {
+            self.PatientIncomingMessageTypes.ACTION_ADD: (
+                self.handle_action_add,
+                "actionName",
             ),
-            self.PatientIncomingMessageTypes.TEST_PASSTHROUGH: (
-                self.handle_test_passthrough,
-            ),
-            self.PatientIncomingMessageTypes.TRIAGE: (
-                self.handle_triage,
-                "triage",
+            self.PatientIncomingMessageTypes.ACTION_CANCEL: (
+                self.handle_action_cancel,
+                "actionId",
             ),
             self.PatientIncomingMessageTypes.ACTION_CHECK: (
                 self.handle_action_check,
@@ -82,9 +79,10 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.ACTION_CHECK_STOP: (
                 self.handle_action_check_stop,
             ),
-            self.PatientIncomingMessageTypes.ACTION_ADD: (
-                self.handle_action_add,
-                "actionName",
+            self.PatientIncomingMessageTypes.EXAMPLE: (
+                self.handle_example,
+                "exerciseId",
+                "patientId",
             ),
             self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
                 self.handle_material_assign,
@@ -106,7 +104,12 @@ class PatientConsumer(AbstractConsumer):
                 self.handle_personnel_release,
                 "personnelId",
             ),
+            self.PatientIncomingMessageTypes.TRIAGE: (
+                self.handle_triage,
+                "triage",
+            ),
         }
+        self.REQUESTS_MAP.update(patient_request_map)
 
     def get_patient_instance(self):
         # this enforces that we always work with up to date data from the database
@@ -146,26 +149,6 @@ class PatientConsumer(AbstractConsumer):
     # API Methods, open to client.
     # These methods are not allowed to be called directly. If you want to call them from the backend, go via self.receive_json()
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(
-        self, patient_instance, exercise_frontend_id, patient_frontend_id
-    ):
-        self.exercise_frontend_id = exercise_frontend_id
-        self.patient_frontend_id = patient_frontend_id
-        self.send_event(
-            self.PatientOutgoingMessageTypes.RESPONSE,
-            content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
-        )
-
-    def handle_test_passthrough(self, patient_instance):
-        self.send_event(
-            self.PatientOutgoingMessageTypes.TEST_PASSTHROUGH,
-            message="received test event",
-        )
-
-    def handle_triage(self, patient_instance, triage):
-        patient_instance.triage = triage
-        patient_instance.save(update_fields=["triage"])
-
     def handle_action_add(self, patient_instance, action_name):
         action_template = Action.objects.get(name=action_name)
         if action_template.category == Action.Category.PRODUCTION:
@@ -183,7 +166,13 @@ class PatientConsumer(AbstractConsumer):
         if not application_succeded:
             self._send_action_declination(action_name=action_name, message=context)
 
-    def handle_action_check(self, patient_instance, action_name):
+    def handle_action_cancel(self, _, action_id):
+        action_instance = ActionInstance.objects.get(id=action_id)
+        success, message = action_instance.cancel()
+        if not success:
+            self.send_failure(message=message)
+
+    def handle_action_check(self, _, action_name):
         self._start_inspecting_action(action_name)
         action_template = Action.objects.get(name=action_name)
         if action_template.category == Action.Category.PRODUCTION:
@@ -199,19 +188,27 @@ class PatientConsumer(AbstractConsumer):
             **action_check_message,
         )
 
-    def handle_action_check_stop(self, patient_instance):
+    def handle_action_check_stop(self, _):
         self._stop_inspecting_action(self.currently_inspected_action)
+
+    def handle_example(self, _, exercise_frontend_id, patient_frontend_id):
+        self.exercise_frontend_id = exercise_frontend_id
+        self.patient_frontend_id = patient_frontend_id
+        self.send_event(
+            self.PatientOutgoingMessageTypes.RESPONSE,
+            content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
+        )
+
+    def handle_material_assign(self, patient_instance, material_id):
+        material_instance = MaterialInstance.objects.get(pk=material_id)
+        succeeded, message = material_instance.try_moving_to(patient_instance)
+        if not succeeded:
+            self.send_failure(message=message)
 
     def handle_material_release(self, patient_instance, material_id):
         material_instance = MaterialInstance.objects.get(pk=material_id)
         area = patient_instance.area
         succeeded, message = material_instance.try_moving_to(area)
-        if not succeeded:
-            self.send_failure(message=message)
-
-    def handle_material_assign(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded, message = material_instance.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(message=message)
 
@@ -228,6 +225,12 @@ class PatientConsumer(AbstractConsumer):
                 message=message,
             )
 
+    def handle_personnel_assign(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(pk=personnel_id)
+        succeeded, message = personnel.try_moving_to(patient_instance)
+        if not succeeded:
+            self.send_failure(message=message)
+
     def handle_personnel_release(self, patient_instance, personnel_id):
         personnel = Personnel.objects.get(pk=personnel_id)
         area = patient_instance.area
@@ -235,11 +238,9 @@ class PatientConsumer(AbstractConsumer):
         if not succeeded:
             self.send_failure(message=message)
 
-    def handle_personnel_assign(self, patient_instance, personnel_id):
-        personnel = Personnel.objects.get(pk=personnel_id)
-        succeeded, message = personnel.try_moving_to(patient_instance)
-        if not succeeded:
-            self.send_failure(message=message)
+    def handle_triage(self, patient_instance, triage):
+        patient_instance.triage = triage
+        patient_instance.save(update_fields=["triage"])
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
@@ -303,13 +304,17 @@ class PatientConsumer(AbstractConsumer):
 
         """all action_instances where either the patient_instance is self.patient_instance or 
         the category is production and the area is the same as the patient_instance.area"""
-        action_instances = ActionInstance.objects.filter(
-            Q(patient_instance=self.get_patient_instance())
-            | Q(
-                template__category=Action.Category.PRODUCTION,
-                area=self.get_patient_instance().area,
+        action_instances = (
+            ActionInstance.objects.filter(
+                Q(patient_instance=self.get_patient_instance())
+                | Q(
+                    template__category=Action.Category.PRODUCTION,
+                    area=self.get_patient_instance().area,
+                )
             )
-        ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+            .exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+            .exclude(current_state__name=ActionInstanceStateNames.CANCELED)
+        )
         # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
 
         for action_instance in action_instances:

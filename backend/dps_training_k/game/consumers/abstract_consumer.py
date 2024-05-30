@@ -24,18 +24,20 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     deciding what part of the event should be sent to the frontend(filtering).
     """
 
+    class IncomingMessageTypes:
+        TEST_PASSTHROUGH = "test-passthrough"
+
     class OutgoingMessageTypes:
-        FAILURE = "failure"
-        WARNING = "warning"
-        SUCCESS = "success"
-        EXERCISE = "exercise"
-        EXERCISE_START = "exercise-start"
-        EXERCISE_END = "exercise-end"
-        EXERCISE_PAUSE = "exercise-pause"
-        EXERCISE_RESUME = "exercise-resume"
         AVAILABLE_ACTIONS = "available-actions"
-        AVAILABLE_PATIENTS = "available-patients"
         AVAILABLE_MATERIALS = "available-materials"
+        AVAILABLE_PATIENTS = "available-patients"
+        EXERCISE = "exercise"
+        EXERCISE_END = "exercise-end"
+        EXERCISE_START = "exercise-start"
+        FAILURE = "failure"
+        SUCCESS = "success"
+        TEST_PASSTHROUGH = "test-passthrough"
+        WARNING = "warning"
 
     class ClosureCodes:
         UNKNOWN = 0
@@ -45,7 +47,9 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         super().__init__(*args, **kwargs)
         self.exercise_frontend_id = ""
         self.exercise = None
-        self.REQUESTS_MAP = {}
+        self.REQUESTS_MAP = {
+            self.IncomingMessageTypes.TEST_PASSTHROUGH: (self.handle_test_passthrough,),
+        }
         self.user = None
 
     @abstractmethod
@@ -171,21 +175,34 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             self.close(code=self.ClosureCodes.NOT_AUTHENTICATED)
             return False, None
 
-    def send_exercise_event(self, event):
-        exercise = Exercise.objects.get(pk=event["exercise_pk"])
-        self._send_exercise(exercise=exercise)
-
-    def _send_exercise(self, exercise):
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # API Methods, open to client.
+    # These methods are not allowed to be called directly. If you want to call them from the backend, go via self.receive_json()
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    def handle_test_passthrough(self, _):
         self.send_event(
-            self.OutgoingMessageTypes.EXERCISE,
-            exercise=ExerciseSerializer(exercise).data,
+            self.OutgoingMessageTypes.TEST_PASSTHROUGH,
+            message="received test event",
         )
 
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
+    # methods used internally
+    # ------------------------------------------------------------------------------------------------------------------------------------------------
     def send_available_actions(self):
         actions = Action.objects.all()
         actions = [ActionSerializer(action).data for action in actions]
         self.send_event(
             self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
+        )
+
+    def send_available_materials(self):
+        materials = Material.objects.all()
+        availableMaterials = [
+            MaterialSerializer(material).data for material in materials
+        ]
+        self.send_event(
+            self.OutgoingMessageTypes.AVAILABLE_MATERIALS,
+            availableMaterials=availableMaterials,
         )
 
     def send_available_patients(self):
@@ -199,31 +216,25 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
             availablePatients=availablePatients,
         )
 
-    def send_available_materials(self):
-        materials = Material.objects.all()
-        availableMaterials = [
-            MaterialSerializer(material).data for material in materials
-        ]
+    def _send_exercise(self, exercise):
         self.send_event(
-            self.OutgoingMessageTypes.AVAILABLE_MATERIALS,
-            availableMaterials=availableMaterials,
+            self.OutgoingMessageTypes.EXERCISE,
+            exercise=ExerciseSerializer(exercise).data,
         )
+
+    def send_exercise_event(self, event):
+        exercise = Exercise.objects.get(pk=event["exercise_pk"])
+        self._send_exercise(exercise=exercise)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def exercise_start_event(self, event=None):
-        self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
-
     def exercise_end_event(self, event=None):
         self.send_event(self.OutgoingMessageTypes.EXERCISE_END)
         self.close()
 
-    def exercise_resume_event(self, event):
-        raise NotImplementedError(
-            """Introducing resuming feature requires reworking the dispatch method inside ExerciseDispatcher. 
-            It currently sends "exercise-start" every time it enters the running state"""
-        )
+    def exercise_start_event(self, event=None):
+        self.send_event(self.OutgoingMessageTypes.EXERCISE_START)
 
     def resource_assignment_event(self, event):
         """Needs to be implemented here to send this event on_exercise_start via channel_notifications to patient_consumer"""

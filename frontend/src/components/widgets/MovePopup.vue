@@ -4,6 +4,7 @@
 	import {useExerciseStore} from "@/stores/Exercise"
 	import socketPatient from "@/sockets/SocketPatient"
 	import socketTrainer from "@/sockets/SocketTrainer"
+	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -67,19 +68,19 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div class="scroll">
 				<h2>{{ title }}</h2>
-				<div class="list">
-					<div
+				<p v-if="!areas.length">
+					Keine Bereiche vorhanden in die verlegt werden kann.
+				</p>
+				<CustomList>
+					<ListItem
 						v-for="areaId in areas"
 						:key="areaId"
-						class="list-item"
 					>
-						<button class="list-item-button" @click="move(areaId)">
-							<div class="list-item-name">
-								{{ exerciseStore.getAreaName(areaId) }}
-							</div>
-						</button>
-					</div>
-				</div>
+						<ListItemButton @click="move(areaId)">
+							<ListItemName :name="exerciseStore.getAreaName(areaId) || ''" />
+						</ListItemButton>
+					</ListItem>
+				</CustomList>
 			</div>
 		</div>
 	</div>

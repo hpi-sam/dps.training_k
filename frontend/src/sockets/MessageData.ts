@@ -90,7 +90,6 @@ interface AvailablePatient {
 	injury: string
 	biometrics: string
 	triage: string
-	consecutiveUniqueNumber: number
 	mobility: string
 	preexistingIllnesses: string
 	permanentMedication: string

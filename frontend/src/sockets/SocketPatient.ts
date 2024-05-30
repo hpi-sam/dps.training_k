@@ -187,9 +187,9 @@ class SocketPatient {
 		}))
 	}
 
-	deleteAction(actionId: number) {
+	cancelAction(actionId: number) {
 		this.sendMessage(JSON.stringify({
-			'messageType': 'action-delete',
+			'messageType': 'action-cancel',
 			'actionId': actionId,
 		}))
 	}
