@@ -189,7 +189,7 @@ class ActionInstance(LocalTimeable, models.Model):
         elif self.patient_instance and self.patient_instance.is_absent():
             is_applicable, message = (
                 False,
-                f"{self.patient_instance.name} ist bereits in einer Bildgebung",
+                f"{self.patient_instance.name} ist bereits woanders",
             )
         else:
             is_applicable, message = self.check_conditions_and_block_resources(
@@ -377,8 +377,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 f"Aktionen mit dem Status {self.current_state.get_name_display()} können nicht abgebrochen werden.",
             )
 
-        template_cancelable = True
-        if not template_cancelable:
+        if self.template.relocates:
             # ToDo: Claas: check if action template says it is cancelable
             return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
 

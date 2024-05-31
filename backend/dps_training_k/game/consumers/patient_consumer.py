@@ -206,20 +206,20 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_material_assign(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
+        material_instance = MaterialInstance.objects.get(id=material_id)
         succeeded, message = material_instance.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(message=message)
 
     def handle_material_release(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
+        material_instance = MaterialInstance.objects.get(id=material_id)
         area = patient_instance.area
         succeeded, message = material_instance.try_moving_to(area)
         if not succeeded:
             self.send_failure(message=message)
 
     def handle_patient_move(self, patient_instance, area_id):
-        area = Area.objects.get(pk=area_id)
+        area = Area.objects.get(id=area_id)
         succeeded, message = patient_instance.try_moving_to(area)
 
         if not succeeded:
@@ -232,13 +232,13 @@ class PatientConsumer(AbstractConsumer):
             )
 
     def handle_personnel_assign(self, patient_instance, personnel_id):
-        personnel = Personnel.objects.get(pk=personnel_id)
+        personnel = Personnel.objects.get(id=personnel_id)
         succeeded, message = personnel.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(message=message)
 
     def handle_personnel_release(self, patient_instance, personnel_id):
-        personnel = Personnel.objects.get(pk=personnel_id)
+        personnel = Personnel.objects.get(id=personnel_id)
         area = patient_instance.area
         succeeded, message = personnel.try_moving_to(area)
         if not succeeded:
@@ -298,7 +298,7 @@ class PatientConsumer(AbstractConsumer):
             )
 
     def action_confirmation_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             actionId=action_instance.id,
@@ -346,7 +346,7 @@ class PatientConsumer(AbstractConsumer):
 
     def relocation_start_event(self, event):
         print("imaging_action_start_event")
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
         self.send_event(
             self.PatientOutgoingMessageTypes.PATIENT_INACTIVE,
             **PatientInactiveSerializer(action_instance).data,

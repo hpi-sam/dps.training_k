@@ -167,7 +167,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
         event = {
             "type": event_type,
-            "action_instance_pk": applied_action.id if applied_action else None,
+            "action_instance_id": applied_action.id if applied_action else None,
         }
         cls._notify_group(channel, event)
 
@@ -320,7 +320,7 @@ class LogEntryDispatcher(ChannelNotifier):
         channel = cls.get_group_name(log_entry.exercise)
         event = {
             "type": ChannelEventTypes.LOG_UPDATE_EVENT,
-            "log_entry_pk": log_entry.id,
+            "log_entry_id": log_entry.id,
         }
         cls._notify_group(channel, event)
 
