@@ -117,8 +117,7 @@ class ChannelNotifier:
 
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, obj, changes, is_updated):
-        applied_action = obj
+    def dispatch_event(cls, applied_action, changes, is_updated):
         if changes:
             channel = cls.get_group_name(applied_action.attached_instance())
             if ["historic_patient_state"] == changes:
@@ -138,15 +137,20 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         == models.ActionInstanceStateNames.IN_PROGRESS
                     ):
                         cls._notify_action_event(
-                            applied_action, ChannelEventTypes.IMAGING_ACTION_START_EVENT
+                            ChannelEventTypes.IMAGING_ACTION_START_EVENT,
+                            channel,
+                            applied_action,
                         )
                     elif (
                         applied_action.state_name
                         == models.ActionInstanceStateNames.FINISHED
                     ):
                         cls._notify_action_event(
-                            applied_action, ChannelEventTypes.ACTION_LIST_EVENT
+                            ChannelEventTypes.IMAGING_ACTION_END_EVENT,
+                            channel,
+                            applied_action,
                         )
+                        cls._notify_exercise_update(cls.get_exercise(applied_action))
 
             # always send action list event
             cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
@@ -209,9 +213,13 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 area=applied_action.destination_area,
                 is_dirty=True,
             )
-            personnel_list = models.Personnel.objects.filter(action_instance=applied_action)
+            personnel_list = models.Personnel.objects.filter(
+                action_instance=applied_action
+            )
             log_entry.personnel.add(*personnel_list)
-            material_list = models.MaterialInstance.objects.filter(action_instance=applied_action)
+            material_list = models.MaterialInstance.objects.filter(
+                action_instance=applied_action
+            )
             log_entry.materials.add(*material_list)
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
@@ -220,7 +228,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 exercise=applied_action.exercise,
                 message=message,
                 patient_instance=applied_action.patient_instance,
-                area=applied_action.area,
+                area=applied_action.destination_area,
             )
 
     @classmethod
