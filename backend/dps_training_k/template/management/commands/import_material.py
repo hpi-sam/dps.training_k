@@ -66,8 +66,18 @@ class Command(BaseCommand):
         Material.objects.update_or_create(
             uuid=MaterialIDs.COMPUTERTOMOGRAPHIE,
             name="Computertomographie",
-            category=Material.Category.DEVICE,
+            category=Material.Category.LABOR,
             is_reusable=True,
+            moveable=False,
+            used=True,
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.ROENTGENGERAET,
+            name="Röntgengerät",
+            category=Material.Category.LABOR,
+            is_reusable=True,
+            moveable=False,
+            used=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ZVD_MESSGERAET,

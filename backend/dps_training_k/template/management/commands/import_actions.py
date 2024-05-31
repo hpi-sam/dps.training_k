@@ -1679,7 +1679,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ROENTGENGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1748,7 +1748,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.ROENTGENGERAET)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.MTRA]: 1},
@@ -1816,7 +1816,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 3,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.COMPUTERTOMOGRAPHIE)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.MTRA]: 1},
