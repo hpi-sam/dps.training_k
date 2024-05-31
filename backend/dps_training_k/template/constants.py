@@ -108,6 +108,7 @@ class MaterialIDs:
     EKG = UUID("e6d9e9f3-7b0e-4a5a-8b1b-3e8a1e2f1c2d")
     LAB_GERAET_1 = UUID("f37df2ee-46a0-4b50-8c4d-5e67f1397f73")
     LAB_GERAET_2 = UUID("a69cc043-7d61-4dd9-9a54-21b8c0ad80bb")
+    LAB_GERAET_3 = UUID("9a39d581-706f-47db-ab4a-6a7a43cec4f5")
     SONOGRAPHIE = UUID("ed289ad9-74d5-4715-8715-111f1d53e487")
     COMPUTERTOMOGRAPHIE = UUID("536df65d-47b3-4d2d-b7fa-aef2ecf780c3")
     ROENTGENGERAET = UUID("8cf7c5e1-aec8-49f4-a5a6-4699deb4bc52")
