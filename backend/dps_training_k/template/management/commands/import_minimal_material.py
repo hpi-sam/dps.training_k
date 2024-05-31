@@ -19,23 +19,29 @@ class Command(BaseCommand):
     def create_resources():
         Material.objects.update_or_create(
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
-            name="Enthrozytenkonzentrat 0 pos.",
+            name="Enthrozytenkonzentrat",
             category=Material.Category.BLOOD,
-            is_reusable=False,
-            used=True,
-        )
-        Material.objects.update_or_create(
-            uuid=MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
-            name="Tragbares Beatmungsgerät",
-            category=Material.Category.DEVICE,
-            is_reusable=True,
+            reusable=False,
             moveable=True,
-            used=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
-            name="Wärmegerät",
+            name="Blutwärmer",
+            category=Material.Category.LABOR,
+            reusable=True,
+            moveable=True,
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.LAB_GERAET_1,
+            name="Gerät 1",
+            category=Material.Category.LABOR,
+            reusable=True,
+            moveable=False,
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.BEATMUNGSBEUTEL,
+            name="Beatmungsbeutel",
             category=Material.Category.DEVICE,
-            is_reusable=True,
-            used=True,
+            reusable=False,
+            moveable=True,
         )

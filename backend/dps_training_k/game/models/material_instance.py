@@ -24,7 +24,7 @@ class MaterialInstance(Assignable, Moveable, models.Model):
 
     @property
     def is_reusable(self):
-        return self.template.is_reusable
+        return self.template.reusable
 
     @classmethod
     def generate_materials(cls, materials_recipe, area):

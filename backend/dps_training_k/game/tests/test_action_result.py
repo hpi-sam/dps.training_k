@@ -78,7 +78,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
-            is_reusable=False,
+            reusable=False,
         )
         count_before = MaterialInstance.objects.filter(
             template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
@@ -165,7 +165,7 @@ class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
-            is_reusable=False,
+            reusable=False,
         )
         ActionFactoryWithProduction(application_duration=0)
         self.deactivate_notifications()

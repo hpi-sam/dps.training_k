@@ -954,8 +954,8 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutdruckmessgerät anbringen",
-            uuid=ActionIDs.BLUTDRUCK_MESSGERAET_ANBRINGEN,
+            name="Blutdruck messen",
+            uuid=ActionIDs.BLUTDRUCK_MESSEN,
             defaults={
                 "category": "TR",
                 "application_duration": 15,
@@ -1961,7 +1961,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.BLUTBANK)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2079,7 +2079,7 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Lactatanalyse",
+            name="Lactatanalyse",  # can also be written as "Laktatanalyse"
             uuid=ActionIDs.LACTATANALYSE,
             defaults={
                 "category": "EX",
