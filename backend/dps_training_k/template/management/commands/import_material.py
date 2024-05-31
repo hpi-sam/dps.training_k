@@ -151,6 +151,12 @@ class Command(BaseCommand):
             used=True,
         )
         Material.objects.update_or_create(
+            uuid=MaterialIDs.BLUTGASANALYSE,
+            name="Blutgasanalysegerät",
+            category=Material.Category.DEVICE,
+            used=True,
+        )
+        Material.objects.update_or_create(
             uuid=MaterialIDs.BLUTBANK,
             name="Blutbank",
             category=Material.Category.LABOR,

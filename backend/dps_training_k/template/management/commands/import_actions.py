@@ -1347,7 +1347,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.ART_KANUELE)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.BLUTGASANALYSE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1393,7 +1393,7 @@ class Command(BaseCommand):
                             [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
                         ],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.BLUTGASANALYSE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2054,7 +2054,9 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": [MaterialIDs.LAB_GERAET_1],
+                        "lab_devices": [
+                            [MaterialIDs.LAB_GERAET_1, MaterialIDs.BLUTGASANALYSE]
+                        ],
                         "area": None,
                         "role": [
                             [
@@ -2114,9 +2116,9 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.BGA_GERAET)],
+                        "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_1)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
