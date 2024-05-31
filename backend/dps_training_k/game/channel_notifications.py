@@ -158,8 +158,10 @@ class ActionInstanceDispatcher(ChannelNotifier):
             return
 
         message = None
+        send_personnel_and_material = False
         if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
             message = f'"{applied_action.name}" wurde gestartet'
+            send_personnel_and_material = True
         elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
             message = f'"{applied_action.name}" wurde abgeschlossen'
             if applied_action.template.category == template.Action.Category.PRODUCTION:
@@ -180,7 +182,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
         elif applied_action.state_name == models.ActionInstanceStateNames.EXPIRED:
             message = f'"{applied_action.name}" wirkt nicht mehr'
 
-        if message:
+        if message and send_personnel_and_material:
             log_entry = models.LogEntry.objects.create(
                 exercise=applied_action.exercise,
                 message=message,
@@ -188,17 +190,19 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 area=applied_action.area,
                 is_dirty=True,
             )
-            personnel_list = models.Personnel.objects.filter(
-                patient_instance=applied_action.patient_instance,
-            )
+            personnel_list = models.Personnel.objects.filter(action_instance=applied_action)
             log_entry.personnel.add(*personnel_list)
-            material_list = models.MaterialInstance.objects.filter(
-                patient_instance=applied_action.patient_instance,
-                lab=applied_action.lab,
-            )
+            material_list = models.MaterialInstance.objects.filter(action_instance=applied_action)
             log_entry.materials.add(*material_list)
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
+        elif message:
+            log_entry = models.LogEntry.objects.create(
+                exercise=applied_action.exercise,
+                message=message,
+                patient_instance=applied_action.patient_instance,
+                area=applied_action.area,
+            )
 
     @classmethod
     def delete_and_notify(cls, action_instance, *args, **kwargs):
