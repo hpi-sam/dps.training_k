@@ -1884,7 +1884,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.SONOGRAPHIE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1935,7 +1935,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.SONOGRAPHIE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,

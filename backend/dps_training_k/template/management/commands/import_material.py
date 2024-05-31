@@ -54,6 +54,7 @@ class Command(BaseCommand):
             name="Sonographie",
             category=Material.Category.DEVICE,
             is_reusable=True,
+            used=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.EKG,
