@@ -142,6 +142,14 @@ class SocketTrainer {
 		}))
 	}
 
+	areaRename(areaId: number, areaName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'area-rename',
+			'areaId': areaId,
+			'areaName': areaName
+		}))
+	}
+
 	patientAdd(areaId: number, patientName: string, code: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'patient-add',
@@ -167,6 +175,14 @@ class SocketTrainer {
 		}))
 	}
 
+	patientRename(patientId: string, patientName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-rename',
+			'patientId': patientId,
+			'patientName': patientName
+		}))
+	}
+
 	personnelAdd(areaId: number) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'personnel-add',
@@ -178,6 +194,14 @@ class SocketTrainer {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'personnel-delete',
 			'personnelId': personnelId
+		}))
+	}
+
+	personnelRename(personnelId: number, personnelName: string) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'personnel-rename',
+			'personnelId': personnelId,
+			'personnelName': personnelName
 		}))
 	}
 

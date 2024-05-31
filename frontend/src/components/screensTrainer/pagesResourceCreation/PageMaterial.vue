@@ -5,7 +5,8 @@
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import AddMaterialPopup from '@/components/widgets/AddMaterialPopup.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
-	import BinButton from '@/components/widgets/BinButton.vue'
+	import IconButton from '@/components/widgets/IconButton.vue'
+	import {svg} from "@/assets/Svg"
 
 	const props = defineProps({
 		currentArea: {
@@ -72,7 +73,7 @@
 			<ListItemButton>
 				<ListItemName :name="device.materialName" />
 				<ListItemRight>
-					<BinButton @click="openDeletePopup(device.materialName, device.materialId)" />
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(device.materialName, device.materialId)" />
 				</ListItemRight>
 			</ListItemButton>
 		</ListItem>
@@ -86,7 +87,7 @@
 			<ListItemButton>
 				<ListItemName :name="blood.materialName" />
 				<ListItemRight>
-					<BinButton @click="openDeletePopup(blood.materialName, blood.materialId)" />
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(blood.materialName, blood.materialId)" />
 				</ListItemRight>
 			</ListItemButton>
 		</ListItem>

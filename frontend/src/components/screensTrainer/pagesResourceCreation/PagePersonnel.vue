@@ -4,7 +4,9 @@
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
-	import BinButton from '@/components/widgets/BinButton.vue'
+	import IconButton from '@/components/widgets/IconButton.vue'
+	import {svg} from "@/assets/Svg"
+	import RenamePopup from '@/components/widgets/RenamePopup.vue'
 
 	const props = defineProps({
 		currentArea: {
@@ -18,8 +20,15 @@
 	const currentAreaData = computed(() => exerciseStore.getArea(props.currentArea))
 
 	const currentPersonnel = ref(Number.NEGATIVE_INFINITY)
+	const currentPersonnelName = computed(() => exerciseStore.getPersonnel(currentPersonnel.value)?.personnelName)
 
+	const showRenamePopup = ref(false)
 	const showDeletePopup = ref(false)
+
+	function openRenamePopup(personnelId: number) {
+		currentPersonnel.value = personnelId
+		showRenamePopup.value = true
+	}
 
 	function openDeletePopup(personnelId: number) {
 		currentPersonnel.value = personnelId
@@ -33,9 +42,20 @@
 	function deletePersonnel() {
 		socketTrainer.personnelDelete(currentPersonnel.value)
 	}
+
+	function renamePersonnel(name: string) {
+		socketTrainer.personnelRename(currentPersonnel.value, name)
+	}
 </script>
 
 <template>
+	<RenamePopup
+		v-if="showRenamePopup"
+		:name="currentPersonnelName || ''"
+		:title="'Personal umbenennen'"
+		@close-popup="showRenamePopup=false"
+		@rename="(name) => renamePersonnel(name)"
+	/>
 	<DeleteItemPopup
 		v-if="showDeletePopup"
 		:name="exerciseStore.getPersonnel(currentPersonnel)?.personnelName"
@@ -52,7 +72,8 @@
 			<ListItemButton>
 				<ListItemName :name="personnel.personnelName" />
 				<ListItemRight>
-					<BinButton @click="openDeletePopup(personnel.personnelId)" />
+					<IconButton :icon="svg.penIcon" @click="openRenamePopup(personnel.personnelId)" />
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(personnel.personnelId)" />
 				</ListItemRight>
 			</ListItemButton>
 		</ListItem>
