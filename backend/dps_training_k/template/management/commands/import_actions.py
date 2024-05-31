@@ -42,6 +42,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -66,6 +67,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -90,6 +92,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -114,6 +117,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -138,6 +142,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -162,6 +167,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -186,6 +192,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -209,6 +216,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -232,6 +240,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 180,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -258,6 +267,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -281,6 +291,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -304,6 +315,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 1800,  # None means permanent
                 "conditions": json.dumps(
@@ -327,6 +339,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -350,6 +363,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 1200,  # None means permanent
                 "conditions": json.dumps(
@@ -373,6 +387,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 60,  # None means permanent
                 "conditions": json.dumps(
@@ -398,6 +413,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -421,6 +437,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # "Freifeld", dunno how do handle that
                 "conditions": json.dumps(
@@ -444,6 +461,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -467,6 +485,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -490,6 +509,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -514,6 +534,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
@@ -537,6 +558,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
@@ -560,6 +582,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -583,6 +606,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": 360,
                 "conditions": json.dumps(
@@ -607,6 +631,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": 60,
                 "conditions": json.dumps(
@@ -631,6 +656,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -654,6 +680,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": 420,
                 "conditions": json.dumps(
@@ -678,6 +705,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # abhängig von Medikament
                 "conditions": json.dumps(
@@ -702,6 +730,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -725,6 +754,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -748,6 +778,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -771,6 +802,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 180,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -794,6 +826,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -817,6 +850,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -840,6 +874,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -863,6 +898,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -887,6 +923,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -910,6 +947,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -933,6 +971,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -960,6 +999,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -992,6 +1032,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1015,6 +1056,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1186,6 +1228,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1209,6 +1252,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1232,6 +1276,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1259,6 +1304,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1284,6 +1330,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1307,6 +1354,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1332,6 +1380,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1357,6 +1406,7 @@ class Command(BaseCommand):
             defaults={
                 "category": "OT",
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,  # Dunno, nothing given
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1380,6 +1430,7 @@ class Command(BaseCommand):
             defaults={
                 "category": "OT",
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,  # Dunno, nothing given
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1403,6 +1454,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 420,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1433,6 +1485,7 @@ class Command(BaseCommand):
             defaults={
                 "category": "OT",
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 420,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1456,6 +1509,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1479,6 +1533,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1524,6 +1579,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1587,6 +1643,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1675,6 +1732,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1698,6 +1756,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1747,6 +1806,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1813,8 +1873,9 @@ class Command(BaseCommand):
             name="Extremitäten Röntgen",
             uuid=ActionIDs.EXTREMITAETEN_ROENTGEN,
             defaults={
-                "category": Action.Category.IMAGING,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1881,8 +1942,9 @@ class Command(BaseCommand):
             name="Thorax Röntgen",
             uuid=ActionIDs.THORAX_ROENTGEN,
             defaults={
-                "category": Action.Category.IMAGING,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1950,8 +2012,9 @@ class Command(BaseCommand):
             name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
-                "category": Action.Category.IMAGING,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 300,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2021,8 +2084,9 @@ class Command(BaseCommand):
             name="Ultraschall Abdomen",
             uuid=ActionIDs.ULTRASCHALL_ABDOMEN,
             defaults={
-                "category": Action.Category.IMAGING,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2073,8 +2137,9 @@ class Command(BaseCommand):
             name="Ultraschall Thorax",
             uuid=ActionIDs.ULTRASCHALL_THORAX,
             defaults={
-                "category": Action.Category.IMAGING,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2127,6 +2192,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2150,6 +2216,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 180,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2187,6 +2254,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2250,6 +2318,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2288,6 +2357,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2326,6 +2396,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2364,6 +2435,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2402,6 +2474,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2440,6 +2513,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -2463,6 +2537,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -2486,6 +2561,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2494,6 +2570,30 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Operation einleiten",
+            uuid=ActionIDs.OP_EINLEITEN,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.LAB,
+                "relocates": True,
+                "application_duration": 360000,  # 100h to assure that the operation never finishes during an exercise
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,  # garbage values
                         "lab_devices": None,
                         "area": None,
                         "role": [

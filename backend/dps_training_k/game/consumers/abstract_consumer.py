@@ -240,10 +240,10 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         """Needs to be implemented here to send this event on_exercise_start via channel_notifications to patient_consumer"""
         pass
 
-    def imaging_action_start_event(self, event):
+    def relocation_start_event(self, event):
         """Needs to be implemented here to send this event on_exercise_start via channel_notifications to patient_consumer"""
         pass
 
-    def imaging_action_end_event(self, event):
+    def relocation_end_event(self, event):
         """Needs to be implemented here to send this event on_exercise_start via channel_notifications to patient_consumer"""
         pass

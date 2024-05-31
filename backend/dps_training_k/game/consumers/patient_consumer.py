@@ -161,13 +161,12 @@ class PatientConsumer(AbstractConsumer):
         if (
             action_template.location == Action.Location.BEDSIDE
             or action_template.category == Action.Category.EXAMINATION
-            or action_template.category == Action.Category.IMAGING
         ):
             kwargs["patient_instance"] = patient_instance
 
         if (
             action_template.category == Action.Category.PRODUCTION
-            or action_template.category == Action.Category.IMAGING
+            or action_template.relocates
         ):
             kwargs["destination_area"] = patient_instance.area
         action_instance = ActionInstance.create(action_template, **kwargs)
@@ -347,15 +346,15 @@ class PatientConsumer(AbstractConsumer):
             actions=actions,
         )
 
-    def imaging_action_start_event(self, event):
+    def relocation_start_event(self, event):
         print("imaging_action_start_event")
-        imaging_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
         self.send_event(
             self.PatientOutgoingMessageTypes.PATIENT_INACTIVE,
-            **PatientInactiveSerializer(imaging_instance).data,
+            **PatientInactiveSerializer(action_instance).data,
         )
 
-    def imaging_action_end_event(self, event=None):
+    def relocation_end_event(self, event=None):
         self.send_event(
             self.PatientOutgoingMessageTypes.PATIENT_ACTIVE,
         )

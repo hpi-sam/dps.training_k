@@ -12,8 +12,8 @@ class PatientInactiveSerializer(serializers.ModelSerializer):
         fields = ["inactiveInfo", "timeUntilBack"]
         read_only = fields
 
-    def get_inactiveInfo(self, imaging_instance):
-        return f"{imaging_instance.name} wird gerade ausgeführt"
+    def get_inactiveInfo(self, action_instance):
+        return f"{action_instance.name} wird gerade ausgeführt"
 
-    def get_timeUntilBack(self, imaging_instance):
-        return se.ScheduledEvent.get_time_until_completion(imaging_instance)
+    def get_timeUntilBack(self, action_instance):
+        return se.ScheduledEvent.get_time_until_completion(action_instance)

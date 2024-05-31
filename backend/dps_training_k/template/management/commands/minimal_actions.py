@@ -173,8 +173,9 @@ class Command(BaseCommand):
             name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
-                "category": Action.Category.IMAGING,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 10,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -247,6 +248,7 @@ class Command(BaseCommand):
             defaults={
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 20,
                 "effect_duration": None,
                 "conditions": json.dumps(

@@ -185,7 +185,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 False,
                 f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
-        elif self.patient_instance and self.patient_instance.is_in_imaging():
+        elif self.patient_instance and self.patient_instance.is_absent():
             is_applicable, context = (
                 False,
                 f"{self.patient_instance.name} ist bereits in einer Bildgebung",
@@ -195,7 +195,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 self.attached_instance(), self.attached_instance()
             )
             if is_applicable:
-                is_applicable, context = self._try_imaging_setup()
+                is_applicable, context = self._try_relocating()
 
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, context)
@@ -221,10 +221,7 @@ class ActionInstance(LocalTimeable, models.Model):
             action_instance=self,
         )
 
-        if (
-            self.template.category == self.template.Category.EXAMINATION
-            or self.template.category == self.template.Category.IMAGING
-        ):
+        if self.template.category == self.template.Category.EXAMINATION:
             self.historic_patient_state = self.patient_instance.patient_state
             self.save(update_fields=["historic_patient_state"])
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
@@ -237,7 +234,7 @@ class ActionInstance(LocalTimeable, models.Model):
         )
         self.free_resources()
         self._try_resource_production()
-        self._try_imaging_finalization()
+        self._try_returning()
         self._try_starting_action_effects()
 
     def attached_instance(self):
@@ -248,13 +245,13 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             raise ValueError("No attached instance found")
 
-    def _try_imaging_setup(self):
+    def _try_relocating(self):
         """
-        iff the action is an imaging action, the patient is moved to the lab
+        iff the action is an action that relocates, the patient is moved to the lab
         :return bool, str: True if the moving is legal, either by not requiring movements or by succeeding a required movement.
         If False, the str contains the reason why the action is not applicable.
         """
-        if self.template.category != self.template.Category.IMAGING:
+        if not self.template.relocates:
             return True, ""
 
         destination_area = self.patient_instance.area
@@ -265,11 +262,11 @@ class ActionInstance(LocalTimeable, models.Model):
             self.save(update_fields=["destination_area"])
         return is_applicable, context
 
-    def _try_imaging_finalization(self):
+    def _try_returning(self):
         """
-        iff the action is an imaging action, the patient is moved back to the destination area
+        iff the action is an action that relocated, the patient is moved back to the destination area
         """
-        if self.template.category == self.template.Category.IMAGING:
+        if self.template.relocates:
             self.patient_instance.perform_move(self.destination_area)
             return True
         return False

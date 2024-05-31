@@ -24,8 +24,8 @@ class ChannelEventTypes:
     ACTION_CHECK_CHANGED_EVENT = "action.check.changed.event"
     LOG_UPDATE_EVENT = "log.update.event"
     RESOURCE_ASSIGNMENT_EVENT = "resource.assignment.event"
-    IMAGING_ACTION_START_EVENT = "imaging.action.start.event"
-    IMAGING_ACTION_END_EVENT = "imaging.action.end.event"
+    RELOCATION_START_EVENT = "relocation.start.event"
+    RELOCATION_END_EVENT = "relocation.end.event"
 
 
 class ChannelNotifier:
@@ -129,15 +129,13 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         channel,
                         applied_action,
                     )
-                elif (
-                    applied_action.template.category == template.Action.Category.IMAGING
-                ):
+                if applied_action.template.relocates:
                     if (
                         applied_action.state_name
                         == models.ActionInstanceStateNames.IN_PROGRESS
                     ):
                         cls._notify_action_event(
-                            ChannelEventTypes.IMAGING_ACTION_START_EVENT,
+                            ChannelEventTypes.RELOCATION_START_EVENT,
                             channel,
                             applied_action,
                         )
@@ -146,7 +144,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         == models.ActionInstanceStateNames.FINISHED
                     ):
                         cls._notify_action_event(
-                            ChannelEventTypes.IMAGING_ACTION_END_EVENT,
+                            ChannelEventTypes.RELOCATION_END_EVENT,
                             channel,
                             applied_action,
                         )

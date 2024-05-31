@@ -28,34 +28,32 @@ class RelocationTestCase(TestUtilsMixin, TestCase):
 
     def test_moving_to_lab(self):
         """
-        If the action is an imaging action _try_imaging_setup moves patient_instance, remembering it's original area,
+        If the action is a relocating action _try_relocating moves patient_instance, remembering it's original area,
         """
         original_area = self.patient_instance.area
-        is_applicable, context = self.action_instance._try_imaging_setup()
+        is_applicable, context = self.action_instance._try_relocating()
         self.assertTrue(is_applicable)
         self.assertEqual(self.action_instance.destination_area, original_area)
 
-    def test_moving_to_lab_non_imaging_action(self):
+    def test_moving_to_lab_relocating_action(self):
         """
-        If the action isn't an imaging action _try_imaging_setup doesn't move the patient_instance, returning (True, "")
+        If the action isn't a relocating action _try_relocating doesn't move the patient_instance, returning (True, "")
         """
         self.assertIsNone(self.action_instance.destination_area)
-        self.action_template.category = Action.Category.OTHER
+        self.action_template.relocates = False
         self.action_template.save(update_fields=["category"])
-        is_applicable, context = self.action_instance._try_imaging_setup()
+        is_applicable, context = self.action_instance._try_relocating()
         self.assertTrue(is_applicable)
         self.assertIsNone(self.action_instance.destination_area)
 
-    def test_moving_to_lab_with_active_imaging_action(self):
+    def test_moving_to_lab_with_active_relocating_action(self):
         """
-        Iff there is already an active imaging action for the patient_instance, the _try_imaging_setup just returns a (False, some_string) tuple
+        Iff there is already an active relocating action for the patient_instance, the _try_relocating just returns a (False, some_string) tuple
         """
-        is_applicable, context = self.action_instance._try_imaging_setup()
-        non_imaging_template = Action.objects.exclude(
-            category=Action.Category.IMAGING
-        ).first()
+        is_applicable, context = self.action_instance._try_relocating()
+        non_relocating_template = Action.objects.exclude(relocates=True).first()
         non_image_action_instance = ActionInstance.create(
-            non_imaging_template,
+            non_relocating_template,
             patient_instance=self.patient_instance,
             lab=self.patient_instance.exercise.lab,
         )

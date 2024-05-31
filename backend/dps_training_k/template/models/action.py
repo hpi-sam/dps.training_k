@@ -13,7 +13,6 @@ class Action(UUIDable, models.Model):
         TREATMENT = "TR", "treatment"
         EXAMINATION = "EX", "examination"
         PRODUCTION = "PR", "production"
-        IMAGING = "IM", "imaging"
         OTHER = "OT", "other"
 
     class Location(models.TextChoices):
@@ -25,6 +24,10 @@ class Action(UUIDable, models.Model):
     category = models.CharField(choices=Category.choices, max_length=2)
     location = models.CharField(
         choices=Location.choices, max_length=2, default=Location.BEDSIDE
+    )
+    relocates = models.BooleanField(
+        default=False,
+        help_text="Does the action relocate the patient to the location and back?",
     )
     application_duration = models.IntegerField(
         default=10,
@@ -94,10 +97,7 @@ class Action(UUIDable, models.Model):
         )
 
     def get_result(self, action_instance):
-        if (
-            self.category == Action.Category.EXAMINATION
-            or self.category == Action.Category.IMAGING
-        ):
+        if self.category == Action.Category.EXAMINATION:
             return self.examination_result(
                 action_instance.get_patient_examination_codes()
             )

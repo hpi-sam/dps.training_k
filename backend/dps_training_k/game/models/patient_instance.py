@@ -250,11 +250,11 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def attached_instance(self):
         return self.area or self.lab
 
-    def is_in_imaging(self):
+    def is_absent(self):
         from game.models import ActionInstanceStateNames
 
         return self.actioninstance_set.filter(
-            template__category=Action.Category.IMAGING,
+            template__relocates=True,
             current_state__name=ActionInstanceStateNames.IN_PROGRESS,
         ).exists()
 
