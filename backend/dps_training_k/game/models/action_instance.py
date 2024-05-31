@@ -148,7 +148,7 @@ class ActionInstance(LocalTimeable, models.Model):
     def create(cls, template, patient_instance=None, destination_area=None, lab=None):
         if not patient_instance and not lab:
             raise ValueError(
-                "Either patient_instance or lab must be provided - an action instance always need a context"
+                "Either patient_instance or lab must be provided - an action instance always need a message"
             )
         if not destination_area and template.relocates:
             destination_area = patient_instance.area
@@ -182,25 +182,25 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def try_application(self):
         if not self.attached_instance().can_receive_actions():
-            is_applicable, context = (
+            is_applicable, message = (
                 False,
                 f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
         elif self.patient_instance and self.patient_instance.is_absent():
-            is_applicable, context = (
+            is_applicable, message = (
                 False,
                 f"{self.patient_instance.name} ist bereits in einer Bildgebung",
             )
         else:
-            is_applicable, context = self.check_conditions_and_block_resources(
+            is_applicable, message = self.check_conditions_and_block_resources(
                 self.attached_instance(), self.attached_instance()
             )
             if is_applicable:
-                is_applicable, context = self._try_relocating()
+                is_applicable, message = self._try_relocating()
 
         if not is_applicable:
-            self._update_state(ActionInstanceStateNames.ON_HOLD, context)
-            return False, context
+            self._update_state(ActionInstanceStateNames.ON_HOLD, message)
+            return False, message
 
         self._start_application()
         return True, None
@@ -256,12 +256,12 @@ class ActionInstance(LocalTimeable, models.Model):
             return True, ""
 
         destination_area = self.patient_instance.area
-        is_applicable, context = self.patient_instance.perform_move(self.lab)
+        is_applicable, message = self.patient_instance.perform_move(self.lab)
 
         if is_applicable and destination_area:
             self.destination_area = destination_area
             self.save(update_fields=["destination_area"])
-        return is_applicable, context
+        return is_applicable, message
 
     def _try_returning(self):
         """

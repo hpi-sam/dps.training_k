@@ -47,7 +47,7 @@ class RelocationTestCase(TestUtilsMixin, TestCase):
             lab=self.patient_instance.exercise.lab,
         )
         self.assertIsNone(self.action_instance.destination_area)
-        is_applicable, context = self.action_instance._try_relocating()
+        is_applicable, message = self.action_instance._try_relocating()
         self.assertTrue(is_applicable)
         self.assertIsNone(self.action_instance.destination_area)
 
@@ -55,13 +55,13 @@ class RelocationTestCase(TestUtilsMixin, TestCase):
         """
         Iff there is already an active relocating action for the patient_instance, the _try_relocating just returns a (False, some_string) tuple
         """
-        is_applicable, context = self.action_instance._try_relocating()
-        non_relocating_template = Action.objects.exclude(relocates=True).first()
+        is_applicable, message = self.action_instance._try_relocating()
+        relocating_template = Action.objects.first()
         another_action_instance = ActionInstance.create(
             relocating_template,
             patient_instance=self.patient_instance,
             lab=self.patient_instance.exercise.lab,
         )
-        is_applicable, context = non_image_action_instance.try_application()
+        is_applicable, message = another_action_instance.try_application()
         self.assertFalse(is_applicable)
-        self.assertIsNotNone(context)
+        self.assertIsNotNone(message)

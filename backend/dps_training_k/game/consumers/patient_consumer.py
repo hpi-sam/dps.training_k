@@ -168,9 +168,9 @@ class PatientConsumer(AbstractConsumer):
         if action_template.category == Action.Category.PRODUCTION:
             kwargs["destination_area"] = patient_instance.area
         action_instance = ActionInstance.create(action_template, **kwargs)
-        application_succeded, context = action_instance.try_application()
+        application_succeded, message = action_instance.try_application()
         if not application_succeded:
-            self._send_action_declination(action_name=action_name, message=context)
+            self._send_action_declination(action_name=action_name, message=message)
 
     def handle_action_cancel(self, _, action_id):
         action_instance = ActionInstance.objects.get(id=action_id)
