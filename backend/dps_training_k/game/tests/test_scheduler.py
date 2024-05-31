@@ -6,6 +6,7 @@ from django.utils import timezone
 from game.tasks import check_for_updates
 from unittest.mock import patch
 import datetime
+from time import sleep
 
 
 class EventPatientTestCase(TestCase):
@@ -34,6 +35,9 @@ class EventPatientTestCase(TestCase):
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 1)
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(10)
+        check_for_updates()
+        # the first check_for_updates can fail because celery is still locked. therefore we try again after a second. this error is hard to reproduce
+        sleep(1)
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 0)
 

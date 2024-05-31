@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import CloseButton from "./CloseButton.vue"
+	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -17,19 +18,16 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div class="scroll">
 				<h2>{{ "Ordne eine dieser Aktionen an" }}</h2>
-				<div class="list">
-					<div
+				<CustomList>
+					<ListItem
 						v-for="(action, index) in props.actions"
 						:key="index"
-						class="list-item"
 					>
-						<div class="list-item-button">
-							<div class="list-item-name">
-								{{ action }}
-							</div>
-						</div>
-					</div>
-				</div>
+						<ListItemButton>
+							<ListItemName :name="action as string" />
+						</ListItemButton>
+					</ListItem>
+				</CustomList>
 			</div>
 		</div>
 	</div>

@@ -77,7 +77,7 @@
 						{{ currentLogEntry?.patientId }} {{ patientName }}
 					</td>
 				</tr>
-				<tr v-if="currentLogEntry?.personnelIds">
+				<tr v-if="currentLogEntry?.personnelIds?.length">
 					<td class="key">
 						Personal:
 					</td>
@@ -106,6 +106,7 @@
 <style scoped>
 	.popup {
 		max-width: 50vw;
+		min-width: 300px;
 		overflow: hidden;
 	}
 

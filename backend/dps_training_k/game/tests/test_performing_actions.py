@@ -41,12 +41,15 @@ class ActionInstanceTestCase(TestCase):
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.PLANNED)
 
-    def test_action_starting(self):
+    @patch("game.models.PatientInstance.can_receive_actions")
+    def test_action_starting(self, can_receive_actions):
         """
         An action instance that was planned in the beginning enters on-hold state when the application cannot be started at the moment.
         """
+        can_receive_actions.return_value = True
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        self.assertTrue(action_instance.try_application())
+        succeeded, context = action_instance.try_application()
+        self.assertTrue(succeeded)
         self.assertEqual(
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
@@ -56,11 +59,13 @@ class ActionInstanceTestCase(TestCase):
         self.assertFalse(condition_succeeded)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
 
+    @patch("game.models.PatientInstance.can_receive_actions")
     @patch("game.channel_notifications.ActionInstanceDispatcher._notify_action_event")
-    def test_channel_notifications_being_send(self, _notify_action_event):
+    def test_channel_notifications_being_send(self, _notify_action_event, can_receive_actions):
         """
         Once an action instance is started, the dispatcher detects it and detects the actual state.
         """
+        can_receive_actions.return_value = True
         self.check_conditions_and_block_resources.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()

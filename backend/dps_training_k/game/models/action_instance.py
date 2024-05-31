@@ -30,6 +30,14 @@ class ActionInstanceState(models.Model):
     )
     info_text = models.CharField(null=True, blank=True, default=None)
 
+    @property
+    def is_cancelable(self):
+        return self.name in [
+            ActionInstanceStateNames.PLANNED,
+            ActionInstanceStateNames.IN_PROGRESS,
+            ActionInstanceStateNames.ON_HOLD,
+        ]
+
     def update(self, state_name, time, info_text=None):
         if state_name == self.name and not info_text:
             return None
@@ -123,6 +131,9 @@ class ActionInstance(LocalTimeable, models.Model):
         ActionInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
         )
+
+    def delete(self, using=None, keep_parents=False):
+        ActionInstanceDispatcher.delete_and_notify(self)
 
     def _update_state(self, state_name, info_text=None):
         new_state = self.current_state.update(
@@ -358,3 +369,26 @@ class ActionInstance(LocalTimeable, models.Model):
                 }
             )
         return codes
+
+    def cancel(self) -> tuple[bool, str]:
+        """Returns whether the object was canceled successfully and an error message if not."""
+
+        if not self.current_state.is_cancelable:
+            return (
+                False,
+                f"Aktionen mit dem Status {self.current_state.get_name_display()} können nicht abgebrochen werden.",
+            )
+
+        template_cancelable = True
+        if not template_cancelable:
+            # ToDo: Claas: check if action template says it is cancelable
+            return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
+
+        self.owned_events.all().delete()
+        self.free_resources()
+
+        self._update_state(
+            ActionInstanceStateNames.CANCELED, "Aktion wurde abgebrochen."
+        )
+
+        return True, ""

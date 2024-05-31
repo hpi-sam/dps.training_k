@@ -1,15 +1,15 @@
 import re
+from collections import defaultdict
 
 from django.core.exceptions import ValidationError
 from django.db import models
 
 from game.channel_notifications import PatientInstanceDispatcher
-from helpers.actions_queueable import ActionsQueueable
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
-from template.models import PatientState, Action
+from template.models import PatientState, Action, Subcondition, Material
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
 
@@ -25,7 +25,7 @@ def validate_patient_frontend_id(value):
         )
 
 
-class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.Model):
+class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
@@ -102,7 +102,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
             self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 
-    def schedule_state_change(self):
+    def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
         if self.patient_state.is_dead:
@@ -111,7 +111,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
             return False
         ScheduledEvent.create_event(
             exercise=self.exercise,
-            t_sim_delta=10,
+            t_sim_delta=10 + time_offset,
             method_name="execute_state_change",
             patient=self,
         )
@@ -119,10 +119,10 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
     def execute_state_change(self):
         if self.patient_state.is_dead or self.patient_state.is_final():
             raise Exception(
-                "Patient is dead or in final state, state change should have never been scheduled"
+                f"Patient is dead or in final state, state change should have never been scheduled"
             )
-        state_change_requirements = {"self.condition_checker.now()": ""}
-        future_state = self.patient_state.transition.activate(state_change_requirements)
+        fulfilled_subconditions = self.get_fulfilled_subconditions()
+        future_state = self.patient_state.transition.activate(fulfilled_subconditions)
         if not future_state:
             return False
         self.patient_state = future_state
@@ -130,17 +130,64 @@ class PatientInstance(Eventable, Moveable, MoveableTo, ActionsQueueable, models.
         self.schedule_state_change()
         return True
 
-    def is_dead(self):
-        if self.patient_state.is_dead:
-            return True
-        return False
+    def get_fulfilled_subconditions(self):
+        from game.models import ActionInstanceState
+
+        # Fetch all necessary data in a single query for performance
+        action_instances = self.actioninstance_set.select_related("template").all()
+        subconditions = Subcondition.objects.all()
+        materials = Material.objects.all()
+
+        # This dict approach is much faster than filter, hence we use this
+        template_action_count = defaultdict(int)
+        for action_instance in action_instances:
+            if (
+                action_instance.current_state.name
+                in ActionInstanceState.success_states()
+            ):
+                template_action_count[str(action_instance.template.uuid)] += 1
+        # TODO: add handling for OP if it's not an action
+        fulfilled_subconditions = set()
+
+        for subcondition in subconditions:
+            isActionFulfilled = False
+            fulfilling_actions = subcondition.fulfilling_measures["actions"]
+            # special handling for "freie Atemwege" because it depends on a vital_signs field
+            if (
+                subcondition.name == "freie Atemwege"
+                and "freie Atemwege" in self.patient_state.vital_signs["Airway"]
+            ):
+                fulfilled_subconditions.add(subcondition)
+
+            for action in fulfilling_actions:
+                if (
+                    subcondition.lower_limit <= template_action_count[action]
+                    and template_action_count[action] <= subcondition.upper_limit
+                ):
+                    isActionFulfilled = True
+
+            isMaterialFulfilled = False
+            fulfilling_materials = subcondition.fulfilling_measures["materials"]
+            for material in fulfilling_materials:
+                num_of_materials_assigned = len(
+                    self.material_assigned(materials.get(uuid=material))
+                )
+                if (
+                    subcondition.lower_limit <= num_of_materials_assigned
+                    and num_of_materials_assigned <= subcondition.upper_limit
+                ):
+                    isMaterialFulfilled = True
+            if isActionFulfilled or isMaterialFulfilled:
+                fulfilled_subconditions.add(subcondition)
+
+        return fulfilled_subconditions
 
     @staticmethod
     def frontend_model_name():
         return "Patient*in"
 
     def can_receive_actions(self):
-        return not self.is_dead()
+        return not (self.patient_state.is_dead or self.patient_state.is_final())
 
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames

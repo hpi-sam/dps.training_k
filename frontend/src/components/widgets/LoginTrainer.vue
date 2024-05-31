@@ -11,39 +11,6 @@
 		trainerStore.username = usernameInput.value
 		socketTrainer.connect()
 		return
-
-		// Will be used when trainer login is implemented in the backend
-		/*const requestBody = {
-			"username": usernameInput.value,
-			"password": passwordInput.value,
-		}
-
-		fetch('https://localhost:8000/trainer/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(requestBody),
-		})
-			.then(response => {
-				if (!response.ok) {
-					console.log('Login failed:', response)
-					switch (response.status) {
-						case 401:
-							showErrorToast("Fehler: falscher Nutzername oder falsches Passwort")
-							break
-						default:
-							showErrorToast("Fehler: Server nicht erreichbar")
-							break
-					}
-					return Promise.reject('Trainer login failed with status ' + response.status)
-				}
-				return response.json()
-			})
-			.then(data => {
-				trainerStore.token = data.token
-				setModule(Modules.TRAINER)
-			})*/
 	}
 </script>
 

@@ -34,5 +34,6 @@
 		display: flex;
 		align-items: center;
 		color: white;
+		margin-left: 16px;
 	}
 </style>
