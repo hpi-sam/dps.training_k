@@ -57,7 +57,6 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div id="left-side">
 				<div class="flex-container">
-					<h2>Patienten-Datensätze</h2>
 					<PatientCodeList @change-patient="changePatientCode" />
 				</div>
 			</div>
@@ -131,14 +130,6 @@
 		text-align: center;
 		margin-top: 10px;
 		background-color: var(--green);
-	}
-
-	.list-item {
-		margin-right: 40px;
-		font-size: 1.25rem;
-		text-align: left;
-		height: 50px;
-		padding-left: 0;
 	}
 
 	.patient-id, .patient-name {
