@@ -2155,7 +2155,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_2)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},

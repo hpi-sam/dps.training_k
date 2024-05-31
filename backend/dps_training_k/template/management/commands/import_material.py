@@ -50,6 +50,13 @@ class Command(BaseCommand):
             is_reusable=True,
         )
         Material.objects.update_or_create(
+            uuid=MaterialIDs.LAB_GERAET_2,
+            name="Gerät 2",
+            category=Material.Category.LABOR,
+            is_reusable=True,
+            used=True,
+        )
+        Material.objects.update_or_create(
             uuid=MaterialIDs.SONOGRAPHIE,
             name="Sonographie",
             category=Material.Category.DEVICE,
