@@ -1337,57 +1337,6 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Fresh Frozen Plasma (0 positiv) auftauen",
-            uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
-            defaults={
-                "category": "PR",
-                "application_duration": 420,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-                "results": json.dumps(
-                    {
-                        "produced_material": {
-                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
-                        }
-                    }
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Lyophilisiertes Frischplasma (jegliche Blutgruppe) auflösen",
-            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_AUFLOESEN,
-            defaults={
-                "category": "OT",
-                "application_duration": 420,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
             name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
             defaults={
@@ -2035,7 +1984,7 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [str(ActionIDs.BLUTGRUPPE_BESTIMMEN)],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2045,6 +1994,14 @@ class Command(BaseCommand):
                             {role_map[RoleIDs.ARZT]: 1},
                         ],
                     },
+                ),
+                "results": json.dumps(
+                    {
+                        "Kreuzblut": {
+                            1000: "Erfolg! Das getestete Blut ist kompatibel.",
+                            1001: "Misserfolg! Bitte führe diese Aktion nochmal aus, um passendes Blut zu finden.",
+                        }
+                    }
                 ),
             },
         )
@@ -2061,7 +2018,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.BLUTBANK)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2332,6 +2289,84 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
+            name="Lyophilisiertes Frischplasma auflösen",
+            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_VORBEREITEN,
+            defaults={
+                "category": "PR",
+                "application_duration": 300,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {
+                        "produced_material": {
+                            str(MaterialIDs.LYOPHILISIERTES_FRISCHPLASMA): 1
+                        }
+                    }
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Lyophilisiertes Frischplasma anwenden",
+            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_ANWENDEN,
+            defaults={
+                "category": "TR",
+                "application_duration": 15,
+                "effect_duration": 120,  # depends on type of "Zugang"
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.LYOPHILISIERTES_FRISCHPLASMA)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Fresh Frozen Plasma auftauen",
+            uuid=ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN,
+            defaults={
+                "category": "PR",
+                "application_duration": 420,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [
+                            str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)
+                        ],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {"produced_material": {str(MaterialIDs.FRESH_FROZEN_PLASMA): 1}}
+                ),
+            },
+        )
+        Action.objects.update_or_create(
             name="Fresh Frozen Plasma anwenden",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_ANWENDEN,
             defaults={
@@ -2342,7 +2377,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.IV_ZUGANG)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.FRESH_FROZEN_PLASMA)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2350,6 +2385,33 @@ class Command(BaseCommand):
                             {role_map[RoleIDs.ARZT]: 1},
                         ],
                     },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Enthrozytenkonzentrat erwärmen",
+            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
+            defaults={
+                "category": "PR",
+                "application_duration": 360,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [
+                            str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)
+                        ],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {"produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}}
                 ),
             },
         )
@@ -2359,32 +2421,13 @@ class Command(BaseCommand):
             defaults={
                 "category": "TR",
                 "application_duration": 15,
-                "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": json.dumps(
-                    {
-                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.ARZT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Enthrozytenkonzentrate (jegliche Blutgruppe) anwenden",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_JEGLICHE_BLUTGRUPPE_ANWENDEN,
-            defaults={
-                "category": "TR",
-                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "required_actions": [
+                            str(ActionIDs.IV_ZUGANG),
+                            str(ActionIDs.KREUZBLUT),
+                        ],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,

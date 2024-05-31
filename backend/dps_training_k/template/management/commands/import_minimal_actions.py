@@ -167,7 +167,7 @@ class Command(BaseCommand):
         # Produce Material
         Action.objects.update_or_create(
             name="Fresh Frozen Plasma (0 positiv) auftauen",
-            uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
+            uuid=ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN,
             defaults={
                 "category": "PR",
                 "application_duration": 20,
@@ -184,11 +184,7 @@ class Command(BaseCommand):
                     }
                 ),
                 "results": json.dumps(
-                    {
-                        "produced_material": {
-                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
-                        }
-                    }
+                    {"produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}}
                 ),
             },
         )

@@ -18,18 +18,11 @@ class Command(BaseCommand):
     @staticmethod
     def create_resources():
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,
             used=True,
-        )
-        Material.objects.update_or_create(
-            uuid=MaterialIDs.BLUTAUFTAU_SLOT,
-            name="Blutauftau-Slot",
-            category=Material.Category.LABOR,
-            is_reusable=True,
-            used=False,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSGERAET_TRAGBAR,

@@ -1,9 +1,12 @@
+import random
+
 from django.db import models
 
 from game.channel_notifications import ActionInstanceDispatcher
 from game.models import ScheduledEvent, MaterialInstance
 from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
+from template.constants import ActionIDs
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -320,6 +323,10 @@ class ActionInstance(LocalTimeable, models.Model):
                     for k, v in self.patient_instance.static_information.examination_codes.items()
                 }
             )
+        if self.template.uuid is ActionIDs.KREUZBLUT:
+            examination_code = random.choices([1000, 1001], weights=[90, 10], k=1)[0]
+            codes.update({"Kreuzblut": f"{examination_code}"})
+
         return codes
 
     def cancel(self) -> tuple[bool, str]:

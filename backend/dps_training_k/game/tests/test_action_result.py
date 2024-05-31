@@ -75,18 +75,18 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
             template=action, lab=LabFactory(), area=AreaFactory()
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,
         )
         count_before = MaterialInstance.objects.filter(
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             area=action_instance.area,
         ).count()
         action_instance._application_finished()
         count_after = MaterialInstance.objects.filter(
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             area=action_instance.area,
         ).count()
         self.assertEqual(count_before + 1, count_after)
@@ -121,13 +121,13 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         self.assertRaises(
             MaterialInstance.DoesNotExist,
             MaterialInstance.objects.get,
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             area=area,
         )
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
-                template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+                template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
                 area=area,
             )
         )
@@ -162,7 +162,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
 class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
     def setUp(self):
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,

@@ -18,23 +18,27 @@ class Command(BaseCommand):
     @staticmethod
     def create_resources():
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
-            name="Enthrozytenkonzentrat 0 pos.",
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
+            name="Enthrozytenkonzentrat",
             category=Material.Category.BLOOD,
             is_reusable=False,
-            used=True,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.BLUTAUFTAU_SLOT,
-            name="Blutauftau-Slot",
-            category=Material.Category.LABOR,
-            is_reusable=True,
-            used=False,
+            uuid=MaterialIDs.FRESH_FROZEN_PLASMA,
+            name="Fresh Frozen Plasma",
+            category=Material.Category.BLOOD,
+            is_reusable=False,
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.LYOPHILISIERTES_FRISCHPLASMA,
+            name="Lyophilisiertes Frischplasma",
+            category=Material.Category.BLOOD,
+            is_reusable=False,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
-            name="Wärmegerät",
-            category=Material.Category.DEVICE,
+            name="Blutwärmer",
+            category=Material.Category.LABOR,
             is_reusable=True,
             used=True,
         )
@@ -144,5 +148,11 @@ class Command(BaseCommand):
             uuid=MaterialIDs.NARKOSEGERAET,
             name="Narkosegerät",
             category=Material.Category.DEVICE,
+            used=True,
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.BLUTBANK,
+            name="Blutbank",
+            category=Material.Category.LABOR,
             used=True,
         )
