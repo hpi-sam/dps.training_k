@@ -1146,33 +1146,6 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Monitor anbringen",
-            uuid=ActionIDs.MONITOR_ANBRINGEN,
-            defaults={
-                "category": "TR",
-                "application_duration": 15,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [
-                            [
-                                str(MaterialIDs.MONITOR_STATIONAER),
-                                str(MaterialIDs.MONITOR_TRAGBAR),
-                            ]
-                        ],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
             name="passageren Pacer anbringen",
             uuid=ActionIDs.PASSAGEREN_PACER_ANBRINGEN,
             defaults={

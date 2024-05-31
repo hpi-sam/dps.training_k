@@ -106,22 +106,6 @@ class Command(BaseCommand):
             used=True,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.MONITOR_TRAGBAR,
-            name="Tragbarer Monitor",
-            category=Material.Category.DEVICE,
-            is_reusable=True,
-            moveable=True,
-            used=True,
-        )
-        Material.objects.update_or_create(
-            uuid=MaterialIDs.MONITOR_STATIONAER,
-            name="Stationärer Monitor",
-            category=Material.Category.DEVICE,
-            is_reusable=True,
-            moveable=False,
-            used=True,
-        )
-        Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
             name="Tragbares Beatmungsgerät",
             category=Material.Category.DEVICE,
