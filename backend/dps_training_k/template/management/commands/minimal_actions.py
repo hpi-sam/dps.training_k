@@ -168,7 +168,7 @@ class Command(BaseCommand):
                 ),
             },
         )
-        # Imaging
+        # Relocating
         Action.objects.update_or_create(
             name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
@@ -238,6 +238,31 @@ class Command(BaseCommand):
                             281: "Thorax: Normalbefund; Extremitäten: Normalbefund; keine Frakturzeichen; keine Fremdkörper; HWS: oB.; Becken: oB.; Schädel: knöchern oB.; ca 1 cm großes Subduralhämatom li frontal; keine Mittelllinienverschiebung; kein Hirnödem;",
                         }
                     }
+                ),
+            },
+        )
+
+        Action.objects.update_or_create(
+            name="Operation einleiten",
+            uuid=ActionIDs.OP_EINLEITEN,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.LAB,
+                "relocates": True,
+                "application_duration": 360000,  # 100h to assure that the operation never finishes during an exercise
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,  # garbage values
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
                 ),
             },
         )

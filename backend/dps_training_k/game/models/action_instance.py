@@ -150,7 +150,8 @@ class ActionInstance(LocalTimeable, models.Model):
             raise ValueError(
                 "Either patient_instance or lab must be provided - an action instance always need a context"
             )
-
+        if not destination_area and template.relocates:
+            destination_area = patient_instance.area
         action_instance = ActionInstance.objects.create(
             patient_instance=patient_instance,
             destination_area=destination_area,

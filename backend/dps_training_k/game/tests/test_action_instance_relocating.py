@@ -39,9 +39,14 @@ class RelocationTestCase(TestUtilsMixin, TestCase):
         """
         If the action isn't a relocating action _try_relocating doesn't move the patient_instance, returning (True, "")
         """
-        self.assertIsNone(self.action_instance.destination_area)
         self.action_template.relocates = False
-        self.action_template.save(update_fields=["category"])
+        self.action_template.save(update_fields=["relocates"])
+        self.action_instance = ActionInstance.create(
+            self.action_template,
+            patient_instance=self.patient_instance,
+            lab=self.patient_instance.exercise.lab,
+        )
+        self.assertIsNone(self.action_instance.destination_area)
         is_applicable, context = self.action_instance._try_relocating()
         self.assertTrue(is_applicable)
         self.assertIsNone(self.action_instance.destination_area)

@@ -161,13 +161,11 @@ class PatientConsumer(AbstractConsumer):
         if (
             action_template.location == Action.Location.BEDSIDE
             or action_template.category == Action.Category.EXAMINATION
+            or action_template.relocates
         ):
             kwargs["patient_instance"] = patient_instance
 
-        if (
-            action_template.category == Action.Category.PRODUCTION
-            or action_template.relocates
-        ):
+        if action_template.category == Action.Category.PRODUCTION:
             kwargs["destination_area"] = patient_instance.area
         action_instance = ActionInstance.create(action_template, **kwargs)
         application_succeded, context = action_instance.try_application()
