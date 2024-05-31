@@ -2221,7 +2221,7 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [str(ActionIDs.BLUTABNAHME)],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2259,7 +2259,10 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2323,7 +2326,10 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": [str(MaterialIDs.BGA_GERAET)],
                         "num_personnel": 1,
@@ -2362,7 +2368,10 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,  # "Laboranalyse"???
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2401,7 +2410,10 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2440,7 +2452,10 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2479,7 +2494,10 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
