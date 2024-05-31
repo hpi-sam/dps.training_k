@@ -53,7 +53,7 @@
 		showDeletePopup.value = false
 	}
 
-	function openDeletePopup(actionId: string, actionName: string) {
+	function openDeletePopup(actionId: number, actionName: string) {
 		currentActionId.value = actionId
 		currentActionName.value = actionName
 		showDeletePopup.value = true
