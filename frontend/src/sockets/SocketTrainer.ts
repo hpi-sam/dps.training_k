@@ -167,10 +167,11 @@ class SocketTrainer {
 		}))
 	}
 
-	personnelAdd(areaId: number) {
+	personnelAdd(areaId: number, personnelName: string) {
 		this.#sendMessage(JSON.stringify({
 			'messageType': 'personnel-add',
-			'areaId': areaId
+			'areaId': areaId,
+			'personnelName': personnelName
 		}))
 	}
 

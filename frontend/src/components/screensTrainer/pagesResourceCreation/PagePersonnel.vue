@@ -4,6 +4,7 @@
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton} from "@/components/widgets/List"
+	import { generateName } from '@/utils'
 
 	const props = defineProps({
 		currentArea: {
@@ -25,8 +26,8 @@
 		showPopup.value = true
 	}
 
-	function addPersonnel() {
-		socketTrainer.personnelAdd(props.currentArea)
+	function addPersonnel() { 
+		socketTrainer.personnelAdd(props.currentArea, generateName())
 	}
 
 	function deletePersonnel() {
