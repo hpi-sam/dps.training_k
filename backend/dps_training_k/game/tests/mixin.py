@@ -63,7 +63,7 @@ class TestUtilsMixin:
 
     def deactivate_condition_checking(self):
         self._deactivate_condition_checking_patch = patch(
-            "game.models.ActionInstance.check_conditions_and_block_resources"
+            "game.models.ActionInstance._check_conditions_and_block_resources"
         )
         self._deactivate_condition_checking = (
             self._deactivate_condition_checking_patch.start()
@@ -102,7 +102,7 @@ class TestUtilsMixin:
 
     def deactivate_moving(self):
         self._deactivate_moving_patch = patch(
-            "game.models.PatientInstance.perform_move"
+            "game.models.PatientInstance._perform_move"
         )
         self._deactivate_moving = self._deactivate_moving_patch.start()
 

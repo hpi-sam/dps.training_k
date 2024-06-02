@@ -20,15 +20,15 @@ from .mixin import TestUtilsMixin
 class ActionInstanceTestCase(TestCase):
     def setUp(self):
         self.check_conditions_and_block_resources_patch = patch(
-            "game.models.ActionInstance.check_conditions_and_block_resources"
+            "game.models.ActionInstance._check_conditions_and_block_resources"
         )
         self.get_local_time_patch = patch("game.models.ActionInstance.get_local_time")
-        self.check_conditions_and_block_resources = (
+        self._check_conditions_and_block_resources = (
             self.check_conditions_and_block_resources_patch.start()
         )
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
-        self.check_conditions_and_block_resources.return_value = True, None
+        self._check_conditions_and_block_resources.return_value = True, None
 
     def tearDown(self):
         self.check_conditions_and_block_resources_patch.stop()
@@ -54,7 +54,10 @@ class ActionInstanceTestCase(TestCase):
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
 
-        self.check_conditions_and_block_resources.return_value = False, "Not applicable"
+        self._check_conditions_and_block_resources.return_value = (
+            False,
+            "Not applicable",
+        )
         condition_succeeded, _ = action_instance.try_application()
         self.assertFalse(condition_succeeded)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
@@ -68,7 +71,7 @@ class ActionInstanceTestCase(TestCase):
         Once an action instance is started, the dispatcher detects it and detects the actual state.
         """
         can_receive_actions.return_value = True
-        self.check_conditions_and_block_resources.return_value = True, None
+        self._check_conditions_and_block_resources.return_value = True, None
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
         action_instance.try_application()
         # send action-list twice, send confirmation event once = 3
@@ -78,7 +81,10 @@ class ActionInstanceTestCase(TestCase):
         )
 
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        self.check_conditions_and_block_resources.return_value = False, "Not applicable"
+        self._check_conditions_and_block_resources.return_value = (
+            False,
+            "Not applicable",
+        )
         action_instance.try_application()
         # send action-list 4 times, send confirmation event twice = 6
         self.assertEqual(_notify_action_event.call_count, 6)

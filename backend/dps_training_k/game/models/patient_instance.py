@@ -206,12 +206,12 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
         return scheduled_actions_exist
 
     @staticmethod
-    def can_move_to(obj):
+    def can_move_to_type(obj):
         from game.models import Area, Lab
 
         return isinstance(obj, Area) or isinstance(obj, Lab)
 
-    def perform_move(self, obj):
+    def _perform_move(self, obj):
         from game.models import Area, Lab
 
         show_warning_message = False

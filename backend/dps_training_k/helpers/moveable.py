@@ -48,11 +48,11 @@ class Moveable(models.Model):
 
     @staticmethod
     @abstractmethod
-    def can_move_to(obj):
+    def can_move_to_type(obj):
         pass
 
     @abstractmethod
-    def perform_move(self, obj) -> tuple[bool, str]:
+    def _perform_move(self, obj) -> tuple[bool, str]:
         """Move the object to another object. The string can be used for either error or warning messages for the frontend."""
         # prone to race conditions, we don't care as highly unlikely
         pass

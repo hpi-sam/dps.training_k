@@ -48,7 +48,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=action_template, patient_instance=PatientFactory()
         )
         self.assertEqual(
-            action_instance.check_conditions_and_block_resources(
+            action_instance._check_conditions_and_block_resources(
                 action_instance.attached_instance(), action_instance.attached_instance()
             ),
             (True, None),
@@ -68,7 +68,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
+        conditions_satisfied, _ = action_instance._check_conditions_and_block_resources(
             action_instance.attached_instance(), action_instance.attached_instance()
         )
         self.assertEqual(conditions_satisfied, False)
@@ -85,7 +85,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
+        conditions_satisfied, _ = action_instance._check_conditions_and_block_resources(
             action_instance.attached_instance(), action_instance.attached_instance()
         )
         self.assertEqual((conditions_satisfied, _), (True, None))
@@ -111,7 +111,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
+        conditions_satisfied, _ = action_instance._check_conditions_and_block_resources(
             action_instance.attached_instance(), action_instance.attached_instance()
         )
         material_instance_1.refresh_from_db()
@@ -147,11 +147,11 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
+        conditions_satisfied, _ = action_instance._check_conditions_and_block_resources(
             action_instance.attached_instance(), action_instance.attached_instance()
         )
-        action_instance.free_resources()
-        action_instance.consume_resources()
+        action_instance._free_resources()
+        action_instance._consume_resources()
 
         self.assertRaises(
             ObjectDoesNotExist, MaterialInstance.objects.get, pk=material_instance_1.id
