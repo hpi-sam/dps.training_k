@@ -23,6 +23,13 @@ class Moveable(models.Model):
 
     def try_moving_to(self, obj) -> tuple[bool, str]:
         """Returns whether the object was moved successfully and an error message if not."""
+        is_allowed, error_message = self.check_moving_to(obj)
+        if not is_allowed:
+            return False, error_message
+        return self._perform_move(obj)
+
+    def check_moving_to(self, obj) -> tuple[bool, str]:
+        """Returns whether the object might be moved successfully and an error message if not."""
         from helpers.moveable_to import MoveableTo
 
         if not isinstance(obj, MoveableTo):
@@ -33,14 +40,21 @@ class Moveable(models.Model):
         if self.is_blocked():
             # noinspection PyUnresolvedReferences
             return False, f"{self.name} ist blockiert und kann nicht verlegt werden."
-        if not self.can_move_to(obj):
+        if not self.can_move_to_type(obj):
             # frontend_model_name is defined in moveable_to
             # noinspection PyUnresolvedReferences
             return (
                 False,
                 f"{self.name} kann nicht zu Objekten des Typs {obj.frontend_model_name()} verlegt werden.",
             )
-        return self.perform_move(obj)
+        succeeded, message = self.check_moving_to_hook(obj)
+        if not succeeded:
+            return False, message
+        return True, ""
+
+    def check_moving_to_hook(self, obj) -> tuple[bool, str]:
+        """Hook for additional checks before moving the object. Return whether the move is allowed and an error message if not."""
+        return True, ""
 
     @abstractmethod
     def is_blocked(self):

@@ -212,40 +212,49 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
         return isinstance(obj, Area) or isinstance(obj, Lab)
 
     def _perform_move(self, obj):
+        """
+        This may only be called after verifying that the movement is possible
+        """
         from game.models import Area, Lab
 
-        show_warning_message = False
-
+        show_warning = self.materialinstance_set.exists() or self.personnel_set.exists()
         for material_instance in self.materialinstance_set.all():
-            show_warning_message = True
-            succeeded, message = material_instance.try_moving_to(
-                self.attached_instance()
-            )
-            if not succeeded:
-                return False, "Fehler beim Freigeben der Ressourcen: " + message
+            material_instance.try_moving_to(self.attached_instance())
         for personnel in self.personnel_set.all():
-            show_warning_message = True
-            succeeded, message = personnel.try_moving_to(self.attached_instance())
-            if not succeeded:
-                return False, "Fehler beim Freigeben der Ressourcen: " + message
-
+            personnel.try_moving_to(self.attached_instance())
         if isinstance(obj, Area):
-            if self.area == obj:
-                return False
             self.area = obj
             self.lab = None
         elif isinstance(obj, Lab):
-            if self.lab == obj:
-                return False
             self.area = None
             self.lab = obj
         self.save(update_fields=["area", "lab"])
 
         return True, (
-            ""
-            if not show_warning_message
-            else "Warnung: Ressourcen wurden automatisch freigegeben"
+            "Warnung: Ressourcen wurden automatisch freigegeben" if show_warning else ""
         )
+
+    def check_moving_to_hook(self, obj):
+        from game.models import Area, Lab
+
+        if isinstance(obj, Area):
+            if self.area == obj:
+                return False, "Patient*in ist bereits in diesem Bereich"
+        elif isinstance(obj, Lab):
+            if self.lab == obj:
+                return False, "Patient*in ist bereits in diesem Labor"
+
+        for material_instance in self.materialinstance_set.all():
+            succeeded, message = material_instance.check_moving_to(
+                self.attached_instance()
+            )
+            if not succeeded:
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
+        for personnel in self.personnel_set.all():
+            succeeded, message = personnel.check_moving_to(self.attached_instance())
+            if not succeeded:
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
+        return True, ""
 
     def attached_instance(self):
         return self.area or self.lab
