@@ -199,11 +199,11 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             ActionInstanceStateNames.IN_PROGRESS,
         }
 
-        scheduled_actions_exist = ActionInstance.objects.filter(
+        scheduled_actions_exists = ActionInstance.objects.filter(
             patient_instance=self, current_state__name__in=scheduled_states
         ).exists()
 
-        return scheduled_actions_exist
+        return scheduled_actions_exists
 
     @staticmethod
     def can_move_to_type(obj):

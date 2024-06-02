@@ -26,10 +26,12 @@ class RelocationTestCase(TestUtilsMixin, TestCase):
     def tearDown(self):
         self.activate_moving()
 
-    def test_relocating(self):
+    @patch("game.models.ActionInstance._check_try_relocating")
+    def test_relocating(self, _check_try_relocating):
         """
         If the action is a relocating action _try_relocating moves patient_instance, remembering it's original area,
         """
+        _check_try_relocating.return_value = (True, True, "")
         original_area = self.patient_instance.area
         is_applicable, message = self.action_instance._try_relocating()
         self.assertTrue(is_applicable)
