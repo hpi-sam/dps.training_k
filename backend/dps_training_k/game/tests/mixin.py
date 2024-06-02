@@ -108,3 +108,18 @@ class TestUtilsMixin:
 
     def activate_moving(self):
         self._deactivate_moving_patch.stop()
+
+    def deactivate_relocating(self):
+        self._deactivate_relocating_patch = patch(
+            "game.models.ActionInstance._try_relocating", patch=(True, "")
+        )
+        self._deactivate_relocating = self._deactivate_relocating_patch.start()
+        self._check_relocating_patch = patch(
+            "game.models.ActionInstance._check_relocating",
+            return_value=(True, False, ""),
+        )
+        self._check_relocating = self._check_relocating_patch.start()
+
+    def activate_relocating(self):
+        self._deactivate_relocating_patch.stop()
+        self._check_relocating_patch.stop()

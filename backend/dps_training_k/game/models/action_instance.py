@@ -196,14 +196,14 @@ class ActionInstance(LocalTimeable, models.Model):
                 self.attached_instance(), self.attached_instance()
             )
             if is_applicable:
-                is_applicable, relocates, message = self._check_try_relocating()
+                is_applicable, relocates, message = self._check_relocating()
 
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, message)
             return False, message
 
         for resource in resources_to_block:
-            resource.block()
+            resource.block(self)
         if relocates:
             self._try_relocating()
         self._start_application()
@@ -272,7 +272,11 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             raise ValueError("No attached instance found")
 
-    def _check_try_relocating(self):
+    def _check_relocating(self):
+        """
+        :return bool, bool, str: True if the action is applicable, True if the action relocates. If the action doesn't relocate,
+        the string contains the reason for declination
+        """
         if not self.template.relocates:
             return True, False, ""
         is_applicable, message = self.patient_instance.check_moving_to(self.lab)
@@ -284,7 +288,7 @@ class ActionInstance(LocalTimeable, models.Model):
         :return bool, str: True if the moving is legal, either by not requiring movements or by succeeding a required movement.
         If False, the str contains the reason why the action is not applicable.
         """
-        is_applicable, relocates, message = self._check_try_relocating()
+        is_applicable, relocates, message = self._check_relocating()
         if not is_applicable or not relocates:
             return is_applicable, message
         self.destination_area = self.patient_instance.area
@@ -329,23 +333,6 @@ class ActionInstance(LocalTimeable, models.Model):
             {self.patient_instance.name + str(self.patient_instance.id) 
              if self.patient_instance 
              else "Lab " + str(self.lab.exercise.frontend_id)}"""
-
-    def _check_conditions_and_block_resources(self, material_owner, personnel_owner):
-        """
-        If all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
-        Each element of the queryset needs to have a block method.
-        :params material_owner: Instance having a material_available method
-        :params personell_owner: Instance having a personell_available method
-        :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
-        """
-        resources_to_block, message, is_applicable = self._try_acquiring_resources(
-            material_owner, personnel_owner
-        )
-        if not is_applicable:
-            return False, message
-        for resource in resources_to_block:
-            resource.block(self)
-        return True, None
 
     def _try_acquiring_resources(self, material_owner, personnel_owner):
         """
