@@ -165,7 +165,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         )
         personnel = PersonnelFactory(patient_instance=action_instance.patient_instance)
         self.material_1.is_reusable = False
-        self.material_1.save(update_fields=["is_reusable"])  # random comment
+        self.material_1.save(update_fields=["is_reusable"])
 
         material_instance_1 = MaterialInstanceFactory(
             template=self.material_1,
