@@ -1,4 +1,5 @@
 import uuid
+import copy
 from unittest.mock import patch
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,9 +11,12 @@ from .factories import (
     MaterialInstanceFactory,
     PatientFactory,
     PersonnelFactory,
+    AreaFactory,
+    LabFactory,
 )
 from .mixin import TestUtilsMixin
 from ..models import MaterialInstance
+from template.models import Action
 
 
 class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
@@ -162,3 +166,88 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         self.assertFalse(material_instance_3.is_blocked())
         self.assertFalse(material_instance_2.is_blocked())
         self.assertFalse(personnel.is_blocked())
+
+    @patch("game.models.MaterialInstance.can_move_to_type")
+    def test_failed_check_is_transparent(self, can_move_to_type_material):
+        """
+        Integration Test: If the condition check fails, the action instance and all participating objects do not change.
+        resources
+        relocating
+        """
+        can_move_to_type_material.return_value = True
+        action_template = ActionFactory(
+            conditions=self.material_personnel_condition,
+            location=Action.Location.BEDSIDE,
+        )
+        patient_instance = PatientFactory()
+        area = AreaFactory()
+        action_instance = ActionInstanceFactory(
+            template=action_template, patient_instance=patient_instance
+        )
+        personnel = PersonnelFactory(area=area)
+        material_instance_1 = MaterialInstanceFactory(
+            template=self.material_1,
+            patient_instance=action_instance.patient_instance,
+        )
+        material_instance_2 = MaterialInstanceFactory(
+            template=self.material_2,
+            patient_instance=action_instance.patient_instance,
+        )
+        material_instance_3 = MaterialInstanceFactory(
+            template=self.material_3,
+            patient_instance=action_instance.patient_instance,
+        )
+        old_state = copy.deepcopy(
+            [
+                patient_instance,
+                area,
+                personnel,
+                material_instance_1,
+                material_instance_2,
+                material_instance_3,
+            ]
+        )
+        self.assertFalse(
+            action_instance.try_application()[0]
+        )  # fail because of missing resource personnel
+        new_state = [
+            patient_instance,
+            area,
+            personnel,
+            material_instance_1,
+            material_instance_2,
+            material_instance_3,
+        ]
+        self.assertEqual(old_state, new_state)
+
+        self.assertTrue(personnel.try_moving_to(patient_instance)[0])
+        action_template.category = Action.Category.EXAMINATION
+        action_template.location = Action.Location.LAB
+        action_template.relocates = True
+        action_template.save(update_fields=["category", "location", "relocates"])
+        action_instance = ActionInstanceFactory(
+            template=action_template,
+            patient_instance=patient_instance,
+            lab=LabFactory(),
+        )
+        can_move_to_type_material.return_value = False
+        old_state = copy.deepcopy(
+            [
+                patient_instance,
+                area,
+                personnel,
+                material_instance_1,
+                material_instance_2,
+                material_instance_3,
+            ]
+        )
+        self.assertFalse(action_instance.try_application()[0])
+        new_state = [
+            patient_instance,
+            area,
+            personnel,
+            material_instance_1,
+            material_instance_2,
+            material_instance_3,
+        ]
+        self.assertEqual(old_state, new_state)
