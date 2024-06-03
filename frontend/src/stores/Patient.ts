@@ -25,8 +25,10 @@ export const usePatientStore = defineStore('patient', {
 		permanentMedication: '',
 		currentCaseHistory: '',
 		pretreatment: '',
-		inactiveInfo: '',
+		isRelocating: false,
+		relocatingInfo: '',
 		timeUntilBack: Number.NEGATIVE_INFINITY,
+		timerRunning: false
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
@@ -63,6 +65,8 @@ export const usePatientStore = defineStore('patient', {
 			}
 		},
 		startUpdatingTimer() {
+			if (this.timerRunning) return
+			this.timerRunning = true
 			setInterval(() => {
 				this.decreaseTimeUntilBack()
 			}, 1000)

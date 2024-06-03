@@ -25,7 +25,7 @@ from ..channel_notifications import (
 )
 from ..serializers.resource_assignment_serializer import AreaResourceSerializer
 
-from ..serializers.patient_inactive_serializer import PatientInactiveSerializer
+from ..serializers.patient_relocating_serializer import PatientRelocatingSerializer
 
 
 class PatientConsumer(AbstractConsumer):
@@ -56,8 +56,8 @@ class PatientConsumer(AbstractConsumer):
         RESOURCE_ASSIGNMENTS = "resource-assignments"
         RESPONSE = "response"
         STATE_CHANGE = "state"
-        PATIENT_INACTIVE = "patient-inactive"
-        PATIENT_ACTIVE = "patient-active"
+        PATIENT_RELOCATING = "patient-relocating"
+        PATIENT_BACK = "patient-back"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -348,13 +348,13 @@ class PatientConsumer(AbstractConsumer):
         print("imaging_action_start_event")
         action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
         self.send_event(
-            self.PatientOutgoingMessageTypes.PATIENT_INACTIVE,
-            **PatientInactiveSerializer(action_instance).data,
+            self.PatientOutgoingMessageTypes.PATIENT_RELOCATING,
+            **PatientRelocatingSerializer(action_instance).data,
         )
 
     def relocation_end_event(self, event=None):
         self.send_event(
-            self.PatientOutgoingMessageTypes.PATIENT_ACTIVE,
+            self.PatientOutgoingMessageTypes.PATIENT_BACK,
         )
 
     def resource_assignment_event(self, event=None):
