@@ -22,8 +22,6 @@
 	})
 
 	const info = computed(() => {
-		console.log("Status: " + exerciseStore.status)
-		console.log(patientStore)
 		switch (exerciseStore.status) {
 			case 'running':
 				return new Date(new Date(0).setSeconds(patientStore.timeUntilBack)).toISOString().substring(12, 19)
