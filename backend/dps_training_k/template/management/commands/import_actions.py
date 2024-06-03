@@ -37,25 +37,24 @@ class Command(BaseCommand):
         """
 
         Action.objects.update_or_create(
-            name="Beatmung",
-            uuid=ActionIDs.BEATMUNG,
+            name="Blut abnehmen",
+            uuid=ActionIDs.BLUTABNAHME,
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 15,
-                "effect_duration": None,  # None means permanent
+                "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": [str(ActionIDs.TRACHEALTUBUS)],
+                        "required_actions": [str(ActionIDs.ART_KANUELE)],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.BEATMUNGSGERAET)],
-                        "num_personnel": 2,
+                        "material": None,
+                        "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                            {role_map[RoleIDs.ARZT]: 1},
                         ],
                     },
                 ),
@@ -516,7 +515,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.IV_ZUGANG)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.NARKOSEGERAET)],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -536,7 +535,7 @@ class Command(BaseCommand):
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 15,
-                "effect_duration": 120,  # Depends of type of "Zugang"
+                "effect_duration": None,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
                     {
                         "required_actions": [str(ActionIDs.IV_ZUGANG)],
@@ -981,7 +980,7 @@ class Command(BaseCommand):
                             [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
                         ],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.DEFIBRILATOR)],
+                        "material": [str(MaterialIDs.DEFI_TRANSCUTANER_PACER)],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -1005,8 +1004,6 @@ class Command(BaseCommand):
                 "conditions": json.dumps(
                     {
                         "required_actions": [
-                            str(ActionIDs.IV_ZUGANG),
-                            str(ActionIDs.NARKOTIKUM),
                             [
                                 str(ActionIDs.TRACHEALTUBUS),
                                 str(ActionIDs.LARYNXTUBUS),
@@ -1014,7 +1011,12 @@ class Command(BaseCommand):
                             ],
                         ],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.BEATMUNGSGERAET)],
+                        "material": [
+                            [
+                                str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                                str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                            ]
+                        ],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -1039,7 +1041,12 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [
+                            [
+                                str(MaterialIDs.SAUERSTOFF_TRAGBAR),
+                                str(MaterialIDs.SAUERSTOFF_STATIONAER),
+                            ]
+                        ],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1051,8 +1058,8 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutdruckmessgerät anbringen",
-            uuid=ActionIDs.BLUTDRUCK_MESSGERAET_ANBRINGEN,
+            name="Blutdruck messen",
+            uuid=ActionIDs.BLUTDRUCK_MESSEN,
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
@@ -1247,30 +1254,6 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Monitor anbringen",
-            uuid=ActionIDs.MONITOR_ANBRINGEN,
-            defaults={
-                "category": Action.Category.TREATMENT,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
             name="passageren Pacer anbringen",
             uuid=ActionIDs.PASSAGEREN_PACER_ANBRINGEN,
             defaults={
@@ -1286,7 +1269,7 @@ class Command(BaseCommand):
                             str(ActionIDs.ANALGETIKUM),
                         ],
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.DEFIBRILATOR)],
+                        "material": [str(MaterialIDs.PASSAGERER_PACER)],
                         "num_personnel": 2,
                         "lab_devices": None,
                         "area": None,
@@ -1313,7 +1296,7 @@ class Command(BaseCommand):
                             [str(ActionIDs.IV_ZUGANG), str(ActionIDs.ZVK)]
                         ],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.PERFUSORPUMPE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1337,7 +1320,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.PERFUSORPUMPE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1401,113 +1384,10 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Patient in benachbarte Station verschieben",
-            uuid=ActionIDs.PATIENT_IN_BENACHBARTE_STATION_VERSCHIEBEN,
+            name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
+            uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
             defaults={
-                "category": "OT",
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,  # Dunno, nothing given
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 2,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Gerät in andere Station verschieben",
-            uuid=ActionIDs.GERAET_IN_ANDERE_STATION_VERSCHIEBEN,
-            defaults={
-                "category": "OT",
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,  # Dunno, nothing given
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.HILFSKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Fresh Frozen Plasma (0 positiv) auftauen",
-            uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
-            defaults={
-                "category": Action.Category.PRODUCTION,
-                "location": Action.Location.LAB,
-                "relocates": False,
-                "application_duration": 420,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-                "results": json.dumps(
-                    {
-                        "produced_material": {
-                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
-                        }
-                    }
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Lyophilisiertes Frischplasma (jegliche Blutgruppe) auflösen",
-            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_AUFLOESEN,
-            defaults={
-                "category": "OT",
-                "location": Action.Location.LAB,
-                "relocates": False,
-                "application_duration": 420,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Blut abnehmen",
-            uuid=ActionIDs.BLUTABNAHME,
-            defaults={
-                "category": Action.Category.TREATMENT,
+                "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 15,
@@ -1516,31 +1396,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.ART_KANUELE)],
                         "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
-            uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
-            defaults={
-                "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
-                "relocates": False,
-                "application_duration": 15,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.BLUTGASANALYSE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1578,15 +1434,17 @@ class Command(BaseCommand):
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
+                "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
+                        ],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.BLUTGASANALYSE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1650,7 +1508,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.BZ_MESSGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1739,7 +1597,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.EKG)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1763,7 +1621,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.EKG_GERAET)],
+                        "material": [str(MaterialIDs.EKG)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1813,7 +1671,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.ZVK)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ZVD_MESSGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1874,15 +1732,15 @@ class Command(BaseCommand):
             uuid=ActionIDs.EXTREMITAETEN_ROENTGEN,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
-                "relocates": True,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ROENTGENGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -1943,15 +1801,15 @@ class Command(BaseCommand):
             uuid=ActionIDs.THORAX_ROENTGEN,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
-                "relocates": True,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ROENTGENGERAET)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2023,7 +1881,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 3,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.COMPUTERTOMOGRAPHIE)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.MTRA]: 1},
@@ -2085,15 +1943,15 @@ class Command(BaseCommand):
             uuid=ActionIDs.ULTRASCHALL_ABDOMEN,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
-                "relocates": True,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.SONOGRAPHIE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2138,15 +1996,15 @@ class Command(BaseCommand):
             uuid=ActionIDs.ULTRASCHALL_THORAX,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
-                "relocates": True,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.SONOGRAPHIE)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2191,22 +2049,33 @@ class Command(BaseCommand):
             uuid=ActionIDs.KREUZBLUT,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
+                "location": Action.Location.LAB,
                 "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTGRUPPE_BESTIMMEN),
+                            str(ActionIDs.BLUTABNAHME),
+                        ],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.BLUTBANK)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
                         ],
                     },
+                ),
+                "results": json.dumps(
+                    {
+                        "Kreuzblut": {
+                            1000: "Erfolg! Das getestete Blut ist kompatibel.",
+                            1001: "Misserfolg! Das getestete Blut ist inkompatibel.",
+                        }
+                    }
                 ),
             },
         )
@@ -2225,7 +2094,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.BLUTBANK)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2266,7 +2135,12 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [
+                            [
+                                str(MaterialIDs.LAB_GERAET_1),
+                                str(MaterialIDs.BLUTGASANALYSE),
+                            ]
+                        ],
                         "area": None,
                         "role": [
                             [
@@ -2316,7 +2190,7 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Lactatanalyse",
+            name="Lactatanalyse",  # can also be written as "Laktatanalyse"
             uuid=ActionIDs.LACTATANALYSE,
             defaults={
                 "category": Action.Category.EXAMINATION,
@@ -2331,9 +2205,9 @@ class Command(BaseCommand):
                         ],  # This is WIP, as you actually need to have done a blood draw per action
                         # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.BGA_GERAET)],
+                        "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_1)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
@@ -2375,7 +2249,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_2)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2417,7 +2291,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_3)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2459,7 +2333,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_3)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2501,7 +2375,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.LAB_GERAET_3)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.ARZT]: 1},
@@ -2526,6 +2400,90 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
+            name="Lyophilisiertes Frischplasma auflösen",
+            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_VORBEREITEN,
+            defaults={
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
+                "application_duration": 300,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {
+                        "produced_material": {
+                            str(MaterialIDs.LYOPHILISIERTES_FRISCHPLASMA): 1
+                        }
+                    }
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Lyophilisiertes Frischplasma anwenden",
+            uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_ANWENDEN,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": 120,  # depends on type of "Zugang"
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.LYOPHILISIERTES_FRISCHPLASMA)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Fresh Frozen Plasma auftauen",
+            uuid=ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN,
+            defaults={
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
+                "application_duration": 420,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [
+                            str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)
+                        ],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {"produced_material": {str(MaterialIDs.FRESH_FROZEN_PLASMA): 1}}
+                ),
+            },
+        )
+        Action.objects.update_or_create(
             name="Fresh Frozen Plasma anwenden",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_ANWENDEN,
             defaults={
@@ -2538,7 +2496,7 @@ class Command(BaseCommand):
                     {
                         "required_actions": [str(ActionIDs.IV_ZUGANG)],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.FRESH_FROZEN_PLASMA)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
@@ -2546,6 +2504,35 @@ class Command(BaseCommand):
                             {role_map[RoleIDs.ARZT]: 1},
                         ],
                     },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Enthrozytenkonzentrat erwärmen",
+            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
+            defaults={
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
+                "application_duration": 360,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [
+                            str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)
+                        ],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {"produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}}
                 ),
             },
         )
@@ -2557,36 +2544,15 @@ class Command(BaseCommand):
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 15,
-                "effect_duration": 120,  # depends on type of "Zugang"
-                "conditions": json.dumps(
-                    {
-                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.ARZT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Enthrozytenkonzentrate (jegliche Blutgruppe) anwenden",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_JEGLICHE_BLUTGRUPPE_ANWENDEN,
-            defaults={
-                "category": Action.Category.TREATMENT,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "required_actions": [
+                            str(ActionIDs.IV_ZUGANG),
+                            str(ActionIDs.KREUZBLUT),
+                        ],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ENTHROZYTENKONZENTRAT)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,

@@ -75,18 +75,18 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
             template=action, lab=LabFactory(), destination_area=AreaFactory()
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,
         )
         count_before = MaterialInstance.objects.filter(
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             area=action_instance.destination_area,
         ).count()
         action_instance._application_finished()
         count_after = MaterialInstance.objects.filter(
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             area=action_instance.destination_area,
         ).count()
         self.assertEqual(count_before + 1, count_after)
@@ -100,15 +100,13 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         """
         Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
         """
-        call_command("minimal_actions")
-        call_command("minimal_material")
+        call_command("import_minimal_actions")
+        call_command("import_minimal_material")
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
         self.deactivate_condition_checking()
-        action_template = Action.objects.get(
-            name="Fresh Frozen Plasma (0 positiv) auftauen"
-        )
+        action_template = Action.objects.get(name="Enthrozytenkonzentrat erwärmen")
         area = AreaFactory()
         lab = LabFactory()
         action_instance = ActionInstance.create(
@@ -120,14 +118,14 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         self.assertRaises(
             MaterialInstance.DoesNotExist,
             MaterialInstance.objects.get,
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             area=area,
         )
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
-                template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+                template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
                 area=area,
             )
         )
@@ -143,11 +141,9 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         Integration Test: If production action is finished, a notification is sent to the consumer.
         """
 
-        call_command("minimal_actions")
-        call_command("minimal_material")
-        action_template = Action.objects.get(
-            name="Fresh Frozen Plasma (0 positiv) auftauen"
-        )
+        call_command("import_minimal_actions")
+        call_command("import_minimal_material")
+        action_template = Action.objects.get(name="Enthrozytenkonzentrat erwärmen")
         area = AreaFactory()
         lab = LabFactory()
         action_instance = ActionInstance.create(
@@ -162,7 +158,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
 class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
     def setUp(self):
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
+            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,

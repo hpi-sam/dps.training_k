@@ -1,14 +1,13 @@
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
-from configuration import settings
-from game.models import Exercise, PatientInstance, Area, Personnel
-from template.models import PatientInformation
-
-from django.core.management.base import BaseCommand
-from template.models import Action, Material
-from template.constants import ActionIDs, MaterialIDs, RoleIDs, role_map
 import json
 from uuid import UUID
+
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
+
+from configuration import settings
+from game.models import Exercise, PatientInstance, Area, Personnel
+from template.constants import ActionIDs
+from template.models import Action, Material
 
 
 class StuffIDs:
@@ -299,8 +298,6 @@ class Command(BaseCommand):
 
 import csv
 import re
-
-from django.core.management.base import BaseCommand
 
 from helpers.triage import Triage
 from template.models import PatientInformation

@@ -17,20 +17,76 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.create_actions()
         self.stdout.write(
-            self.style.SUCCESS("Successfully added minimal actions to the database")
+            self.style.SUCCESS("Successfully added minimal action list to the database")
         )
 
     @staticmethod
     def create_actions():
-        # Treatments
+        # Simple basic action
+        Action.objects.update_or_create(
+            name="art. Kanüle",
+            uuid=ActionIDs.ART_KANUELE,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 10,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        # Produce Material
+        Action.objects.update_or_create(
+            name="Enthrozytenkonzentrat erwärmen",
+            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
+            defaults={
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": None,
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [
+                            str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)
+                        ],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {"produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}}
+                ),
+            },
+        )
+        # Use Blood
         Action.objects.update_or_create(
             name="i.V. Zugang",
             uuid=ActionIDs.IV_ZUGANG,
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
-                "application_duration": 60,
-                "effect_duration": 120,  # depends on type of "Zugang"
+                "relocates": False,
+                "application_duration": 10,
+                "effect_duration": 30,  # depends on type of "Zugang"
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
@@ -47,33 +103,162 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Vollelektrolyt",
-            uuid=ActionIDs.VOLLELEKTROLYT,
+            name="Blut abnehmen",
+            uuid=ActionIDs.BLUTABNAHME,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 5,
-                "effect_duration": 120,  # depends on type of "Zugang"
+                "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "required_actions": [str(ActionIDs.ART_KANUELE)],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,
-                        "role": {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    }
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
                 ),
-                "results": json.dumps({}),
             },
         )
-        # Examinations
+        Action.objects.update_or_create(
+            name="Blutgruppe bestimmen",
+            uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
+            defaults={
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
+                "application_duration": 10,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.BLUTABNAHME)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [str(MaterialIDs.BLUTBANK)],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {
+                        "Blutgruppe": {
+                            1: "A Rh pos",
+                            2: "B Rh pos",
+                            3: "A rh neg",
+                            4: "0 Rh pos",
+                            5: "B rh neg",
+                            6: "AB rh neg",
+                            7: "O rh neg",
+                            8: "AB Rh pos",
+                        }
+                    }
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Kreuzblut",
+            uuid=ActionIDs.KREUZBLUT,
+            defaults={
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
+                "application_duration": 10,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            str(ActionIDs.BLUTGRUPPE_BESTIMMEN),
+                            str(ActionIDs.BLUTABNAHME),
+                        ],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": [str(MaterialIDs.BLUTBANK)],
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+                "results": json.dumps(
+                    {
+                        "Kreuzblut": {
+                            1000: "Erfolg! Das getestete Blut ist kompatibel.",
+                            1001: "Misserfolg! Das getestete Blut ist inkompatibel.",
+                        }
+                    }
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Enthrozytenkonzentrate anwenden",
+            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 5,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [
+                            str(ActionIDs.IV_ZUGANG),
+                            str(ActionIDs.KREUZBLUT),
+                        ],
+                        "prohibitive_actions": None,
+                        "material": [str(MaterialIDs.ENTHROZYTENKONZENTRAT)],
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        # OP
+        Action.objects.update_or_create(
+            name="Operation einleiten",
+            uuid=ActionIDs.OP_EINLEITEN,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.LAB,
+                "relocates": True,
+                "application_duration": 360000,  # 100h to assure that the operation never finishes during an exercise
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,  # garbage values
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        # Non-relocating examinations
         Action.objects.update_or_create(
             name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 10,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -85,7 +270,12 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
-                        "lab_devices": None,
+                        "lab_devices": [
+                            [
+                                str(MaterialIDs.LAB_GERAET_1),
+                                str(MaterialIDs.BLUTGASANALYSE),
+                            ]
+                        ],
                         "area": None,
                         "role": [
                             [
@@ -134,44 +324,7 @@ class Command(BaseCommand):
                 ),
             },
         )
-        Action.objects.update_or_create(
-            name="Blutgruppe bestimmen",
-            uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
-            defaults={
-                "category": Action.Category.EXAMINATION,
-                "location": Action.Location.LAB,
-                "application_duration": 10,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.ARZT]: 1},
-                        ],
-                    },
-                ),
-                "results": json.dumps(
-                    {
-                        "Blutgruppe": {
-                            1: "A Rh pos",
-                            2: "B Rh pos",
-                            3: "A rh neg",
-                            4: "0 Rh pos",
-                            5: "B rh neg",
-                            6: "AB rh neg",
-                            7: "O rh neg",
-                            8: "AB Rh pos",
-                        }
-                    }
-                ),
-            },
-        )
-        # Relocating
+        # Relocating and lab side examinations
         Action.objects.update_or_create(
             name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
@@ -187,7 +340,7 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 3,
-                        "lab_devices": None,
+                        "lab_devices": [str(MaterialIDs.COMPUTERTOMOGRAPHIE)],
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.MTRA]: 1},
@@ -239,63 +392,6 @@ class Command(BaseCommand):
                             273: "Thorax: Lobärpneumonie links; deutliche Überblähung der peripheren Lungenanteile, vereinzelt kleinere Bullä; seitengleiche Belüftung Extremitäten: Normalbefund; keine Frakturzeichen; Pneumonische Infiltrate links und beginnend rechts, kleiner Pleuraerguss re.",
                             274: "Thorax: Normalbefund; Extremitäten: Normalbefund; keine Frakturzeichen; keine Fremdkörper; mind 1,5 l Blut im Abdomen; Leber fraglich rupturiert.",
                             281: "Thorax: Normalbefund; Extremitäten: Normalbefund; keine Frakturzeichen; keine Fremdkörper; HWS: oB.; Becken: oB.; Schädel: knöchern oB.; ca 1 cm großes Subduralhämatom li frontal; keine Mittelllinienverschiebung; kein Hirnödem;",
-                        }
-                    }
-                ),
-            },
-        )
-
-        Action.objects.update_or_create(
-            name="Operation einleiten",
-            uuid=ActionIDs.OP_EINLEITEN,
-            defaults={
-                "category": Action.Category.TREATMENT,
-                "location": Action.Location.LAB,
-                "relocates": True,
-                "application_duration": 360000,  # 100h to assure that the operation never finishes during an exercise
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,  # garbage values
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.ARZT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        # Produce Material
-        Action.objects.update_or_create(
-            name="Fresh Frozen Plasma (0 positiv) auftauen",
-            uuid=ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN,
-            defaults={
-                "category": Action.Category.PRODUCTION,
-                "location": Action.Location.LAB,
-                "relocates": False,
-                "application_duration": 20,
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [str(MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                        ],
-                    },
-                ),
-                "results": json.dumps(
-                    {
-                        "produced_material": {
-                            str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1
                         }
                     }
                 ),

@@ -1,18 +1,18 @@
 from unittest.mock import patch
+
 from django.core.management import call_command
-
-
 from django.test import TestCase
-from .mixin import TestUtilsMixin
-from .factories import PatientFactory, LabFactory
-from template.models import Action
+
 from game.models import ActionInstance
+from template.models import Action
+from .factories import PatientFactory, LabFactory
+from .mixin import TestUtilsMixin
 
 
 class RelocationTestCase(TestUtilsMixin, TestCase):
     def setUp(self):
         self.deactivate_moving()
-        call_command("minimal_actions")
+        call_command("import_minimal_actions")
         self._deactivate_moving.return_value = (True, "")
         self.patient_instance = PatientFactory()
         self.lab = LabFactory(exercise=self.patient_instance.exercise)

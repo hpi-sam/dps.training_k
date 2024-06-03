@@ -13,7 +13,7 @@ from ..models import PatientInstance, Exercise, Area
 
 class TestUtilsMixin:
     async def create_patient_communicator_and_authenticate(self):
-        await sync_to_async(call_command)("patient_information")
+        await sync_to_async(call_command)("import_patient_information")
         await sync_to_async(call_command)("loaddata", "patient_state_1004.json")
 
         self.exercise = await sync_to_async(Exercise.createExercise)()

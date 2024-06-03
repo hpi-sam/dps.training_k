@@ -4,6 +4,7 @@ from collections import defaultdict
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from configuration import settings
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
@@ -105,13 +106,15 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
+        state_change_time = 10 if settings.RUN_CONFIG == "dev" else 600
+
         if self.patient_state.is_dead:
             return False
         if self.patient_state.is_final():
             return False
         ScheduledEvent.create_event(
             exercise=self.exercise,
-            t_sim_delta=10 + time_offset,
+            t_sim_delta=state_change_time + time_offset,
             method_name="execute_state_change",
             patient=self,
         )
