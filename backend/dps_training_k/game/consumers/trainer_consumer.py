@@ -7,6 +7,7 @@ from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
 from template.constants import MaterialIDs
 
+
 class TrainerConsumer(AbstractConsumer):
     """
     for general functionality @see AbstractConsumer
@@ -15,6 +16,7 @@ class TrainerConsumer(AbstractConsumer):
     class TrainerIncomingMessageTypes:
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        AREA_RENAME = "area-rename"
         EXAMPLE = "example"
         EXERCISE_CREATE = "exercise-create"
         EXERCISE_END = "exercise-end"
@@ -24,9 +26,10 @@ class TrainerConsumer(AbstractConsumer):
         PATIENT_ADD = "patient-add"
         PATIENT_DELETE = "patient-delete"
         PATIENT_UPDATE = "patient-update"
+        PATIENT_RENAME = "patient-rename"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
-        PERSONNEL_UPDATE = "personnel-update"
+        PERSONNEL_RENAME = "personnel-rename"
 
     class TrainerOutgoingMessageTypes:
         EXERCISE_CREATED = "trainer-exercise-create"
@@ -84,7 +87,6 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.PATIENT_UPDATE: (
                 self.handle_update_patient,
                 "patientId",
-                "patientName",
                 "code",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
@@ -95,11 +97,21 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_delete_personnel,
                 "personnelId",
             ),
-            self.TrainerIncomingMessageTypes.PERSONNEL_UPDATE: (
-                self.handle_update_personnel,
+            self.TrainerIncomingMessageTypes.PERSONNEL_RENAME: (
+            self.handle_rename_personnel,
                 "personnelId",
                 "personnelName",
             ),
+            self.TrainerIncomingMessageTypes.AREA_RENAME: (
+                self.handle_rename_area,
+                "areaId",
+                "areaName",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_RENAME: (
+                self.handle_rename_patient,
+                "patientId",
+                "patientName",
+            )
         }
         self.REQUESTS_MAP.update(trainer_request_map)
 
@@ -125,6 +137,11 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No area found with the pk '{areaId}'",
             )
+    
+    def handle_rename_area(self, exercise, area_id, area_name):
+        area = Area.objects.get(id=area_id, exercise_id=exercise.id)
+        area.name = area_name
+        area.save(update_fields=["name"])
 
     def handle_example(self, exercise, exercise_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
@@ -181,13 +198,15 @@ class TrainerConsumer(AbstractConsumer):
             patient_information = PatientInformation.objects.get(code=code)
             if patient_information.start_status == 551:
                 try:
-                    material_instances = MaterialInstance.objects.filter(template__uuid=MaterialIDs.BEATMUNGSGERAET)
+                    material_instances = MaterialInstance.objects.filter(
+                        template__uuid=MaterialIDs.BEATMUNGSGERAET
+                    )
                     succeeded = False
                     for material_instance in material_instances:
                         if material_instance.attached_instance() == area:
                             succeeded = True
                             break
-            
+
                     if succeeded:
                         patient_instance = PatientInstance.objects.create(
                             name=patientName,
@@ -197,10 +216,16 @@ class TrainerConsumer(AbstractConsumer):
                             frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
                         )
                         material_instance.try_moving_to(patient_instance)
-                    else: # catches case where no material_instance was in patients area
-                        self.send_failure(message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen.")
-                except MaterialInstance.DoesNotExist: # catches no material_instance matching filter
-                    self.send_failure(message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen.")
+                    else:  # catches case where no material_instance was in patients area
+                        self.send_failure(
+                            message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                        )
+                except (
+                    MaterialInstance.DoesNotExist
+                ):  # catches no material_instance matching filter
+                    self.send_failure(
+                        message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                    )
             else:
                 patient_instance = PatientInstance.objects.create(
                     name=patientName,
@@ -209,7 +234,7 @@ class TrainerConsumer(AbstractConsumer):
                     area=area,
                     frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
                 )
-            
+
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the pk '{areaId}'",
@@ -219,15 +244,22 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the pk '{areaId}'",
             )
 
-    def handle_update_patient(self, exercise, patientFrontendId, patientName, code):
-        patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
+    #TODO: remove updating name
+    def handle_update_patient(self, exercise, patientFrontendId, code):
+        patient = PatientInstance.objects.get(frontend_id=patientFrontendId, exercise_id=exercise.id)
         patient_information = PatientInformation.objects.get(code=code)
         if not patient.static_information.start_status == 551:
-            patient.name = patientName
             patient.static_information = patient_information
-            patient.save(update_fields=["name", "static_information"])
+            patient.save(update_fields=["static_information"])
         else:
-            self.send_failure(message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen.")
+            self.send_failure(
+                message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen."
+            )
+    
+    def handle_rename_patient(self, exercise, patient_id, patient_name):
+        patient = PatientInstance.objects.get(frontend_id=patient_id, exercise_id=exercise.id)
+        patient.name = patient_name
+        patient.save(update_fields=["name"])
 
     def handle_delete_patient(self, exercise, patientFrontendId):
         try:
@@ -237,7 +269,7 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No patient found with the patientId '{patientFrontendId}'",
             )
-    
+
     def handle_add_personnel(self, _, areaId):
         try:
             area = Area.objects.get(pk=areaId)
@@ -260,10 +292,10 @@ class TrainerConsumer(AbstractConsumer):
                 f"No personnel found with the pk '{personnel_id}'",
             )
 
-    def handle_update_personnel(self, _, personnelId, personnelName):
-        personnel = Personnel.objects.get(id=personnelId)
-        personnel.name = personnelName
-        personnel.save()
+    def handle_rename_personnel(self, exercise, personnel_id, personnel_name):
+        personnel = Personnel.objects.get(id=personnel_id)
+        personnel.name = personnel_name
+        personnel.save(update_fields=["name"])
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
