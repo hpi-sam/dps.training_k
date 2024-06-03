@@ -106,9 +106,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
         self.deactivate_condition_checking()
-        action_template = Action.objects.get(
-            name="Fresh Frozen Plasma (0 positiv) auftauen"
-        )
+        action_template = Action.objects.get(name="Enthrozytenkonzentrat erwärmen")
         area = AreaFactory()
         lab = LabFactory()
         action_instance = ActionInstance.create(
@@ -145,9 +143,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
 
         call_command("import_minimal_actions")
         call_command("import_minimal_material")
-        action_template = Action.objects.get(
-            name="Fresh Frozen Plasma (0 positiv) auftauen"
-        )
+        action_template = Action.objects.get(name="Enthrozytenkonzentrat erwärmen")
         area = AreaFactory()
         lab = LabFactory()
         action_instance = ActionInstance.create(
