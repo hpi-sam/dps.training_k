@@ -11,5 +11,5 @@ class Material(UUIDable, models.Model):
 
     name = models.CharField(max_length=100, unique=True)
     category = models.CharField(choices=Category.choices, max_length=2)
-    reusable = models.BooleanField()  # can be used multiple times
-    moveable = models.BooleanField(default=False)  # can be moved between locations
+    is_reusable = models.BooleanField(default=False)  # can be used multiple times
+    is_moveable = models.BooleanField(default=False)  # can be moved between locations

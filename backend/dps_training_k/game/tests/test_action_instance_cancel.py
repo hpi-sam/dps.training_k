@@ -21,10 +21,10 @@ class CancelAction(TestUtilsMixin, TestCase):
         )
         self._start_application_patch.start()
         self.material_1 = MaterialFactory(
-            name="Material 1", reusable=True, uuid=str(uuid.uuid4())
+            name="Material 1", is_reusable=True, uuid=str(uuid.uuid4())
         )
         self.material_2 = MaterialFactory(
-            name="Material 2", reusable=False, uuid=str(uuid.uuid4())
+            name="Material 2", is_reusable=False, uuid=str(uuid.uuid4())
         )
         self.patient = PatientFactory()
         self.personnel = PersonnelFactory(patient_instance=self.patient)

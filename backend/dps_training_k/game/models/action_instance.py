@@ -297,14 +297,14 @@ class ActionInstance(LocalTimeable, models.Model):
 
     def free_resources(self):
         for material in self.materialinstance_set.all():
-            if material.reusable:
+            if material.is_reusable:
                 material.release()
         for personnel in self.personnel_set.all():
             personnel.release()
 
     def consume_resources(self):
         for material in self.materialinstance_set.all():
-            if not material.reusable:
+            if not material.is_reusable:
                 material.consume()
 
     def get_patient_examination_codes(self) -> dict[str, str]:
