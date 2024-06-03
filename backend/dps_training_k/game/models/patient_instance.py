@@ -192,60 +192,63 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames
 
-        scheduled_states = {
-            ActionInstanceStateNames.PLANNED,
-            # do not include currently as on_hold actions are currently not shown in frontend and will never be rescheduled
-            # ActionInstanceStateNames.ON_HOLD,
-            ActionInstanceStateNames.IN_PROGRESS,
-        }
-
-        scheduled_actions_exist = ActionInstance.objects.filter(
-            patient_instance=self, current_state__name__in=scheduled_states
+        scheduled_actions_exists = ActionInstance.objects.filter(
+            patient_instance=self,
+            current_state__name=ActionInstanceStateNames.IN_PROGRESS,
         ).exists()
 
-        return scheduled_actions_exist
+        return scheduled_actions_exists
 
     @staticmethod
-    def can_move_to(obj):
+    def can_move_to_type(obj):
         from game.models import Area, Lab
 
         return isinstance(obj, Area) or isinstance(obj, Lab)
 
-    def perform_move(self, obj):
+    def _perform_move(self, obj):
+        """
+        This may only be called after verifying that the movement is possible
+        """
         from game.models import Area, Lab
 
-        show_warning_message = False
-
+        show_warning = self.materialinstance_set.exists() or self.personnel_set.exists()
         for material_instance in self.materialinstance_set.all():
-            show_warning_message = True
-            succeeded, message = material_instance.try_moving_to(
-                self.attached_instance()
-            )
-            if not succeeded:
-                return False, "Fehler beim Freigeben der Ressourcen: " + message
+            material_instance.try_moving_to(self.attached_instance())
         for personnel in self.personnel_set.all():
-            show_warning_message = True
-            succeeded, message = personnel.try_moving_to(self.attached_instance())
-            if not succeeded:
-                return False, "Fehler beim Freigeben der Ressourcen: " + message
-
+            personnel.try_moving_to(self.attached_instance())
         if isinstance(obj, Area):
-            if self.area == obj:
-                return False
             self.area = obj
             self.lab = None
         elif isinstance(obj, Lab):
-            if self.lab == obj:
-                return False
             self.area = None
             self.lab = obj
         self.save(update_fields=["area", "lab"])
 
         return True, (
-            ""
-            if not show_warning_message
-            else "Warnung: Ressourcen wurden automatisch freigegeben"
+            "Warnung: Ressourcen wurden automatisch freigegeben" if show_warning else ""
         )
+
+    def check_moving_to_hook(self, obj):
+        from game.models import Area, Lab
+
+        if isinstance(obj, Area):
+            if self.area == obj:
+                return False, "Patient*in ist bereits in diesem Bereich"
+        elif isinstance(obj, Lab):
+            if self.lab == obj:
+                return False, "Patient*in ist bereits in diesem Labor"
+
+        for material_instance in self.materialinstance_set.all():
+            succeeded, message = material_instance.check_moving_to(
+                self.attached_instance()
+            )
+            if not succeeded:
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
+        for personnel in self.personnel_set.all():
+            succeeded, message = personnel.check_moving_to(self.attached_instance())
+            if not succeeded:
+                return False, "Fehler beim Freigeben der Ressourcen: " + message
+        return True, ""
 
     def attached_instance(self):
         return self.area or self.lab

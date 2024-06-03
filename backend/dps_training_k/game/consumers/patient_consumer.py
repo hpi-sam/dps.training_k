@@ -174,7 +174,7 @@ class PatientConsumer(AbstractConsumer):
 
     def handle_action_cancel(self, _, action_id):
         action_instance = ActionInstance.objects.get(id=action_id)
-        success, message = action_instance.cancel()
+        success, message = action_instance.try_cancelation()
         if not success:
             self.send_failure(message=message)
 

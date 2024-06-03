@@ -31,7 +31,7 @@ class Assignable(
             )
         )
 
-    def perform_move(self, obj):
+    def _perform_move(self, obj):
         from game.models import PatientInstance, Area, Lab
 
         if isinstance(obj, PatientInstance):
@@ -56,7 +56,7 @@ class Assignable(
         return True, ""
 
     @staticmethod
-    def can_move_to(obj):
+    def can_move_to_type(obj):
         from game.models import PatientInstance, Area, Lab
 
         return (

@@ -192,16 +192,20 @@ class ActionInstance(LocalTimeable, models.Model):
                 f"{self.patient_instance.name} ist bereits woanders",
             )
         else:
-            is_applicable, message = self.check_conditions_and_block_resources(
+            resources_to_block, message, is_applicable = self._try_acquiring_resources(
                 self.attached_instance(), self.attached_instance()
             )
             if is_applicable:
-                is_applicable, message = self._try_relocating()
+                is_applicable, relocates, message = self._check_relocating()
 
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, message)
             return False, message
 
+        for resource in resources_to_block:
+            resource.block(self)
+        if relocates:
+            self._try_relocating()
         self._start_application()
         return True, None
 
@@ -226,17 +230,38 @@ class ActionInstance(LocalTimeable, models.Model):
             self.historic_patient_state = self.patient_instance.patient_state
             self.save(update_fields=["historic_patient_state"])
         self._update_state(ActionInstanceStateNames.IN_PROGRESS)
-        self.consume_resources()
+        self._consume_resources()
 
     def _application_finished(self):
         self._update_state(
             ActionInstanceStateNames.FINISHED,
             info_text=self.template.get_result(self),
         )
-        self.free_resources()
+        self._free_resources()
         self._try_resource_production()
         self._try_returning()
         self._try_starting_action_effects()
+
+    def try_cancelation(self) -> tuple[bool, str]:
+        """Returns whether the object was canceled successfully and an error message if not."""
+
+        if not self.current_state.is_cancelable:
+            return (
+                False,
+                f"Aktionen mit dem Status {self.current_state.get_name_display()} können nicht abgebrochen werden.",
+            )
+
+        if self.template.relocates:
+            return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
+
+        self.owned_events.all().delete()
+        self._free_resources()
+
+        self._update_state(
+            ActionInstanceStateNames.CANCELED, "Aktion wurde abgebrochen."
+        )
+
+        return True, ""
 
     def attached_instance(self):
         if self.template.location == self.template.Location.BEDSIDE:
@@ -246,29 +271,36 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             raise ValueError("No attached instance found")
 
+    def _check_relocating(self):
+        """
+        :return bool, bool, str: True if the action is applicable, True if the action relocates. If the action doesn't relocate,
+        the string contains the reason for declination
+        """
+        if not self.template.relocates:
+            return True, False, ""
+        is_applicable, message = self.patient_instance.check_moving_to(self.lab)
+        return is_applicable, is_applicable, message
+
     def _try_relocating(self):
         """
         iff the action is an action that relocates, the patient is moved to the lab
         :return bool, str: True if the moving is legal, either by not requiring movements or by succeeding a required movement.
         If False, the str contains the reason why the action is not applicable.
         """
-        if not self.template.relocates:
-            return True, ""
-
-        destination_area = self.patient_instance.area
-        is_applicable, message = self.patient_instance.perform_move(self.lab)
-
-        if is_applicable and destination_area:
-            self.destination_area = destination_area
-            self.save(update_fields=["destination_area"])
-        return is_applicable, message
+        is_applicable, relocates, message = self._check_relocating()
+        if not is_applicable or not relocates:
+            return is_applicable, message
+        self.destination_area = self.patient_instance.area
+        self.save(update_fields=["destination_area"])
+        self.patient_instance.try_moving_to(self.lab)
+        return True, message
 
     def _try_returning(self):
         """
         iff the action is an action that relocated, the patient is moved back to the destination area
         """
         if self.template.relocates:
-            self.patient_instance.perform_move(self.destination_area)
+            self.patient_instance._perform_move(self.destination_area)
             return True
         return False
 
@@ -301,51 +333,52 @@ class ActionInstance(LocalTimeable, models.Model):
              if self.patient_instance 
              else "Lab " + str(self.lab.exercise.frontend_id)}"""
 
-    def check_conditions_and_block_resources(self, material_owner, personnel_owner):
+    def _try_acquiring_resources(self, material_owner, personnel_owner):
         """
-        If all conditions are met, block the needed resources. Every argument passed needs to return a queryset for their available methods.
-        Each element of the queryset needs to have a block method.
         :params material_owner: Instance having a material_available method
         :params personell_owner: Instance having a personell_available method
-        :return bool, str: True if all conditions are met, False if not. If False, the str contains the reason why the conditions are not met.
+        :return list, str, bool: True if all resources might be aquired for satisfying the starting condition, False if not.
+        If true, the list returns all resources needed to satisfy the condition. If false, the str contains the reason for failing
         """
         needed_material_groups = self.template.material_needed()
         if not needed_material_groups:
             needed_material_groups = []
         resources_to_block = []
         for needed_material_group in needed_material_groups:
+            resource_found = False
+
             for material_condition in needed_material_group:
                 available_materials = material_owner.material_available(
                     material_condition
                 )
                 if available_materials:
                     resources_to_block.append(available_materials[0])
+                    resource_found = True
                     break
-                else:
-                    return (
-                        False,
-                        f"Kein Material des Typs {material_condition.name} verfügbar",
-                    )
+            if not resource_found:
+                return (
+                    [],
+                    f"Kein Material des Typs {material_condition.name} verfügbar",
+                    False,
+                )
 
         available_personnel = personnel_owner.personnel_available()
         if len(available_personnel) < self.template.personnel_count_needed():
-            return False, f"Nicht genug Personal verfügbar"
+            return [], False, f"Nicht genug Personal verfügbar"
         for i in range(self.template.personnel_count_needed()):
             resources_to_block.append(available_personnel[i])
         if not resources_to_block:
-            return True, None
-        for resource in resources_to_block:
-            resource.block(self)
-        return True, None
+            return [], "", True
+        return resources_to_block, "", True
 
-    def free_resources(self):
+    def _free_resources(self):
         for material in self.materialinstance_set.all():
             if material.is_reusable:
                 material.release()
         for personnel in self.personnel_set.all():
             personnel.release()
 
-    def consume_resources(self):
+    def _consume_resources(self):
         for material in self.materialinstance_set.all():
             if not material.is_reusable:
                 material.consume()
@@ -367,25 +400,3 @@ class ActionInstance(LocalTimeable, models.Model):
                 }
             )
         return codes
-
-    def cancel(self) -> tuple[bool, str]:
-        """Returns whether the object was canceled successfully and an error message if not."""
-
-        if not self.current_state.is_cancelable:
-            return (
-                False,
-                f"Aktionen mit dem Status {self.current_state.get_name_display()} können nicht abgebrochen werden.",
-            )
-
-        if self.template.relocates:
-            # ToDo: Claas: check if action template says it is cancelable
-            return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
-
-        self.owned_events.all().delete()
-        self.free_resources()
-
-        self._update_state(
-            ActionInstanceStateNames.CANCELED, "Aktion wurde abgebrochen."
-        )
-
-        return True, ""
