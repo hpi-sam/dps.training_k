@@ -192,15 +192,9 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames
 
-        scheduled_states = {
-            ActionInstanceStateNames.PLANNED,
-            # do not include currently as on_hold actions are currently not shown in frontend and will never be rescheduled
-            # ActionInstanceStateNames.ON_HOLD,
-            ActionInstanceStateNames.IN_PROGRESS,
-        }
-
         scheduled_actions_exists = ActionInstance.objects.filter(
-            patient_instance=self, current_state__name__in=scheduled_states
+            patient_instance=self,
+            current_state__name=ActionInstanceStateNames.IN_PROGRESS,
         ).exists()
 
         return scheduled_actions_exists
