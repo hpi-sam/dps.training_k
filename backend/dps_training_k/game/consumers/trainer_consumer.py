@@ -6,6 +6,8 @@ from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
 from template.constants import MaterialIDs
+from game.models import Lab
+
 
 class TrainerConsumer(AbstractConsumer):
     """
@@ -137,6 +139,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_create_exercise(self, exercise):
         self.exercise = Exercise.createExercise()
         self.exercise_frontend_id = self.exercise.frontend_id
+        Lab.objects.get(exercise=self.exercise).create_basic_devices()
         self._send_exercise(self.exercise)
         self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.subscribe(LogEntryDispatcher.get_group_name(self.exercise))
@@ -181,13 +184,15 @@ class TrainerConsumer(AbstractConsumer):
             patient_information = PatientInformation.objects.get(code=code)
             if patient_information.start_status == 551:
                 try:
-                    material_instances = MaterialInstance.objects.filter(template__uuid=MaterialIDs.BEATMUNGSGERAET)
+                    material_instances = MaterialInstance.objects.filter(
+                        template__uuid=MaterialIDs.BEATMUNGSGERAET
+                    )
                     succeeded = False
                     for material_instance in material_instances:
                         if material_instance.attached_instance() == area:
                             succeeded = True
                             break
-            
+
                     if succeeded:
                         patient_instance = PatientInstance.objects.create(
                             name=patientName,
@@ -197,10 +202,16 @@ class TrainerConsumer(AbstractConsumer):
                             frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
                         )
                         material_instance.try_moving_to(patient_instance)
-                    else: # catches case where no material_instance was in patients area
-                        self.send_failure(message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen.")
-                except MaterialInstance.DoesNotExist: # catches no material_instance matching filter
-                    self.send_failure(message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen.")
+                    else:  # catches case where no material_instance was in patients area
+                        self.send_failure(
+                            message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                        )
+                except (
+                    MaterialInstance.DoesNotExist
+                ):  # catches no material_instance matching filter
+                    self.send_failure(
+                        message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                    )
             else:
                 patient_instance = PatientInstance.objects.create(
                     name=patientName,
@@ -209,7 +220,7 @@ class TrainerConsumer(AbstractConsumer):
                     area=area,
                     frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
                 )
-            
+
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the pk '{areaId}'",
@@ -227,7 +238,9 @@ class TrainerConsumer(AbstractConsumer):
             patient.static_information = patient_information
             patient.save(update_fields=["name", "static_information"])
         else:
-            self.send_failure(message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen.")
+            self.send_failure(
+                message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen."
+            )
 
     def handle_delete_patient(self, exercise, patientFrontendId):
         try:
@@ -237,7 +250,7 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No patient found with the patientId '{patientFrontendId}'",
             )
-    
+
     def handle_add_personnel(self, _, areaId):
         try:
             area = Area.objects.get(pk=areaId)
