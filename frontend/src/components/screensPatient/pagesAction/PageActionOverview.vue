@@ -99,7 +99,7 @@
 						</ListItemLeft>
 						<ListItemName :name="action.actionName" />
 						<ListItemRight>
-							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(12, 19) }}
 						</ListItemRight>
 					</ListItemButton>
 				</ListItem>
@@ -118,7 +118,7 @@
 						</ListItemLeft>
 						<ListItemName :name="action.actionName" />
 						<ListItemRight v-if="action.timeUntilCompletion > 0">
-							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(12, 19) }}
 						</ListItemRight>
 					</ListItemButton>
 				</ListItem>

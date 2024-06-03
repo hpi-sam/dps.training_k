@@ -3,16 +3,16 @@ import game.models.action_instance as ai
 import game.models.scheduled_event as se
 
 
-class PatientInactiveSerializer(serializers.ModelSerializer):
-    inactiveInfo = serializers.SerializerMethodField()
+class PatientRelocatingSerializer(serializers.ModelSerializer):
+    relocatingInfo = serializers.SerializerMethodField()
     timeUntilBack = serializers.SerializerMethodField()
 
     class Meta:
         model = ai.ActionInstance
-        fields = ["inactiveInfo", "timeUntilBack"]
+        fields = ["relocatingInfo", "timeUntilBack"]
         read_only = fields
 
-    def get_inactiveInfo(self, action_instance):
+    def get_relocatingInfo(self, action_instance):
         return f"{action_instance.name} wird gerade ausgeführt"
 
     def get_timeUntilBack(self, action_instance):
