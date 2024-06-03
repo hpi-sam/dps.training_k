@@ -80,17 +80,21 @@ class SocketPatient {
 					patientStore.initializePatientFromExercise()
 					break
 				case 'exercise-start':
+					exerciseStore.status = 'running'
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				case 'exercise-pause':
-					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+					exerciseStore.status = 'paused'
+					setScreen(Screens.WAITING, ScreenPosition.FULL)
 					break
 				case 'exercise-resume':
+					exerciseStore.status = 'running'
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				case 'exercise-end':
+					exerciseStore.status = 'ended'
 					setScreen(Screens.ENDED, ScreenPosition.FULL)
 					break
 				case 'delete':
@@ -122,15 +126,17 @@ class SocketPatient {
 				case 'action-check':
 					actionCheckStore.loadActionCheck(data as unknown as ActionCheck)
 					break
-				case 'patient-inactive':
-					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
-					patientStore.inactiveInfo = data.inactiveInfo || ''
+				case 'patient-relocating':
+					setScreen(Screens.WAITING, ScreenPosition.FULL)
+					patientStore.isRelocating = true
+					patientStore.relocatingInfo = data.relocatingInfo || ''
 					patientStore.timeUntilBack = data.timeUntilBack || Number.NEGATIVE_INFINITY
 					patientStore.startUpdatingTimer()
 					break
-				case 'patient-active':
+				case 'patient-back':
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
+					patientStore.isRelocating = false
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)

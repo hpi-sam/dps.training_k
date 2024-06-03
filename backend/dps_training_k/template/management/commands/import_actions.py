@@ -37,6 +37,30 @@ class Command(BaseCommand):
         """
 
         Action.objects.update_or_create(
+            name="Blut abnehmen",
+            uuid=ActionIDs.BLUTABNAHME,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.ART_KANUELE)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
             name="Thoraxdrainage",
             uuid=ActionIDs.THORAXDRAINAGE,
             defaults={
@@ -2528,7 +2552,7 @@ class Command(BaseCommand):
                             str(ActionIDs.KREUZBLUT),
                         ],
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ENTHROZYTENKONZENTRAT)],
                         "num_personnel": 1,
                         "lab_devices": None,
                         "area": None,

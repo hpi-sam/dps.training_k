@@ -13,7 +13,7 @@
 	import ScreenStatus from './screensPatient/ScreenStatus.vue'
 	import ScreenActions from './screensPatient/ScreenActions.vue'
 	import {computed, ref} from "vue"
-	import ScreenInactive from "@/components/screensPatient/ScreenInactive.vue"
+	import ScreenWaiting from "@/components/screensPatient/ScreenWaiting.vue"
 	import ScreenEnd from "@/components/screensPatient/ScreenEnd.vue"
 
 	export enum ScreenPosition {
@@ -25,7 +25,7 @@
 	export enum Screens {
 		STATUS = "ScreenStatus",
 		ACTIONS = "ScreenActions",
-		INACTIVE = "ScreenInactive",
+		WAITING = "ScreenWaiting",
 		ENDED = "ScreenEnd",
 	}
 
@@ -33,7 +33,7 @@
 	const currentLeftScreenComponent = computed(() => getScreenComponent(currentLeftScreen.value))
 	const currentRightScreen = ref(Screens.ACTIONS)
 	const currentRightScreenComponent = computed(() => getScreenComponent(currentRightScreen.value))
-	const currentFullScreen = ref(Screens.INACTIVE)
+	const currentFullScreen = ref(Screens.WAITING)
 	const currentFullScreenComponent = computed(() => getScreenComponent(currentFullScreen.value))
 	const fullScreen = ref(true)
 
@@ -43,8 +43,8 @@
 				return ScreenStatus
 			case Screens.ACTIONS:
 				return ScreenActions
-			case Screens.INACTIVE:
-				return ScreenInactive
+			case Screens.WAITING:
+				return ScreenWaiting
 			case Screens.ENDED:
 				return ScreenEnd
 		}

@@ -243,10 +243,8 @@ class Command(BaseCommand):
             fulfilling_measures={
                 "actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
                 "materials": [
-                    [
-                        str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
-                        str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
-                    ]
+                    str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                    str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
                 ],
             },
         )
