@@ -99,7 +99,6 @@ class ActionIDs:
 
 
 class MaterialIDs:
-    # TODO: add UUIDable mixin to Material models once it exists
     ENTHROZYTENKONZENTRAT = UUID("f6576558-c1d3-4548-823b-2c1e2b0636d7")
     FRESH_FROZEN_PLASMA = UUID("9caf09e2-2cc0-4e6c-bed2-8c932d7afd59")
     BEATMUNGSBEUTEL = UUID("9ddcbe2f-0c95-4562-8dc9-3e9ab990a526")
