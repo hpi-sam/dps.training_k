@@ -97,7 +97,7 @@ class Command(BaseCommand):
             category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,  # in reality there also exist mobile devices
-            is_lab=True,
+            is_lab=False,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ZVD_MESSGERAET,

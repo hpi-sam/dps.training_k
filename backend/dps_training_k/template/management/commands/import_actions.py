@@ -18,8 +18,8 @@ class Command(BaseCommand):
     @staticmethod
     def create_actions():
         """
-        "category": "TR", // category as defined in Action, short form
-        "application_duration": 60, // application duration in seconds
+        "category": Action.Category.TREATMENT, // category as defined in Action, short form
+        "location": BE, : 60, // application duration in seconds
         "effect_duration": 60,  // effect duration in seconds; None means permanent
         "conditions": {
             "required_actions": ["A1uuid", "A2uuid", ["A3uuid", "A4uuid"]], // this means action1 AND action2 AND (action3 OR action4); can be None
@@ -40,7 +40,9 @@ class Command(BaseCommand):
             name="Thoraxdrainage",
             uuid=ActionIDs.THORAXDRAINAGE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -63,7 +65,9 @@ class Command(BaseCommand):
             name="Pleurapunktion",
             uuid=ActionIDs.PLEURAPUNKTION,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -86,7 +90,9 @@ class Command(BaseCommand):
             name="Trachealtubus",
             uuid=ActionIDs.TRACHEALTUBUS,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -109,7 +115,9 @@ class Command(BaseCommand):
             name="Larynxmaske",
             uuid=ActionIDs.LARYNXMASKE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -132,7 +140,9 @@ class Command(BaseCommand):
             name="Larynxtubus",
             uuid=ActionIDs.LARYNXTUBUS,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -155,7 +165,9 @@ class Command(BaseCommand):
             name="Guedeltubus",
             uuid=ActionIDs.GUEDELTUBUS,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -177,7 +189,9 @@ class Command(BaseCommand):
             name="Wendeltubus",
             uuid=ActionIDs.WENDELTUBUS,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -199,7 +213,9 @@ class Command(BaseCommand):
             name="Koniotomietubus",
             uuid=ActionIDs.KONIOTOMIETUBUS,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 180,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -224,7 +240,9 @@ class Command(BaseCommand):
             name="Analgetikum",
             uuid=ActionIDs.ANALGETIKUM,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -246,7 +264,9 @@ class Command(BaseCommand):
             name="Antiasthmatikum",
             uuid=ActionIDs.ANTIASTHMATIKUM,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -268,7 +288,9 @@ class Command(BaseCommand):
             name="Kortikosteroid",
             uuid=ActionIDs.KORTIKOSTEROID,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 1800,  # None means permanent
                 "conditions": json.dumps(
@@ -290,7 +312,9 @@ class Command(BaseCommand):
             name="Nitrat",
             uuid=ActionIDs.NITRAT,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -312,7 +336,9 @@ class Command(BaseCommand):
             name="Diuretikum",
             uuid=ActionIDs.DIURETIKUM,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 1200,  # None means permanent
                 "conditions": json.dumps(
@@ -334,7 +360,9 @@ class Command(BaseCommand):
             name="Katecholamin",
             uuid=ActionIDs.KATECHOLAMIN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 60,  # None means permanent
                 "conditions": json.dumps(
@@ -358,7 +386,9 @@ class Command(BaseCommand):
             name="Sedativum",
             uuid=ActionIDs.SEDATIVUM,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 600,  # None means permanent
                 "conditions": json.dumps(
@@ -380,7 +410,9 @@ class Command(BaseCommand):
             name="Regional-Narkotikum",
             uuid=ActionIDs.REGIONAL_NARKOTIKUM,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # "Freifeld", dunno how do handle that
                 "conditions": json.dumps(
@@ -402,7 +434,9 @@ class Command(BaseCommand):
             name="Tetanusprophylaxe",
             uuid=ActionIDs.TETANUSPROPHYLAXE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -424,7 +458,9 @@ class Command(BaseCommand):
             name="Antikoagulanz",
             uuid=ActionIDs.ANTIKOAGULANZ,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -446,7 +482,9 @@ class Command(BaseCommand):
             name="(Voll-)Narkotikum",
             uuid=ActionIDs.NARKOTIKUM,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # None means permanent
                 "conditions": json.dumps(
@@ -469,7 +507,9 @@ class Command(BaseCommand):
             name="Vollelektrolyt",
             uuid=ActionIDs.VOLLELEKTROLYT,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
@@ -491,7 +531,9 @@ class Command(BaseCommand):
             name="Plasmaexpander",
             uuid=ActionIDs.PLASMAEXPANDER,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # Depends of type of "Zugang"
                 "conditions": json.dumps(
@@ -513,7 +555,9 @@ class Command(BaseCommand):
             name="i.V. Zugang",
             uuid=ActionIDs.IV_ZUGANG,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -535,7 +579,9 @@ class Command(BaseCommand):
             name="ZVK",
             uuid=ActionIDs.ZVK,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": 360,
                 "conditions": json.dumps(
@@ -558,7 +604,9 @@ class Command(BaseCommand):
             name="Schleuse",
             uuid=ActionIDs.SCHLEUSE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": 60,
                 "conditions": json.dumps(
@@ -581,7 +629,9 @@ class Command(BaseCommand):
             name="art. Kanüle",
             uuid=ActionIDs.ART_KANUELE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -603,7 +653,9 @@ class Command(BaseCommand):
             name="mehrlumen ZVK",
             uuid=ActionIDs.MEHRLUMEN_ZVK,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": 420,
                 "conditions": json.dumps(
@@ -626,7 +678,9 @@ class Command(BaseCommand):
             name="Regional-Narkose",
             uuid=ActionIDs.REGIONAL_NARKOSE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,  # abhängig von Medikament
                 "conditions": json.dumps(
@@ -649,7 +703,9 @@ class Command(BaseCommand):
             name="Druckverband",
             uuid=ActionIDs.DRUCKVERBAND,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -671,7 +727,9 @@ class Command(BaseCommand):
             name="Turniquet",
             uuid=ActionIDs.TURNIQUET,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -693,7 +751,9 @@ class Command(BaseCommand):
             name="Wundversorgung",
             uuid=ActionIDs.WUNDVERSORGUNG,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -715,7 +775,9 @@ class Command(BaseCommand):
             name="chir. Blutstillung",
             uuid=ActionIDs.CHIR_BLUTSTILLUNG,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 180,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -737,7 +799,9 @@ class Command(BaseCommand):
             name="Stifneck",
             uuid=ActionIDs.STIFNECK,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -759,7 +823,9 @@ class Command(BaseCommand):
             name="Vakuumschiene",
             uuid=ActionIDs.VAKUUMSCHIENE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -781,7 +847,9 @@ class Command(BaseCommand):
             name="Beckenschlinge",
             uuid=ActionIDs.BECKENSCHLINGE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -803,7 +871,9 @@ class Command(BaseCommand):
             name="Gipsverband",
             uuid=ActionIDs.GIPSVERBAND,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -826,7 +896,9 @@ class Command(BaseCommand):
             name="Stabile Seitenlage",
             uuid=ActionIDs.STABILE_SEITENLAGE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -848,7 +920,9 @@ class Command(BaseCommand):
             name="Schocklage",
             uuid=ActionIDs.SCHOCKLAGE,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -870,7 +944,9 @@ class Command(BaseCommand):
             name="Defi + transcutaner Pacer",
             uuid=ActionIDs.DEFI_TRANSCUTANER_PACER,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -896,7 +972,9 @@ class Command(BaseCommand):
             name="Beatmungsgerät anbringen",
             uuid=ActionIDs.BEATMUNGSGERAET_ANBRINGEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -930,7 +1008,9 @@ class Command(BaseCommand):
             name="Sauerstoff anbringen",
             uuid=ActionIDs.SAUERSTOFF_ANBRINGEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -957,7 +1037,9 @@ class Command(BaseCommand):
             name="Blutdruck messen",
             uuid=ActionIDs.BLUTDRUCK_MESSEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1127,7 +1209,9 @@ class Command(BaseCommand):
             name="Sättigungsmessgerät anbringen",
             uuid=ActionIDs.SAETTIGUNGSMESSGERAET_ANBRINGEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1149,7 +1233,9 @@ class Command(BaseCommand):
             name="passageren Pacer anbringen",
             uuid=ActionIDs.PASSAGEREN_PACER_ANBRINGEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1175,7 +1261,9 @@ class Command(BaseCommand):
             name="Perfusorpumpe aktivieren",
             uuid=ActionIDs.PERFUSORPUMPE_AKTIVIEREN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1199,7 +1287,9 @@ class Command(BaseCommand):
             name="Perfusorpumpe mit Wirkstoff bestücken",
             uuid=ActionIDs.PERFUSORPUMPE_MIT_WIRKSTOFF_BESTUECKEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1221,7 +1311,9 @@ class Command(BaseCommand):
             name="Glucose verabreichen",
             uuid=ActionIDs.GLUCOSE_VERABREICHEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1245,7 +1337,9 @@ class Command(BaseCommand):
             name="Lyse verabreichen",
             uuid=ActionIDs.LYSE_VERARBREICHEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1270,6 +1364,8 @@ class Command(BaseCommand):
             uuid=ActionIDs.PATIENT_IN_BENACHBARTE_STATION_VERSCHIEBEN,
             defaults={
                 "category": "OT",
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,  # Dunno, nothing given
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1292,6 +1388,8 @@ class Command(BaseCommand):
             uuid=ActionIDs.GERAET_IN_ANDERE_STATION_VERSCHIEBEN,
             defaults={
                 "category": "OT",
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,  # Dunno, nothing given
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1313,7 +1411,9 @@ class Command(BaseCommand):
             name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1357,7 +1457,9 @@ class Command(BaseCommand):
             name="Blutgaseanalyse für Säure-Base-Haushalt durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1421,7 +1523,9 @@ class Command(BaseCommand):
             name="Blutzucker analysieren",
             uuid=ActionIDs.BLUTZUCKER_ANALYSIEREN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1508,7 +1612,9 @@ class Command(BaseCommand):
             name="EKG anbringen",
             uuid=ActionIDs.EKG_ANBRINGEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1530,7 +1636,9 @@ class Command(BaseCommand):
             name="EKG ablesen",
             uuid=ActionIDs.EKG_ABLESEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1578,7 +1686,9 @@ class Command(BaseCommand):
             name="Zentralen Venendruck messen",
             uuid=ActionIDs.ZENTRALEN_VENENDRUCK_MESSEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1645,7 +1755,9 @@ class Command(BaseCommand):
             name="Extremitäten Röntgen",
             uuid=ActionIDs.EXTREMITAETEN_ROENTGEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1712,16 +1824,18 @@ class Command(BaseCommand):
             name="Thorax Röntgen",
             uuid=ActionIDs.THORAX_ROENTGEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
                         "required_actions": None,
                         "prohibitive_actions": None,
-                        "material": None,
+                        "material": [str(MaterialIDs.ROENTGENGERAET)],
                         "num_personnel": 1,
-                        "lab_devices": [str(MaterialIDs.ROENTGENGERAET)],
+                        "lab_devices": None,
                         "area": None,
                         "role": [
                             {role_map[RoleIDs.MTRA]: 1},
@@ -1780,7 +1894,9 @@ class Command(BaseCommand):
             name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 300,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1800,7 +1916,7 @@ class Command(BaseCommand):
                 ),
                 "results": json.dumps(
                     {
-                        "CT": {
+                        "Trauma-CT": {
                             100: "deutlich vergrößertes Herz, Aorta elongiert, Belüftung oB. Extremitäten: Normalbefund; keine Frakturzeichen;",
                             105: "inhomogene Verschattungen, bds zentrale Infiltrate, Zwerchfellhochstand Extremitäten: Normalbefund; keine Frakturzeichen; Lunge wie bei ARDS; zentrales vermutlich gekapseltes Hämatom abdominal ca 2 L",
                             106: "Thorax: Normalbefund; Spiralfraktur rechter Oberarm; sonst keine Frakturen HWS: oB.; Becken: oB; Abdomen: oB.; Schädel: oB.;",
@@ -1850,7 +1966,9 @@ class Command(BaseCommand):
             name="Ultraschall Abdomen",
             uuid=ActionIDs.ULTRASCHALL_ABDOMEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1901,7 +2019,9 @@ class Command(BaseCommand):
             name="Ultraschall Thorax",
             uuid=ActionIDs.ULTRASCHALL_THORAX,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 60,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -1952,12 +2072,17 @@ class Command(BaseCommand):
             name="Kreuzblut",
             uuid=ActionIDs.KREUZBLUT,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": [str(ActionIDs.BLUTGRUPPE_BESTIMMEN)],
+                        "required_actions": [
+                            str(ActionIDs.BLUTGRUPPE_BESTIMMEN),
+                            str(ActionIDs.BLUTABNAHME),
+                        ],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -1982,12 +2107,14 @@ class Command(BaseCommand):
             name="Blutgruppe bestimmen",
             uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 180,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [str(ActionIDs.BLUTABNAHME)],
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2018,12 +2145,17 @@ class Command(BaseCommand):
             name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2085,12 +2217,17 @@ class Command(BaseCommand):
             name="Lactatanalyse",  # can also be written as "Laktatanalyse"
             uuid=ActionIDs.LACTATANALYSE,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2122,12 +2259,17 @@ class Command(BaseCommand):
             name="Gerinnungsanalyse",
             uuid=ActionIDs.GERINNUNGSANALYSE,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,  # "Laboranalyse"???
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2159,12 +2301,17 @@ class Command(BaseCommand):
             name="Leberanalyse",
             uuid=ActionIDs.LEBERANALYSE,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2196,12 +2343,17 @@ class Command(BaseCommand):
             name="Nierenanalyse",
             uuid=ActionIDs.NIERENANALYSE,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2233,12 +2385,17 @@ class Command(BaseCommand):
             name="Infarktanalyse",
             uuid=ActionIDs.INFARKTANALYSE,
             defaults={
-                "category": "EX",
+                "category": Action.Category.EXAMINATION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 120,
                 "effect_duration": None,
                 "conditions": json.dumps(
                     {
-                        "required_actions": None,
+                        "required_actions": [
+                            str(ActionIDs.BLUTABNAHME)
+                        ],  # This is WIP, as you actually need to have done a blood draw per action
+                        # with blood draw as requirement, which also need to be unique per patient
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
@@ -2270,7 +2427,9 @@ class Command(BaseCommand):
             name="Lyophilisiertes Frischplasma auflösen",
             uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_VORBEREITEN,
             defaults={
-                "category": "PR",
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 300,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2299,7 +2458,9 @@ class Command(BaseCommand):
             name="Lyophilisiertes Frischplasma anwenden",
             uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_ANWENDEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -2321,7 +2482,9 @@ class Command(BaseCommand):
             name="Fresh Frozen Plasma auftauen",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN,
             defaults={
-                "category": "PR",
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 420,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2348,7 +2511,9 @@ class Command(BaseCommand):
             name="Fresh Frozen Plasma anwenden",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_ANWENDEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": json.dumps(
@@ -2370,7 +2535,9 @@ class Command(BaseCommand):
             name="Enthrozytenkonzentrat erwärmen",
             uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
             defaults={
-                "category": "PR",
+                "category": Action.Category.PRODUCTION,
+                "location": Action.Location.LAB,
+                "relocates": False,
                 "application_duration": 360,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2397,7 +2564,9 @@ class Command(BaseCommand):
             name="Enthrozytenkonzentrate anwenden",
             uuid=ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN,
             defaults={
-                "category": "TR",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": json.dumps(
@@ -2409,6 +2578,30 @@ class Command(BaseCommand):
                         "prohibitive_actions": None,
                         "material": None,
                         "num_personnel": 1,
+                        "lab_devices": None,
+                        "area": None,
+                        "role": [
+                            {role_map[RoleIDs.ARZT]: 1},
+                        ],
+                    },
+                ),
+            },
+        )
+        Action.objects.update_or_create(
+            name="Operation einleiten",
+            uuid=ActionIDs.OP_EINLEITEN,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.LAB,
+                "relocates": True,
+                "application_duration": 360000,  # 100h to assure that the operation never finishes during an exercise
+                "effect_duration": None,
+                "conditions": json.dumps(
+                    {
+                        "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                        "prohibitive_actions": None,
+                        "material": None,
+                        "num_personnel": 1,  # garbage values
                         "lab_devices": None,
                         "area": None,
                         "role": [
