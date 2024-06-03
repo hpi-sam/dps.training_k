@@ -39,31 +39,35 @@ class Command(BaseCommand):
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
             name="Blutwärmer",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=True,
+            is_lab=True,
         )
 
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_1,
             name="Gerät 1",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_2,
             name="Gerät 2",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_3,
             name="Gerät 3",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.SONOGRAPHIE,
@@ -82,16 +86,18 @@ class Command(BaseCommand):
         Material.objects.update_or_create(
             uuid=MaterialIDs.COMPUTERTOMOGRAPHIE,
             name="Computertomographie",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ROENTGENGERAET,
             name="Röntgengerät",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,  # in reality there also exist mobile devices
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ZVD_MESSGERAET,
@@ -173,9 +179,10 @@ class Command(BaseCommand):
         Material.objects.update_or_create(
             uuid=MaterialIDs.BLUTBANK,
             name="Blutbank",  # Not really a device but more of a location in a hospital
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSBEUTEL,

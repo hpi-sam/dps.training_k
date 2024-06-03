@@ -27,16 +27,18 @@ class Command(BaseCommand):
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
             name="Blutwärmer",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=True,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_1,
             name="Gerät 1",
-            category=Material.Category.LABOR,
+            category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSBEUTEL,
