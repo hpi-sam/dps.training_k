@@ -24,6 +24,8 @@ class ChannelEventTypes:
     ACTION_CHECK_CHANGED_EVENT = "action.check.changed.event"
     LOG_UPDATE_EVENT = "log.update.event"
     RESOURCE_ASSIGNMENT_EVENT = "resource.assignment.event"
+    RELOCATION_START_EVENT = "relocation.start.event"
+    RELOCATION_END_EVENT = "relocation.end.event"
 
 
 class ChannelNotifier:
@@ -115,8 +117,7 @@ class ChannelNotifier:
 
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
-    def dispatch_event(cls, obj, changes, is_updated):
-        applied_action = obj
+    def dispatch_event(cls, applied_action, changes, is_updated):
         if changes:
             channel = cls.get_group_name(applied_action.attached_instance())
             if ["historic_patient_state"] == changes:
@@ -128,6 +129,26 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         channel,
                         applied_action,
                     )
+                if applied_action.template.relocates:
+                    if (
+                        applied_action.state_name
+                        == models.ActionInstanceStateNames.IN_PROGRESS
+                    ):
+                        cls._notify_action_event(
+                            ChannelEventTypes.RELOCATION_START_EVENT,
+                            channel,
+                            applied_action,
+                        )
+                    elif (
+                        applied_action.state_name
+                        == models.ActionInstanceStateNames.FINISHED
+                    ):
+                        cls._notify_action_event(
+                            ChannelEventTypes.RELOCATION_END_EVENT,
+                            channel,
+                            applied_action,
+                        )
+                        cls._notify_exercise_update(cls.get_exercise(applied_action))
 
             # always send action list event
             cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
@@ -146,7 +167,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
         event = {
             "type": event_type,
-            "action_instance_pk": applied_action.id if applied_action else None,
+            "action_instance_id": applied_action.id if applied_action else None,
         }
         cls._notify_group(channel, event)
 
@@ -187,12 +208,16 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 exercise=applied_action.exercise,
                 message=message,
                 patient_instance=applied_action.patient_instance,
-                area=applied_action.area,
+                area=applied_action.destination_area,
                 is_dirty=True,
             )
-            personnel_list = models.Personnel.objects.filter(action_instance=applied_action)
+            personnel_list = models.Personnel.objects.filter(
+                action_instance=applied_action
+            )
             log_entry.personnel.add(*personnel_list)
-            material_list = models.MaterialInstance.objects.filter(action_instance=applied_action)
+            material_list = models.MaterialInstance.objects.filter(
+                action_instance=applied_action
+            )
             log_entry.materials.add(*material_list)
             log_entry.is_dirty = False
             log_entry.save(update_fields=["is_dirty"])
@@ -201,7 +226,7 @@ class ActionInstanceDispatcher(ChannelNotifier):
                 exercise=applied_action.exercise,
                 message=message,
                 patient_instance=applied_action.patient_instance,
-                area=applied_action.area,
+                area=applied_action.destination_area,
             )
 
     @classmethod
@@ -295,7 +320,7 @@ class LogEntryDispatcher(ChannelNotifier):
         channel = cls.get_group_name(log_entry.exercise)
         event = {
             "type": ChannelEventTypes.LOG_UPDATE_EVENT,
-            "log_entry_pk": log_entry.id,
+            "log_entry_id": log_entry.id,
         }
         cls._notify_group(channel, event)
 

@@ -52,43 +52,43 @@ class Command(BaseCommand):
             uuid=StuffIDs.JUENGER,
             name="Jünger (m/w/d)",
             category=Material.Category.BLOOD,
-            reusable=False,
+            is_reusable=False,
         )
         Material.objects.update_or_create(
             uuid=StuffIDs.CAPTURE_THE_FLAG,
             name="Capture the Flag Aufgabe. Ohne Clicky-Bunty",
             category=Material.Category.DEVICE,
-            reusable=True,
+            is_reusable=True,
         )
         Material.objects.update_or_create(
             uuid=StuffIDs.MONEY,
             name="Geld von Fitnessnerds",
             category=Material.Category.DEVICE,
-            reusable=False,
+            is_reusable=False,
         )
         Material.objects.update_or_create(
             uuid=StuffIDs.OLYMPIA_RANGLISTENPUNKTE,
             name="Olympia Ranglistenpunkte/ Kreisklassenpunkte",
             category=Material.Category.BLOOD,
-            reusable=False,
+            is_reusable=False,
         )
         Material.objects.update_or_create(
             uuid=StuffIDs.ISSUE,
             name="Codezeilen, die nicht funktionieren",
             category=Material.Category.DEVICE,
-            reusable=False,
+            is_reusable=False,
         )
         Material.objects.update_or_create(
             uuid=StuffIDs.RETRO_PHOTO,
             name="Retro Foto",
             category=Material.Category.DEVICE,
-            reusable=True,
+            is_reusable=True,
         )
         Material.objects.update_or_create(
             uuid=StuffIDs.CLAAS_VERSCHLAEFT,
             name="Claas verschläft",
             category=Material.Category.BLOOD,
-            reusable=False,
+            is_reusable=False,
         )
 
     @staticmethod

@@ -9,6 +9,7 @@ from template.constants import MaterialIDs
 from game.models import Lab
 
 
+
 class TrainerConsumer(AbstractConsumer):
     """
     for general functionality @see AbstractConsumer
@@ -121,11 +122,11 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_delete_area(self, _, areaId):
         try:
-            area = Area.objects.get(pk=areaId)
+            area = Area.objects.get(id=areaId)
             area.delete()
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
 
     def handle_example(self, exercise, exercise_frontend_id):
@@ -162,11 +163,11 @@ class TrainerConsumer(AbstractConsumer):
             MaterialInstance.objects.create(template=template, area=area)
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
+                f"Multiple areas found with the id '{areaId}'",
             )
 
     def handle_delete_material(self, _, materialId):
@@ -175,12 +176,12 @@ class TrainerConsumer(AbstractConsumer):
             material.delete()
         except MaterialInstance.DoesNotExist:
             self.send_failure(
-                f"No material found with the pk '{materialId}'",
+                f"No material found with the id '{materialId}'",
             )
 
     def handle_add_patient(self, _, areaId, patientName, code):
         try:
-            area = Area.objects.get(pk=areaId)
+            area = Area.objects.get(id=areaId)
             patient_information = PatientInformation.objects.get(code=code)
             if patient_information.start_status == 551:
                 try:
@@ -223,11 +224,11 @@ class TrainerConsumer(AbstractConsumer):
 
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
+                f"Multiple areas found with the id '{areaId}'",
             )
 
     def handle_update_patient(self, exercise, patientFrontendId, patientName, code):
@@ -253,15 +254,15 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_add_personnel(self, _, areaId):
         try:
-            area = Area.objects.get(pk=areaId)
+            area = Area.objects.get(id=areaId)
             Personnel.create_personnel(area=area, name="Personal")
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
+                f"Multiple areas found with the id '{areaId}'",
             )
 
     def handle_delete_personnel(self, _, personnel_id):
@@ -270,7 +271,7 @@ class TrainerConsumer(AbstractConsumer):
             personnel.delete()
         except Personnel.DoesNotExist:
             self.send_failure(
-                f"No personnel found with the pk '{personnel_id}'",
+                f"No personnel found with the id '{personnel_id}'",
             )
 
     def handle_update_personnel(self, _, personnelId, personnelName):
@@ -299,7 +300,7 @@ class TrainerConsumer(AbstractConsumer):
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def log_update_event(self, event):
-        log_entry = LogEntry.objects.get(pk=event["log_entry_pk"])
+        log_entry = LogEntry.objects.get(id=event["log_entry_id"])
 
         self.send_event(
             self.TrainerOutgoingMessageTypes.LOG_UPDATE,

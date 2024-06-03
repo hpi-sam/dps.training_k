@@ -66,7 +66,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
     maxDiff = None
 
     def setUp(self):
-        call_command("minimal_actions")
+        call_command("import_minimal_actions")
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):

@@ -13,8 +13,18 @@
 				Patient inaktiv
 			</div>
 			<div class="inactive-patient-details">
-				<div>Patient: {{ patientStore.patientName }} | {{ patientStore.patientId }}</div>
-				<div>Bereich: {{ exerciseStore.getAreaName(patientStore.areaId) }}</div>
+				<p>
+					Patient: {{ patientStore.patientName }} | {{ patientStore.patientId }}
+				</p>
+				<p v-if="exerciseStore.getAreaName(patientStore.areaId)">
+					Bereich: {{ exerciseStore.getAreaName(patientStore.areaId) }}
+				</p>
+				<p v-if="patientStore.inactiveInfo">
+					{{ patientStore.inactiveInfo }}
+				</p>
+				<p v-if="patientStore.timeUntilBack > 0">
+					{{ new Date(new Date(0).setSeconds(patientStore.timeUntilBack)).toISOString().substring(14, 19) }}
+				</p>
 			</div>
 		</div>
 	</div>

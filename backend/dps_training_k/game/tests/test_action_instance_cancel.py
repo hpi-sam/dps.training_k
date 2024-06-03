@@ -21,10 +21,10 @@ class CancelAction(TestUtilsMixin, TestCase):
         )
         self._start_application_patch.start()
         self.material_1 = MaterialFactory(
-            name="Material 1", reusable=True, uuid=str(uuid.uuid4())
+            name="Material 1", is_reusable=True, uuid=str(uuid.uuid4())
         )
         self.material_2 = MaterialFactory(
-            name="Material 2", reusable=False, uuid=str(uuid.uuid4())
+            name="Material 2", is_reusable=False, uuid=str(uuid.uuid4())
         )
         self.patient = PatientFactory()
         self.personnel = PersonnelFactory(patient_instance=self.patient)
@@ -40,17 +40,17 @@ class CancelAction(TestUtilsMixin, TestCase):
         An Action can only be canceled if its state is either running, planned or on_hold
         """
 
-        self.assertTrue(self.action_instance.cancel()[0])
+        self.assertTrue(self.action_instance.try_cancelation()[0])
         self.assertEqual(
             self.action_instance.state_name, ActionInstanceStateNames.CANCELED
         )
         self.action_instance._update_state(ActionInstanceStateNames.IN_PROGRESS)
-        self.assertTrue(self.action_instance.cancel()[0])
+        self.assertTrue(self.action_instance.try_cancelation()[0])
         self.action_instance._update_state(ActionInstanceStateNames.ON_HOLD)
-        self.assertTrue(self.action_instance.cancel()[0])
+        self.assertTrue(self.action_instance.try_cancelation()[0])
         self.action_instance._update_state(ActionInstanceStateNames.IN_EFFECT)
         self.assertEqual(
-            self.action_instance.cancel(),
+            self.action_instance.try_cancelation(),
             (
                 False,
                 f"Aktionen mit dem Status {ActionInstanceStateNames.IN_EFFECT.label} können nicht abgebrochen werden.",
@@ -60,11 +60,11 @@ class CancelAction(TestUtilsMixin, TestCase):
             self.action_instance.current_state.name, ActionInstanceStateNames.IN_EFFECT
         )
         self.action_instance._update_state(ActionInstanceStateNames.FINISHED)
-        self.assertFalse(self.action_instance.cancel()[0])
+        self.assertFalse(self.action_instance.try_cancelation()[0])
         self.action_instance._update_state(ActionInstanceStateNames.CANCELED)
-        self.assertFalse(self.action_instance.cancel()[0])
+        self.assertFalse(self.action_instance.try_cancelation()[0])
         self.action_instance._update_state(ActionInstanceStateNames.EXPIRED)
-        self.assertFalse(self.action_instance.cancel()[0])
+        self.assertFalse(self.action_instance.try_cancelation()[0])
 
     def test_canceling_action(self):
         """
@@ -90,7 +90,7 @@ class CancelAction(TestUtilsMixin, TestCase):
         self.assertEqual(self.patient.material_available(self.material_1), [])
         self.assertEqual(self.patient.material_available(self.material_2), [])
 
-        self.action_instance.cancel()
+        self.action_instance.try_cancelation()
 
         self.assertEqual(self.patient.personnel_available(), [self.personnel])
         self.assertEqual(

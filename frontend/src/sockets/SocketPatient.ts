@@ -114,13 +114,23 @@ class SocketPatient {
 					break
 				case 'action-list':
 					actionOverview.loadActions(data.actions as Action[])
-					actionOverview.startUpdating()
+					actionOverview.startUpdatingTimers()
 					break
 				case 'visible-injuries':
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				case 'action-check':
 					actionCheckStore.loadActionCheck(data as unknown as ActionCheck)
+					break
+				case 'patient-inactive':
+					setScreen(Screens.INACTIVE, ScreenPosition.FULL)
+					patientStore.inactiveInfo = data.inactiveInfo || ''
+					patientStore.timeUntilBack = data.timeUntilBack || Number.NEGATIVE_INFINITY
+					patientStore.startUpdatingTimer()
+					break
+				case 'patient-active':
+					setScreen(Screens.STATUS, ScreenPosition.LEFT)
+					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten:' + data.messageType)

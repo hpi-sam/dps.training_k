@@ -63,6 +63,8 @@ class ActionIDs:
         "5d3138a7-a4f3-47ff-839b-7852a271b902"
     )
     GERAET_IN_ANDERE_STATION_VERSCHIEBEN = UUID("1ea079b5-e3cb-4f14-a6e6-c13900e2c4ed")
+    BLUTABNAHME = UUID("7e70364d-1a99-40b1-be29-bbe32055f887")
+    OP_EINLEITEN = UUID("4af66ac0-b13a-40c0-9627-793ff1df3c6a")
     BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG = UUID(
         "ce492b24-cf12-42b5-a674-d3c77d463f12"
     )
@@ -97,7 +99,6 @@ class ActionIDs:
 
 
 class MaterialIDs:
-    # TODO: add UUIDable mixin to Material models once it exists
     ENTHROZYTENKONZENTRAT = UUID("f6576558-c1d3-4548-823b-2c1e2b0636d7")
     FRESH_FROZEN_PLASMA = UUID("9caf09e2-2cc0-4e6c-bed2-8c932d7afd59")
     BEATMUNGSBEUTEL = UUID("9ddcbe2f-0c95-4562-8dc9-3e9ab990a526")

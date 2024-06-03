@@ -21,27 +21,29 @@ class Command(BaseCommand):
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat",
             category=Material.Category.BLOOD,
-            reusable=False,
-            moveable=True,
+            is_reusable=False,
+            is_moveable=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
             name="Blutwärmer",
-            category=Material.Category.LABOR,
-            reusable=True,
-            moveable=True,
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+            is_moveable=True,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_1,
             name="Gerät 1",
-            category=Material.Category.LABOR,
-            reusable=True,
-            moveable=False,
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+            is_moveable=False,
+            is_lab=True,
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSBEUTEL,
             name="Beatmungsbeutel",
             category=Material.Category.DEVICE,
-            reusable=False,
-            moveable=True,
+            is_reusable=False,
+            is_moveable=True,
         )
