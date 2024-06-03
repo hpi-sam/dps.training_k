@@ -102,8 +102,9 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
 
     def test_blocking(self):
         """
-        After a action was applied successfully, the used resources are blocked
+        After an action was applied successfully, the used resources are blocked
         """
+        # This enforces ActionInstance.try_application to succeed, so that the blocking phase is guaranteed to be reached
         self.deactivate_moving()
         self.can_receive_actions_patch = patch(
             "game.models.PatientInstance.can_receive_actions"
@@ -150,6 +151,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         """
         After an action is finished, the materials and personnel used for the action are freed. Consumable materials are deleted.
         """
+        # This enforces ActionInstance.try_application to succeed, so that the blocking phase is guaranteed to be reached
         self.deactivate_moving()
         self.can_receive_actions_patch = patch(
             "game.models.PatientInstance.can_receive_actions"
@@ -202,8 +204,6 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
     def test_failed_check_is_transparent(self, can_move_to_type_material):
         """
         Integration Test: If the condition check fails, the action instance and all participating objects do not change.
-        resources
-        relocating
         """
         can_move_to_type_material.return_value = True
         action_template = ActionFactory(
@@ -272,7 +272,9 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
                 material_instance_3,
             ]
         )
-        self.assertFalse(action_instance.try_application()[0])
+        self.assertFalse(
+            action_instance.try_application()[0]
+        )  # fail because of movement to lab is disallowed in mixin
         new_state = [
             patient_instance,
             area,

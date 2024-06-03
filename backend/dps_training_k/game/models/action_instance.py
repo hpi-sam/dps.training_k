@@ -252,7 +252,6 @@ class ActionInstance(LocalTimeable, models.Model):
             )
 
         if self.template.relocates:
-            # ToDo: Claas: check if action template says it is cancelable
             return False, f"Aktion {self.template.name} kann nicht abgebrochen werden."
 
         self.owned_events.all().delete()
