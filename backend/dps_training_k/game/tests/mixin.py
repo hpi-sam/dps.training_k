@@ -63,12 +63,12 @@ class TestUtilsMixin:
 
     def deactivate_condition_checking(self):
         self._deactivate_condition_checking_patch = patch(
-            "game.models.ActionInstance.check_conditions_and_block_resources"
+            "game.models.ActionInstance._try_acquiring_resources"
         )
         self._deactivate_condition_checking = (
             self._deactivate_condition_checking_patch.start()
         )
-        self._deactivate_condition_checking.return_value = (True, None)
+        self._deactivate_condition_checking.return_value = ([], "", True)
 
     def activate_condition_checking(self):
         self._deactivate_condition_checking_patch.stop()
@@ -99,3 +99,27 @@ class TestUtilsMixin:
 
     def activate_results(self):
         self._deactivate_result_patch.stop()
+
+    def deactivate_moving(self):
+        self._deactivate_moving_patch = patch(
+            "game.models.PatientInstance._perform_move"
+        )
+        self._deactivate_moving = self._deactivate_moving_patch.start()
+
+    def activate_moving(self):
+        self._deactivate_moving_patch.stop()
+
+    def deactivate_relocating(self):
+        self._deactivate_relocating_patch = patch(
+            "game.models.ActionInstance._try_relocating", patch=(True, "")
+        )
+        self._deactivate_relocating = self._deactivate_relocating_patch.start()
+        self._check_relocating_patch = patch(
+            "game.models.ActionInstance._check_relocating",
+            return_value=(True, False, ""),
+        )
+        self._check_relocating = self._check_relocating_patch.start()
+
+    def activate_relocating(self):
+        self._deactivate_relocating_patch.stop()
+        self._check_relocating_patch.stop()

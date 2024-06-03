@@ -86,6 +86,10 @@ class ScheduledEvent(models.Model):
             # Handle the case where no Owner is associated with the related object, aka there is no scheduled event
             return None
 
+    @classmethod
+    def remove_events_of_exercise(cls, exercise):
+        cls.objects.filter(exercise=exercise).delete()
+
     def action(self):
         owner_instance = self.owner.owner_instance()
         method = getattr(owner_instance, self.method_name)

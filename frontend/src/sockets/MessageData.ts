@@ -27,6 +27,8 @@ interface MessageData {
 	injuries: Injury[]
 	speed: number
 	actionCheck: ActionCheck
+	relocatingInfo: string
+	timeUntilBack: number
 }
 
 interface Exercise {

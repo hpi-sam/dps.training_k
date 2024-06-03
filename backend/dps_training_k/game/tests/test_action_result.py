@@ -72,7 +72,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         """
         action = ActionFactoryWithProduction()
         action_instance = ActionInstanceFactory(
-            template=action, lab=LabFactory(), area=AreaFactory()
+            template=action, lab=LabFactory(), destination_area=AreaFactory()
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
@@ -82,12 +82,12 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         )
         count_before = MaterialInstance.objects.filter(
             template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
-            area=action_instance.area,
+            area=action_instance.destination_area,
         ).count()
         action_instance._application_finished()
         count_after = MaterialInstance.objects.filter(
             template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
-            area=action_instance.area,
+            area=action_instance.destination_area,
         ).count()
         self.assertEqual(count_before + 1, count_after)
 
@@ -114,16 +114,16 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         action_instance = ActionInstance.create(
             action_template,
             lab=lab,
-            area=area,
+            destination_area=area,
         )
         action_instance.try_application()
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
         self.assertRaises(
             MaterialInstance.DoesNotExist,
             MaterialInstance.objects.get,
             template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS,
             area=area,
         )
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
@@ -153,7 +153,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         action_instance = ActionInstance.create(
             action_template,
             lab=lab,
-            area=area,
+            destination_area=area,
         )
         action_instance._application_finished()
         self.assertEqual(_notify_exercise_update.call_count, 1)
