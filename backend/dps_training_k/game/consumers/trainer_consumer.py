@@ -186,7 +186,7 @@ class TrainerConsumer(AbstractConsumer):
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(
-                        template__uuid=MaterialIDs.BEATMUNGSGERAET
+                        template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
                     )
                     succeeded = False
                     for material_instance in material_instances:
