@@ -18,6 +18,14 @@ class Command(BaseCommand):
     @staticmethod
     def create_resources():
         Material.objects.update_or_create(
+            uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
+            name="Blutwärmer",
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+            is_moveable=True,
+            is_lab=True,
+        )
+        Material.objects.update_or_create(
             uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
             name="Enthrozytenkonzentrat",
             category=Material.Category.BLOOD,
@@ -25,11 +33,11 @@ class Command(BaseCommand):
             is_moveable=True,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
-            name="Blutwärmer",
+            uuid=MaterialIDs.BLUTBANK,
+            name="Blutbank",  # Not really a device but more of a location in a hospital
             category=Material.Category.DEVICE,
             is_reusable=True,
-            is_moveable=True,
+            is_moveable=False,
             is_lab=True,
         )
         Material.objects.update_or_create(
@@ -41,9 +49,10 @@ class Command(BaseCommand):
             is_lab=True,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.BEATMUNGSBEUTEL,
-            name="Beatmungsbeutel",
+            uuid=MaterialIDs.COMPUTERTOMOGRAPHIE,
+            name="Computertomographie",
             category=Material.Category.DEVICE,
-            is_reusable=False,
-            is_moveable=True,
+            is_reusable=True,
+            is_moveable=False,
+            is_lab=True,
         )

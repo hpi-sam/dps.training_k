@@ -44,7 +44,6 @@ class Command(BaseCommand):
             is_moveable=True,
             is_lab=True,
         )
-
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_1,
             name="Gerät 1",
