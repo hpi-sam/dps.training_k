@@ -1360,54 +1360,6 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Patient in benachbarte Station verschieben",
-            uuid=ActionIDs.PATIENT_IN_BENACHBARTE_STATION_VERSCHIEBEN,
-            defaults={
-                "category": "OT",
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,  # Dunno, nothing given
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 2,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.PFLEGEFACHKRAFT]: 2},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
-            name="Gerät in andere Station verschieben",
-            uuid=ActionIDs.GERAET_IN_ANDERE_STATION_VERSCHIEBEN,
-            defaults={
-                "category": "OT",
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,  # Dunno, nothing given
-                "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": None,
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [
-                            {role_map[RoleIDs.HILFSKRAFT]: 1},
-                        ],
-                    },
-                ),
-            },
-        )
-        Action.objects.update_or_create(
             name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
             defaults={
