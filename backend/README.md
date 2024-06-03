@@ -2,7 +2,11 @@
 
 ## Running the project using Docker
 
-- inside dps_training_k folder, run `docker compose up -d`
+For more information on the difference between `prod` and `dev`, see the project README.
+Note that the `prod` env file here still assumes this is running locally - 
+meaning it will expect the frontend to run on localhost.
+
+- inside dps_training_k folder, run `docker-compose --env-file .env.<prod/dev> up -d`
 - create superuser account: `docker exec -it K-dPS-django python manage.py createsuperuser`
 
 ## Running the project locally (NOT UP TO DATE)

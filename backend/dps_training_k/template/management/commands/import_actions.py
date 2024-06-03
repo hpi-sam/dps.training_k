@@ -2028,7 +2028,10 @@ class Command(BaseCommand):
                         "material": None,
                         "num_personnel": 1,
                         "lab_devices": [
-                            [MaterialIDs.LAB_GERAET_1, MaterialIDs.BLUTGASANALYSE]
+                            [
+                                str(MaterialIDs.LAB_GERAET_1),
+                                str(MaterialIDs.BLUTGASANALYSE),
+                            ]
                         ],
                         "area": None,
                         "role": [

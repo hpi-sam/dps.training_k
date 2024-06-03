@@ -4,6 +4,7 @@ from collections import defaultdict
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from configuration import settings
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
@@ -104,13 +105,15 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
+        state_change_time = 10 if settings.RUN_CONFIG == "dev" else 600
+
         if self.patient_state.is_dead:
             return False
         if self.patient_state.is_final():
             return False
         ScheduledEvent.create_event(
             exercise=self.exercise,
-            t_sim_delta=10 + time_offset,
+            t_sim_delta=state_change_time + time_offset,
             method_name="execute_state_change",
             patient=self,
         )
@@ -131,6 +134,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
 
     def get_fulfilled_subconditions(self):
         from game.models import ActionInstanceState
+
         # Fetch all necessary data in a single query for performance
         action_instances = self.actioninstance_set.select_related("template").all()
         subconditions = Subcondition.objects.all()
@@ -139,7 +143,10 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
         # This dict approach is much faster than filter, hence we use this
         template_action_count = defaultdict(int)
         for action_instance in action_instances:
-            if action_instance.current_state.name in ActionInstanceState.success_states():
+            if (
+                action_instance.current_state.name
+                in ActionInstanceState.success_states()
+            ):
                 template_action_count[str(action_instance.template.uuid)] += 1
         # TODO: add handling for OP if it's not an action
         fulfilled_subconditions = set()
