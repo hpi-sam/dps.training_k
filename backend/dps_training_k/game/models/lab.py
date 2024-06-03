@@ -1,6 +1,7 @@
 from django.db import models
 
 from helpers.moveable_to import MoveableTo
+from game.models import MaterialInstance
 from template.models import Material
 from template.constants import MaterialIDs
 
@@ -12,14 +13,17 @@ class Lab(MoveableTo):
     )
 
     def create_basic_devices(self):
-        lab_materials = Material.objects.filter(
-            category=Material.Category.LABOR
-        ).exclude(uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE)
+        lab_materials = Material.objects.filter(is_lab=True).exclude(
+            uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE
+        )
         for material in lab_materials:
-            Material.objects.update_or_create(template=material, lab=self)
+            MaterialInstance.objects.update_or_create(template=material, lab=self)
         for _ in range(4):
-            Material.objects.update_or_create(
-                uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE, lab=self
+            MaterialInstance.objects.update_or_create(
+                template=Material.objects.get(
+                    uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE
+                ),
+                lab=self,
             )
 
     @property
