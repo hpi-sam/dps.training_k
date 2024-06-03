@@ -56,3 +56,18 @@ class Command(BaseCommand):
             is_moveable=False,
             is_lab=True,
         )
+        # needed for patient_instance#get_fulfilled_subconditions
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+            name="Tragbares Beatmungsgerät",
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+            is_moveable=True,
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+            name="Stationäres Beatmungsgerät",
+            category=Material.Category.DEVICE,
+            is_reusable=True,
+            is_moveable=False,
+        )
