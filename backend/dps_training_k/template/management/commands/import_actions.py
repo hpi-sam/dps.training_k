@@ -1972,7 +1972,7 @@ class Command(BaseCommand):
                     {
                         "Kreuzblut": {
                             1000: "Erfolg! Das getestete Blut ist kompatibel.",
-                            1001: "Misserfolg! Bitte führe diese Aktion nochmal aus, um passendes Blut zu finden.",
+                            1001: "Misserfolg! Das getestete Blut ist inkompatibel.",
                         }
                     }
                 ),

@@ -5,14 +5,12 @@ from template.models import Material
 
 
 class Command(BaseCommand):
-    help = "Populates the database with minimal material list"
+    help = "Populates the database with material list"
 
     def handle(self, *args, **kwargs):
         self.create_resources()
         self.stdout.write(
-            self.style.SUCCESS(
-                "Successfully added minimal material list to the database"
-            )
+            self.style.SUCCESS("Successfully added material list to the database")
         )
 
     @staticmethod
