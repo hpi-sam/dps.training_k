@@ -100,8 +100,8 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         """
         Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
         """
-        call_command("minimal_actions")
-        call_command("minimal_material")
+        call_command("import_minimal_actions")
+        call_command("import_minimal_material")
         self.variable_backup = settings.CURRENT_TIME
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
@@ -143,8 +143,8 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         Integration Test: If production action is finished, a notification is sent to the consumer.
         """
 
-        call_command("minimal_actions")
-        call_command("minimal_material")
+        call_command("import_minimal_actions")
+        call_command("import_minimal_material")
         action_template = Action.objects.get(
             name="Fresh Frozen Plasma (0 positiv) auftauen"
         )
