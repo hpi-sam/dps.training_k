@@ -19,7 +19,7 @@ class Lab(MoveableTo):
         for material in lab_materials:
             MaterialInstance.objects.update_or_create(template=material, lab=self)
         for _ in range(4):
-            MaterialInstance.objects.update_or_create(
+            MaterialInstance.objects.create(
                 template=Material.objects.get(
                     uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE
                 ),
