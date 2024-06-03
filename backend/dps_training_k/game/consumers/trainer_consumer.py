@@ -6,6 +6,8 @@ from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
 from template.constants import MaterialIDs
+from game.models import Lab
+
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -138,6 +140,7 @@ class TrainerConsumer(AbstractConsumer):
     def handle_create_exercise(self, exercise):
         self.exercise = Exercise.createExercise()
         self.exercise_frontend_id = self.exercise.frontend_id
+        Lab.objects.get(exercise=self.exercise).create_basic_devices()
         self._send_exercise(self.exercise)
         self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.subscribe(LogEntryDispatcher.get_group_name(self.exercise))
