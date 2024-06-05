@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
         user, created = User.objects.get_or_create(username="test", user_type=User.UserType.TRAINER)
         if not created:
-            user.set_password("test")
+            user.set_password("password")
             user.save()
         self.exercise = Exercise.createExercise(user)
         self.exercise.frontend_id = "abcdef"
