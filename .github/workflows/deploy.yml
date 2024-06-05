@@ -25,7 +25,7 @@ jobs:
       - name: Build and push frontend Docker images
         run: |
           cd ./frontend/
-          docker-compose --env-file .env.prod build -d
+          docker-compose --env-file .env.prod up -d
           docker tag dps_training_k-frontend ghcr.io/hpi-sam/dps_training_k-frontend:latest
           docker push ghcr.io/hpi-sam/dps_training_k-frontend:latest
 
