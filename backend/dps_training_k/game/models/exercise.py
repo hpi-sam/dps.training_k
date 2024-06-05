@@ -28,12 +28,19 @@ class Exercise(NonEventable, models.Model):
         choices=StateTypes.choices,
         default=StateTypes.CONFIGURATION,
     )
+    trainer = models.ForeignKey(
+        to="User",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     @classmethod
-    def createExercise(cls):
+    def createExercise(cls, trainer):
         new_Exercise = cls.objects.create(
             frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.StateTypes.CONFIGURATION,
+            trainer=trainer,
         )
         Lab.objects.create(exercise=new_Exercise)
         return new_Exercise
