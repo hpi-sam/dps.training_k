@@ -22,7 +22,7 @@ class Command(BaseCommand):
             PatientInstance.objects.get(frontend_id=123456).delete()
 
         user, created = User.objects.get_or_create(username="test", user_type=User.UserType.TRAINER)
-        if not created:
+        if created:
             user.set_password("password")
             user.save()
         self.exercise = Exercise.createExercise(user)
