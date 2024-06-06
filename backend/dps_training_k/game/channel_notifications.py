@@ -130,11 +130,11 @@ class ActionInstanceDispatcher(ChannelNotifier):
                         applied_action,
                     )
                 if applied_action.template.relocates:
+                    channel = cls.get_group_name(applied_action.patient_instance)
                     if (
                         applied_action.state_name
                         == models.ActionInstanceStateNames.IN_PROGRESS
                     ):
-                        channel = cls.get_group_name(applied_action.patient_instance)
                         cls._notify_action_event(
                             ChannelEventTypes.RELOCATION_START_EVENT,
                             channel,
