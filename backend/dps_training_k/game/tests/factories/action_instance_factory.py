@@ -30,7 +30,7 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
         model = ActionInstance
         django_get_or_create = (
             "patient_instance",
-            "area",
+            "destination_area",
             "lab",
             "template",
             "current_state",
@@ -38,7 +38,7 @@ class ActionInstanceFactory(factory.django.DjangoModelFactory):
         )
 
     patient_instance = None
-    area = None
+    destination_area = None
     lab = None
     template = factory.SubFactory(ActionFactory)
     current_state = None
@@ -66,14 +66,14 @@ class ActionInstanceFactoryWithEffectDuration(factory.django.DjangoModelFactory)
         model = ActionInstance
         django_get_or_create = (
             "patient_instance",
-            "area",
+            "destination_area",
             "lab",
             "template",
             "current_state",
         )
 
     patient_instance = None
-    area = None
+    destination_area = None
     lab = None
     template = factory.SubFactory(ActionFactoryWithEffectDuration)
     current_state = None

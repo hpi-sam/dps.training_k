@@ -1,5 +1,6 @@
 import asyncio
 
+from unittest.mock import patch
 from channels.db import database_sync_to_async
 from channels.testing import WebsocketCommunicator
 from django.core.management import call_command
@@ -13,7 +14,8 @@ from .mixin import TestUtilsMixin
 class TrainerConsumerTestCase(TestUtilsMixin, TransactionTestCase):
     maxDiff = None
 
-    async def test_trainer_handle_create_exercise(self):
+    @patch("game.models.Lab.create_basic_devices")
+    async def test_trainer_handle_create_exercise(self, create_basic_devices):
         """
         trainer consumer responds to exercise-create event by sending an exercise object
         """
@@ -60,7 +62,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
     maxDiff = None
 
     def setUp(self):
-        call_command("minimal_actions")
+        call_command("import_minimal_actions")
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):
