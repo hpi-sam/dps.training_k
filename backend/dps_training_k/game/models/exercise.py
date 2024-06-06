@@ -31,7 +31,7 @@ class Exercise(NonEventable, models.Model):
     )
     trainer = models.ForeignKey(
         to="User",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
