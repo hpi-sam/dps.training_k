@@ -39,9 +39,9 @@ class TrainerLoginView(APIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
-            # Create new trainer user
             if User.objects.filter(username=username).exists():
-                return Response({'error': 'Username already taken.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Wrong Password'}, status=status.HTTP_401_UNAUTHORIZED)
+            # Create new trainer user
             user = User.objects.create(username=username, user_type=User.UserType.TRAINER)
             user.set_password(password)
             user.save()

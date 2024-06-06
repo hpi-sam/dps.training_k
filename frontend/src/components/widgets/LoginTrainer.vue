@@ -29,7 +29,10 @@
 					console.log('Login failed:', response)
 					switch (response.status) {
 						case 400:
-							showErrorToast("Fehler: Username und oder Passwort nicht angegeben oder Username schon vergeben")
+							showErrorToast("Fehler: Username und oder Passwort nicht angegeben")
+							break
+						case 401:
+							showErrorToast("Fehler: Falsches Passwort")
 							break
 						default:
 							showErrorToast("Fehler: Unbekannter Fehler")

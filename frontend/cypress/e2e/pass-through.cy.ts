@@ -7,7 +7,7 @@ describe('pass-through tests', () => {
 		cy.get('#trainer-login-username').type('test')
 		cy.get('#trainer-login-password').type('passwort')
 		cy.get('#trainer-login').click()
-		cy.get('.Vue-Toastification__toast-body').should('contain', 'Fehler: Username und oder Passwort nicht angegeben oder Username schon vergeben')
+		cy.get('.Vue-Toastification__toast-body').should('contain', 'Fehler: Username und oder Passwort nicht angegeben')
 	})
 
 	it('trainer login & passthrough test', () => {
