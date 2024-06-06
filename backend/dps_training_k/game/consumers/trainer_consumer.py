@@ -183,11 +183,13 @@ class TrainerConsumer(AbstractConsumer):
         try:
             area = Area.objects.get(id=areaId)
             patient_information = PatientInformation.objects.get(code=code)
+            # a patient in state 551 starts "beatmet" and therefore needs a "Beatmungsgerät"
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(
                         template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
                     )
+                    # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
                     succeeded = False
                     for material_instance in material_instances:
                         if material_instance.attached_instance() == area:
@@ -233,20 +235,48 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_update_patient(self, exercise, patientFrontendId, patientName, code):
         patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
-        patient_information = PatientInformation.objects.get(code=code)
-        if not patient.static_information.start_status == 551:
-            patient.name = patientName
-            patient.static_information = patient_information
-            patient.save(update_fields=["name", "static_information"])
+        new_patient_information = PatientInformation.objects.get(code=code)
+        if patient.static_information.start_status == 551:
+            self._unassign_beatmungsgeraet(patient)
+        
+        # if new start state is 551, try to assign a "Beatmungsgerät"
+        if new_patient_information.start_status == 551:
+            try:
+                material_instances = MaterialInstance.objects.filter(
+                    template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
+                )
+                # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
+                succeeded = False
+                for material_instance in material_instances:
+                    if material_instance.attached_instance() == patient.area:
+                        succeeded = True
+                        break
+                if succeeded:
+                    patient.name = patientName
+                    patient.static_information = new_patient_information
+                    patient.save(update_fields=["name", "static_information"])
+                    material_instance.try_moving_to(patient)
+                else:
+                    self.send_failure(
+                        message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                    )
+            
+            except:
+                self.send_failure(
+                    message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                )
         else:
-            self.send_failure(
-                message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen."
-            )
-
+            patient.name = patientName
+            patient.static_information = new_patient_information
+            patient.save(update_fields=["name", "static_information"])
+    
     def handle_delete_patient(self, exercise, patientFrontendId):
         try:
             patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
+            if patient.static_information.start_status == 551:
+                self._unassign_beatmungsgeraet(patient)
             patient.delete()
+
         except PatientInstance.DoesNotExist:
             self.send_failure(
                 f"No patient found with the patientId '{patientFrontendId}'",
@@ -295,6 +325,17 @@ class TrainerConsumer(AbstractConsumer):
         self.send_event(
             self.TrainerOutgoingMessageTypes.LOG_UPDATE, logEntries=log_entry_dicts
         )
+    
+    def _unassign_beatmungsgeraet(self, patient):
+        material_instances = MaterialInstance.objects.filter(
+            template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
+        )
+        # find the "Beatmungsgerät" that has been assigned to the patient
+        for material_instance in material_instances:
+            if material_instance.attached_instance() == patient:
+                break
+        # unassign "Beatmungsgerät"
+        material_instance.try_moving_to(patient.area)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
