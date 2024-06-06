@@ -43,6 +43,9 @@
 				useTrainerStore().token = data.token
 				setModule(Modules.TRAINER)
 			})
+			.catch(_ => {
+				// Do nothing here, just catch the error to prevent unhandled Promise rejection as it is already handled above in the switch case
+			})
 	}
 </script>
 

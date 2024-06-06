@@ -3,11 +3,17 @@ describe('pass-through tests', () => {
 		cy.visit('http://localhost:5173/')
 	})
 
-	it('trainer route passthrough test', () => {
+	it('trainer failed login test', () => {
+		cy.get('#trainer-login-username').type('test')
+		cy.get('#trainer-login-password').type('passwort')
+		cy.get('#trainer-login').click()
+		cy.get('.Vue-Toastification__toast-body').should('contain', 'Fehler: Username und oder Passwort nicht angegeben oder Username schon vergeben')
+	})
+
+	it('trainer login & passthrough test', () => {
 		cy.get('#trainer-login-username').type('test')
 		cy.get('#trainer-login-password').type('password')
 		cy.get('#trainer-login').click()
-
 		cy.get('#ps-test').should('be.visible').click()
 		cy.get('.Vue-Toastification__toast-body').should('contain', 'received test event')
 	})
@@ -33,7 +39,7 @@ describe('pass-through tests', () => {
 		})
 	})
 
-	it('patient route passthrough test', () => {
+	it('patient login & passthrough test', () => {
 		cy.get('#patient-login-exercise-id').type(Cypress.env('exercise-id'))
 		cy.get('#patient-login-patient-id').type(Cypress.env('patient-id'))
 		cy.get('#patient-login').click()
