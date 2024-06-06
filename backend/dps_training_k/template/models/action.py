@@ -65,6 +65,7 @@ class Action(UUIDable, models.Model):
         if not "material" in parsed_condition:
             return []
         material_uuids = parsed_condition["material"] or []
+        # currently, lab_devices and material do exactly the same thing, hence they can be handled the same. If that changes, the following two lines are a bad idea
         lab_device_uuids = parsed_condition["lab_devices"] or []
         material_uuids += lab_device_uuids
         if not material_uuids:
