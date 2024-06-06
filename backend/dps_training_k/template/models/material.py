@@ -15,3 +15,6 @@ class Material(UUIDable, models.Model):
     is_lab = models.BooleanField(
         default=False
     )  # won't be shown as addable material for areas and is instead a device in the laboratory
+
+    def __str__(self):
+        return f"Material called {self.name} or category {self.category}"
