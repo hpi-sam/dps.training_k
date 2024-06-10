@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs
+
 from configuration import settings
 from game.models import Area
 from game.models import Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry
@@ -107,11 +109,15 @@ class TrainerConsumer(AbstractConsumer):
         self.REQUESTS_MAP.update(trainer_request_map)
 
     def connect(self):
-        self.accept()
-        self.send_available_patients()
-        self.send_available_materials()
-        if self.exercise:
-            self.send_past_logs()
+        query_string = parse_qs(self.scope["query_string"].decode())
+        token = query_string.get("token", [None])[0]
+        success, _ = self.authenticate(token)
+        if success:
+            self.accept()
+            self.send_available_patients()
+            self.send_available_materials()
+            if self.exercise:
+                self.send_past_logs()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -138,7 +144,10 @@ class TrainerConsumer(AbstractConsumer):
 
     # here, the exercise argument is None
     def handle_create_exercise(self, exercise):
-        self.exercise = Exercise.createExercise()
+        if Exercise.objects.filter(trainer=self.user).exists():
+            self.exercise = Exercise.objects.get(trainer=self.user)
+        else:
+            self.exercise = Exercise.createExercise(self.user)
         self.exercise_frontend_id = self.exercise.frontend_id
         Lab.objects.get(exercise=self.exercise).create_basic_devices()
         self._send_exercise(self.exercise)
