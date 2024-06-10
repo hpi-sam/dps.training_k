@@ -4,6 +4,7 @@ from django.db import models
 from game.channel_notifications import ExerciseDispatcher
 from helpers.eventable import NonEventable
 from .lab import Lab
+from .scheduled_event import ScheduledEvent
 from .log_entry import LogEntry
 
 
@@ -28,12 +29,19 @@ class Exercise(NonEventable, models.Model):
         choices=StateTypes.choices,
         default=StateTypes.CONFIGURATION,
     )
+    trainer = models.ForeignKey(
+        to="User",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     @classmethod
-    def createExercise(cls):
+    def createExercise(cls, trainer):
         new_Exercise = cls.objects.create(
             frontend_id=settings.ID_GENERATOR.get_exercise_frontend_id(),
             state=cls.StateTypes.CONFIGURATION,
+            trainer=trainer,
         )
         Lab.objects.create(exercise=new_Exercise)
         return new_Exercise
@@ -48,6 +56,8 @@ class Exercise(NonEventable, models.Model):
         self.save(update_fields=["state"])
         if not self.is_running_state(old_state) and self.is_running_state(state):
             LogEntry.set_empty_timestamps(self)
+        elif self.state == self.StateTypes.FINISHED:
+            ScheduledEvent.remove_events_of_exercise(self)
 
     def time_factor(self):
         if self.config is None:
@@ -59,9 +69,7 @@ class Exercise(NonEventable, models.Model):
 
     @classmethod
     def is_running_state(cls, state):
-        if state == cls.StateTypes.RUNNING:
-            return True
-        return False
+        return state == cls.StateTypes.RUNNING
 
     def __str__(self):
         return f"Exercise {self.frontend_id}"

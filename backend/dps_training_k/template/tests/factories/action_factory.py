@@ -1,9 +1,11 @@
-import factory, json
-from template.models import Action
-from .JSON_factory import JSONFactory
-from .condition_factory import ConditionFactory
+import json
+
+import factory
+
+from template.constants import ActionIDs
 from template.constants import MaterialIDs
-from template.constants import ActionIDs, ActionResultIDs
+from template.models import Action
+from .condition_factory import ConditionFactory
 
 
 class ActionFactory(factory.django.DjangoModelFactory):
@@ -12,6 +14,8 @@ class ActionFactory(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "name",
             "category",
+            "location",
+            "relocates",
             "application_duration",
             "effect_duration",
             "conditions",
@@ -21,6 +25,8 @@ class ActionFactory(factory.django.DjangoModelFactory):
 
     name = "Recovery Position"
     category = Action.Category.EXAMINATION
+    location = Action.Location.BEDSIDE
+    relocates = False
     application_duration = 10
     effect_duration = None
     conditions = ConditionFactory()
@@ -45,6 +51,8 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "name",
             "category",
+            "location",
+            "relocates",
             "application_duration",
             "effect_duration",
             "conditions",
@@ -54,6 +62,8 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
 
     name = "Recovery Position"
     category = Action.Category.TREATMENT
+    location = Action.Location.BEDSIDE
+    relocates = False
     application_duration = 10
     effect_duration = 10
     conditions = ConditionFactory()
@@ -67,6 +77,8 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
         django_get_or_create = (
             "name",
             "category",
+            "location",
+            "relocates",
             "application_duration",
             "effect_duration",
             "conditions",
@@ -76,14 +88,16 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
 
     name = "Fresh Frozen Plasma (0 positiv) auftauen"
     category = Action.Category.PRODUCTION
+    location = Action.Location.LAB
+    relocates = False
     application_duration = 10
     effect_duration = None
     conditions = ConditionFactory()
-    uuid = ActionIDs.FRESH_FROZEN_PLASMA_AUFTAUEN
+    uuid = ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN
     results = json.dumps(
         {
             "produced_material": {
-                str(MaterialIDs.ENTHROZYTENKONZENTRAT_0_POS): 1,
+                str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1,
             }
         }
     )

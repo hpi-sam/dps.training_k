@@ -74,10 +74,10 @@
 			<h1>{{ actionCheckStore?.actionName }}</h1>
 			<CustomList>
 				<p v-if="actionCheckStore?.applicationDuration">
-					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(14, 19) }}
+					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(12, 19) }}
 				</p>
 				<p v-if="actionCheckStore?.effectDuration > 0">
-					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(14, 19) }}
+					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(12, 19) }}
 				</p>
 				<br>
 			</CustomList>

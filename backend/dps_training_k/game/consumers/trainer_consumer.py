@@ -1,11 +1,14 @@
+from urllib.parse import parse_qs
+
 from configuration import settings
 from game.models import Area
 from game.models import Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry
+from game.models import Lab
+from template.constants import MaterialIDs
 from template.models import PatientInformation, Material
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
-from template.constants import MaterialIDs
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -25,8 +28,8 @@ class TrainerConsumer(AbstractConsumer):
         MATERIAL_DELETE = "material-delete"
         PATIENT_ADD = "patient-add"
         PATIENT_DELETE = "patient-delete"
-        PATIENT_UPDATE = "patient-update"
         PATIENT_RENAME = "patient-rename"
+        PATIENT_UPDATE = "patient-update"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_RENAME = "personnel-rename"
@@ -53,6 +56,11 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.AREA_DELETE: (
                 self.handle_delete_area,
                 "areaId",
+            ),
+            self.TrainerIncomingMessageTypes.AREA_RENAME: (
+                self.handle_rename_area,
+                "areaId",
+                "areaName",
             ),
             self.TrainerIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -84,6 +92,11 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_delete_patient,
                 "patientId",
             ),
+            self.TrainerIncomingMessageTypes.PATIENT_RENAME: (
+                self.handle_rename_patient,
+                "patientId",
+                "patientName",
+            ),
             self.TrainerIncomingMessageTypes.PATIENT_UPDATE: (
                 self.handle_update_patient,
                 "patientId",
@@ -98,29 +111,23 @@ class TrainerConsumer(AbstractConsumer):
                 "personnelId",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_RENAME: (
-            self.handle_rename_personnel,
+                self.handle_rename_personnel,
                 "personnelId",
                 "personnelName",
             ),
-            self.TrainerIncomingMessageTypes.AREA_RENAME: (
-                self.handle_rename_area,
-                "areaId",
-                "areaName",
-            ),
-            self.TrainerIncomingMessageTypes.PATIENT_RENAME: (
-                self.handle_rename_patient,
-                "patientId",
-                "patientName",
-            )
         }
         self.REQUESTS_MAP.update(trainer_request_map)
 
     def connect(self):
-        self.accept()
-        self.send_available_patients()
-        self.send_available_materials()
-        if self.exercise:
-            self.send_past_logs()
+        query_string = parse_qs(self.scope["query_string"].decode())
+        token = query_string.get("token", [None])[0]
+        success, _ = self.authenticate(token)
+        if success:
+            self.accept()
+            self.send_available_patients()
+            self.send_available_materials()
+            if self.exercise:
+                self.send_past_logs()
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # API Methods, open to client.
@@ -131,13 +138,13 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_delete_area(self, _, areaId):
         try:
-            area = Area.objects.get(pk=areaId)
+            area = Area.objects.get(id=areaId)
             area.delete()
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
-    
+
     def handle_rename_area(self, exercise, area_id, area_name):
         area = Area.objects.get(id=area_id, exercise_id=exercise.id)
         area.name = area_name
@@ -152,8 +159,12 @@ class TrainerConsumer(AbstractConsumer):
 
     # here, the exercise argument is None
     def handle_create_exercise(self, exercise):
-        self.exercise = Exercise.createExercise()
+        if Exercise.objects.filter(trainer=self.user).exists():
+            self.exercise = Exercise.objects.get(trainer=self.user)
+        else:
+            self.exercise = Exercise.createExercise(self.user)
         self.exercise_frontend_id = self.exercise.frontend_id
+        Lab.objects.get(exercise=self.exercise).create_basic_devices()
         self._send_exercise(self.exercise)
         self.subscribe(ChannelNotifier.get_group_name(self.exercise))
         self.subscribe(LogEntryDispatcher.get_group_name(self.exercise))
@@ -176,11 +187,11 @@ class TrainerConsumer(AbstractConsumer):
             MaterialInstance.objects.create(template=template, area=area)
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
+                f"Multiple areas found with the id '{areaId}'",
             )
 
     def handle_delete_material(self, _, materialId):
@@ -189,17 +200,20 @@ class TrainerConsumer(AbstractConsumer):
             material.delete()
         except MaterialInstance.DoesNotExist:
             self.send_failure(
-                f"No material found with the pk '{materialId}'",
+                f"No material found with the id '{materialId}'",
             )
 
     def handle_add_patient(self, _, areaId, patientName, code):
         try:
-            area = Area.objects.get(pk=areaId)
+            area = Area.objects.get(id=areaId)
             patient_information = PatientInformation.objects.get(code=code)
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(
-                        template__uuid=MaterialIDs.BEATMUNGSGERAET
+                        template__uuid__in=[
+                            MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+                            MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+                        ]
                     )
                     succeeded = False
                     for material_instance in material_instances:
@@ -237,31 +251,14 @@ class TrainerConsumer(AbstractConsumer):
 
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
+                f"Multiple areas found with the id '{areaId}'",
             )
 
-    #TODO: remove updating name
-    def handle_update_patient(self, exercise, patientFrontendId, code):
-        patient = PatientInstance.objects.get(frontend_id=patientFrontendId, exercise_id=exercise.id)
-        patient_information = PatientInformation.objects.get(code=code)
-        if not patient.static_information.start_status == 551:
-            patient.static_information = patient_information
-            patient.save(update_fields=["static_information"])
-        else:
-            self.send_failure(
-                message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen."
-            )
-    
-    def handle_rename_patient(self, exercise, patient_id, patient_name):
-        patient = PatientInstance.objects.get(frontend_id=patient_id, exercise_id=exercise.id)
-        patient.name = patient_name
-        patient.save(update_fields=["name"])
-
-    def handle_delete_patient(self, exercise, patientFrontendId):
+    def handle_delete_patient(self, _, patientFrontendId):
         try:
             patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
             patient.delete()
@@ -270,17 +267,37 @@ class TrainerConsumer(AbstractConsumer):
                 f"No patient found with the patientId '{patientFrontendId}'",
             )
 
+    def handle_rename_patient(self, exercise, patient_id, patient_name):
+        patient = PatientInstance.objects.get(
+            frontend_id=patient_id, exercise_id=exercise.id
+        )
+        patient.name = patient_name
+        patient.save(update_fields=["name"])
+
+    def handle_update_patient(self, exercise, patient_frontend_id, code):
+        patient = PatientInstance.objects.get(
+            frontend_id=patient_frontend_id, exercise_id=exercise.id
+        )
+        patient_information = PatientInformation.objects.get(code=code)
+        if not patient.static_information.start_status == 551:
+            patient.static_information = patient_information
+            patient.save(update_fields=["static_information"])
+        else:
+            self.send_failure(
+                message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen."
+            )
+
     def handle_add_personnel(self, _, areaId):
         try:
-            area = Area.objects.get(pk=areaId)
+            area = Area.objects.get(id=areaId)
             Personnel.create_personnel(area=area, name="Personal")
         except Area.DoesNotExist:
             self.send_failure(
-                f"No area found with the pk '{areaId}'",
+                f"No area found with the id '{areaId}'",
             )
         except Area.MultipleObjectsReturned:
             self.send_failure(
-                f"Multiple areas found with the pk '{areaId}'",
+                f"Multiple areas found with the id '{areaId}'",
             )
 
     def handle_delete_personnel(self, _, personnel_id):
@@ -289,10 +306,10 @@ class TrainerConsumer(AbstractConsumer):
             personnel.delete()
         except Personnel.DoesNotExist:
             self.send_failure(
-                f"No personnel found with the pk '{personnel_id}'",
+                f"No personnel found with the id '{personnel_id}'",
             )
 
-    def handle_rename_personnel(self, exercise, personnel_id, personnel_name):
+    def handle_rename_personnel(self, _, personnel_id, personnel_name):
         personnel = Personnel.objects.get(id=personnel_id)
         personnel.name = personnel_name
         personnel.save(update_fields=["name"])
@@ -318,7 +335,7 @@ class TrainerConsumer(AbstractConsumer):
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def log_update_event(self, event):
-        log_entry = LogEntry.objects.get(pk=event["log_entry_pk"])
+        log_entry = LogEntry.objects.get(id=event["log_entry_id"])
 
         self.send_event(
             self.TrainerOutgoingMessageTypes.LOG_UPDATE,

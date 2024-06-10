@@ -25,6 +25,10 @@ export const usePatientStore = defineStore('patient', {
 		permanentMedication: '',
 		currentCaseHistory: '',
 		pretreatment: '',
+		isRelocating: false,
+		relocatingInfo: '',
+		timeUntilBack: Number.NEGATIVE_INFINITY,
+		timerRunning: false
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
@@ -54,6 +58,18 @@ export const usePatientStore = defineStore('patient', {
 			this.permanentMedication = availablesStore.getPatient(this.code)?.permanentMedication || ''
 			this.currentCaseHistory = availablesStore.getPatient(this.code)?.currentCaseHistory || ''
 			this.pretreatment = availablesStore.getPatient(this.code)?.pretreatment || ''
+		},
+		decreaseTimeUntilBack() {
+			if (this.timeUntilBack > 0) {
+				this.timeUntilBack--
+			}
+		},
+		startUpdatingTimer() {
+			if (this.timerRunning) return
+			this.timerRunning = true
+			setInterval(() => {
+				this.decreaseTimeUntilBack()
+			}, 1000)
 		}
 	}
 })
