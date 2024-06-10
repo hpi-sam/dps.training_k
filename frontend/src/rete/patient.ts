@@ -31,10 +31,7 @@ type Conn =
   | Connection<TransitionNode, StateNode>;
 type Schemes = GetSchemes<Node, Conn>;
 
-class Connection<A extends Node, B extends Node> extends Classic.Connection<
-  A,
-  B
-> {}
+class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 
 class StateNode extends Classic.Node {
   width = 100
@@ -72,28 +69,32 @@ type AreaExtra =
 
 const socket = new Classic.Socket('socket')
 
-export async function createEditor(container: HTMLElement) {
+export async function createEditor(
+  container: HTMLElement,
+  patientEditorStore: any,
+  patientStateStore: any,
+  transitionStore: any
+) {
   const editor = new NodeEditor<Schemes>()
   const area = new AreaPlugin<Schemes, AreaExtra>(container)
   const connection = new ConnectionPlugin<Schemes, AreaExtra>()
-
   const vueRender = new VuePlugin<Schemes, AreaExtra>()
-
+  
   vueRender.addPreset(
     VuePresets.classic.setup({
       customize: {
         node(context) {
           if (context.payload.label === 'State') {
             return CircleNode
-          } else if (context.payload.label === 'Transition') {
+            } else if (context.payload.label === 'Transition') {
             return SquareNode
-          }
-          return VuePresets.classic.Node
-        },
+            }
+            return VuePresets.classic.Node
+            },
       },
     })
   )
-
+  
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
       ['State', () => new StateNode()],
@@ -101,15 +102,13 @@ export async function createEditor(container: HTMLElement) {
     ]),
   })
   const minimap = new MinimapPlugin<Schemes>()
-
+  
   editor.use(area)
-
   area.use(vueRender)
-
   area.use(connection)
   area.use(contextMenu)
   area.use(minimap)
-
+  
   connection.addPreset(() => new ClassicFlow({
     makeConnection(from, to, context) {
       const [source, target] = getSourceTarget(from, to) || [null, null]
@@ -136,23 +135,42 @@ export async function createEditor(container: HTMLElement) {
   vueRender.addPreset(VuePresets.contextMenu.setup())
   vueRender.addPreset(VuePresets.minimap.setup())
 
-  const a = new StateNode()
-  const b = new StateNode()
-  const t = new TransitionNode()
+  // Create nodes from patient states and store them in an object
+  for (const patientState of Object.values(patientStateStore.patientStates)) {
+    const node = new StateNode()
+    await editor.addNode(node)
+    patientState.nodeId = node.id
+  }
 
-  await editor.addNode(a)
-  await editor.addNode(b)
-  await editor.addNode(t)
+  // Create nodes from transitions and store them in an object
+  for (const transition of Object.values(transitionStore.transitions)) {
+    const node = new TransitionNode()
+    await editor.addNode(node)
+    transition.nodeId = node.id
+  }
 
-  await editor.addConnection(new Connection(a, 'out', t, 'in'))
-  await editor.addConnection(new Connection(b, 'out', t, 'in'))
+  
+  // Create connections
+  for (const patientState of Object.values(patientStateStore.patientStates)) {
+    const node = editor.getNode(patientState.nodeId)
+    const nextTransition = transitionStore.transitions[patientState.nextTransition]
+    if (!nextTransition) continue
+    const nextNode = editor.getNode(nextTransition.nodeId)
+    await editor.addConnection(new Connection(node, 'out', nextNode, 'in'))
+  }
 
+  // Create connections
+  for (const transition of Object.values(transitionStore.transitions)) {
+    const node = editor.getNode(transition.nodeId)
+    const nextState = patientStateStore.patientStates[transition.nextStates[0]]
+    const nextNode = editor.getNode(nextState.nodeId)
+    console.log("Transition: "+ node.id+" to "+nextNode)
+    await editor.addConnection(new Connection(node, 'out', nextNode, 'in'))
+  }
+  
   const arrange = new AutoArrangePlugin<Schemes>()
-
   arrange.addPreset(ArrangePresets.classic.setup())
-
   area.use(arrange)
-
   await arrange.layout()
 
   AreaExtensions.zoomAt(area, editor.getNodes())
@@ -165,6 +183,10 @@ export async function createEditor(container: HTMLElement) {
   AreaExtensions.selectableNodes(area, selector, { accumulating })
 
   return {
+    layout: async () => {
+      await arrange.layout()
+      AreaExtensions.zoomAt(area, editor.getNodes())
+    },
     destroy: () => area.destroy(),
   }
 }

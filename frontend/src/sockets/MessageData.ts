@@ -202,3 +202,38 @@ interface CheckLabDevice {
 	available: number
 	needed: number
 }
+
+interface PatientEditor {
+	code: number
+	firstState: number
+	patientName: string
+	triage: string
+	personalDetails: string
+	injury: string
+	biometrics: string
+	mobility: string
+	preexistingIllnesses: string
+	permanentMedication: string
+	currentCaseHistory: string
+	pretreatment: string
+}
+
+interface PatientState {
+	id: number
+	nodeId: string
+	nextTransition: number
+	airway: string
+	breathing: string
+	circulation: string
+	consciousness: string
+	psyche: string
+	pupils: string
+	skin: string
+}
+
+interface Transition {
+	id: number
+	nodeId: string
+	firstCondition: number
+	nextStates: number[]
+}
