@@ -197,7 +197,13 @@ class TrainerConsumer(AbstractConsumer):
     def handle_delete_material(self, _, materialId):
         try:
             material = MaterialInstance.objects.get(id=materialId)
-            material.delete()
+            if not material.patient_instance:
+                material.delete()
+            else:
+                self.send_failure(
+                    "Material ist einem Patienten zugewiesen und kann deswegen nicht gelöscht werden. Bitte gebe zuerst das Material frei oder "
+                    "lösche den Patienten."
+                )
         except MaterialInstance.DoesNotExist:
             self.send_failure(
                 f"No material found with the id '{materialId}'",
@@ -207,6 +213,7 @@ class TrainerConsumer(AbstractConsumer):
         try:
             area = Area.objects.get(id=areaId)
             patient_information = PatientInformation.objects.get(code=code)
+            # a patient in state 551 starts "beatmet" and therefore needs a "Beatmungsgerät"
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(
@@ -215,6 +222,7 @@ class TrainerConsumer(AbstractConsumer):
                             MaterialIDs.BEATMUNGSGERAET_STATIONAER,
                         ]
                     )
+                    # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
                     succeeded = False
                     for material_instance in material_instances:
                         if material_instance.attached_instance() == area:
@@ -232,16 +240,16 @@ class TrainerConsumer(AbstractConsumer):
                         material_instance.try_moving_to(patient_instance)
                     else:  # catches case where no material_instance was in patients area
                         self.send_failure(
-                            message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                            message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                         )
                 except (
                     MaterialInstance.DoesNotExist
                 ):  # catches no material_instance matching filter
                     self.send_failure(
-                        message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                        message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                     )
             else:
-                patient_instance = PatientInstance.objects.create(
+                PatientInstance.objects.create(
                     name=patientName,
                     static_information=patient_information,
                     exercise=area.exercise,
@@ -261,7 +269,10 @@ class TrainerConsumer(AbstractConsumer):
     def handle_delete_patient(self, _, patientFrontendId):
         try:
             patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
+            if patient.static_information.start_status == 551:
+                self._unassign_beatmungsgeraet(patient)
             patient.delete()
+
         except PatientInstance.DoesNotExist:
             self.send_failure(
                 f"No patient found with the patientId '{patientFrontendId}'",
@@ -274,18 +285,45 @@ class TrainerConsumer(AbstractConsumer):
         patient.name = patient_name
         patient.save(update_fields=["name"])
 
-    def handle_update_patient(self, exercise, patient_frontend_id, code):
-        patient = PatientInstance.objects.get(
-            frontend_id=patient_frontend_id, exercise_id=exercise.id
-        )
-        patient_information = PatientInformation.objects.get(code=code)
-        if not patient.static_information.start_status == 551:
-            patient.static_information = patient_information
-            patient.save(update_fields=["static_information"])
+    def handle_update_patient(self, _, patient_frontend_id, code):
+        patient = PatientInstance.objects.get(frontend_id=patient_frontend_id)
+        new_patient_information = PatientInformation.objects.get(code=code)
+        if patient.static_information.start_status == 551:
+            self._unassign_beatmungsgeraet(patient)
+
+        # if new start state is 551, try to assign a "Beatmungsgerät"
+        if new_patient_information.start_status == 551:
+            try:
+                ventilators = MaterialInstance.objects.filter(
+                    template__uuid__in=[
+                        MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+                        MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+                    ]
+                )
+                # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
+                succeeded = False
+                for ventilator in ventilators:
+                    if ventilator.attached_instance() == patient.area:
+                        succeeded = True
+                        break
+                if succeeded:
+                    patient.static_information = new_patient_information
+                    patient.save(update_fields=["static_information"])
+                    # While Python does know the concept of scopes, one can still use the variables after the for loop. So what happens here is that
+                    # the for loop loops until it finds a desired ventilator and then breaks as to not overwrite the current instance.
+                    ventilator.try_moving_to(patient)
+                else:
+                    self.send_failure(
+                        message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
+                    )
+
+            except:
+                self.send_failure(
+                    message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
+                )
         else:
-            self.send_failure(
-                message="Patienten mit Startstatus 551 können momentan keinen neuen Code zugewiesen bekommen."
-            )
+            patient.static_information = new_patient_information
+            patient.save(update_fields=["static_information"])
 
     def handle_add_personnel(self, _, areaId):
         try:
@@ -303,7 +341,13 @@ class TrainerConsumer(AbstractConsumer):
     def handle_delete_personnel(self, _, personnel_id):
         try:
             personnel = Personnel.objects.get(id=personnel_id)
-            personnel.delete()
+            if not personnel.patient_instance:
+                personnel.delete()
+            else:
+                self.send_failure(
+                    "Personal ist einem Patienten zugewiesen und kann deswegen nicht gelöscht werden. Bitte gebe zuerst das Personal frei oder "
+                    "lösche den Patienten."
+                )
         except Personnel.DoesNotExist:
             self.send_failure(
                 f"No personnel found with the id '{personnel_id}'",
@@ -330,6 +374,20 @@ class TrainerConsumer(AbstractConsumer):
         self.send_event(
             self.TrainerOutgoingMessageTypes.LOG_UPDATE, logEntries=log_entry_dicts
         )
+
+    def _unassign_beatmungsgeraet(self, patient):
+        material_instances = MaterialInstance.objects.filter(
+            template__uuid__in=[
+                MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+                MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+            ]
+        )
+        # find the "Beatmungsgerät" that has been assigned to the patient
+        for material_instance in material_instances:
+            if material_instance.attached_instance() == patient:
+                break
+        # unassign "Beatmungsgerät"
+        material_instance.try_moving_to(patient.area)
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # Events triggered internally by channel notifications
