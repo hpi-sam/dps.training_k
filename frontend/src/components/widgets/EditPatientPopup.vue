@@ -18,8 +18,8 @@
 		}
 	})
 
-	function updatePatient(patientId: string, patientName: string, patientCode: number) {
-		socketTrainer.patientUpdate(patientId, patientName, patientCode)
+	function updatePatient(patientId: string, patientCode: number) {
+		socketTrainer.patientUpdate(patientId, patientCode)
 		emit('close-popup')
 	}
 
@@ -74,7 +74,7 @@
 					<div id="button-row">
 						<button
 							id="save-button"
-							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.code || Number.NEGATIVE_INFINITY)"
+							@click="updatePatient(props.patientId, currentPatient?.code || Number.NEGATIVE_INFINITY)"
 						>
 							Änderung speichern
 						</button>

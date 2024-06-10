@@ -19,6 +19,7 @@ class TrainerConsumer(AbstractConsumer):
     class TrainerIncomingMessageTypes:
         AREA_ADD = "area-add"
         AREA_DELETE = "area-delete"
+        AREA_RENAME = "area-rename"
         EXAMPLE = "example"
         EXERCISE_CREATE = "exercise-create"
         EXERCISE_END = "exercise-end"
@@ -27,10 +28,11 @@ class TrainerConsumer(AbstractConsumer):
         MATERIAL_DELETE = "material-delete"
         PATIENT_ADD = "patient-add"
         PATIENT_DELETE = "patient-delete"
+        PATIENT_RENAME = "patient-rename"
         PATIENT_UPDATE = "patient-update"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
-        PERSONNEL_UPDATE = "personnel-update"
+        PERSONNEL_RENAME = "personnel-rename"
 
     class TrainerOutgoingMessageTypes:
         EXERCISE_CREATED = "trainer-exercise-create"
@@ -54,6 +56,11 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.AREA_DELETE: (
                 self.handle_delete_area,
                 "areaId",
+            ),
+            self.TrainerIncomingMessageTypes.AREA_RENAME: (
+                self.handle_rename_area,
+                "areaId",
+                "areaName",
             ),
             self.TrainerIncomingMessageTypes.EXAMPLE: (
                 self.handle_example,
@@ -85,10 +92,14 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_delete_patient,
                 "patientId",
             ),
+            self.TrainerIncomingMessageTypes.PATIENT_RENAME: (
+                self.handle_rename_patient,
+                "patientId",
+                "patientName",
+            ),
             self.TrainerIncomingMessageTypes.PATIENT_UPDATE: (
                 self.handle_update_patient,
                 "patientId",
-                "patientName",
                 "code",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
@@ -99,8 +110,8 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_delete_personnel,
                 "personnelId",
             ),
-            self.TrainerIncomingMessageTypes.PERSONNEL_UPDATE: (
-                self.handle_update_personnel,
+            self.TrainerIncomingMessageTypes.PERSONNEL_RENAME: (
+                self.handle_rename_personnel,
                 "personnelId",
                 "personnelName",
             ),
@@ -133,6 +144,11 @@ class TrainerConsumer(AbstractConsumer):
             self.send_failure(
                 f"No area found with the id '{areaId}'",
             )
+
+    def handle_rename_area(self, exercise, area_id, area_name):
+        area = Area.objects.get(id=area_id, exercise_id=exercise.id)
+        area.name = area_name
+        area.save(update_fields=["name"])
 
     def handle_example(self, exercise, exercise_frontend_id):
         self.exercise_frontend_id = exercise_frontend_id
@@ -250,8 +266,27 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the id '{areaId}'",
             )
 
-    def handle_update_patient(self, _, patientFrontendId, patientName, code):
-        patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
+    def handle_delete_patient(self, _, patientFrontendId):
+        try:
+            patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
+            if patient.static_information.start_status == 551:
+                self._unassign_beatmungsgeraet(patient)
+            patient.delete()
+
+        except PatientInstance.DoesNotExist:
+            self.send_failure(
+                f"No patient found with the patientId '{patientFrontendId}'",
+            )
+
+    def handle_rename_patient(self, exercise, patient_id, patient_name):
+        patient = PatientInstance.objects.get(
+            frontend_id=patient_id, exercise_id=exercise.id
+        )
+        patient.name = patient_name
+        patient.save(update_fields=["name"])
+
+    def handle_update_patient(self, _, patient_frontend_id, code):
+        patient = PatientInstance.objects.get(frontend_id=patient_frontend_id)
         new_patient_information = PatientInformation.objects.get(code=code)
         if patient.static_information.start_status == 551:
             self._unassign_beatmungsgeraet(patient)
@@ -272,9 +307,8 @@ class TrainerConsumer(AbstractConsumer):
                         succeeded = True
                         break
                 if succeeded:
-                    patient.name = patientName
                     patient.static_information = new_patient_information
-                    patient.save(update_fields=["name", "static_information"])
+                    patient.save(update_fields=["static_information"])
                     # While Python does know the concept of scopes, one can still use the variables after the for loop. So what happens here is that
                     # the for loop loops until it finds a desired ventilator and then breaks as to not overwrite the current instance.
                     ventilator.try_moving_to(patient)
@@ -288,21 +322,8 @@ class TrainerConsumer(AbstractConsumer):
                     message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                 )
         else:
-            patient.name = patientName
             patient.static_information = new_patient_information
-            patient.save(update_fields=["name", "static_information"])
-
-    def handle_delete_patient(self, _, patientFrontendId):
-        try:
-            patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
-            if patient.static_information.start_status == 551:
-                self._unassign_beatmungsgeraet(patient)
-            patient.delete()
-
-        except PatientInstance.DoesNotExist:
-            self.send_failure(
-                f"No patient found with the patientId '{patientFrontendId}'",
-            )
+            patient.save(update_fields=["static_information"])
 
     def handle_add_personnel(self, _, areaId):
         try:
@@ -332,10 +353,10 @@ class TrainerConsumer(AbstractConsumer):
                 f"No personnel found with the id '{personnel_id}'",
             )
 
-    def handle_update_personnel(self, _, personnelId, personnelName):
-        personnel = Personnel.objects.get(id=personnelId)
-        personnel.name = personnelName
-        personnel.save()
+    def handle_rename_personnel(self, _, personnel_id, personnel_name):
+        personnel = Personnel.objects.get(id=personnel_id)
+        personnel.name = personnel_name
+        personnel.save(update_fields=["name"])
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally

@@ -5,9 +5,11 @@
 	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
 	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemLeft, ListItemRight} from "@/components/widgets/List"
-	import BinButton from '@/components/widgets/BinButton.vue'
+	import IconButton from '@/components/widgets/IconButton.vue'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
+	import {svg} from "@/assets/Svg"
+	import RenamePopup from '@/components/widgets/RenamePopup.vue'
 
 	const props = defineProps({
 		currentArea: {
@@ -20,6 +22,7 @@
 
 	const currentAreaData = computed(() => exerciseStore.getArea(props.currentArea))
 
+	const showRenamePopup = ref(false)
 	const showDeletePopup = ref(false)
 	const showEditPatientPopup = ref(false)
 	const showAddPatientPopup = ref(false)
@@ -40,6 +43,15 @@
 		socketTrainer.patientDelete(currentPatientId.value)
 	}
 
+	function renamePatient(name: string) {
+		socketTrainer.patientRename(currentPatientId.value, name)
+	}
+
+	function openRenamePopup(patientId: string) {
+		currentPatientId.value = patientId
+		showRenamePopup.value = true
+	}
+
 	function openDeletePopup(patientId: string) {
 		currentPatientId.value = patientId
 		showDeletePopup.value = true
@@ -47,6 +59,13 @@
 </script>
 
 <template>
+	<RenamePopup
+		v-if="showRenamePopup"
+		:name="currentPatientName || ''"
+		:title="'Patient umbenennen'"
+		@close-popup="showRenamePopup=false"
+		@rename="(name) => renamePatient(name)"
+	/>
 	<DeleteItemPopup
 		v-if="showDeletePopup"
 		:name="currentPatientName"
@@ -69,7 +88,8 @@
 				<TriageForListItems :patient-code="patient.code" @click="editPatient(patient.patientId)" />
 				<ListItemName :name="patient.patientName" @click="editPatient(patient.patientId)" />
 				<ListItemRight>
-					<BinButton @click="openDeletePopup(patient.patientId)" />
+					<IconButton :icon="svg.penIcon" @click="openRenamePopup(patient.patientId)" />
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(patient.patientId)" />
 				</ListItemRight>
 			</ListItemButton>
 		</ListItem>
