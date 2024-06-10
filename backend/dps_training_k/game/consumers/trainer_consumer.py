@@ -184,7 +184,10 @@ class TrainerConsumer(AbstractConsumer):
             if not material.patient_instance:
                 material.delete()
             else:
-                self.send_failure("Material ist einem Patienten zugeordnet und kann deswegen nicht gelöscht werden")
+                self.send_failure(
+                    "Material ist einem Patienten zugewiesen und kann deswegen nicht gelöscht werden. Bitte gebe zuerst das Material frei oder "
+                    "lösche den Patienten."
+                )
         except MaterialInstance.DoesNotExist:
             self.send_failure(
                 f"No material found with the id '{materialId}'",
@@ -230,7 +233,7 @@ class TrainerConsumer(AbstractConsumer):
                         message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                     )
             else:
-                patient_instance = PatientInstance.objects.create(
+                PatientInstance.objects.create(
                     name=patientName,
                     static_information=patient_information,
                     exercise=area.exercise,
@@ -247,7 +250,7 @@ class TrainerConsumer(AbstractConsumer):
                 f"Multiple areas found with the id '{areaId}'",
             )
 
-    def handle_update_patient(self, exercise, patientFrontendId, patientName, code):
+    def handle_update_patient(self, _, patientFrontendId, patientName, code):
         patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
         new_patient_information = PatientInformation.objects.get(code=code)
         if patient.static_information.start_status == 551:
@@ -289,7 +292,7 @@ class TrainerConsumer(AbstractConsumer):
             patient.static_information = new_patient_information
             patient.save(update_fields=["name", "static_information"])
 
-    def handle_delete_patient(self, exercise, patientFrontendId):
+    def handle_delete_patient(self, _, patientFrontendId):
         try:
             patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
             if patient.static_information.start_status == 551:
@@ -317,7 +320,13 @@ class TrainerConsumer(AbstractConsumer):
     def handle_delete_personnel(self, _, personnel_id):
         try:
             personnel = Personnel.objects.get(id=personnel_id)
-            personnel.delete()
+            if not personnel.patient_instance:
+                personnel.delete()
+            else:
+                self.send_failure(
+                    "Personal ist einem Patienten zugewiesen und kann deswegen nicht gelöscht werden. Bitte gebe zuerst das Personal frei oder "
+                    "lösche den Patienten."
+                )
         except Personnel.DoesNotExist:
             self.send_failure(
                 f"No personnel found with the id '{personnel_id}'",
