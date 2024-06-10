@@ -85,8 +85,6 @@
 			<h1>Übersicht</h1>
 			<CustomList>
 				<ListItemAddButton text="Aktion hinzufügen" @click="emit('add-action')" />
-			</CustomList>
-			<CustomList v-if="actionsNotFinished.length">
 				<ListItem
 					v-for="action in actionsNotFinished"
 					:key="action.actionId"
@@ -147,3 +145,9 @@
 		</div>
 	</div>
 </template>
+
+<style scoped>
+	.list-item-right {
+		margin-right: 16px;
+	}
+</style>

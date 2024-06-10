@@ -3,7 +3,8 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
-	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton} from "@/components/widgets/List"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
+	import BinButton from '@/components/widgets/BinButton.vue'
 
 	const props = defineProps({
 		currentArea: {
@@ -18,11 +19,11 @@
 
 	const currentPersonnel = ref(Number.NEGATIVE_INFINITY)
 
-	const showPopup = ref(false)
+	const showDeletePopup = ref(false)
 
-	function openPopup(personnelId: number) {
+	function openDeletePopup(personnelId: number) {
 		currentPersonnel.value = personnelId
-		showPopup.value = true
+		showDeletePopup.value = true
 	}
 
 	function addPersonnel() {
@@ -36,9 +37,9 @@
 
 <template>
 	<DeleteItemPopup
-		v-if="showPopup"
+		v-if="showDeletePopup"
 		:name="exerciseStore.getPersonnel(currentPersonnel)?.personnelName"
-		@close-popup="showPopup=false"
+		@close-popup="showDeletePopup=false"
 		@delete="deletePersonnel"
 	/>
 	<h1>Personal</h1>
@@ -48,8 +49,11 @@
 			v-for="personnel in currentAreaData?.personnel"
 			:key="personnel.personnelName"
 		>
-			<ListItemButton @click="openPopup(personnel.personnelId)">
+			<ListItemButton>
 				<ListItemName :name="personnel.personnelName" />
+				<ListItemRight>
+					<BinButton @click="openDeletePopup(personnel.personnelId)" />
+				</ListItemRight>
 			</ListItemButton>
 		</ListItem>
 	</CustomList>

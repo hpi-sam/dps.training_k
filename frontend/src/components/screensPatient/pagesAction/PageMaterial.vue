@@ -134,4 +134,8 @@
 		font-size: 1.25rem;
 		justify-content: center;
 	}
+
+	.list-item-right {
+		margin-right: 16px;
+	}
 </style>

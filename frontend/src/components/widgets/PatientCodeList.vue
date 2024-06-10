@@ -2,7 +2,7 @@
 	import {useAvailablesStore} from "@/stores/Availables"
 	import '@/assets/main.css'
 	import TriageForListItems from "./TriageForListItems.vue"
-	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
+	import {CustomList} from "@/components/widgets/List"
 
 	const availablesStore = useAvailablesStore()
 	const availablePatients = availablesStore.patients
@@ -16,6 +16,7 @@
 
 <template>
 	<div class="scroll">
+		<h2>Patienten-Datensätze</h2>
 		<CustomList>
 			<button
 				v-for="patient in availablePatients"
