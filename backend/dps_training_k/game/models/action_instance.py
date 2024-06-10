@@ -367,7 +367,7 @@ class ActionInstance(LocalTimeable, models.Model):
 
         available_personnel = personnel_owner.personnel_available()
         if len(available_personnel) < self.template.personnel_count_needed():
-            return [], False, f"Nicht genug Personal verfügbar"
+            return [], f"Nicht genug Personal verfügbar", False 
         for i in range(self.template.personnel_count_needed()):
             resources_to_block.append(available_personnel[i])
         if not resources_to_block:

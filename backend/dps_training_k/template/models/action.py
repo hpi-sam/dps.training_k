@@ -64,9 +64,13 @@ class Action(UUIDable, models.Model):
         parsed_condition = json.loads(self.conditions)
         if not "material" in parsed_condition:
             return []
-        material_uuids = parsed_condition["material"]
+        material_uuids = parsed_condition["material"] or []
+        # currently, lab_devices and material do exactly the same thing, hence they can be handled the same. If that changes, the following two lines are a bad idea
+        lab_device_uuids = parsed_condition["lab_devices"] or []
+        material_uuids += lab_device_uuids
         if not material_uuids:
             return []
+        
         needed_material_groups = []
         for material_condition_uuid in material_uuids:
             if isinstance(material_condition_uuid, list):
