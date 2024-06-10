@@ -3,13 +3,12 @@ from urllib.parse import parse_qs
 from configuration import settings
 from game.models import Area
 from game.models import Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry
+from game.models import Lab
+from template.constants import MaterialIDs
 from template.models import PatientInformation, Material
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
-from template.constants import MaterialIDs
-from game.models import Lab
-
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -196,7 +195,10 @@ class TrainerConsumer(AbstractConsumer):
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(
-                        template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
+                        template__uuid__in=[
+                            MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+                            MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+                        ]
                     )
                     # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
                     succeeded = False
@@ -247,12 +249,15 @@ class TrainerConsumer(AbstractConsumer):
         new_patient_information = PatientInformation.objects.get(code=code)
         if patient.static_information.start_status == 551:
             self._unassign_beatmungsgeraet(patient)
-        
+
         # if new start state is 551, try to assign a "Beatmungsgerät"
         if new_patient_information.start_status == 551:
             try:
                 ventilators = MaterialInstance.objects.filter(
-                    template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
+                    template__uuid__in=[
+                        MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+                        MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+                    ]
                 )
                 # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
                 succeeded = False
@@ -264,12 +269,14 @@ class TrainerConsumer(AbstractConsumer):
                     patient.name = patientName
                     patient.static_information = new_patient_information
                     patient.save(update_fields=["name", "static_information"])
+                    # While Python does know the concept of scopes, one can still use the variables after the for loop. So what happens here is that
+                    # the for loop loops until it finds a desired ventilator and then breaks as to not overwrite the current instance.
                     ventilator.try_moving_to(patient)
                 else:
                     self.send_failure(
                         message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                     )
-            
+
             except:
                 self.send_failure(
                     message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
@@ -278,7 +285,7 @@ class TrainerConsumer(AbstractConsumer):
             patient.name = patientName
             patient.static_information = new_patient_information
             patient.save(update_fields=["name", "static_information"])
-    
+
     def handle_delete_patient(self, exercise, patientFrontendId):
         try:
             patient = PatientInstance.objects.get(frontend_id=patientFrontendId)
@@ -334,10 +341,13 @@ class TrainerConsumer(AbstractConsumer):
         self.send_event(
             self.TrainerOutgoingMessageTypes.LOG_UPDATE, logEntries=log_entry_dicts
         )
-    
+
     def _unassign_beatmungsgeraet(self, patient):
         material_instances = MaterialInstance.objects.filter(
-            template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
+            template__uuid__in=[
+                MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
+                MaterialIDs.BEATMUNGSGERAET_STATIONAER,
+            ]
         )
         # find the "Beatmungsgerät" that has been assigned to the patient
         for material_instance in material_instances:
