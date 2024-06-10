@@ -216,13 +216,13 @@ class TrainerConsumer(AbstractConsumer):
                         material_instance.try_moving_to(patient_instance)
                     else:  # catches case where no material_instance was in patients area
                         self.send_failure(
-                            message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                            message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                         )
                 except (
                     MaterialInstance.DoesNotExist
                 ):  # catches no material_instance matching filter
                     self.send_failure(
-                        message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                        message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                     )
             else:
                 patient_instance = PatientInstance.objects.create(
@@ -251,28 +251,28 @@ class TrainerConsumer(AbstractConsumer):
         # if new start state is 551, try to assign a "Beatmungsgerät"
         if new_patient_information.start_status == 551:
             try:
-                material_instances = MaterialInstance.objects.filter(
+                ventilators = MaterialInstance.objects.filter(
                     template__uuid__in=[MaterialIDs.BEATMUNGSGERAET_TRAGBAR, MaterialIDs.BEATMUNGSGERAET_STATIONAER]
                 )
                 # find a "Beatmungsgerät" that has not been assigned to a patient but is in same area as the patient
                 succeeded = False
-                for material_instance in material_instances:
-                    if material_instance.attached_instance() == patient.area:
+                for ventilator in ventilators:
+                    if ventilator.attached_instance() == patient.area:
                         succeeded = True
                         break
                 if succeeded:
                     patient.name = patientName
                     patient.static_information = new_patient_information
                     patient.save(update_fields=["name", "static_information"])
-                    material_instance.try_moving_to(patient)
+                    ventilator.try_moving_to(patient)
                 else:
                     self.send_failure(
-                        message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                        message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                     )
             
             except:
                 self.send_failure(
-                    message="Es fehlt ein Beatmungsgerät um den Patienten im Zustand 551 starten zu lassen."
+                    message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                 )
         else:
             patient.name = patientName
