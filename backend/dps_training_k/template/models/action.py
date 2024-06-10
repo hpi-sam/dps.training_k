@@ -12,12 +12,23 @@ class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
         TREATMENT = "TR", "treatment"
         EXAMINATION = "EX", "examination"
-        LAB = "LA", "lab"
         PRODUCTION = "PR", "production"
         OTHER = "OT", "other"
 
+    class Location(models.TextChoices):
+        LAB = "LA", "lab"
+        BEDSIDE = "BE", "bedside"
+        STATION = "ST", "station"
+
     name = models.CharField(max_length=100, unique=True)
     category = models.CharField(choices=Category.choices, max_length=2)
+    location = models.CharField(
+        choices=Location.choices, max_length=2, default=Location.BEDSIDE
+    )
+    relocates = models.BooleanField(
+        default=False,
+        help_text="Does the action relocate the patient to the location and back?",
+    )
     application_duration = models.IntegerField(
         default=10,
         help_text="Duration in seconds in realtime. Might be scaled by external factors.",
@@ -53,9 +64,13 @@ class Action(UUIDable, models.Model):
         parsed_condition = json.loads(self.conditions)
         if not "material" in parsed_condition:
             return []
-        material_uuids = parsed_condition["material"]
+        material_uuids = parsed_condition["material"] or []
+        # currently, lab_devices and material do exactly the same thing, hence they can be handled the same. If that changes, the following two lines are a bad idea
+        lab_device_uuids = parsed_condition["lab_devices"] or []
+        material_uuids += lab_device_uuids
         if not material_uuids:
             return []
+        
         needed_material_groups = []
         for material_condition_uuid in material_uuids:
             if isinstance(material_condition_uuid, list):
@@ -72,6 +87,8 @@ class Action(UUIDable, models.Model):
         return needed_material_groups + needed_single_material
 
     def personnel_count_needed(self):
+        if self.location == Action.Location.LAB:
+            return 0  # ToDo: remove once we use personnel for labs
         if not self.conditions:
             return 0
         parsed_condition = json.loads(self.conditions)
@@ -84,19 +101,12 @@ class Action(UUIDable, models.Model):
         )
 
     def get_result(self, action_instance):
-        if self.category == Action.Category.TREATMENT:
-            return self.treatment_result()
-        elif self.category == Action.Category.EXAMINATION:
+        if self.category == Action.Category.EXAMINATION:
             return self.examination_result(
                 action_instance.get_patient_examination_codes()
             )
-        elif self.category == Action.Category.LAB:
-            return self.lab_result()
-        elif self.category == Action.Category.PRODUCTION:
-            return self.production_result()
-
-    def treatment_result(self):
-        return f"Behandlung {self.name} wurde durchgeführt"
+        else:
+            return self.generic_result()
 
     def examination_result(self, examination_codes):
         results_dict = json.loads(self.results)
@@ -114,9 +124,5 @@ class Action(UUIDable, models.Model):
 
         return result_string
 
-    def production_result(self):
+    def generic_result(self):
         return f"{self.name} wurde durchgeführt"
-
-    @staticmethod
-    def lab_result():
-        return "This is a lab result"

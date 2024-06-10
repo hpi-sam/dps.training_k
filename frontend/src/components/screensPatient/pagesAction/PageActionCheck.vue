@@ -5,7 +5,7 @@
 	import {useActionCheckStore} from '@/stores/ActionCheck'
 	import {svg} from '@/assets/Svg'
 	import ActionGroupPopup from '@/components/widgets/ActionGroupPopup.vue'
-	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-action'])
 
@@ -74,10 +74,10 @@
 			<h1>{{ actionCheckStore?.actionName }}</h1>
 			<CustomList>
 				<p v-if="actionCheckStore?.applicationDuration">
-					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(14, 19) }}
+					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(12, 19) }}
 				</p>
 				<p v-if="actionCheckStore?.effectDuration > 0">
-					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(14, 19) }}
+					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(12, 19) }}
 				</p>
 				<br>
 			</CustomList>
@@ -224,14 +224,11 @@
 		margin-bottom: 80px;
 	}
 
-	.right-text {
-		flex-shrink: 0;
-		margin-right: 16px;
-		white-space: nowrap;
-		width: auto;
-	}
-
 	.error-message {
 		font-size: 12px;
+	}
+
+	.list-item-right {
+		margin-right: 16px;
 	}
 </style>

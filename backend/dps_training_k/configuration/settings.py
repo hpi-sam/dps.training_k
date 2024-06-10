@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # import env file
 env = Env()
-Env.read_env(os.path.join(BASE_DIR, ".env"))
+Env.read_env(os.path.join(BASE_DIR, ".env.dev"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,6 +33,7 @@ Env.read_env(os.path.join(BASE_DIR, ".env"))
 DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOWED_ORIGINS = ["http://" + env.str("FRONTEND_URL") + ":5173"]
+RUN_CONFIG = env.str("RUN_CONFIG", default="dev")
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 
@@ -187,6 +188,6 @@ CELERY_BEAT_SCHEDULE = {
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 
 # Redis connection settings
-REDIS_HOST = 'K-dPS-redis'
+REDIS_HOST = "K-dPS-redis"
 REDIS_PORT = 6379
 REDIS_DB = 0

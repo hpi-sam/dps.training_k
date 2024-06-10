@@ -3,12 +3,14 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
-	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
 	import {Screens, setRightScreen} from '../ModuleTrainer.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
+	import IconButton from '@/components/widgets/IconButton.vue'
+	import {svg} from "@/assets/Svg"
+	import RenamePopup from '../widgets/RenamePopup.vue'
 
 	const exerciseStore = useExerciseStore()
 
@@ -22,9 +24,12 @@
 		currentArea.value = areaId
 	}
 
-	function openPopup(areaId: number) {
-		openArea(areaId)
-		showPopup.value = true
+	function openDeletePopup() {
+		showDeletePopup.value = true
+	}
+
+	function openRenamePopup() {
+		showRenamePopup.value = true
 	}
 
 	function addArea() {
@@ -35,16 +40,33 @@
 		socketTrainer.areaDelete(currentArea.value)
 	}
 
+	function renameArea(name: string) {
+		socketTrainer.areaRename(currentArea.value, name)
+	}
+
 	function openLog() {
 		setRightScreen(Screens.LOG)
 		currentArea.value = Number.NEGATIVE_INFINITY
 	}
 
-	const showPopup = ref(false)
+	const showDeletePopup = ref(false)
+	const showRenamePopup = ref(false)
 </script>
 
 <template>
-	<DeleteItemPopup v-if="showPopup" :name="exerciseStore.getAreaName(currentArea) || ''" @close-popup="showPopup=false" @delete="deleteArea" />
+	<RenamePopup
+		v-if="showRenamePopup"
+		:name="exerciseStore.getAreaName(currentArea) || ''"
+		:title="'Bereich umbenennen'"
+		@close-popup="showRenamePopup=false"
+		@rename="(name) => renameArea(name)"
+	/>
+	<DeleteItemPopup
+		v-if="showDeletePopup"
+		:name="exerciseStore.getAreaName(currentArea) || ''"
+		@close-popup="showDeletePopup=false"
+		@delete="deleteArea"
+	/>
 	<div class="flex-container">
 		<TopBarTrainer />
 		<div class="scroll">
@@ -59,19 +81,11 @@
 					:key="area.areaId"
 					:class="{ 'selected': currentArea === area.areaId }"
 				>
-					<ListItemButton @click="openArea(area.areaId)">
-						<ListItemName :name="area.areaName" />
+					<ListItemButton>
+						<ListItemName :name="area.areaName" @click="openArea(area.areaId)" />
 						<ListItemRight>
-							<button class="settings-button" @click="openPopup(area.areaId)">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="24"
-									viewBox="0 -960 960 960"
-									width="24"
-								>
-									<path :d="svg.settingsIcon" />
-								</svg>
-							</button>
+							<IconButton :icon="svg.penIcon" @click="openArea(area.areaId); openRenamePopup()" />
+							<IconButton :icon="svg.binIcon" @click="openArea(area.areaId); openDeletePopup()" />
 						</ListItemRight>
 					</ListItemButton>
 				</ListItem>
@@ -87,14 +101,6 @@
 </template>
 
 <style scoped>
-	.settings-button {
-		height: 50px;
-		width: 50px;
-		border: none;
-		background-color: white;
-		margin-left: auto;
-	}
-
 	.scroll {
 		margin-bottom: 110px;
 	}

@@ -53,7 +53,7 @@
 		showDeletePopup.value = false
 	}
 
-	function openDeletePopup(actionId: string, actionName: string) {
+	function openDeletePopup(actionId: number, actionName: string) {
 		currentActionId.value = actionId
 		currentActionName.value = actionName
 		showDeletePopup.value = true
@@ -85,8 +85,6 @@
 			<h1>Übersicht</h1>
 			<CustomList>
 				<ListItemAddButton text="Aktion hinzufügen" @click="emit('add-action')" />
-			</CustomList>
-			<CustomList v-if="actionsNotFinished.length">
 				<ListItem
 					v-for="action in actionsNotFinished"
 					:key="action.actionId"
@@ -99,7 +97,7 @@
 						</ListItemLeft>
 						<ListItemName :name="action.actionName" />
 						<ListItemRight>
-							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(12, 19) }}
 						</ListItemRight>
 					</ListItemButton>
 				</ListItem>
@@ -118,7 +116,7 @@
 						</ListItemLeft>
 						<ListItemName :name="action.actionName" />
 						<ListItemRight v-if="action.timeUntilCompletion > 0">
-							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(14, 19) }}
+							{{ new Date(new Date(0).setSeconds(action.timeUntilCompletion)).toISOString().substring(12, 19) }}
 						</ListItemRight>
 					</ListItemButton>
 				</ListItem>
@@ -147,3 +145,9 @@
 		</div>
 	</div>
 </template>
+
+<style scoped>
+	.list-item-right {
+		margin-right: 16px;
+	}
+</style>

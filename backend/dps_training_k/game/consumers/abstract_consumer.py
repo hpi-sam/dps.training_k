@@ -196,7 +196,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         )
 
     def send_available_materials(self):
-        materials = Material.objects.all()
+        materials = Material.objects.all().exclude(is_lab=True)
         availableMaterials = [
             MaterialSerializer(material).data for material in materials
         ]

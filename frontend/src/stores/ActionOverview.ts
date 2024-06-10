@@ -17,7 +17,7 @@ export const useActionOverviewStore = defineStore('actionOverview', {
 				return action
 			})
 		},
-		startUpdating() {
+		startUpdatingTimers() {
 			if (this.timersRunning) return
 			this.timersRunning = true
 			setInterval(() => {
