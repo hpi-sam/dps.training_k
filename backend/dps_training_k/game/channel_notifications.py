@@ -118,40 +118,45 @@ class ChannelNotifier:
 class ActionInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, applied_action, changes, is_updated):
-        if changes:
-            channel = cls.get_group_name(applied_action.attached_instance())
-            if ["historic_patient_state"] == changes:
-                return
-            if "current_state" in changes:
-                if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
+        if not changes or ["historic_patient_state"] == changes:
+            return
+
+        channel = cls.get_group_name(
+            applied_action.patient_instance
+            if applied_action.patient_instance
+            else applied_action.lab
+        )
+
+        if "current_state" in changes:
+            if applied_action.state_name == models.ActionInstanceStateNames.PLANNED:
+                cls._notify_action_event(
+                    ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
+                    channel,
+                    applied_action,
+                )
+            if applied_action.template.relocates:
+                if (
+                    applied_action.state_name
+                    == models.ActionInstanceStateNames.IN_PROGRESS
+                ):
                     cls._notify_action_event(
-                        ChannelEventTypes.ACTION_CONFIRMATION_EVENT,
+                        ChannelEventTypes.RELOCATION_START_EVENT,
                         channel,
                         applied_action,
                     )
-                if applied_action.template.relocates:
-                    if (
-                        applied_action.state_name
-                        == models.ActionInstanceStateNames.IN_PROGRESS
-                    ):
-                        cls._notify_action_event(
-                            ChannelEventTypes.RELOCATION_START_EVENT,
-                            channel,
-                            applied_action,
-                        )
-                    elif (
-                        applied_action.state_name
-                        == models.ActionInstanceStateNames.FINISHED
-                    ):
-                        cls._notify_action_event(
-                            ChannelEventTypes.RELOCATION_END_EVENT,
-                            channel,
-                            applied_action,
-                        )
-                        cls._notify_exercise_update(cls.get_exercise(applied_action))
+                elif (
+                    applied_action.state_name
+                    == models.ActionInstanceStateNames.FINISHED
+                ):
+                    cls._notify_action_event(
+                        ChannelEventTypes.RELOCATION_END_EVENT,
+                        channel,
+                        applied_action,
+                    )
+                    cls._notify_exercise_update(cls.get_exercise(applied_action))
 
-            # always send action list event
-            cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
+        # always send action list event
+        cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
 
     @classmethod
     def _notify_action_event(cls, event_type, channel, applied_action=None):
