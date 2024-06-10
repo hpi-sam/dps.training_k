@@ -181,7 +181,10 @@ class TrainerConsumer(AbstractConsumer):
     def handle_delete_material(self, _, materialId):
         try:
             material = MaterialInstance.objects.get(id=materialId)
-            material.delete()
+            if not material.patient_instance:
+                material.delete()
+            else:
+                self.send_failure("Material ist einem Patienten zugeordnet und kann deswegen nicht gelöscht werden")
         except MaterialInstance.DoesNotExist:
             self.send_failure(
                 f"No material found with the id '{materialId}'",
