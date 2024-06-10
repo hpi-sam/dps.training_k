@@ -1,4 +1,5 @@
 import uuid
+import copy
 from unittest.mock import patch
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,9 +11,12 @@ from .factories import (
     MaterialInstanceFactory,
     PatientFactory,
     PersonnelFactory,
+    AreaFactory,
+    LabFactory,
 )
 from .mixin import TestUtilsMixin
 from ..models import MaterialInstance
+from template.models import Action
 
 
 class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
@@ -48,10 +52,10 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=action_template, patient_instance=PatientFactory()
         )
         self.assertEqual(
-            action_instance.check_conditions_and_block_resources(
+            action_instance._try_acquiring_resources(
                 action_instance.attached_instance(), action_instance.attached_instance()
             ),
-            (True, None),
+            ([], "", True),
         )
 
     def test_action_check(self):
@@ -68,10 +72,14 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
-            action_instance.attached_instance(), action_instance.attached_instance()
+        aquired_resources, message, conditions_satisfied = (
+            action_instance._try_acquiring_resources(
+                action_instance.attached_instance(), action_instance.attached_instance()
+            )
         )
         self.assertEqual(conditions_satisfied, False)
+        self.assertNotEqual(message, "")
+
         personnel = PersonnelFactory(patient_instance=action_instance.patient_instance)
         material_instance_1 = MaterialInstanceFactory(
             template=self.material_1,
@@ -85,15 +93,27 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
-            action_instance.attached_instance(), action_instance.attached_instance()
+        aquired_resources, message, conditions_satisfied = (
+            action_instance._try_acquiring_resources(
+                action_instance.attached_instance(), action_instance.attached_instance()
+            )
         )
-        self.assertEqual((conditions_satisfied, _), (True, None))
+        self.assertTrue(conditions_satisfied)
 
     def test_blocking(self):
         """
-        If a condition is satisfied, the materials and the personnel used for satisfaction are blocked
+        After an action was applied successfully, the used resources are blocked
         """
+        # This enforces ActionInstance.try_application to succeed, so that the blocking phase is guaranteed to be reached
+        self.deactivate_moving()
+        self.can_receive_actions_patch = patch(
+            "game.models.PatientInstance.can_receive_actions"
+        )
+        self.can_receive_actions_patch.start().return_value = True
+        self.is_absent_patch = patch("game.models.PatientInstance.is_absent")
+        self.is_absent_patch.start().return_value = False
+        self.deactivate_relocating()
+
         action_template = ActionFactory(conditions=self.material_personnel_condition)
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
@@ -111,9 +131,8 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
-            action_instance.attached_instance(), action_instance.attached_instance()
-        )
+        succeeded, message = action_instance.try_application()
+        self.assertTrue(succeeded)
         material_instance_1.refresh_from_db()
         material_instance_2.refresh_from_db()
         material_instance_3.refresh_from_db()
@@ -123,10 +142,25 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         self.assertFalse(material_instance_2.is_blocked())
         self.assertTrue(personnel.is_blocked())
 
+        self.activate_moving()
+        self.can_receive_actions_patch.stop()
+        self.is_absent_patch.stop()
+        self.activate_relocating()
+
     def test_consuming_freeing_resources(self):
         """
         After an action is finished, the materials and personnel used for the action are freed. Consumable materials are deleted.
         """
+        # This enforces ActionInstance.try_application to succeed, so that the blocking phase is guaranteed to be reached
+        self.deactivate_moving()
+        self.can_receive_actions_patch = patch(
+            "game.models.PatientInstance.can_receive_actions"
+        )
+        self.can_receive_actions_patch.start().return_value = True
+        self.is_absent_patch = patch("game.models.PatientInstance.is_absent")
+        self.is_absent_patch.start().return_value = False
+        self.deactivate_relocating()
+
         action_template = ActionFactory(conditions=self.material_personnel_condition)
         action_instance = ActionInstanceFactory(
             template=action_template, patient_instance=PatientFactory()
@@ -147,11 +181,9 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=self.material_3,
             patient_instance=action_instance.patient_instance,
         )
-        conditions_satisfied, _ = action_instance.check_conditions_and_block_resources(
-            action_instance.attached_instance(), action_instance.attached_instance()
-        )
-        action_instance.free_resources()
-        action_instance.consume_resources()
+        action_instance.try_application()
+        action_instance._free_resources()
+        action_instance._consume_resources()
 
         self.assertRaises(
             ObjectDoesNotExist, MaterialInstance.objects.get, pk=material_instance_1.id
@@ -162,3 +194,93 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
         self.assertFalse(material_instance_3.is_blocked())
         self.assertFalse(material_instance_2.is_blocked())
         self.assertFalse(personnel.is_blocked())
+
+        self.activate_moving()
+        self.can_receive_actions_patch.stop()
+        self.is_absent_patch.stop()
+        self.activate_relocating()
+
+    @patch("game.models.MaterialInstance.can_move_to_type")
+    def test_failed_check_is_transparent(self, can_move_to_type_material):
+        """
+        Integration Test: If the condition check fails, the action instance and all participating objects do not change.
+        """
+        can_move_to_type_material.return_value = True
+        action_template = ActionFactory(
+            conditions=self.material_personnel_condition,
+            location=Action.Location.BEDSIDE,
+        )
+        patient_instance = PatientFactory()
+        area = AreaFactory()
+        action_instance = ActionInstanceFactory(
+            template=action_template, patient_instance=patient_instance
+        )
+        personnel = PersonnelFactory(area=area)
+        material_instance_1 = MaterialInstanceFactory(
+            template=self.material_1,
+            patient_instance=action_instance.patient_instance,
+        )
+        material_instance_2 = MaterialInstanceFactory(
+            template=self.material_2,
+            patient_instance=action_instance.patient_instance,
+        )
+        material_instance_3 = MaterialInstanceFactory(
+            template=self.material_3,
+            patient_instance=action_instance.patient_instance,
+        )
+        old_state = copy.deepcopy(
+            [
+                patient_instance,
+                area,
+                personnel,
+                material_instance_1,
+                material_instance_2,
+                material_instance_3,
+            ]
+        )
+        self.assertFalse(
+            action_instance.try_application()[0]
+        )  # fail because of missing resource personnel
+        new_state = [
+            patient_instance,
+            area,
+            personnel,
+            material_instance_1,
+            material_instance_2,
+            material_instance_3,
+        ]
+        self.assertEqual(old_state, new_state)
+
+        self.assertTrue(personnel.try_moving_to(patient_instance)[0])
+        action_template.category = Action.Category.EXAMINATION
+        action_template.location = Action.Location.LAB
+        action_template.relocates = True
+        action_template.save(update_fields=["category", "location", "relocates"])
+        action_instance = ActionInstanceFactory(
+            template=action_template,
+            patient_instance=patient_instance,
+            lab=LabFactory(),
+        )
+        can_move_to_type_material.return_value = False
+        old_state = copy.deepcopy(
+            [
+                patient_instance,
+                area,
+                personnel,
+                material_instance_1,
+                material_instance_2,
+                material_instance_3,
+            ]
+        )
+        self.assertFalse(
+            action_instance.try_application()[0]
+        )  # fail because of movement to lab is disallowed in mixin
+        new_state = [
+            patient_instance,
+            area,
+            personnel,
+            material_instance_1,
+            material_instance_2,
+            material_instance_3,
+        ]
+        self.assertEqual(old_state, new_state)

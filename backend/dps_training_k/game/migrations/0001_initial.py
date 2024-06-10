@@ -5,7 +5,6 @@ import django.contrib.auth.validators
 import django.db.models.deletion
 import django.utils.timezone
 import game.models.patient_instance
-import helpers.actions_queueable
 import helpers.eventable
 import helpers.local_timable
 from django.conf import settings
@@ -29,7 +28,6 @@ class Migration(migrations.Migration):
                 ('isPaused', models.BooleanField(default=False)),
                 ('name', models.CharField(max_length=30)),
             ],
-            bases=(helpers.actions_queueable.ActionsQueueable, models.Model),
         ),
         migrations.CreateModel(
             name='Exercise',
@@ -140,7 +138,7 @@ class Migration(migrations.Migration):
                 ('static_information', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='template.patientinformation')),
                 ('user', models.OneToOneField(blank=True, help_text='User object for authentication - has to be deleted explicitly or manually', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
             ],
-            bases=(helpers.eventable.Eventable, helpers.actions_queueable.ActionsQueueable, models.Model),
+            bases=(helpers.eventable.Eventable, models.Model),
         ),
         migrations.CreateModel(
             name='MaterialInstance',

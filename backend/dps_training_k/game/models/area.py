@@ -1,11 +1,10 @@
 from django.db import models
 
 from game.channel_notifications import AreaDispatcher
-from helpers.actions_queueable import ActionsQueueable
 from helpers.moveable_to import MoveableTo
 
 
-class Area(ActionsQueueable, MoveableTo, models.Model):
+class Area(MoveableTo, models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(

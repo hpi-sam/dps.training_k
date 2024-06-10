@@ -25,6 +25,8 @@ from ..channel_notifications import (
 )
 from ..serializers.resource_assignment_serializer import AreaResourceSerializer
 
+from ..serializers.patient_relocating_serializer import PatientRelocatingSerializer
+
 
 class PatientConsumer(AbstractConsumer):
     """
@@ -54,6 +56,8 @@ class PatientConsumer(AbstractConsumer):
         RESOURCE_ASSIGNMENTS = "resource-assignments"
         RESPONSE = "response"
         STATE_CHANGE = "state"
+        PATIENT_RELOCATING = "patient-relocating"
+        PATIENT_BACK = "patient-back"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -151,24 +155,26 @@ class PatientConsumer(AbstractConsumer):
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def handle_action_add(self, patient_instance, action_name):
         action_template = Action.objects.get(name=action_name)
+        kwargs = {}
+        if action_template.location == Action.Location.LAB:
+            kwargs["lab"] = self.exercise.lab
+        if (
+            action_template.location == Action.Location.BEDSIDE
+            or action_template.category == Action.Category.EXAMINATION
+            or action_template.relocates
+        ):
+            kwargs["patient_instance"] = patient_instance
+
         if action_template.category == Action.Category.PRODUCTION:
-            action_instance = ActionInstance.create(
-                template=action_template,
-                lab=self.exercise.lab,
-                area=patient_instance.area,
-            )
-        else:
-            action_instance = ActionInstance.create(
-                template=action_template,
-                patient_instance=patient_instance,
-            )
-        application_succeded, context = action_instance.try_application()
+            kwargs["destination_area"] = patient_instance.area
+        action_instance = ActionInstance.create(action_template, **kwargs)
+        application_succeded, message = action_instance.try_application()
         if not application_succeded:
-            self._send_action_declination(action_name=action_name, message=context)
+            self._send_action_declination(action_name=action_name, message=message)
 
     def handle_action_cancel(self, _, action_id):
         action_instance = ActionInstance.objects.get(id=action_id)
-        success, message = action_instance.cancel()
+        success, message = action_instance.try_cancelation()
         if not success:
             self.send_failure(message=message)
 
@@ -200,20 +206,20 @@ class PatientConsumer(AbstractConsumer):
         )
 
     def handle_material_assign(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
+        material_instance = MaterialInstance.objects.get(id=material_id)
         succeeded, message = material_instance.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(message=message)
 
     def handle_material_release(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
+        material_instance = MaterialInstance.objects.get(id=material_id)
         area = patient_instance.area
         succeeded, message = material_instance.try_moving_to(area)
         if not succeeded:
             self.send_failure(message=message)
 
     def handle_patient_move(self, patient_instance, area_id):
-        area = Area.objects.get(pk=area_id)
+        area = Area.objects.get(id=area_id)
         succeeded, message = patient_instance.try_moving_to(area)
 
         if not succeeded:
@@ -226,13 +232,13 @@ class PatientConsumer(AbstractConsumer):
             )
 
     def handle_personnel_assign(self, patient_instance, personnel_id):
-        personnel = Personnel.objects.get(pk=personnel_id)
+        personnel = Personnel.objects.get(id=personnel_id)
         succeeded, message = personnel.try_moving_to(patient_instance)
         if not succeeded:
             self.send_failure(message=message)
 
     def handle_personnel_release(self, patient_instance, personnel_id):
-        personnel = Personnel.objects.get(pk=personnel_id)
+        personnel = Personnel.objects.get(id=personnel_id)
         area = patient_instance.area
         succeeded, message = personnel.try_moving_to(area)
         if not succeeded:
@@ -292,7 +298,7 @@ class PatientConsumer(AbstractConsumer):
             )
 
     def action_confirmation_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             actionId=action_instance.id,
@@ -309,7 +315,7 @@ class PatientConsumer(AbstractConsumer):
                 Q(patient_instance=self.get_patient_instance())
                 | Q(
                     template__category=Action.Category.PRODUCTION,
-                    area=self.get_patient_instance().area,
+                    destination_area=self.get_patient_instance().area,
                 )
             )
             .exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
@@ -337,6 +343,27 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.ACTION_LIST,
             actions=actions,
         )
+
+    def relocation_start_event(self, event):
+        self.unsubscribe(ChannelNotifier.get_group_name(self.exercise))
+        action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
+        self.send_event(
+            self.PatientOutgoingMessageTypes.PATIENT_RELOCATING,
+            **PatientRelocatingSerializer(action_instance).data,
+        )
+
+    def relocation_end_event(self, event=None):
+        self.subscribe(ChannelNotifier.get_group_name(self.exercise))
+        self.send_event(
+            self.PatientOutgoingMessageTypes.PATIENT_BACK,
+        )
+
+    def send_exercise_event(self, event):
+        if (
+            not self.get_patient_instance().area
+        ):  # frontend assumes that patients are always in an area
+            return
+        super().send_exercise_event(event)
 
     def resource_assignment_event(self, event=None):
         patient_instance = self.get_patient_instance()

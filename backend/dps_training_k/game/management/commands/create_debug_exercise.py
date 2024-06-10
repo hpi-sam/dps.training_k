@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 
 from configuration import settings
 from game.consumers import TrainerConsumer
-from game.models import Exercise, PatientInstance, Area, Personnel
+from game.models import Exercise, PatientInstance, Area, Personnel, User
 from template.models import PatientInformation, PatientState
 
 
@@ -21,7 +21,11 @@ class Command(BaseCommand):
         else:
             PatientInstance.objects.get(frontend_id=123456).delete()
 
-        self.exercise = Exercise.createExercise()
+        user, created = User.objects.get_or_create(username="test", user_type=User.UserType.TRAINER)
+        if created:
+            user.set_password("password")
+            user.save()
+        self.exercise = Exercise.createExercise(user)
         self.exercise.frontend_id = "abcdef"
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
