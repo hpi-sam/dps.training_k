@@ -105,6 +105,7 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
                 "areaId",
+                "personnelName"
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_DELETE: (
                 self.handle_delete_personnel,
@@ -325,10 +326,10 @@ class TrainerConsumer(AbstractConsumer):
             patient.static_information = new_patient_information
             patient.save(update_fields=["static_information"])
 
-    def handle_add_personnel(self, _, areaId):
+    def handle_add_personnel(self, _, areaId, personnel_name):
         try:
             area = Area.objects.get(id=areaId)
-            Personnel.create_personnel(area=area, name="Personal")
+            Personnel.create_personnel(area=area, name=personnel_name)
         except Area.DoesNotExist:
             self.send_failure(
                 f"No area found with the id '{areaId}'",

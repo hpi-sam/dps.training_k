@@ -7,6 +7,7 @@
 	import IconButton from '@/components/widgets/IconButton.vue'
 	import {svg} from "@/assets/Svg"
 	import RenamePopup from '@/components/widgets/RenamePopup.vue'
+	import { generateName } from '@/utils'
 
 	const props = defineProps({
 		currentArea: {
@@ -36,7 +37,7 @@
 	}
 
 	function addPersonnel() {
-		socketTrainer.personnelAdd(props.currentArea)
+		socketTrainer.personnelAdd(props.currentArea, generateName())
 	}
 
 	function deletePersonnel() {
