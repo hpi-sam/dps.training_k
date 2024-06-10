@@ -5,13 +5,6 @@ from helpers.moveable_to import MoveableTo
 
 
 class Area(MoveableTo, models.Model):
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "exercise"],
-                name="unique_area_names_per_exercise",
-            )
-        ]
 
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     isPaused = models.BooleanField(default=False)
