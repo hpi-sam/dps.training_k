@@ -17,4 +17,4 @@ class Material(UUIDable, models.Model):
     )  # won't be shown as addable material for areas and is instead a device in the laboratory
 
     def __str__(self):
-        return f"Material called {self.name} or category {self.category}"
+        return f"Material called {self.name} of category {self.category}"
