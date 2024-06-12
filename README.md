@@ -1,5 +1,5 @@
 # K-dPS
-The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personal on how to act during medical 
+The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personnel on how to act during medical 
 surges / during mass casualty incidents.
 The Frontend website and backend server are two different projects. For setup instructions see the Readmes in the respective folders.
 
@@ -19,19 +19,30 @@ environment variables as well as the docker-compose file as
 There are two environment files provided with the docker-compose file in the artifacts: `.env.prod` and `.env.dev`.
 The `.env.prod` file is used for the production version on a server and the `.env.dev` file is used for the development version locally.
 Replace `<prod/dev>` with `prod` or `dev` in the following commands to use the respective environment file.
+0. Prerequisites: Install Docker and Docker Compose on the server where you want to deploy the software.
 1. Download the action artifacts and extract them in a folder
 2. Recommended: As the env files are probably stored in a public repository, it is strongly encouraged to change the SECRET_KEY and the 
    POSTGRES_PASSWORD variables in the used `.env.<prod/dev>` file.
-3. Optional: If you want a clean start, run following command in that folder in order to recreate the database:
+3. Log into the GitHub Packages registry with the following command. Ask a team member for valid credentials.
+```bash
+docker login ghcr.io -u <username> -p <token>
+```
+4. Optional: If you want a clean start, run following command in that folder in order to recreate the database:
 ```bash
 docker-compose --env-file .env.<prod/dev> down --volumes
 ```
-4. Run following command to pull the newest images and build and run the containers:
+5. Run following commands to pull the newest images (only needed if already setup once) and build and run the containers:
 ```bash
-docker-compose --env-file .env.<prod/dev> up --pull always -d
+docker-compose --env-file .env.<prod/dev> pull
+docker-compose --env-file .env.<prod/dev> up
 ```
 
 The application is now deployed and the website should be accessible on port 5173.
+
+Keep in mind that the IP address of the server running the back- and frontend are hardcoded in the environment files. For 
+the backend a simple correction of the `FRONTEND_URL` variable within the `.env.<prod/dev>` file on the server is enough, but fot the frontend the 
+`SERVER_URL` variable (and `VITE_SERVER_URL` variable for building without docker) has to be adjusted in the associated env file and the image has 
+to be rebuilt and re-uploaded to the GitHub Packages registry.
 
 ## Changing the project configuration
 If you want to change the configuration of the project by e.g. updating a docker-compose or env file, you need to keep following aspects in mind:
