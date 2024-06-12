@@ -181,7 +181,7 @@ class PatientConsumer(AbstractConsumer):
     def handle_action_check(self, _, action_name):
         self._start_inspecting_action(action_name)
         action_template = Action.objects.get(name=action_name)
-        if action_template.category == Action.Category.PRODUCTION:
+        if action_template.location == Action.Location.LAB:
             action_check_message = LabActionCheckSerializer(
                 action_template, self.exercise.lab
             ).data
