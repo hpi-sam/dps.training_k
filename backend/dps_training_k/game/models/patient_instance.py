@@ -106,7 +106,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
-        state_change_time = 10 if settings.RUN_CONFIG == "dev" else 600
+        state_change_time = 600
 
         if self.patient_state.is_dead:
             return False

@@ -60,9 +60,13 @@ class Exercise(NonEventable, models.Model):
             ScheduledEvent.remove_events_of_exercise(self)
 
     def time_factor(self):
-        if self.config is None:
-            return 1
-        return 1 / self.config.time_speed_up
+        # config currently is not being used, but could be implemented as follows:
+        # if self.config is None:
+        #     return 1
+        # return 1 / self.config.time_speed_up
+        if settings.DEBUG == True:
+            return 0.1
+        return 1
 
     def is_running(self):
         return self.is_running_state(self.state)
