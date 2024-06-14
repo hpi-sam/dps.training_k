@@ -1,4 +1,3 @@
-import json
 import logging
 import uuid
 
@@ -44,10 +43,9 @@ class Action(UUIDable, models.Model):
     def produced_resources(self):
         if not self.results:
             return None
-        results = json.loads(self.results)
-        if not "produced_material" in results:
+        if not "produced_material" in self.results:
             return None
-        resources = results["produced_material"]
+        resources = self.results["produced_material"]
         resources = {
             Material.objects.get(uuid=uuid.UUID(key)): amount
             for key, amount in resources.items()
@@ -61,16 +59,15 @@ class Action(UUIDable, models.Model):
         """
         if not self.conditions:
             return []
-        parsed_condition = json.loads(self.conditions)
-        if not "material" in parsed_condition:
+        if not "material" in self.conditions:
             return []
-        material_uuids = parsed_condition["material"] or []
+        material_uuids = self.conditions["material"] or []
         # currently, lab_devices and material do exactly the same thing, hence they can be handled the same. If that changes, the following two lines are a bad idea
-        lab_device_uuids = parsed_condition["lab_devices"] or []
+        lab_device_uuids = self.conditions["lab_devices"] or []
         material_uuids += lab_device_uuids
         if not material_uuids:
             return []
-        
+
         needed_material_groups = []
         for material_condition_uuid in material_uuids:
             if isinstance(material_condition_uuid, list):
@@ -91,13 +88,10 @@ class Action(UUIDable, models.Model):
             return 0  # ToDo: remove once we use personnel for labs
         if not self.conditions:
             return 0
-        parsed_condition = json.loads(self.conditions)
-        if not "num_personnel" in parsed_condition:
+        if not "num_personnel" in self.conditions:
             return 0
         return (
-            parsed_condition["num_personnel"]
-            if parsed_condition["num_personnel"]
-            else 0
+            self.conditions["num_personnel"] if self.conditions["num_personnel"] else 0
         )
 
     def get_result(self, action_instance):
@@ -109,9 +103,8 @@ class Action(UUIDable, models.Model):
             return self.generic_result()
 
     def examination_result(self, examination_codes):
-        results_dict = json.loads(self.results)
         result_string = f"{self.name} Ergebnis:"
-        for examination_type, result_dict in results_dict.items():
+        for examination_type, result_dict in self.results.items():
             current_code = examination_codes.get(examination_type, "")
             result_substring = result_dict.get(current_code)
 

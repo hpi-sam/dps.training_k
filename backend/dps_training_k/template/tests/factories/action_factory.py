@@ -1,5 +1,3 @@
-import json
-
 import factory
 
 from template.constants import ActionIDs
@@ -31,18 +29,16 @@ class ActionFactory(factory.django.DjangoModelFactory):
     effect_duration = None
     conditions = ConditionFactory()
     uuid = ActionIDs.STABILE_SEITENLAGE
-    results = json.dumps(
-        {
-            "Hb": {
-                400: "Ergebnis1",
-                401: "Ergebnis2",
-            },
-            "BZ": {
-                900: "Ergebnis1",
-                901: "Ergebnis2",
-            },
-        }
-    )
+    results = {
+        "Hb": {
+            400: "Ergebnis1",
+            401: "Ergebnis2",
+        },
+        "BZ": {
+            900: "Ergebnis1",
+            901: "Ergebnis2",
+        },
+    }
 
 
 class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
@@ -68,7 +64,7 @@ class ActionFactoryWithEffectDuration(factory.django.DjangoModelFactory):
     effect_duration = 10
     conditions = ConditionFactory()
     uuid = ActionIDs.IV_ZUGANG
-    results = json.dumps({})
+    results = {}
 
 
 class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
@@ -94,10 +90,8 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
     effect_duration = None
     conditions = ConditionFactory()
     uuid = ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN
-    results = json.dumps(
-        {
-            "produced_material": {
-                str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1,
-            }
+    results = {
+        "produced_material": {
+            str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1,
         }
-    )
+    }
