@@ -1,4 +1,3 @@
-import json
 from uuid import UUID
 
 from django.core.management import call_command
@@ -100,20 +99,16 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps(
-                    {"produced_material": {str(StuffIDs.JUENGER): 2}}
-                ),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {"produced_material": {str(StuffIDs.JUENGER): 2}},
             },
         )
         Action.objects.update_or_create(
@@ -123,20 +118,16 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps(
-                    {"produced_material": {str(StuffIDs.CAPTURE_THE_FLAG): 1}}
-                ),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {"produced_material": {str(StuffIDs.CAPTURE_THE_FLAG): 1}},
             },
         )
         Action.objects.update_or_create(
@@ -146,20 +137,18 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps(
-                    {"produced_material": {str(StuffIDs.OLYMPIA_RANGLISTENPUNKTE): 1}}
-                ),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {
+                    "produced_material": {str(StuffIDs.OLYMPIA_RANGLISTENPUNKTE): 1}
+                },
             },
         )
         Action.objects.update_or_create(
@@ -169,18 +158,16 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps({"produced_material": {str(StuffIDs.MONEY): 10}}),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {"produced_material": {str(StuffIDs.MONEY): 10}},
             },
         )
         Action.objects.update_or_create(
@@ -190,18 +177,16 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps({"produced_material": {str(StuffIDs.ISSUE): 1}}),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {"produced_material": {str(StuffIDs.ISSUE): 1}},
             },
         )
         Action.objects.update_or_create(
@@ -211,20 +196,16 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps(
-                    {"produced_material": {str(StuffIDs.CLAAS_VERSCHLAEFT): 1}}
-                ),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {"produced_material": {str(StuffIDs.CLAAS_VERSCHLAEFT): 1}},
             },
         )
         Action.objects.update_or_create(
@@ -234,20 +215,16 @@ class Command(BaseCommand):
                 "category": "PR",
                 "application_duration": 20,
                 "effect_duration": None,
-                "conditions": json.dumps(
-                    {
-                        "required_actions": None,
-                        "prohibitive_actions": None,
-                        "material": [],
-                        "num_personnel": 1,
-                        "lab_devices": None,
-                        "area": None,
-                        "role": [],
-                    }
-                ),
-                "results": json.dumps(
-                    {"produced_material": {str(StuffIDs.RETRO_PHOTO): 10}}
-                ),
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": None,
+                    "material": [],
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [],
+                },
+                "results": {"produced_material": {str(StuffIDs.RETRO_PHOTO): 10}},
             },
         )
 

@@ -1,7 +1,3 @@
-import json
-from template.constants import MaterialIDs, RoleIDs, role_map
-
-
 class ConditionFactory:
     def __new__(
         cls,
@@ -36,4 +32,4 @@ class ConditionFactory:
             default_conditions["area"] = area
         if role:
             default_conditions["role"] = role
-        return json.dumps(default_conditions)
+        return default_conditions

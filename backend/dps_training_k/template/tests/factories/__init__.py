@@ -1,4 +1,3 @@
-from .JSON_factory import *
 from .action_factory import *
 from .condition_factory import *
 from .material_factory import *

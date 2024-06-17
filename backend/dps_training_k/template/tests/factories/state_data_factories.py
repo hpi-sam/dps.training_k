@@ -1,7 +1,7 @@
-from .JSON_factory import JSONFactory
+from faker import Faker
 
 
-class VitalSignsData(JSONFactory):
+class VitalSignsData:
     def __new__(cls):
         """Needed to copy interface of factory"""
 
@@ -14,10 +14,27 @@ class VitalSignsData(JSONFactory):
             "psyche": None,
             "skin": None,
         }
-        return super().__new__(cls, state_data_dict)
+        instance = super().__new__(cls)
+        instance.__init__(state_data_dict)
+        return instance.generate()
+
+    def __init__(self, dict):
+        self.random = Faker()
+        self.dict = dict
+
+    def generate(self):
+        r_dict = self.dict
+        for key, value in r_dict.items():
+            if not value:
+                r_dict[key] = self.random.sentence()
+        return r_dict
 
 
-class ExaminationCodesData(JSONFactory):
+class ExaminationCodesData:
+    def __new__(cls):
+        instance = super().__new__(cls)
+        return instance.generate()
+
     @staticmethod
     def generate(
         bga_oxy="600",
