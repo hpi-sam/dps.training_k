@@ -18,7 +18,7 @@ services:
 
   # Caching service
   redis:
-    image: redis:latest
+    image: redis:7.2.5
     container_name: K-dPS-redis
 
   # Backend service
