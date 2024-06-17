@@ -1,10 +1,21 @@
 version: '3.8'
 
 services:
+  # Update service for self-hosted Docker images for completely automatic deployment
+  # Only updates images marked with the label "com.centurylinklabs.watchtower.enable=true"
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 60 --label-enable
+
   # Database service
   postgres:
     image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
     container_name: K-dPS-postgres
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     env_file:
       - .env.${RUN_CONFIG}
     volumes:
@@ -18,13 +29,15 @@ services:
 
   # Caching service
   redis:
-    image: redis:latest
+    image: redis:7.2.5
     container_name: K-dPS-redis
 
   # Backend service
   django:
     image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
     container_name: K-dPS-django
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
     depends_on:
       - postgres
@@ -43,6 +56,8 @@ services:
   celeryworker:
     image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
     container_name: K-dPS-celeryworker
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     env_file:
@@ -53,6 +68,8 @@ services:
   celerybeat:
     image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
     container_name: K-dPS-celerybeat
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     env_file:
@@ -63,6 +80,8 @@ services:
   nginx:
     image: ghcr.io/hpi-sam/dps_training_k-nginx:${IMAGE_TAG}
     container_name: K-dPS-nginx
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     volumes:
@@ -74,6 +93,8 @@ services:
   web:
     image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
     container_name: K-dPS-frontend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "5173:5173"
 
