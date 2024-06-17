@@ -105,6 +105,7 @@
 
 <template>
 	<main>
+		New Frontend container
 		<component :is="currentModuleComponent" />
 	</main>
 

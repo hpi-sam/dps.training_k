@@ -182,7 +182,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     def handle_test_passthrough(self, _):
         self.send_event(
             self.OutgoingMessageTypes.TEST_PASSTHROUGH,
-            message="received test event",
+            message="received test event - new backend",
         )
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
