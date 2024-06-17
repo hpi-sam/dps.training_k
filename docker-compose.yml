@@ -1,6 +1,8 @@
 version: '3.8'
 
 services:
+  # Update service for self-hosted Docker images for completely automatic deployment
+  # Only updates images marked with the label "com.centurylinklabs.watchtower.enable=true"
   watchtower:
     image: containrrr/watchtower
     volumes:
