@@ -17,7 +17,9 @@ class Command(BaseCommand):
     def create_actions():
         """
         "category": Action.Category.TREATMENT, // category as defined in Action, short form
-        "location": BE, : 60, // application duration in seconds
+        "location": BE, // location where action is conducted
+        "relocates": false // boolean indicating whether action relocates the patient or not
+        "application_duration: 60, // application duration in seconds
         "effect_duration": 60,  // effect duration in seconds; None means permanent
         "conditions": {
             "required_actions": ["A1uuid", "A2uuid", ["A3uuid", "A4uuid"]], // this means action1 AND action2 AND (action3 OR action4); can be None
@@ -923,11 +925,7 @@ class Command(BaseCommand):
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
-                        [
-                            str(ActionIDs.TRACHEALTUBUS),
-                            str(ActionIDs.LARYNXTUBUS),
-                            str(ActionIDs.LARYNXMASKE),
-                        ],
+                        str(ActionIDs.TRACHEALTUBUS),
                     ],
                     "prohibitive_actions": None,
                     "material": [

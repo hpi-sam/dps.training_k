@@ -24,6 +24,16 @@ class Command(BaseCommand):
         )
 
     def create_subconditions(self):
+        """
+        name="Lyse", // name of subcondition
+        upper_limit=CUSTOM_MAXINT, // maximum number of occurrences of fulfilling actions or fulfilling materials
+        lower_limit=1, // minimum number of occurrences of fulfilling actions or fulfilling materials
+        fulfilling_measures={
+            "actions": [str(ActionIDs.LYSE_VERARBREICHEN)],
+            "materials": [],
+        }, // actions / materials that fulfill this subcondition. everything is or-connected. and-connection is not possible with current implementation
+        """
+
         # corresponds to "Lyse"
         Subcondition.objects.update_or_create(
             name="Lyse",
@@ -127,7 +137,10 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.SAUERSTOFF_ANBRINGEN)],
+                "actions": [
+                    str(ActionIDs.SAUERSTOFF_ANBRINGEN),
+                    str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
+                ],
                 "materials": [],
             },
         )
@@ -154,7 +167,10 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.SAUERSTOFF_ANBRINGEN)],
+                "actions": [
+                    str(ActionIDs.SAUERSTOFF_ANBRINGEN),
+                    str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
+                ],
                 "materials": [],
             },
         )
@@ -194,9 +210,16 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [],
+                "actions": [
+                    str(ActionIDs.STABILE_SEITENLAGE),
+                    str(ActionIDs.GUEDELTUBUS),
+                    str(ActionIDs.WENDELTUBUS),
+                    str(ActionIDs.TRACHEALTUBUS),
+                    str(ActionIDs.LARYNXMASKE),
+                    str(ActionIDs.LARYNXTUBUS),
+                ],
                 "materials": [],
-            },  # add "Tubus" things here?
+            },
         )
         # corresponds to "EK´s"
         Subcondition.objects.update_or_create(
@@ -891,10 +914,7 @@ class Command(BaseCommand):
         return patient_states
 
 
-# TODO: how do we check "freie Atemwege"? this doesn't depend on measures, instead its in the patient state data
-# TODO: which action corresponds to "Infusion"?
 # TODO: add action for Operation, then also add to corresponding Subcondition
-# TODO: which action corresponds to "O2 Inhalation", same for O2?
 # TODO: which action corresponds to "CPAP"?
 # TODO: are there more "Blutstillungen" than "Chir. Blutstillung"?
 # TODO: patient 1036 has no value for ZVD
