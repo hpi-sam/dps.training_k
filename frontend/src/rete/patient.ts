@@ -1,27 +1,21 @@
 import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete'
-
 import { Area2D, AreaExtensions, AreaPlugin } from 'rete-area-plugin'
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
 } from 'rete-connection-plugin'
-
 import { VuePlugin, VueArea2D, Presets as VuePresets } from 'rete-vue-plugin'
-
 import {
   AutoArrangePlugin,
   Presets as ArrangePresets,
 } from 'rete-auto-arrange-plugin'
-
+import { Zoom } from 'rete-area-plugin'
 import {
   ContextMenuPlugin,
   ContextMenuExtra,
   Presets as ContextMenuPresets,
 } from 'rete-context-menu-plugin'
-import { MinimapExtra, MinimapPlugin } from 'rete-minimap-plugin'
-
 import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
-
 import CircleNode from './customization/CircleNode.vue'
 import SquareNode from './customization/SquareNode.vue'
 
@@ -101,13 +95,13 @@ export async function createEditor(
       ['Transition', () => new TransitionNode()],
     ]),
   })
-  const minimap = new MinimapPlugin<Schemes>()
   
   editor.use(area)
   area.use(vueRender)
   area.use(connection)
   area.use(contextMenu)
-  area.use(minimap)
+
+  area.area.setZoomHandler(null)
   
   connection.addPreset(() => new ClassicFlow({
     makeConnection(from, to, context) {
@@ -133,7 +127,6 @@ export async function createEditor(
 
   vueRender.addPreset(VuePresets.classic.setup())
   vueRender.addPreset(VuePresets.contextMenu.setup())
-  vueRender.addPreset(VuePresets.minimap.setup())
 
   // Create nodes from patient states and store them in an object
   for (const patientState of Object.values(patientStateStore.patientStates)) {
