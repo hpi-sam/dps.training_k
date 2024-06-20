@@ -1,5 +1,7 @@
-from rest_framework import serializers
 from abc import ABC
+
+from rest_framework import serializers
+
 import template.models.action as a
 
 
@@ -47,7 +49,7 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
             {
                 "name": "Beliebiges Personal",
                 "available": len(self.patient_instance.personnel_available()),
-                "assigned": len(self.patient_instance.personel_assigned()),
+                "assigned": len(self.patient_instance.personnel_assigned()),
                 "needed": self.action.personnel_count_needed(),
             }
         ]
@@ -84,7 +86,7 @@ class LabActionCheckSerializer(ActionCheckSerializer):
             {
                 "name": "Beliebiges Personal",
                 "available": len(self.lab.personnel_available()),
-                "assigned": len(self.lab.personel_assigned()),
+                "assigned": len(self.lab.personnel_assigned()),
                 "needed": self.action.personnel_count_needed(),
             }
         ]

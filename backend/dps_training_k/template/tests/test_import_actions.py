@@ -1,4 +1,3 @@
-import json
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -9,6 +8,7 @@ from template.management.commands.import_actions import (
 
 
 class TestPopulateActionsCommand(TestCase):
+
     def test_defaults_structure(self):
         """
         actions inside import_actions command according to comment in import_actions.create_action.
@@ -42,7 +42,7 @@ class TestPopulateActionsCommand(TestCase):
                     f"{defaults['effect_duration']} is neither an int nor a NoneType",
                 )
                 conditions = defaults["conditions"]
-                conditions = json.loads(conditions)
+                conditions = conditions
                 self.assertTrue(
                     isinstance(conditions["required_actions"], type(None))
                     or isinstance(conditions["required_actions"], list),
@@ -76,6 +76,11 @@ class TestPopulateActionsCommand(TestCase):
                     isinstance(conditions["role"], list),
                     f"{conditions['role']} is not a list ",
                 )
+                if defaults.get("results", None):
+                    self.assertTrue(
+                        isinstance(defaults["results"], dict),
+                        f"{defaults['results']} is not a dict",
+                    )
                 num_personnel = 0
                 for entry in conditions["role"]:
                     if isinstance(entry, dict):

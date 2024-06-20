@@ -2,7 +2,6 @@
 	import {ref} from 'vue'
 	import {usePatientStore} from '@/stores/Patient'
 	import {Modules, setModule, showErrorToast} from "@/App.vue"
-	import {svg} from "@/assets/Svg"
 
 	const exerciseIdInput = ref("")
 	const patientIdInput = ref("")
@@ -27,7 +26,7 @@
 			"patientId": patientId,
 		}
 
-		fetch('http://localhost:8000/patient/access', {
+		fetch('http://' + import.meta.env.VITE_SERVER_URL + ':8000/patient/access', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -56,6 +55,9 @@
 				usePatientStore().token = data.token
 				setModule(Modules.PATIENT)
 			})
+			.catch(_ => {
+				// Do nothing here, just catch the error to prevent unhandled Promise rejection as it is already handled above in the switch case
+			})
 	}
 </script>
 
@@ -66,9 +68,7 @@
 			<input id="patient-login-exercise-id" v-model="exerciseIdInput" placeholder="Übungs-ID">
 			<input id="patient-login-patient-id" v-model="patientIdInput" placeholder="Patienten-ID">
 			<button id="patient-login" @click="submit()">
-				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-					<path :d="svg.loginIcon" />
-				</svg>
+				Einloggen
 			</button>
 		</div>
 	</div>

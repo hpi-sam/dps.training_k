@@ -2,3 +2,4 @@
 backend/.vscode/settings.json
 .idea/
 .vscode/launch.json
+backend/dps_training_k/restart_backend.sh

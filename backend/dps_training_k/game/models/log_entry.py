@@ -1,6 +1,7 @@
 from django.db import models
-from game.channel_notifications import LogEntryDispatcher
 from django.utils import timezone
+
+from game.channel_notifications import LogEntryDispatcher
 
 
 class LogEntry(models.Model):
@@ -53,9 +54,16 @@ class LogEntry(models.Model):
         return log_entries
 
     def generate_local_id(self, exercise):
-        return LogEntry.objects.filter(exercise=exercise).count() + 1
+        highest_local_id = LogEntry.objects.filter(exercise=exercise).aggregate(models.Max("local_id"))["local_id__max"]
+        if highest_local_id:
+            return highest_local_id + 1
+        return 1
 
     def is_valid(self):
         if self.timestamp and self.local_id and not self.is_dirty:
             return True
         return False
+
+    def set_dirty(self, new_dirty):
+        self.is_dirty = new_dirty
+        self.save(update_fields=["is_dirty"])

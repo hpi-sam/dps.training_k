@@ -4,6 +4,8 @@
 	import socketTrainer, {serverMockEvents as serverMockEventsTrainer} from "@/sockets/SocketTrainer"
 	import {connection} from "@/stores/Connection"
 
+	const runMode = import.meta.env.VITE_RUN_CONFIG
+
 	const connectionState = computed(() => {
 		if (currentModule.value === Modules.TRAINER) return connection.trainerConnected
 		else if (currentModule.value === Modules.PATIENT) return connection.patientConnected
@@ -110,7 +112,7 @@
 		<component :is="currentModuleComponent" />
 	</main>
 
-	<div id="dev-bar">
+	<div v-if="runMode == 'dev'" id="dev-bar">
 		<button id="login-module-button" @click="currentModule=Modules.LOGIN">
 			Login
 		</button>

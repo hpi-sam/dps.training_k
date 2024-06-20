@@ -7,8 +7,9 @@ from game.models import (
     MaterialInstance,
     ActionInstance,
     ScheduledEvent,
-    Exercise,
+    Personnel,
     ActionInstanceStateNames,
+    Area,
 )
 from game.serializers.action_check_serializers import (
     PatientInstanceActionCheckSerializer,
@@ -22,6 +23,9 @@ from ..channel_notifications import (
     PersonnelDispatcher,
     MaterialInstanceDispatcher,
 )
+from ..serializers.resource_assignment_serializer import AreaResourceSerializer
+
+from ..serializers.patient_relocating_serializer import PatientRelocatingSerializer
 
 
 class PatientConsumer(AbstractConsumer):
@@ -30,24 +34,30 @@ class PatientConsumer(AbstractConsumer):
     """
 
     class PatientIncomingMessageTypes:
-        EXAMPLE = "example"
-        TEST_PASSTHROUGH = "test-passthrough"
-        TRIAGE = "triage"
+        ACTION_ADD = "action-add"
+        ACTION_CANCEL = "action-cancel"
         ACTION_CHECK = "action-check"
         ACTION_CHECK_STOP = "action-check-stop"
-        ACTION_ADD = "action-add"
-        MATERIAL_RELEASE = "material-release"
+        EXAMPLE = "example"
         MATERIAL_ASSIGN = "material-assign"
+        MATERIAL_RELEASE = "material-release"
+        PATIENT_MOVE = "patient-move"
+        PERSONNEL_ASSIGN = "personnel-assign"
+        PERSONNEL_RELEASE = "personnel-release"
+        TEST_PASSTHROUGH = "test-passthrough"
+        TRIAGE = "triage"
 
     class PatientOutgoingMessageTypes:
-        RESPONSE = "response"
-        EXERCISE = "exercise"
-        TEST_PASSTHROUGH = "test-passthrough"
-        STATE_CHANGE = "state-change"
+        ACTION_CHECK = "action-check"
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
-        ACTION_CHECK = "action-check"
+        EXERCISE = "exercise"
+        RESOURCE_ASSIGNMENTS = "resource-assignments"
+        RESPONSE = "response"
+        STATE_CHANGE = "state"
+        PATIENT_RELOCATING = "patient-relocating"
+        PATIENT_BACK = "patient-back"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,18 +66,15 @@ class PatientConsumer(AbstractConsumer):
         ]
         self.patient_frontend_id = ""
         self.currently_inspected_action = None
-        self.REQUESTS_MAP = {
-            self.PatientIncomingMessageTypes.EXAMPLE: (
-                self.handle_example,
-                "exerciseId",
-                "patientId",
+
+        patient_request_map = {
+            self.PatientIncomingMessageTypes.ACTION_ADD: (
+                self.handle_action_add,
+                "actionName",
             ),
-            self.PatientIncomingMessageTypes.TEST_PASSTHROUGH: (
-                self.handle_test_passthrough,
-            ),
-            self.PatientIncomingMessageTypes.TRIAGE: (
-                self.handle_triage,
-                "triage",
+            self.PatientIncomingMessageTypes.ACTION_CANCEL: (
+                self.handle_action_cancel,
+                "actionId",
             ),
             self.PatientIncomingMessageTypes.ACTION_CHECK: (
                 self.handle_action_check,
@@ -76,21 +83,38 @@ class PatientConsumer(AbstractConsumer):
             self.PatientIncomingMessageTypes.ACTION_CHECK_STOP: (
                 self.handle_action_check_stop,
             ),
-            self.PatientIncomingMessageTypes.ACTION_ADD: (
-                self.handle_action_add,
-                "actionName",
-            ),
-            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
-                self.handle_material_release,
-                "materialId",
+            self.PatientIncomingMessageTypes.EXAMPLE: (
+                self.handle_example,
+                "exerciseId",
+                "patientId",
             ),
             self.PatientIncomingMessageTypes.MATERIAL_ASSIGN: (
                 self.handle_material_assign,
                 "materialId",
             ),
+            self.PatientIncomingMessageTypes.MATERIAL_RELEASE: (
+                self.handle_material_release,
+                "materialId",
+            ),
+            self.PatientIncomingMessageTypes.PATIENT_MOVE: (
+                self.handle_patient_move,
+                "areaId",
+            ),
+            self.PatientIncomingMessageTypes.PERSONNEL_ASSIGN: (
+                self.handle_personnel_assign,
+                "personnelId",
+            ),
+            self.PatientIncomingMessageTypes.PERSONNEL_RELEASE: (
+                self.handle_personnel_release,
+                "personnelId",
+            ),
+            self.PatientIncomingMessageTypes.TRIAGE: (
+                self.handle_triage,
+                "triage",
+            ),
         }
+        self.REQUESTS_MAP.update(patient_request_map)
 
-    @property
     def get_patient_instance(self):
         # this enforces that we always work with up to date data from the database
         # if you want to update values, copy the instance this function returns and work with that.
@@ -116,9 +140,12 @@ class PatientConsumer(AbstractConsumer):
             self._send_exercise(exercise=self.exercise)
             self.send_available_actions()
             self.send_available_patients()
-            self.action_list_event(None)
-            if self.exercise.state == Exercise.StateTypes.RUNNING:
-                self.exercise_start_event(None)
+            self.state_change_event()
+            if self.exercise.is_running():
+                self.exercise_start_event()
+                self.action_list_event()
+                self.resource_assignment_event()
+
         else:
             self.close()
 
@@ -126,47 +153,35 @@ class PatientConsumer(AbstractConsumer):
     # API Methods, open to client.
     # These methods are not allowed to be called directly. If you want to call them from the backend, go via self.receive_json()
     # ------------------------------------------------------------------------------------------------------------------------------------------------
-    def handle_example(
-        self, patient_instance, exercise_frontend_id, patient_frontend_id
-    ):
-        self.exercise_frontend_id = exercise_frontend_id
-        self.patient_frontend_id = patient_frontend_id
-        self.send_event(
-            self.PatientOutgoingMessageTypes.RESPONSE,
-            content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
-        )
-
-    def handle_test_passthrough(self, patient_instance):
-        self.send_event(
-            self.PatientOutgoingMessageTypes.TEST_PASSTHROUGH,
-            message="received test event",
-        )
-
-    def handle_triage(self, patient_instance, triage):
-        patient_instance.triage = triage
-        patient_instance.save(update_fields=["triage"])
-
     def handle_action_add(self, patient_instance, action_name):
         action_template = Action.objects.get(name=action_name)
-        if action_template.category == Action.Category.PRODUCTION:
-            action_instance = ActionInstance.create(
-                template=action_template,
-                lab=self.exercise.lab,
-                area=patient_instance.area,
-            )
-        else:
-            action_instance = ActionInstance.create(
-                template=action_template,
-                patient_instance=patient_instance,
-            )
-        application_succeded, context = action_instance.try_application()
-        if not application_succeded:
-            self._send_action_declination(action_name=action_name, message=context)
+        kwargs = {}
+        if action_template.location == Action.Location.LAB:
+            kwargs["lab"] = self.exercise.lab
+        if (
+            action_template.location == Action.Location.BEDSIDE
+            or action_template.category == Action.Category.EXAMINATION
+            or action_template.relocates
+        ):
+            kwargs["patient_instance"] = patient_instance
 
-    def handle_action_check(self, patient_instance, action_name):
+        if action_template.category == Action.Category.PRODUCTION:
+            kwargs["destination_area"] = patient_instance.area
+        action_instance = ActionInstance.create(action_template, **kwargs)
+        application_succeded, message = action_instance.try_application()
+        if not application_succeded:
+            self._send_action_declination(action_name=action_name, message=message)
+
+    def handle_action_cancel(self, _, action_id):
+        action_instance = ActionInstance.objects.get(id=action_id)
+        success, message = action_instance.try_cancelation()
+        if not success:
+            self.send_failure(message=message)
+
+    def handle_action_check(self, _, action_name):
         self._start_inspecting_action(action_name)
         action_template = Action.objects.get(name=action_name)
-        if action_template.category == Action.Category.PRODUCTION:
+        if action_template.location == Action.Location.LAB:
             action_check_message = LabActionCheckSerializer(
                 action_template, self.exercise.lab
             ).data
@@ -179,25 +194,59 @@ class PatientConsumer(AbstractConsumer):
             **action_check_message,
         )
 
-    def handle_action_check_stop(self, patient_instance):
+    def handle_action_check_stop(self, _):
         self._stop_inspecting_action(self.currently_inspected_action)
 
-    def handle_material_release(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
-        area = patient_instance.area
-        succeeded = material_instance.try_moving_to(area)
-        if not succeeded:
-            self.send_failure(
-                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
-            )
+    def handle_example(self, _, exercise_frontend_id, patient_frontend_id):
+        self.exercise_frontend_id = exercise_frontend_id
+        self.patient_frontend_id = patient_frontend_id
+        self.send_event(
+            self.PatientOutgoingMessageTypes.RESPONSE,
+            content=f"exerciseId {self.exercise_frontend_id} & patientId {self.patient_frontend_id}",
+        )
 
     def handle_material_assign(self, patient_instance, material_id):
-        material_instance = MaterialInstance.objects.get(pk=material_id)
-        succeeded = material_instance.try_moving_to(patient_instance)
+        material_instance = MaterialInstance.objects.get(id=material_id)
+        succeeded, message = material_instance.try_moving_to(patient_instance)
         if not succeeded:
-            self.send_failure(
-                message="Dieses Material wird aktuell verwendet. Es kann nicht verschoben werden."
+            self.send_failure(message=message)
+
+    def handle_material_release(self, patient_instance, material_id):
+        material_instance = MaterialInstance.objects.get(id=material_id)
+        area = patient_instance.area
+        succeeded, message = material_instance.try_moving_to(area)
+        if not succeeded:
+            self.send_failure(message=message)
+
+    def handle_patient_move(self, patient_instance, area_id):
+        area = Area.objects.get(id=area_id)
+        succeeded, message = patient_instance.try_moving_to(area)
+
+        if not succeeded:
+            self.send_failure(message=message)
+            return
+
+        if message is not None and message != "":
+            self.send_warning(
+                message=message,
             )
+
+    def handle_personnel_assign(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(id=personnel_id)
+        succeeded, message = personnel.try_moving_to(patient_instance)
+        if not succeeded:
+            self.send_failure(message=message)
+
+    def handle_personnel_release(self, patient_instance, personnel_id):
+        personnel = Personnel.objects.get(id=personnel_id)
+        area = patient_instance.area
+        succeeded, message = personnel.try_moving_to(area)
+        if not succeeded:
+            self.send_failure(message=message)
+
+    def handle_triage(self, patient_instance, triage):
+        patient_instance.triage = triage
+        patient_instance.save(update_fields=["triage"])
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     # methods used internally
@@ -230,14 +279,16 @@ class PatientConsumer(AbstractConsumer):
     # Events triggered internally by channel notifications
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
-    def state_change_event(self, event):
-        serialized_state = StateSerializer(self.get_patient_instance.patient_state).data
+    def state_change_event(self, event=None):
+        serialized_state = StateSerializer(
+            self.get_patient_instance().patient_state
+        ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE_CHANGE,
-            **serialized_state,
+            state=serialized_state,
         )
 
-    def action_check_changed_event(self, event):
+    def action_check_changed_event(self, event=None):
         if self.currently_inspected_action:
             self.receive_json(
                 {
@@ -247,25 +298,29 @@ class PatientConsumer(AbstractConsumer):
             )
 
     def action_confirmation_event(self, event):
-        action_instance = ActionInstance.objects.get(pk=event["action_instance_pk"])
+        action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_CONFIRMATION,
             actionId=action_instance.id,
             actionName=action_instance.name,
         )
 
-    def action_list_event(self, event):
+    def action_list_event(self, event=None):
         actions = []
 
         """all action_instances where either the patient_instance is self.patient_instance or 
         the category is production and the area is the same as the patient_instance.area"""
-        action_instances = ActionInstance.objects.filter(
-            Q(patient_instance=self.get_patient_instance)
-            | Q(
-                template__category=Action.Category.PRODUCTION,
-                area=self.get_patient_instance.area,
+        action_instances = (
+            ActionInstance.objects.filter(
+                Q(patient_instance=self.get_patient_instance())
+                | Q(
+                    template__category=Action.Category.PRODUCTION,
+                    destination_area=self.get_patient_instance().area,
+                )
             )
-        ).exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+            .exclude(current_state__name=ActionInstanceStateNames.ON_HOLD)
+            .exclude(current_state__name=ActionInstanceStateNames.CANCELED)
+        )
         # ToDo: remove the filter for ON_HOLD actions, when the scheduler is implemented so that the actions are not forever stuck in ON_HOLD
 
         for action_instance in action_instances:
@@ -287,4 +342,45 @@ class PatientConsumer(AbstractConsumer):
         self.send_event(
             self.PatientOutgoingMessageTypes.ACTION_LIST,
             actions=actions,
+        )
+
+    def relocation_start_event(self, event):
+        self.unsubscribe(ChannelNotifier.get_group_name(self.exercise))
+        action_instance = ActionInstance.objects.get(id=event["action_instance_id"])
+        self.send_event(
+            self.PatientOutgoingMessageTypes.PATIENT_RELOCATING,
+            **PatientRelocatingSerializer(action_instance).data,
+        )
+
+    def relocation_end_event(self, event=None):
+        self.subscribe(ChannelNotifier.get_group_name(self.exercise))
+        self.send_event(
+            self.PatientOutgoingMessageTypes.PATIENT_BACK,
+        )
+
+    def send_exercise_event(self, event):
+        if (
+            not self.get_patient_instance().area
+        ):  # frontend assumes that patients are always in an area
+            return
+        super().send_exercise_event(event)
+
+    def resource_assignment_event(self, event=None):
+        patient_instance = self.get_patient_instance()
+
+        if not patient_instance:
+            return
+
+        area = patient_instance.area
+
+        if not area:
+            self.send_event(
+                self.PatientOutgoingMessageTypes.RESOURCE_ASSIGNMENTS,
+                resourceAssignments=[],
+            )
+
+        area_data = AreaResourceSerializer(area).data
+        self.send_event(
+            self.PatientOutgoingMessageTypes.RESOURCE_ASSIGNMENTS,
+            resourceAssignments=[area_data],
         )

@@ -5,6 +5,7 @@
 	import {useActionCheckStore} from '@/stores/ActionCheck'
 	import {svg} from '@/assets/Svg'
 	import ActionGroupPopup from '@/components/widgets/ActionGroupPopup.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-action'])
 
@@ -71,144 +72,132 @@
 		</div>
 		<div class="scroll">
 			<h1>{{ actionCheckStore?.actionName }}</h1>
-			<div class="list">
+			<CustomList>
 				<p v-if="actionCheckStore?.applicationDuration">
-					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(14, 19) }}
+					Ausführungsdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.applicationDuration)).toISOString().substring(12, 19) }}
 				</p>
 				<p v-if="actionCheckStore?.effectDuration > 0">
-					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(14, 19) }}
+					Effektdauer: {{ new Date(new Date(0).setSeconds(actionCheckStore?.effectDuration)).toISOString().substring(12, 19) }}
 				</p>
 				<br>
-				<p v-if="actionCheckStore?.personnel?.length > 0">
+			</CustomList>
+			<CustomList v-if="actionCheckStore?.personnel?.length > 0">
+				<p>
 					Personal (verfügbar / zugeordnet / benötigt)
 				</p>
-				<div
+				<ListItem
 					v-for="personnel in actionCheckStore?.personnel"
 					:key="personnel.name"
-					class="listItem"
 				>
-					<div class="list-item-button">
-						<div class="list-item-icon">
+					<ListItemButton>
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(personnel.available, personnel.assigned, personnel.needed)" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ personnel.name }}
-						</div>
-						<div class="right-text">
+						</ListItemLeft>
+						<ListItemName :name="personnel.name" />
+						<ListItemRight>
 							{{ personnel.available }} / {{ personnel.assigned }} / {{ personnel.needed }}
-						</div>
-					</div>
-				</div>
-				<br>
-				<p v-if="actionCheckStore?.material?.length > 0">
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="actionCheckStore?.material?.length > 0">
+				<p>
 					Material (verfügbar / zugeordnet / benötigt)
 				</p>
-				<div
+				<ListItem
 					v-for="material in actionCheckStore?.material"
 					:key="material.name"
-					class="listItem"
 				>
-					<div class="list-item-button">
-						<div class="list-item-icon">
+					<ListItemButton>
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(material.available, material.assigned, material.needed)" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ material.name }}
-						</div>
-						<div class="right-text">
+						</ListItemLeft>
+						<ListItemName :name="material.name" />
+						<ListItemRight>
 							{{ material.available }} / {{ material.assigned }} / {{ material.needed }}
-						</div>
-					</div>
-				</div>
-				<br>
-				<p v-if="actionCheckStore.labDevices?.length > 0">
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="actionCheckStore.labDevices?.length > 0">
+				<p>
 					Laborgeräte (verfügbar / benötigt)
 				</p>
-				<div
+				<ListItem
 					v-for="labDevice in actionCheckStore?.labDevices"
 					:key="labDevice.name"
-					class="listItem"
 				>
-					<div class="list-item-button">
-						<div class="list-item-icon">
+					<ListItemButton>
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="getIconPath(labDevice.available, labDevice.available, labDevice.needed)" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ labDevice.name }}
-						</div>
-						<div class="right-text">
+						</ListItemLeft>
+						<ListItemName :name="labDevice.name" />
+						<ListItemRight>
 							{{ labDevice.available }} / {{ labDevice.needed }}
-						</div>
-					</div>
-				</div>
-				<br>
-				<p v-if="actionCheckStore?.requiredActions?.singleActions?.length > 0">
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="actionCheckStore?.requiredActions?.singleActions?.length > 0">
+				<p>
 					Folgende Aktionen müssen zuvor durchgeführt werden
 				</p>
-				<div
+				<ListItem
 					v-for="(action, index) in actionCheckStore?.requiredActions?.singleActions"
 					:key="index"
-					class="listItem"
 				>
-					<div class="list-item-button">
-						<div class="list-item-icon">
+					<ListItemButton>
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.closeIcon" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ action }}
-						</div>
-					</div>
-				</div>
-				<div
+						</ListItemLeft>
+						<ListItemName :name="action" />
+					</ListItemButton>
+				</ListItem>
+				<ListItem
 					v-for="(actionGroup, index) in actionCheckStore?.requiredActions?.actionGroups"
 					:key="index"
-					class="list-item"
 				>
-					<div class="list-item-button" @click="openActionGroupPopup(actionGroup.actions)">
-						<div class="list-item-icon">
+					<ListItemButton @click="openActionGroupPopup(actionGroup.actions)">
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.closeIcon" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ actionGroup.groupName ? actionGroup.groupName : actionGroup.actions.join(' / ') }}
-						</div>
-						<div class="right-text">
+						</ListItemLeft>
+						<ListItemName :name="actionGroup.groupName ? actionGroup.groupName : actionGroup.actions.join(' / ')" />
+						<ListItemRight>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.descriptionIcon" />
 							</svg>
-						</div>
-					</div>
-				</div>
-				<br>
-				<p v-if="actionCheckStore?.prohibitedActions?.length > 0">
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
+			<CustomList v-if="actionCheckStore?.prohibitedActions?.length > 0">
+				<p>
 					Folgende durchgeführte Aktionen verhindern die Anordnung
 				</p>
-				<div
+				<ListItem
 					v-for="(action, index) in actionCheckStore?.prohibitedActions"
 					:key="index"
-					class="list-item"
 				>
-					<div class="list-item-button">
-						<div class="list-item-icon">
+					<ListItemButton>
+						<ListItemLeft>
 							<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
 								<path :d="svg.closeIcon" />
 							</svg>
-						</div>
-						<div class="list-item-name">
-							{{ action }}
-						</div>
-					</div>
-				</div>
-			</div>
+						</ListItemLeft>
+						<ListItemName :name="action" />
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 		<div>
 			<button v-if="actionCheckStore?.actionName" class="main-button" :disabled="errorMessage.length > 0" @click="addAction()">
@@ -235,14 +224,11 @@
 		margin-bottom: 80px;
 	}
 
-	.right-text {
-		flex-shrink: 0;
-		margin-right: 16px;
-		white-space: nowrap;
-		width: auto;
-	}
-
 	.error-message {
 		font-size: 12px;
+	}
+
+	.list-item-right {
+		margin-right: 16px;
 	}
 </style>

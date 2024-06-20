@@ -7,14 +7,15 @@
 	import PatientCodeList from "./PatientCodeList.vue"
 	import {showErrorToast} from "@/App.vue"
 	import CloseButton from "./CloseButton.vue"
-	import { generateName } from "@/utils"
+	import {generateName} from "@/utils"
+	import {ListItem} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
 	const props = defineProps({
-		areaName: {
-			type: String,
-			default: 'No Area'
+		areaId: {
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		},
 	})
 
@@ -22,11 +23,11 @@
 	patientName.value = generateName()
 
 	function addPatient() {
-		if (!patientCodeChanged) {
+		if (!patientCodeChanged.value) {
 			showErrorToast('Es wurde kein Patientencode ausgewählt')
 			return
 		}
-		socketTrainer.patientAdd(props.areaName, patientName.value, currentPatientCode.value)
+		socketTrainer.patientAdd(props.areaId, patientName.value, currentPatientCode.value)
 		patientName.value = generateName()
 	}
 
@@ -41,11 +42,11 @@
 		return null
 	})
 
-	let patientCodeChanged = false
+	const patientCodeChanged = ref(false)
 
 	function changePatientCode(patientCode: number) {
 		currentPatientCode.value = patientCode
-		patientCodeChanged = true
+		patientCodeChanged.value = true
 	}
 
 </script>
@@ -56,22 +57,20 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div id="left-side">
 				<div class="flex-container">
-					<h2>Patienten-Datensätze</h2>
 					<PatientCodeList @change-patient="changePatientCode" />
 				</div>
 			</div>
 			<div id="right-side">
-				<div class="list-item">
-					<TriageForListItems :patient-code="currentPatient?.code" />
+				<ListItem>
+					<TriageForListItems v-if="patientCodeChanged" :patient-code="currentPatient?.code" />
 					<div class="patient-name">
 						{{ patientName }}
 					</div>
-				</div>
+				</ListItem>
 				<div class="scroll">
 					<PatientInfo
 						:injury="currentPatient?.injury"
 						:biometrics="currentPatient?.biometrics"
-						:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
 						:mobility="currentPatient?.mobility"
 						:preexisting-illnesses="currentPatient?.preexistingIllnesses"
 						:permanent-medication="currentPatient?.permanentMedication"
@@ -133,15 +132,11 @@
 		background-color: var(--green);
 	}
 
-	.list-item {
-		margin-right: 40px;
-		font-size: 1.25rem;
-		text-align: left;
-		height: 50px;
-		padding-left: 0;
-	}
-
 	.patient-id, .patient-name {
 		padding: .75rem 1rem;
+	}
+
+	.patient-code {
+		margin-left: 0px;
 	}
 </style>

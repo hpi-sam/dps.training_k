@@ -1,26 +1,23 @@
 <script setup lang="ts">
 	import {ref} from 'vue'
 	import {useTrainerStore} from '@/stores/Trainer'
-	import {Modules, setModule} from "@/App.vue"
-	import {svg} from "@/assets/Svg"
+	import {Modules, setModule, showErrorToast} from "@/App.vue"
 
 	const usernameInput = ref("")
 	const passwordInput = ref("")
 
 	function submit() {
 		const trainerStore = useTrainerStore()
-		trainerStore.username = usernameInput.value
+		const username = usernameInput.value
+		const password = passwordInput.value
+		trainerStore.username = username
 
-		setModule(Modules.TRAINER)
-		return
-
-		// Will be used when trainer login is implemented in the backend
-		/*const requestBody = {
-			"username": usernameInput.value,
-			"password": passwordInput.value,
+		const requestBody = {
+			"username": username,
+			"password": password,
 		}
 
-		fetch('https://localhost:8000/trainer/login', {
+		fetch('http://' + import.meta.env.VITE_SERVER_URL + ':8000/trainer/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -31,11 +28,14 @@
 				if (!response.ok) {
 					console.log('Login failed:', response)
 					switch (response.status) {
+						case 400:
+							showErrorToast("Fehler: Username und oder Passwort nicht angegeben")
+							break
 						case 401:
-							showErrorToast("Fehler: falscher Nutzername oder falsches Passwort")
+							showErrorToast("Fehler: Falsches Passwort")
 							break
 						default:
-							showErrorToast("Fehler: Server nicht erreichbar")
+							showErrorToast("Fehler: Unbekannter Fehler")
 							break
 					}
 					return Promise.reject('Trainer login failed with status ' + response.status)
@@ -43,9 +43,12 @@
 				return response.json()
 			})
 			.then(data => {
-				trainerStore.token = data.token
+				useTrainerStore().token = data.token
 				setModule(Modules.TRAINER)
-			})*/
+			})
+			.catch(_ => {
+				// Do nothing here, just catch the error to prevent unhandled Promise rejection as it is already handled above in the switch case
+			})
 	}
 </script>
 
@@ -56,14 +59,12 @@
 			<input id="trainer-login-username" v-model="usernameInput" placeholder="Nutzername">
 			<input id="trainer-login-password" v-model="passwordInput" type="password" placeholder="Passwort">
 			<button id="trainer-login" @click="submit()">
-				<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-					<path :d="svg.loginIcon" />
-				</svg>
+				Übung erstellen
 			</button>
 		</div>
 	</div>
 </template>
 
 <style scoped>
-	@import url(../../assets/login.css);
+	@import url(../../assets/login.css)
 </style>

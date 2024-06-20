@@ -2,6 +2,7 @@
 	import {useAvailablesStore} from "@/stores/Availables"
 	import '@/assets/main.css'
 	import TriageForListItems from "./TriageForListItems.vue"
+	import {CustomList} from "@/components/widgets/List"
 
 	const availablesStore = useAvailablesStore()
 	const availablePatients = availablesStore.patients
@@ -15,7 +16,8 @@
 
 <template>
 	<div class="scroll">
-		<div class="list">
+		<h2>Patienten-Datensätze</h2>
+		<CustomList>
 			<button
 				v-for="patient in availablePatients"
 				:key="patient.code"
@@ -24,7 +26,7 @@
 			>
 				<TriageForListItems :patient-code="patient.code" />
 			</button>
-		</div>
+		</CustomList>
 	</div>
 </template>
 
@@ -38,6 +40,10 @@
 		align-items: center;
 		font-size: 1.25rem;
 		height: 50px;
+	}
+
+	.patient-code {
+		margin-left: 0px;
 	}
 </style>
   

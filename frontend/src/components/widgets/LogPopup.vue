@@ -14,6 +14,7 @@
 	})
 
 	const logStore = useLogStore()
+	const exerciseStore = useExerciseStore()
 
 	const currentLogEntry = computed(() => {
 		if (props.logId !== Number.NEGATIVE_INFINITY && logStore.getLogEntry(props.logId)) {
@@ -60,12 +61,12 @@
 						{{ new Date(currentLogEntry?.logTime || '').toTimeString().split(' ')[0] }}
 					</td>
 				</tr>
-				<tr v-if="currentLogEntry?.areaName">
+				<tr v-if="currentLogEntry?.areaId">
 					<td class="key">
 						Bereich:
 					</td>
 					<td>
-						{{ currentLogEntry?.areaName }}
+						{{ exerciseStore.getAreaName(currentLogEntry?.areaId) }}
 					</td>
 				</tr>
 				<tr v-if="currentLogEntry?.patientId">
@@ -76,7 +77,7 @@
 						{{ currentLogEntry?.patientId }} {{ patientName }}
 					</td>
 				</tr>
-				<tr v-if="currentLogEntry?.personnelNames">
+				<tr v-if="currentLogEntry?.personnelIds?.length">
 					<td class="key">
 						Personal:
 					</td>
@@ -105,6 +106,7 @@
 <style scoped>
 	.popup {
 		max-width: 50vw;
+		min-width: 300px;
 		overflow: hidden;
 	}
 

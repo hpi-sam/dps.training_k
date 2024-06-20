@@ -30,19 +30,21 @@
 </script>
 
 <script lang="ts">
-	const currentArea = ref("")
+	const currentArea = ref(0)
 
-	export const setArea = (newArea: string) => {
+	export const setArea = (newArea: number) => {
 		currentArea.value = newArea
 	}
 </script>
 
 <template>
 	<div class="page">
-		<p v-if="!currentArea" id="no-area-text">
-			Wähle einen Bereich aus
-		</p>
-		<component :is="currentPageComponent" v-if="currentArea" :current-area="currentArea" />
+		<div class="scroll">
+			<p v-if="!currentArea" id="no-area-text">
+				Wähle einen Bereich aus
+			</p>
+			<component :is="currentPageComponent" v-if="currentArea" :current-area="currentArea" />
+		</div>
 	</div>
 	<nav>
 		<button id="nav-patients" :class="{ 'selected': currentPage === Pages.PATIENTS }" @click="setPage(Pages.PATIENTS)">

@@ -7,7 +7,8 @@
 	import SpeedSelectorPopup from "./SpeedSelectorPopup.vue"
 	import { useAvailablesStore } from "@/stores/Availables"
 	import { useLogStore } from "@/stores/Log"
-	import {Screens, setLeftScreen, setRightScreen} from "@/components/ModuleTrainer.vue"
+	import { Modules, setModule } from "@/App.vue"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const exerciseStore = useExerciseStore()
 
@@ -44,8 +45,7 @@
 		useAvailablesStore().$reset()
 		useExerciseStore().$reset()
 		useLogStore().$reset()
-		setLeftScreen(Screens.CREATE_EXERCISE)
-		setRightScreen(Screens.JOIN_EXERCISE)
+		setModule(Modules.LOGIN)
 	}
 
 	function startExercise() {
@@ -121,27 +121,25 @@
 		@button-click="leaveExercise"
 		@close-popup="showLeavePopup = false"
 	/>
-	<div class="panel">
-		<button
-			class="leave-button"
-			@click="showLeavePopup = true"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				height="24"
-				viewBox="0 -960 960 960"
-				width="24"
-				fill="white"
+	<ListItem>
+		<ListItemLeft>
+			<button
+				class="leave-button"
+				@click="showLeavePopup = true"
 			>
-				<path :d="svg.arrowBackIcon" />
-			</svg>
-		</button>
-		<div class="list-item-button">
-			<div class="list-item-name">
-				{{ info }}
-			</div>
-		</div>
-		<div class="right-buttons">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					height="24"
+					viewBox="0 -960 960 960"
+					width="24"
+					fill="white"
+				>
+					<path :d="svg.arrowBackIcon" />
+				</svg>
+			</button>
+		</ListItemLeft>
+		<ListItemName :name="info" />
+		<ListItemRight>
 			<button
 				v-if="status != 'ended'"
 				class="speed-button"
@@ -209,11 +207,11 @@
 					<path :d="svg.closeIcon" />
 				</svg>
 			</button>
-		</div>
-	</div>
+		</ListItemRight>
+	</ListItem>
 </template>
 <style scoped>
-	.panel {
+	.list-item {
 		position: absolute;
 		bottom: 0rem;
 		width: 100%;
@@ -223,22 +221,12 @@
 		align-items: center;
 	}
 
-	.list-item-button {
-		flex-grow: 1;
-		height: 100%;
-	}
-
 	.leave-button {
 		background-color: var(--red);
 	}
 
-	.right-buttons {
-		margin-left: auto;
-		display: flex;
-	}
-
 	.leave-button, .speed-button, .start-button, .pause-button, .end-button {
-		height: 58px;
+		height: 57px;
 		width: 60px;
 		border: none;
 	}
@@ -258,5 +246,14 @@
 
 	.end-button {
 		background-color: var(--red);
+	}
+
+	.list-item-left {
+		margin-left: 0;
+	}
+
+	.list-item-right {
+		margin-right: 0;
+		display: flex;
 	}
 </style>

@@ -7,6 +7,7 @@
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import PatientCodeList from "./PatientCodeList.vue"
 	import CloseButton from "./CloseButton.vue"
+	import {ListItem, ListItemName, ListItemLeft} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -17,13 +18,8 @@
 		}
 	})
 
-	function deletePatient(patientId: string) {
-		socketTrainer.patientDelete(patientId)
-		emit('close-popup')
-	}
-
-	function updatePatient(patientId: string, patientName: string, patientCode: number) {
-		socketTrainer.patientUpdate(patientId, patientName, patientCode)
+	function updatePatient(patientId: string, patientCode: number) {
+		socketTrainer.patientUpdate(patientId, patientCode)
 		emit('close-popup')
 	}
 
@@ -52,26 +48,22 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div id="left-side">
 				<div class="flex-container">
-					<h2>Patienten-Datensätze</h2>
 					<PatientCodeList @change-patient="changePatientCode" />
 				</div>
 			</div>
 			<div id="right-side">
 				<div class="flex-container">
-					<div class="list-item">
-						<div class="patient-id">
+					<ListItem>
+						<ListItemLeft>
 							{{ props.patientId }}
-						</div>
+						</ListItemLeft>
 						<TriageForListItems :patient-code="currentPatient?.code" />
-						<div class="patient-name">
-							{{ currentPatientName }}
-						</div>
-					</div>
+						<ListItemName :name="currentPatientName" />
+					</ListItem>
 					<div class="scroll">
 						<PatientInfo
 							:injury="currentPatient?.injury"
 							:biometrics="currentPatient?.biometrics"
-							:consecutive-unique-number="currentPatient?.consecutiveUniqueNumber"
 							:mobility="currentPatient?.mobility"
 							:preexisting-illnesses="currentPatient?.preexistingIllnesses"
 							:permanent-medication="currentPatient?.permanentMedication"
@@ -80,14 +72,11 @@
 						/>
 					</div>
 					<div id="button-row">
-						<button id="delete-button" @click="deletePatient(props.patientId)">
-							Löschen
-						</button>
 						<button
 							id="save-button"
-							@click="updatePatient(props.patientId, currentPatientName || '', currentPatient?.code || Number.NEGATIVE_INFINITY)"
+							@click="updatePatient(props.patientId, currentPatient?.code || Number.NEGATIVE_INFINITY)"
 						>
-							Speichern
+							Änderung speichern
 						</button>
 					</div>
 				</div>
@@ -137,17 +126,5 @@
 	#save-button {
 		background-color: var(--green);
 		margin-left: 10px;
-	}
-
-	.list-item {
-		margin-right: 40px;
-		font-size: 1.25rem;
-		text-align: left;
-		height: 50px;
-		padding-left: 0;
-	}
-
-	.patient-id, .patient-name {
-		padding: .75rem 1rem;
 	}
 </style>

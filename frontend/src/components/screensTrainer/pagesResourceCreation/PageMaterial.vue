@@ -4,11 +4,14 @@
 	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
 	import socketTrainer from '@/sockets/SocketTrainer'
 	import AddMaterialPopup from '@/components/widgets/AddMaterialPopup.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
+	import IconButton from '@/components/widgets/IconButton.vue'
+	import {svg} from "@/assets/Svg"
 
 	const props = defineProps({
 		currentArea: {
-			type: String,
-			default: "Kein Bereich ausgewählt"
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
@@ -60,39 +63,33 @@
 		:current-area="props.currentArea"
 		@close-popup="showAddPopup=false"
 	/>
-	<div class="scroll">
-		<h1>Material</h1>
-		<div class="list">
-			<button v-if="currentAreaData" class="list-item-add-button" @click="openAddPopup('DE')">
-				Gerät hinzufügen
-			</button>
-			<div
-				v-for="device in devices as Material[]"
-				:key="device.materialName"
-				class="list-item"
-			>
-				<button class="list-item-button" @click="openDeletePopup(device.materialName, device.materialId)">
-					<div class="list-item-name">
-						{{ device.materialName }}
-					</div>
-				</button>
-			</div>
-		</div>
-		<div class="list">
-			<button v-if="currentAreaData" class="list-item-add-button" @click="openAddPopup('BL')">
-				Blut hinzufügen
-			</button>
-			<div
-				v-for="blood in bloodList as Material[]"
-				:key="blood.materialName"
-				class="list-item"
-			>
-				<button class="list-item-button" @click="openDeletePopup(blood.materialName, blood.materialId)">
-					<div class="list-item-name">
-						{{ blood.materialName }}
-					</div>
-				</button>
-			</div>
-		</div>
-	</div>
+	<h1>Material</h1>
+	<CustomList>
+		<ListItemAddButton v-if="currentAreaData" text="Material hinzufügen" @click="openAddPopup('DE')" />
+		<ListItem
+			v-for="device in devices"
+			:key="device.materialName"
+		>
+			<ListItemButton>
+				<ListItemName :name="device.materialName" />
+				<ListItemRight>
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(device.materialName, device.materialId)" />
+				</ListItemRight>
+			</ListItemButton>
+		</ListItem>
+	</CustomList>
+	<CustomList>
+		<ListItemAddButton v-if="currentAreaData" text="Blut hinzufügen" @click="openAddPopup('BL')" />
+		<ListItem
+			v-for="blood in bloodList"
+			:key="blood.materialName"
+		>
+			<ListItemButton>
+				<ListItemName :name="blood.materialName" />
+				<ListItemRight>
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(blood.materialName, blood.materialId)" />
+				</ListItemRight>
+			</ListItemButton>
+		</ListItem>
+	</CustomList>
 </template>

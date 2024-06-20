@@ -3,27 +3,33 @@
 	import {useExerciseStore} from '@/stores/Exercise'
 	import socketTrainer from "@/sockets/SocketTrainer"
 	import TopBarTrainer from "@/components/widgets/TopBarTrainer.vue"
-	import {svg} from "@/assets/Svg"
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
-	import { Screens, setRightScreen } from '../ModuleTrainer.vue'
+	import {Screens, setRightScreen} from '../ModuleTrainer.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
+	import IconButton from '@/components/widgets/IconButton.vue'
+	import {svg} from "@/assets/Svg"
+	import RenamePopup from '../widgets/RenamePopup.vue'
 
 	const exerciseStore = useExerciseStore()
 
 	const areas = computed(() => exerciseStore.areas)
 
-	const currentArea = ref("Kein Bereich ausgewählt")
+	const currentArea = ref(Number.NEGATIVE_INFINITY)
 
-	function openArea(areaName: string) {
-		setArea(areaName)
+	function openArea(areaId: number) {
+		setArea(areaId)
 		setRightScreen(Screens.RESOURCE_CREATION)
-		currentArea.value = areaName
+		currentArea.value = areaId
 	}
 
-	function openPopup(areaName: string) {
-		openArea(areaName)
-		showPopup.value = true
+	function openDeletePopup() {
+		showDeletePopup.value = true
+	}
+
+	function openRenamePopup() {
+		showRenamePopup.value = true
 	}
 
 	function addArea() {
@@ -34,50 +40,56 @@
 		socketTrainer.areaDelete(currentArea.value)
 	}
 
-	function openLog() {
-		setRightScreen(Screens.LOG)
-		currentArea.value = 'Kein Bereich ausgewählt'
+	function renameArea(name: string) {
+		socketTrainer.areaRename(currentArea.value, name)
 	}
 
-	const showPopup = ref(false)
+	function openLog() {
+		setRightScreen(Screens.LOG)
+		currentArea.value = Number.NEGATIVE_INFINITY
+	}
+
+	const showDeletePopup = ref(false)
+	const showRenamePopup = ref(false)
 </script>
 
 <template>
-	<DeleteItemPopup v-if="showPopup" :name="currentArea" @close-popup="showPopup=false" @delete="deleteArea" />
+	<RenamePopup
+		v-if="showRenamePopup"
+		:name="exerciseStore.getAreaName(currentArea) || ''"
+		:title="'Bereich umbenennen'"
+		@close-popup="showRenamePopup=false"
+		@rename="(name) => renameArea(name)"
+	/>
+	<DeleteItemPopup
+		v-if="showDeletePopup"
+		:name="exerciseStore.getAreaName(currentArea) || ''"
+		@close-popup="showDeletePopup=false"
+		@delete="deleteArea"
+	/>
 	<div class="flex-container">
 		<TopBarTrainer />
 		<div class="scroll">
-			<div class="list">
+			<CustomList>
 				<p v-if="exerciseStore?.status !== 'not-started'">
 					<i>Die Bearbeitung der Übung nach Übungsstart ist noch nicht vollständig implementiert.</i>
 				</p>
 				<br v-if="exerciseStore?.status !== 'not-started'">
-				<button id="add-area-button" class="list-item-add-button" @click="addArea()">
-					Bereich hinzufügen
-				</button>
-				<div
+				<ListItemAddButton id="add-area-button" text="Bereich hinzufügen" @click="addArea()" />
+				<ListItem
 					v-for="area in areas"
-					:key="area.areaName"
-					class="list-item"
-					:class="{ 'selected': currentArea === area.areaName }"
+					:key="area.areaId"
+					:class="{ 'selected': currentArea === area.areaId }"
 				>
-					<button class="list-item-button" @click="openArea(area.areaName)">
-						<div class="list-item-name">
-							{{ area.areaName }}
-						</div>
-					</button>
-					<button class="settings-button" @click="openPopup(area.areaName)">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							height="24"
-							viewBox="0 -960 960 960"
-							width="24"
-						>
-							<path :d="svg.settingsIcon" />
-						</svg>
-					</button>
-				</div>
-			</div>
+					<ListItemButton>
+						<ListItemName :name="area.areaName" @click="openArea(area.areaId)" />
+						<ListItemRight>
+							<IconButton :icon="svg.penIcon" @click="openArea(area.areaId); openRenamePopup()" />
+							<IconButton :icon="svg.binIcon" @click="openArea(area.areaId); openDeletePopup()" />
+						</ListItemRight>
+					</ListItemButton>
+				</ListItem>
+			</CustomList>
 		</div>
 		<div>
 			<button v-if="exerciseStore?.status !== 'not-started'" class="main-button" @click="openLog()">
@@ -89,14 +101,6 @@
 </template>
 
 <style scoped>
-	.settings-button {
-		height: 50px;
-		width: 50px;
-		border: none;
-		background-color: rgb(243, 244, 246);
-		margin-left: auto;
-	}
-
 	.scroll {
 		margin-bottom: 110px;
 	}
@@ -105,5 +109,9 @@
 		background-color: var(--green);
 		color: white;
 		margin-bottom: 80px;
+	}
+
+	.list-item-right {
+		margin-right: 0;
 	}
 </style>

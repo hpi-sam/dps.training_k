@@ -1,5 +1,6 @@
 import asyncio
 
+from unittest.mock import patch
 from channels.db import database_sync_to_async
 from channels.testing import WebsocketCommunicator
 from django.core.management import call_command
@@ -10,17 +11,15 @@ from game.models import ActionInstance
 from .mixin import TestUtilsMixin
 
 
-class TrainerConsumerTestCase(TransactionTestCase):
+class TrainerConsumerTestCase(TestUtilsMixin, TransactionTestCase):
     maxDiff = None
 
-    async def test_trainer_handle_create_exercise(self):
+    @patch("game.models.Lab.create_basic_devices")
+    async def test_trainer_handle_create_exercise(self, create_basic_devices):
         """
         trainer consumer responds to exercise-create event by sending an exercise object
         """
-        path = "/ws/trainer/"
-        communicator = WebsocketCommunicator(application, path)
-        connected, _ = await communicator.connect()
-        self.assertTrue(connected)
+        communicator = await self.create_trainer_communicator_and_authenticate()
 
         await communicator.receive_json_from()  # catch available patients
         await communicator.receive_json_from()  # catch available materials
@@ -40,10 +39,7 @@ class TrainerConsumerTestCase(TransactionTestCase):
         """
         trainer consumer responds to events by sending a test-passthrough event and receiving a response.
         """
-        path = "/ws/trainer/"
-        communicator = WebsocketCommunicator(application, path)
-        connected, _ = await communicator.connect()
-        self.assertTrue(connected)
+        communicator = await self.create_trainer_communicator_and_authenticate()
 
         await communicator.receive_json_from()  # catch available patients
         await communicator.receive_json_from()  # catch available materials
@@ -66,7 +62,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
     maxDiff = None
 
     def setUp(self):
-        call_command("minimal_actions")
+        call_command("import_minimal_actions")
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):

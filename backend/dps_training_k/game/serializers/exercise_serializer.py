@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import serializers
 
 import game.models.area as a
@@ -21,7 +22,7 @@ class PatientInstanceSerializer(serializers.ModelSerializer):
 
 
 class PersonnelSerializer(serializers.ModelSerializer):
-    personnelId = serializers.IntegerField(source="pk")
+    personnelId = serializers.IntegerField(source="id")
     personnelName = serializers.CharField(source="name")
 
     class Meta:
@@ -46,14 +47,29 @@ class MaterialInstanceSerializer(serializers.ModelSerializer):
 
 
 class AreaSerializer(serializers.ModelSerializer):
+    @staticmethod
+    def get_material(obj):
+        material = m.MaterialInstance.objects.filter(
+            Q(area=obj) | Q(patient_instance__area=obj)
+        )
+        return MaterialInstanceSerializer(material, many=True).data
+
+    @staticmethod
+    def get_personnel(obj):
+        personnel = p.Personnel.objects.filter(
+            Q(area=obj) | Q(patient_instance__area=obj)
+        )
+        return PersonnelSerializer(personnel, many=True).data
+
+    areaId = serializers.IntegerField(source="id")
     areaName = serializers.CharField(source="name")
     patients = PatientInstanceSerializer(source="patientinstance_set", many=True)
-    personnel = PersonnelSerializer(source="personnel_set", many=True)
-    material = MaterialInstanceSerializer(source="materialinstance_set", many=True)
+    personnel = serializers.SerializerMethodField(method_name="get_personnel")
+    material = serializers.SerializerMethodField(method_name="get_material")
 
     class Meta:
         model = a.Area
-        fields = ["areaName", "patients", "personnel", "material"]
+        fields = ["areaId", "areaName", "patients", "personnel", "material"]
         read_only = fields
 
 

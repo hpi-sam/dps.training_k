@@ -1,17 +1,10 @@
 from django.db import models
 
 from game.channel_notifications import AreaDispatcher
-from helpers.actions_queueable import ActionsQueueable
+from helpers.moveable_to import MoveableTo
 
 
-class Area(ActionsQueueable, models.Model):
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "exercise"],
-                name="unique_area_names_per_exercise",
-            )
-        ]
+class Area(MoveableTo, models.Model):
 
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
     isPaused = models.BooleanField(default=False)
@@ -37,6 +30,10 @@ class Area(ActionsQueueable, models.Model):
 
     def delete(self, using=None, keep_parents=False):
         AreaDispatcher.delete_and_notify(self)
+
+    @staticmethod
+    def frontend_model_name():
+        return "Bereich"
 
     def __str__(self):
         return f"{self.name} of exercise {self.exercise.frontend_id}"

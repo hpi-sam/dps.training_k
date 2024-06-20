@@ -1,11 +1,30 @@
 version: '3.8'
 
-volumes:
-  local_postgres_data: { }
-  local_postgres_data_backups: { }
-  static_volume: { }
-
 services:
+  # Database service
+  postgres:
+    build:
+      context: .
+      dockerfile: ./deployment/postgres/Dockerfile
+    image: dps_training_k-postgres
+    container_name: K-dPS-postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    env_file:
+      - .env.${RUN_CONFIG}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Caching service
+  redis:
+    image: redis:latest
+    container_name: K-dPS-redis
+
+  # Backend service
   django:
     build:
       context: .
@@ -17,9 +36,9 @@ services:
       - postgres
       - redis
     env_file:
-      - .env
+      - .env.${RUN_CONFIG}
     environment:
-      - RUN_MIGRATIONS=1
+      - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
       - static_volume:/app/staticfiles
       - .:/app:z
@@ -29,54 +48,36 @@ services:
     stdin_open: true
     tty: true
 
-
-  postgres:
-    build:
-      context: .
-      dockerfile: ./deployment/postgres/Dockerfile
-    image: dps_training_k-postgres
-    container_name: K-dPS-postgres
-    volumes:
-      - local_postgres_data:/var/lib/postgresql/data:Z
-      - local_postgres_data_backups:/backups:z
-    env_file:
-      - .env
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:latest
-    container_name: K-dPS-redis
-
+  # Celery worker service (e.g. scheduled tasks)
   celeryworker:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
-    env_file:
-      - .env
     image: dps_training_k-celeryworker
     container_name: K-dPS-celeryworker
+    env_file:
+      - .env.${RUN_CONFIG}
     command: /start-celeryworker
     depends_on:
       - django
 
+  # Celery beat service (e.g. scheduled tasks)
   celerybeat:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
-    env_file:
-      - .env
     image: dps_training_k-celerybeat
     container_name: K-dPS-celerybeat
+    env_file:
+      - .env.${RUN_CONFIG}
     command: /start-celerybeat
     depends_on:
       - django
 
+  # Nginx service (reverse proxy for Backend)
   nginx:
-    build: deployment/nginx
+    build:
+      context: deployment/nginx
     image: dps_training_k-nginx
     container_name: K-dPS-nginx
     volumes:
@@ -85,3 +86,8 @@ services:
       - "8000:80"
     depends_on:
       - django
+
+volumes:
+  local_postgres_data: { }
+  local_postgres_data_backups: { }
+  static_volume: { }

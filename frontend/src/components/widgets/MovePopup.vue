@@ -1,9 +1,10 @@
 <script setup lang="ts">
 	import {computed} from "vue"
 	import CloseButton from "./CloseButton.vue"
-    import {useExerciseStore} from "@/stores/Exercise"
+	import {useExerciseStore} from "@/stores/Exercise"
 	import socketPatient from "@/sockets/SocketPatient"
 	import socketTrainer from "@/sockets/SocketTrainer"
+	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
 
@@ -21,32 +22,32 @@
 			default: Number.NEGATIVE_INFINITY
 		},
 		currentArea: {
-			type: String,
-			default: 'Kein Bereich ausgewählt'
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
 	const exerciseStore = useExerciseStore()
 
-	const areas = computed(() => exerciseStore.getAreaNames.filter(areaName => areaName !== props.currentArea))
+	const areas = computed(() => exerciseStore.getAreaIds.filter(areaId => areaId !== props.currentArea))
 
-	function move(areaName: string) {
+	function move(areaId: number) {
 		if (props.module === 'Patient') {
 			if (props.typeToMove === 'Patient') 
-				socketPatient.movePatient(areaName)
+				socketPatient.movePatient(areaId)
 			else if (props.typeToMove === 'Personnel')
-				socketPatient.movePersonnel(props.idOfMoveable, areaName)
+				socketPatient.movePersonnel(props.idOfMoveable, areaId)
 			else if (props.typeToMove === 'Material')
-				socketPatient.moveMaterial(props.idOfMoveable, areaName)
+				socketPatient.moveMaterial(props.idOfMoveable, areaId)
 			else 
 				console.error('Invalid type to move')
 		} else if (props.module === 'Trainer') {
 			if (props.typeToMove === 'Patient') 
-				socketTrainer.movePatient(areaName)
+				socketTrainer.movePatient(areaId)
 			else if (props.typeToMove === 'Personnel')
-				socketTrainer.movePersonnel(props.idOfMoveable, areaName)
+				socketTrainer.movePersonnel(props.idOfMoveable, areaId)
 			else if (props.typeToMove === 'Material')
-				socketTrainer.moveMaterial(props.idOfMoveable, areaName)
+				socketTrainer.moveMaterial(props.idOfMoveable, areaId)
 			else
 				console.error('Invalid type to move')
 		} else 
@@ -67,19 +68,19 @@
 			<CloseButton @close="emit('close-popup')" />
 			<div class="scroll">
 				<h2>{{ title }}</h2>
-				<div class="list">
-					<div
-						v-for="areaName in areas"
-						:key="areaName"
-						class="list-item"
+				<p v-if="!areas.length">
+					Keine Bereiche vorhanden in die verlegt werden kann.
+				</p>
+				<CustomList>
+					<ListItem
+						v-for="areaId in areas"
+						:key="areaId"
 					>
-						<button class="list-item-button" @click="move(areaName)">
-							<div class="list-item-name">
-								{{ areaName }}
-							</div>
-						</button>
-					</div>
-				</div>
+						<ListItemButton @click="move(areaId)">
+							<ListItemName :name="exerciseStore.getAreaName(areaId) || ''" />
+						</ListItemButton>
+					</ListItem>
+				</CustomList>
 			</div>
 		</div>
 	</div>

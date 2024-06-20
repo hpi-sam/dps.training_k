@@ -4,11 +4,17 @@
 	import EditPatientPopup from '@/components/widgets/EditPatientPopup.vue'
 	import AddPatientPopup from '@/components/widgets/AddPatientPopup.vue'
 	import TriageForListItems from '@/components/widgets/TriageForListItems.vue'
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemLeft, ListItemRight} from "@/components/widgets/List"
+	import IconButton from '@/components/widgets/IconButton.vue'
+	import socketTrainer from "@/sockets/SocketTrainer"
+	import DeleteItemPopup from '@/components/widgets/DeleteItemPopup.vue'
+	import {svg} from "@/assets/Svg"
+	import RenamePopup from '@/components/widgets/RenamePopup.vue'
 
 	const props = defineProps({
 		currentArea: {
-			type: String,
-			default: "Kein Bereich ausgewählt"
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
 		}
 	})
 
@@ -16,10 +22,13 @@
 
 	const currentAreaData = computed(() => exerciseStore.getArea(props.currentArea))
 
+	const showRenamePopup = ref(false)
+	const showDeletePopup = ref(false)
 	const showEditPatientPopup = ref(false)
 	const showAddPatientPopup = ref(false)
 
-	const currentPatientId = ref('')
+	const currentPatientId = ref('No Patient Id')
+	const currentPatientName = computed(() => exerciseStore.getPatient(currentPatientId.value)?.patientName)
 
 	function editPatient(patientId: string) {
 		currentPatientId.value = patientId
@@ -29,32 +38,60 @@
 	function addPatient() {
 		showAddPatientPopup.value = true
 	}
+
+	function deletePatient() {
+		socketTrainer.patientDelete(currentPatientId.value)
+	}
+
+	function renamePatient(name: string) {
+		socketTrainer.patientRename(currentPatientId.value, name)
+	}
+
+	function openRenamePopup(patientId: string) {
+		currentPatientId.value = patientId
+		showRenamePopup.value = true
+	}
+
+	function openDeletePopup(patientId: string) {
+		currentPatientId.value = patientId
+		showDeletePopup.value = true
+	}
 </script>
 
 <template>
+	<RenamePopup
+		v-if="showRenamePopup"
+		:name="currentPatientName || ''"
+		:title="'Patient umbenennen'"
+		@close-popup="showRenamePopup=false"
+		@rename="(name) => renamePatient(name)"
+	/>
+	<DeleteItemPopup
+		v-if="showDeletePopup"
+		:name="currentPatientName"
+		@close-popup="showDeletePopup=false"
+		@delete="deletePatient"
+	/>
 	<EditPatientPopup v-if="showEditPatientPopup" :patient-id="currentPatientId" @close-popup="showEditPatientPopup=false" />
-	<AddPatientPopup v-if="showAddPatientPopup" :area-name="currentArea" @close-popup="showAddPatientPopup=false" />
-	<div class="scroll">
-		<h1>Patienten</h1>
-		<div class="list">
-			<button v-if="currentAreaData" id="create-patient-button" class="list-item-add-button" @click="addPatient()">
-				Patient hinzufügen
-			</button>
-			<div
-				v-for="patient in currentAreaData?.patients"
-				:key="patient.patientName"
-				class="list-item"
-			>
-				<button class="list-item-button" @click="editPatient(patient.patientId)">
-					<div class="list-item-id">
-						{{ patient.patientId }}
-					</div>
-					<TriageForListItems :patient-code="patient.code" />
-					<div class="list-item-name">
-						{{ patient.patientName }}
-					</div>
-				</button>
-			</div>
-		</div>
-	</div>
+	<AddPatientPopup v-if="showAddPatientPopup" :area-id="currentArea" @close-popup="showAddPatientPopup=false" />
+	<h1>Patienten</h1>
+	<CustomList>
+		<ListItemAddButton v-if="currentAreaData" id="create-patient-button" text="Patient hinzufügen" @click="addPatient()" />
+		<ListItem
+			v-for="patient in currentAreaData?.patients"
+			:key="patient.patientName"
+		>
+			<ListItemButton>
+				<ListItemLeft @click="editPatient(patient.patientId)">
+					{{ patient.patientId }}
+				</ListItemLeft>
+				<TriageForListItems :patient-code="patient.code" @click="editPatient(patient.patientId)" />
+				<ListItemName :name="patient.patientName" @click="editPatient(patient.patientId)" />
+				<ListItemRight>
+					<IconButton :icon="svg.penIcon" @click="openRenamePopup(patient.patientId)" />
+					<IconButton :icon="svg.binIcon" @click="openDeletePopup(patient.patientId)" />
+				</ListItemRight>
+			</ListItemButton>
+		</ListItem>
+	</CustomList>
 </template>

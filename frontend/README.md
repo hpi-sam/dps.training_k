@@ -4,30 +4,39 @@ The interactive K-dPS website which displays the backend information. For the si
 
 ## Project Setup
 
-### Recommended IDE Setup
+### Recommended IDE Setups
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + 
+[TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- [WebStorm](https://www.jetbrains.com/webstorm/) (with Vue.js plugin installed)
 
 ### Customize configuration
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-### run locally
+For more information on the difference between `prod` and `dev`, see the project README.
 
-```sh
+### run locally without docker
+
+Install dependencies:
+
+```bash
 npm install
 ```
 
-Compile and Hot-Reload for Development:
+Compile and start:
+Note that only the dev version supports e.g. hot-reloading.
 
-```sh
-npm run dev
+```bash
+npm run <prod/dev>
 ```
 
-Compile and Minify for Production:
+### run with docker
 
-```sh
-npm run build
+Note that neither version supports hot-reloading.
+
+```bash
+docker-compose --env-file .env.<prod/dev> up --build -d
 ```
 
 ## Project structure

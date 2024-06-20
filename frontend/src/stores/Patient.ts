@@ -9,28 +9,29 @@ export const usePatientStore = defineStore('patient', {
 		code: Number.NEGATIVE_INFINITY,
 		patientName: '',
 		triage: '-',
-		areaName: '',
+		areaId: Number.NEGATIVE_INFINITY,
 		airway: '',
 		breathing: '',
 		circulation: '',
 		consciousness: '',
-		phaseNumber: 0,
 		psyche: '',
 		pupils: '',
 		skin: '',
 		personalDetails: '', // currently unused - might be later configurable with birthday and address
 		injury: '',
 		biometrics: '',
-		consecutiveUniqueNumber: -1,
 		mobility: '',
 		preexistingIllnesses: '',
 		permanentMedication: '',
 		currentCaseHistory: '',
 		pretreatment: '',
+		isRelocating: false,
+		relocatingInfo: '',
+		timeUntilBack: Number.NEGATIVE_INFINITY,
+		timerRunning: false
 	}),
 	actions: {
 		loadStatusFromJSON(state: State) {
-			this.phaseNumber = state.phaseNumber
 			this.airway = state.airway
 			this.breathing = state.breathing
 			this.circulation = state.circulation
@@ -43,7 +44,7 @@ export const usePatientStore = defineStore('patient', {
 			const exerciseStore = useExerciseStore()
 			this.patientName = exerciseStore.getPatient(this.patientId)?.patientName || ''
 			this.code = exerciseStore.getPatient(this.patientId)?.code || Number.NEGATIVE_INFINITY
-			this.areaName = exerciseStore.getAreaOfPatient(this.patientId)?.areaName || ''
+			this.areaId = exerciseStore.getAreaOfPatient(this.patientId)?.areaId || Number.NEGATIVE_INFINITY
 			this.triage = exerciseStore.getPatient(this.patientId)?.triage || '-'
 
 			if (useAvailablesStore().getPatient(this.code)) this.initializePatientFromAvailablePatients()
@@ -52,12 +53,23 @@ export const usePatientStore = defineStore('patient', {
 			const availablesStore = useAvailablesStore()
 			this.injury = availablesStore.getPatient(this.code)?.injury || ''
 			this.biometrics = availablesStore.getPatient(this.code)?.biometrics || ''
-			this.consecutiveUniqueNumber = availablesStore.getPatient(this.code)?.consecutiveUniqueNumber || -1
 			this.mobility = availablesStore.getPatient(this.code)?.mobility || ''
 			this.preexistingIllnesses = availablesStore.getPatient(this.code)?.preexistingIllnesses || ''
 			this.permanentMedication = availablesStore.getPatient(this.code)?.permanentMedication || ''
 			this.currentCaseHistory = availablesStore.getPatient(this.code)?.currentCaseHistory || ''
 			this.pretreatment = availablesStore.getPatient(this.code)?.pretreatment || ''
+		},
+		decreaseTimeUntilBack() {
+			if (this.timeUntilBack > 0) {
+				this.timeUntilBack--
+			}
+		},
+		startUpdatingTimer() {
+			if (this.timerRunning) return
+			this.timerRunning = true
+			setInterval(() => {
+				this.decreaseTimeUntilBack()
+			}, 1000)
 		}
 	}
 })

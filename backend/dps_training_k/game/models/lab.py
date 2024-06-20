@@ -1,27 +1,41 @@
 from django.db import models
 
+from helpers.moveable_to import MoveableTo
+from game.models import MaterialInstance
+from template.models import Material
+from template.constants import MaterialIDs
 
-class Lab(models.Model):
+
+class Lab(MoveableTo):
     exercise = models.OneToOneField(
         "Exercise",
         on_delete=models.CASCADE,
     )
 
-    def material_assigned(self, material_template):
-        return list(self.materialinstance_set.filter(template=material_template))
-
-    def material_available(self, material_template):
-        return list(
-            self.materialinstance_set.filter(
-                template=material_template, action_instance=None
-            )
+    def create_basic_devices(self):
+        lab_materials = Material.objects.filter(is_lab=True).exclude(
+            uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE
         )
+        for material in lab_materials:
+            MaterialInstance.objects.update_or_create(template=material, lab=self)
+        for _ in range(4):
+            MaterialInstance.objects.create(
+                template=Material.objects.get(
+                    uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE
+                ),
+                lab=self,
+            )
 
-    def personel_assigned(self):
-        return []
+    @property
+    def name(self):
+        return self.exercise.frontend_id
 
-    def personnel_available(self):
-        return []
+    def can_receive_actions(self):
+        return True
+
+    @staticmethod
+    def frontend_model_name():
+        return "Labor"
 
     def __str__(self):
         return f"Lab: {self.exercise.frontend_id}"

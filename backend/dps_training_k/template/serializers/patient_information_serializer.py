@@ -4,7 +4,6 @@ from template.models import PatientInformation
 
 
 class PatientInformationSerializer(serializers.ModelSerializer):
-    consecutiveUniqueNumber = serializers.CharField(source="consecutive_unique_number")
     preexistingIllnesses = serializers.CharField(source="preexisting_illnesses")
     permanentMedication = serializers.CharField(source="permanent_medication")
     currentCaseHistory = serializers.CharField(source="current_case_history")
@@ -16,7 +15,6 @@ class PatientInformationSerializer(serializers.ModelSerializer):
             "injury",
             "biometrics",
             "triage",
-            "consecutiveUniqueNumber",
             "mobility",
             "preexistingIllnesses",
             "permanentMedication",

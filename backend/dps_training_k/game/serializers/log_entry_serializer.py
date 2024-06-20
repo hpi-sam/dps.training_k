@@ -1,18 +1,15 @@
-from rest_framework import serializers
-import game.models.log_entry as le
-import game.models.patient_instance as pa
-
-import game.models.lab as la
-import game.models.personnel as pe
-from datetime import datetime
 import pytz
+from rest_framework import serializers
+
+import game.models.log_entry as le
+import game.models.personnel as pe
 
 
 class LogEntrySerializer(serializers.ModelSerializer):
     logId = serializers.IntegerField(source="local_id")
     logMessage = serializers.CharField(source="message")
     logTime = serializers.SerializerMethodField()
-    areaName = serializers.SerializerMethodField()
+    areaId = serializers.SerializerMethodField()
     patientId = serializers.SerializerMethodField()
     personnelIds = serializers.PrimaryKeyRelatedField(
         source="personnel",
@@ -28,7 +25,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
             "logId",
             "logMessage",
             "logTime",
-            "areaName",
+            "areaId",
             "patientId",
             "personnelIds",
             "materialNames",
@@ -40,8 +37,8 @@ class LogEntrySerializer(serializers.ModelSerializer):
         timestamp = obj.timestamp.replace(tzinfo=pytz.UTC)
         return int(timestamp.timestamp() * 1000)
 
-    def get_areaName(self, obj):
-        return obj.area.name if obj.area else None
+    def get_areaId(self, obj):
+        return obj.area.pk if obj.area else None
 
     def get_patientId(self, obj):
         return obj.patient_instance.frontend_id if obj.patient_instance else None
