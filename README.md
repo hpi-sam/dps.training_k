@@ -38,7 +38,7 @@ examinations and more. The state of the patient displayed on the left is dynamic
 The following list describes where to find the documentation for the different parts of the project:
 - Frontend documentation with setup instructions: [frontend folder](./frontend/README.md).
 - Backend documentation with setup instructions: [backend folder](./backend/README.md).
-- Interface definition (Frontend <-> Backend): [interface definition Notion page](https://k-dps.notion.site/Interface-Definition-6852697ae02f41b29544550f84e1049a).
+- Interface definition (Frontend <-> Backend): [docs file](./docs/interface-definition.md).
 - Deployment process: [docs file](./docs/deployment-process.md).
 - Tips regarding the project configuration: [docs file](./docs/configuration-tips.md).
 - MoSCoW and future plans: [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4).
