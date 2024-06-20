@@ -35,10 +35,8 @@ class TrainerConsumer(AbstractConsumer):
         PERSONNEL_RENAME = "personnel-rename"
 
     class TrainerOutgoingMessageTypes:
-        EXERCISE_CREATED = "trainer-exercise-create"
         LOG_UPDATE = "log-update"
         RESPONSE = "response"
-        TEST_PASSTHROUGH = "test-passthrough"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,7 +103,7 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
                 "areaId",
-                "personnelName"
+                "personnelName",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_DELETE: (
                 self.handle_delete_personnel,

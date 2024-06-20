@@ -35,7 +35,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         EXERCISE_END = "exercise-end"
         EXERCISE_START = "exercise-start"
         FAILURE = "failure"
-        SUCCESS = "success"
         TEST_PASSTHROUGH = "test-passthrough"
         WARNING = "warning"
 
@@ -83,16 +82,6 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         for key, value in kwargs.items():
             message_dict[key] = value
         self.send_json(message_dict)
-
-    def send_validation(self, request_type, **kwargs):
-        """
-        Wrapper to send_json() in order to always have the same structure. Notifies the client
-        that the asked request was evaluated and executed.
-        """
-        d = {"messageType": self.OutgoingMessageTypes.SUCCESS, "request": request_type}
-        for key, value in kwargs.items():
-            d[key] = value
-        self.send_json(d)
 
     # entry point function for all incoming WebSocket messages
     def receive_json(self, content):
