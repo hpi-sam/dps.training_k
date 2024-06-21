@@ -84,7 +84,7 @@ const rete = ref(null)
 </script>
 
 <template>
-	<div ref="rete" class="rete"></div>
+	<div ref="rete" class="rete" />
 	<div class="sidebar">
 		<h1>Patient 1007</h1>
 	</div>
