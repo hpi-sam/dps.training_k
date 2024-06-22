@@ -4,6 +4,7 @@ import { createEditor as createPatientEditor } from '@/rete/patient'
 import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
 import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
 import { useTransitionStore } from '@/stores/patienteditor/Transition'
+import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
 
 const rete = ref(null)
 
@@ -86,27 +87,26 @@ const rete = ref(null)
 <template>
 	<div ref="rete" class="rete" />
 	<div class="sidebar">
-		<h1>Patient 1007</h1>
+		<PatientInfoForm />
 	</div>
 </template>
 
 <style scoped>
-.rete {
-  position: relative;
-  height: 90vh;
-  width: 60%;
-  font-size: 1rem;
-  background: white;
-  text-align: left;
-  line-height: 1;
-}
+  .rete {
+    position: relative;
+    height: 90vh;
+    font-size: 1rem;
+    background: white;
+    text-align: left;
+    line-height: 1;
+  }
 
   .sidebar {
     position: absolute;
     top: 0;
     right: 0;
-    width: 40%;
     height: 100%;
+    width: 400px;
     background: #f0f0f0;
     padding: 20px;
     overflow: auto;
