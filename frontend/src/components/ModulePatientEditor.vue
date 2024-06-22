@@ -5,6 +5,7 @@ import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
 import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
 import { useTransitionStore } from '@/stores/patienteditor/Transition'
 import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
+import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
 
 const rete = ref(null)
 
@@ -86,8 +87,11 @@ const rete = ref(null)
 
 <template>
 	<div ref="rete" class="rete" />
-	<div class="sidebar">
+	<div v-if="false" class="sidebar">
 		<PatientInfoForm />
+	</div>
+  <div class="sidebar">
+		<PatientStateForm />
 	</div>
 </template>
 
