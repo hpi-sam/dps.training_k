@@ -378,15 +378,40 @@ class ActionInstance(LocalTimeable, models.Model):
         return resources_to_block, "", True
     
     def _verify_prerequisite_actions(self):
+        required_actions_fulfilled, message1 = self._check_required_actions()
+        no_prohibitive_actions, message2 = self._check_prohibitive_actions()
+        return_message = ""
+        if message1:
+            return_message += message1
+        if message2:
+            return_message += message2
+        if required_actions_fulfilled and no_prohibitive_actions:
+            return True, return_message
+        return False, return_message
+
+    def _check_required_actions(self):
         completed_actions = ActionInstance.objects.filter(patient_instance=self.patient_instance, current_state__name__in=ActionInstanceState.completion_states())
         for required_action_group in self.template.required_actions():
             fulfilling_action_found = False
             for required_action in required_action_group:
                 if completed_actions.filter(template=required_action).count() >= 1:
                     fulfilling_action_found = True
+                    break
             if not fulfilling_action_found:
-                return False, f"Die Aktion {required_action_group[0]} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann"
+                return False, f"Die Aktion {required_action.name} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann. "
             return fulfilling_action_found, ""
+        return True, ""
+    
+    def _check_prohibitive_actions(self):
+        performed_actions = ActionInstance.objects.filter(patient_instance=self.patient_instance)
+        for prohibitive_action_group in self.template.prohibitive_actions():
+            prohibitive_action_found = False
+            for prohibitive_action in prohibitive_action_group:
+                if performed_actions.filter(template=prohibitive_action).count() >= 1:
+                    prohibitive_action_found = True
+                    break
+            if prohibitive_action_found:
+                return False, f"Die Aktion {self.template.name} kann nicht ausgeführt werden, weil bereits die Aktion {prohibitive_action.name} ausgeführt wurde. "
         return True, ""
 
     def _free_resources(self):

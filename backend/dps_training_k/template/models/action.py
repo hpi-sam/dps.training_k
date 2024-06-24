@@ -95,30 +95,32 @@ class Action(UUIDable, models.Model):
         )
     
     def required_actions(self):
-        """
-        :return list of lists: each list entry means that at least
-        one of the required actions in the list is needed to perfom this action
-        """
+        return self.get_action_conditions("required_actions")
+
+    def get_action_conditions(self, conditions_type):
         if not self.conditions:
             return []
-        if not "required_actions" in self.conditions:
+        if not conditions_type in self.conditions:
             return []
-        required_action_uuids = self.conditions["required_actions"] or []
+        action_conditions = self.conditions[conditions_type] or []
 
-        needed_required_action_groups = []
-        for required_action_uuid in required_action_uuids:
-            if isinstance(required_action_uuid, list):
-                needed_required_action_group = [
+        action_groups = []
+        for action_condition in action_conditions:
+            if isinstance(action_condition, list):
+                action_group = [
                     Action.objects.get(uuid=uuid.UUID(action_uuid))
-                    for action_uuid in required_action_uuid
+                    for action_uuid in action_condition
                 ]
-                needed_required_action_groups.append(needed_required_action_group)
-        needed_single_required_action = [
+                action_groups.append(action_group)
+        single_action = [
             [Action.objects.get(uuid=uuid.UUID(action_uuid))]
-            for action_uuid in required_action_uuids
+            for action_uuid in action_conditions
             if not isinstance(action_uuid, list)
         ]
-        return needed_required_action_groups + needed_single_required_action
+        return action_groups + single_action
+
+    def prohibitive_actions(self):
+        return self.get_action_conditions("prohibitive_actions")
 
     def get_result(self, action_instance):
         if self.category == Action.Category.EXAMINATION:
