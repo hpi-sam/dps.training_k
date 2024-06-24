@@ -889,8 +889,8 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Defi + transcutaner Pacer",
-            uuid=ActionIDs.DEFI_TRANSCUTANER_PACER,
+            name="Defi + transkutaner Pacer",
+            uuid=ActionIDs.DEFI_TRANSKUTANER_PACER,
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
@@ -903,7 +903,7 @@ class Command(BaseCommand):
                         [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
                     ],
                     "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.DEFI_TRANSCUTANER_PACER)],
+                    "material": [str(MaterialIDs.DEFI_TRANSKUTANER_PACER)],
                     "num_personnel": 2,
                     "lab_devices": None,
                     "area": None,
@@ -2320,8 +2320,8 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Enthrozytenkonzentrat erwärmen",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
+            name="Erythrozytenkonzentrat erwärmen",
+            uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_VORBEREITEN,
             defaults={
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
@@ -2340,13 +2340,13 @@ class Command(BaseCommand):
                     ],
                 },
                 "results": {
-                    "produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}
+                    "produced_material": {str(MaterialIDs.ERYTHROZYTENKONZENTRAT): 1}
                 },
             },
         )
         Action.objects.update_or_create(
-            name="Enthrozytenkonzentrate anwenden",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN,
+            name="Erythrozytenkonzentrate anwenden",
+            uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN,
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
@@ -2359,7 +2359,7 @@ class Command(BaseCommand):
                         str(ActionIDs.KREUZBLUT),
                     ],
                     "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.ENTHROZYTENKONZENTRAT)],
+                    "material": [str(MaterialIDs.ERYTHROZYTENKONZENTRAT)],
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,
