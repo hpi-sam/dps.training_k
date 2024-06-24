@@ -93,6 +93,32 @@ class Action(UUIDable, models.Model):
         return (
             self.conditions["num_personnel"] if self.conditions["num_personnel"] else 0
         )
+    
+    def required_actions(self):
+        """
+        :return list of lists: each list entry means that at least
+        one of the required actions in the list is needed to perfom this action
+        """
+        if not self.conditions:
+            return []
+        if not "required_actions" in self.conditions:
+            return []
+        required_action_uuids = self.conditions["required_actions"] or []
+
+        needed_required_action_groups = []
+        for required_action_uuid in required_action_uuids:
+            if isinstance(required_action_uuid, list):
+                needed_required_action_group = [
+                    Action.objects.get(uuid=uuid.UUID(action_uuid))
+                    for action_uuid in required_action_uuid
+                ]
+                needed_required_action_groups.append(needed_required_action_group)
+        needed_single_required_action = [
+            [Action.objects.get(uuid=uuid.UUID(action_uuid))]
+            for action_uuid in required_action_uuids
+            if not isinstance(action_uuid, list)
+        ]
+        return needed_required_action_groups + needed_single_required_action
 
     def get_result(self, action_instance):
         if self.category == Action.Category.EXAMINATION:
@@ -119,3 +145,6 @@ class Action(UUIDable, models.Model):
 
     def generic_result(self):
         return f"{self.name} wurde durchgeführt"
+
+    def __str__(self):
+        return f"Action {self.name}"

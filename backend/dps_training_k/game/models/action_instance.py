@@ -64,7 +64,7 @@ class ActionInstanceState(models.Model):
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
 
     def completion_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.EXPIRED]
+        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT, ActionInstanceStateNames.EXPIRED]
 
 
 class ActionInstance(LocalTimeable, models.Model):
@@ -200,6 +200,9 @@ class ActionInstance(LocalTimeable, models.Model):
             )
             if is_applicable:
                 is_applicable, relocates, message = self._check_relocating()
+                if is_applicable:
+                    is_applicable, message = self._verify_prerequisite_actions()
+            
 
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, message)
@@ -373,6 +376,18 @@ class ActionInstance(LocalTimeable, models.Model):
         if not resources_to_block:
             return [], "", True
         return resources_to_block, "", True
+    
+    def _verify_prerequisite_actions(self):
+        completed_actions = ActionInstance.objects.filter(patient_instance=self.patient_instance, current_state__name__in=ActionInstanceState.completion_states())
+        for required_action_group in self.template.required_actions():
+            fulfilling_action_found = False
+            for required_action in required_action_group:
+                if completed_actions.filter(template=required_action).count() >= 1:
+                    fulfilling_action_found = True
+            if not fulfilling_action_found:
+                return False, f"Die Aktion {required_action_group[0]} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann"
+            return fulfilling_action_found, ""
+        return True, ""
 
     def _free_resources(self):
         for material in self.materialinstance_set.all():
