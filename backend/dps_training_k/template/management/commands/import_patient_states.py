@@ -50,7 +50,7 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=4,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "actions": [str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN)],
                 "materials": [],
             },
         )
@@ -227,7 +227,7 @@ class Command(BaseCommand):
             upper_limit=1,
             lower_limit=0,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "actions": [str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN)],
                 "materials": [],
             },
         )
@@ -236,7 +236,7 @@ class Command(BaseCommand):
             upper_limit=3,
             lower_limit=2,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "actions": [str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN)],
                 "materials": [],
             },
         )
@@ -245,7 +245,7 @@ class Command(BaseCommand):
             upper_limit=5,
             lower_limit=4,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "actions": [str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN)],
                 "materials": [],
             },
         )
@@ -254,7 +254,7 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=6,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
+                "actions": [str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN)],
                 "materials": [],
             },
         )

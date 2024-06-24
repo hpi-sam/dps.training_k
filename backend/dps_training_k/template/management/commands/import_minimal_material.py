@@ -26,8 +26,8 @@ class Command(BaseCommand):
             is_lab=True,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
-            name="Enthrozytenkonzentrat",
+            uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
+            name="Erythrozytenkonzentrat",
             category=Material.Category.BLOOD,
             is_reusable=False,
             is_moveable=True,

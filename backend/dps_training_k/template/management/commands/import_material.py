@@ -16,8 +16,8 @@ class Command(BaseCommand):
     @staticmethod
     def create_resources():
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
-            name="Enthrozytenkonzentrat",
+            uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
+            name="Erythrozytenkonzentrat",
             category=Material.Category.BLOOD,
             is_reusable=False,
             is_moveable=True,
@@ -141,8 +141,8 @@ class Command(BaseCommand):
             is_moveable=False,
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.DEFI_TRANSCUTANER_PACER,
-            name="Defi + transcutaner Pacer",
+            uuid=MaterialIDs.DEFI_TRANSKUTANER_PACER,
+            name="Defi + transkutaner Pacer",
             category=Material.Category.DEVICE,
             is_reusable=True,
             is_moveable=True,

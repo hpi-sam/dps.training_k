@@ -35,7 +35,7 @@ class Lab(MoveableTo):
 
     @staticmethod
     def frontend_model_name():
-        return "Labor"
+        return "Labor/Bildgebung"
 
     def __str__(self):
         return f"Lab: {self.exercise.frontend_id}"
