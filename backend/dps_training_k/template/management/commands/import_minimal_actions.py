@@ -22,9 +22,9 @@ class Command(BaseCommand):
     def create_actions():
         # Simple basic action
         Action.objects.update_or_create(
-            name="art. Kanüle",
             uuid=ActionIDs.ART_KANUELE,
             defaults={
+                "name": "art. Kanüle",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -45,9 +45,9 @@ class Command(BaseCommand):
         )
         # Produce Material
         Action.objects.update_or_create(
-            name="Erythrozytenkonzentrat erwärmen",
             uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_VORBEREITEN,
             defaults={
+                "name": "Erythrozytenkonzentrat erwärmen",
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -71,9 +71,9 @@ class Command(BaseCommand):
         )
         # Use Blood
         Action.objects.update_or_create(
-            name="i.V. Zugang",
             uuid=ActionIDs.IV_ZUGANG,
             defaults={
+                "name": "i.V. Zugang",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -93,9 +93,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blut abnehmen",
             uuid=ActionIDs.BLUTABNAHME,
             defaults={
+                "name": "Blut abnehmen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -115,9 +115,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgruppe bestimmen",
             uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
             defaults={
+                "name": "Blutgruppe bestimmen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -149,9 +149,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Kreuzblut",
             uuid=ActionIDs.KREUZBLUT,
             defaults={
+                "name": "Kreuzblut",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -180,9 +180,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Erythrozytenkonzentrate anwenden",
             uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN,
             defaults={
+                "name": "Erythrozytenkonzentrate anwenden",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -206,9 +206,9 @@ class Command(BaseCommand):
         )
         # OP
         Action.objects.update_or_create(
-            name="Operation einleiten",
             uuid=ActionIDs.OP_EINLEITEN,
             defaults={
+                "name": "Operation einleiten",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.LAB,
                 "relocates": True,
@@ -229,9 +229,9 @@ class Command(BaseCommand):
         )
         # Non-relocating examinations
         Action.objects.update_or_create(
-            name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
+                "name": "Hämoglobinanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -298,9 +298,9 @@ class Command(BaseCommand):
         )
         # Relocating and lab side examinations
         Action.objects.update_or_create(
-            name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
+                "name": "Trauma CT",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": True,
