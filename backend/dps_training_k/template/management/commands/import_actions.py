@@ -1907,7 +1907,7 @@ class Command(BaseCommand):
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 120,
+                "application_duration": 2700,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
@@ -2230,7 +2230,7 @@ class Command(BaseCommand):
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 300,
+                "application_duration": 600,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,

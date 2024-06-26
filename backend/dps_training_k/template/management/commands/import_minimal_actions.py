@@ -155,7 +155,7 @@ class Command(BaseCommand):
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 2700,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
