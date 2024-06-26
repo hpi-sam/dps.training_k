@@ -1282,9 +1282,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
-            uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
+            uuid=ActionIDs.BLUTGASEANALYSE,
             defaults={
+                "name": "Blutgaseanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1319,33 +1319,7 @@ class Command(BaseCommand):
                         613: "nicht verwertbar",
                         614: "mäßige Hypoxie",
                         615: "schwere Hypoxie",
-                    }
-                },
-            },
-        )
-        Action.objects.update_or_create(
-            name="Blutgaseanalyse für Säure-Base-Haushalt durchführen",
-            uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
-            defaults={
-                "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,
-                "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BLUTGASANALYSE)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
-                "results": {
+                    },
                     "BGA-SBH": {
                         650: "resp. Alkalose",
                         651: "kompensierte resp. Alkalose",
