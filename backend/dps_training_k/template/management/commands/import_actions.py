@@ -539,7 +539,7 @@ class Command(BaseCommand):
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 60,
-                "effect_duration": 120,  # depends on type of "Zugang"
+                "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
