@@ -488,8 +488,30 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Vollelektrolyt",
-            uuid=ActionIDs.VOLLELEKTROLYT,
+            name="Vollelektrolyt 1000ml",
+            uuid=ActionIDs.VOLLELEKTROLYT_1000,
+            defaults={
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,  # Depends of type of "Zugang"
+                "conditions": {
+                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                    "prohibitive_actions": None,
+                    "material": None,
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
+            name="Vollelektrolyt 500ml",
+            uuid=ActionIDs.VOLLELEKTROLYT_500,
             defaults={
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
