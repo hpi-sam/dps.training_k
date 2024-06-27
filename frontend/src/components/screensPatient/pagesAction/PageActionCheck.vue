@@ -23,7 +23,7 @@
 	}
 
 	const errorMessage = ref(computed(() => {
-		if (actionCheckStore?.prohibitedActions?.length > 0) {
+		if (actionCheckStore?.prohibitiveActions?.length > 0) {
 			return "Eine durchgeführte Aktion verhindert die Anordnung."
 		} else if (actionCheckStore?.requiredActions?.singleActions?.length > 0 || actionCheckStore?.requiredActions?.actionGroups?.length > 0) {
 			return "Es müssen zuerst andere Aktionen durchgeführt werden."

@@ -26,6 +26,15 @@ class Lab(MoveableTo):
                 lab=self,
             )
 
+    def get_completed_action_types(self):
+        from game.models import ActionInstanceState
+        action_instances = self.actioninstance_set.select_related("template").all()
+        applied_actions = set()
+        for action_instance in action_instances:
+            if action_instance.current_state.name in ActionInstanceState.completion_states():
+                applied_actions.add(action_instance.template)
+        return applied_actions
+
     @property
     def name(self):
         return self.exercise.frontend_id

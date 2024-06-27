@@ -407,6 +407,9 @@ class ActionInstance(LocalTimeable, models.Model):
         for prohibitive_action_group in self.template.prohibitive_actions():
             prohibitive_action_found = False
             for prohibitive_action in prohibitive_action_group:
+                # allow first application of action, but no subsequent ones
+                if prohibitive_action.name == self.template.name and performed_actions.filter(template=prohibitive_action).count() == 1:
+                    continue
                 if performed_actions.filter(template=prohibitive_action).count() >= 1:
                     prohibitive_action_found = True
                     break
