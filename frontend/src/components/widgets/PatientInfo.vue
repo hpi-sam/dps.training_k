@@ -29,8 +29,7 @@ import { computed } from 'vue'
 			<td colspan="2">
 				<br>
 				<b>{{ info.name }}</b>
-				<br>
-				{{ info.value }}
+				<br>{{ info.value }}
 			</td>
 		</tr>
 	</table>
