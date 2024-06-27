@@ -172,7 +172,6 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_end_exercise(self, exercise):
         exercise.update_state(Exercise.StateTypes.FINISHED)
-        exercise.delete()
 
     def handle_start_exercise(self, exercise):
         owned_patients = PatientInstance.objects.filter(exercise=exercise)
