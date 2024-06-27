@@ -1608,8 +1608,8 @@ class Command(BaseCommand):
             uuid=ActionIDs.EXTREMITAETEN_ROENTGEN,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
+                "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": {
@@ -1673,8 +1673,8 @@ class Command(BaseCommand):
             uuid=ActionIDs.THORAX_ROENTGEN,
             defaults={
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
+                "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": {
