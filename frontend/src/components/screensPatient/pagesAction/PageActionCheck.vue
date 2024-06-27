@@ -180,12 +180,12 @@
 					</ListItemButton>
 				</ListItem>
 			</CustomList>
-			<CustomList v-if="actionCheckStore?.prohibitedActions?.length > 0">
+			<CustomList v-if="actionCheckStore?.prohibitiveActions?.length > 0">
 				<p>
 					Folgende durchgeführte Aktionen verhindern die Anordnung
 				</p>
 				<ListItem
-					v-for="(action, index) in actionCheckStore?.prohibitedActions"
+					v-for="(action, index) in actionCheckStore?.prohibitiveActions"
 					:key="index"
 				>
 					<ListItemButton>

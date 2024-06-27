@@ -30,14 +30,31 @@ class ActionCheckSerializer(ABC):
         material_available_assigned_needed = self.material_available_assigned_needed()
         if material_available_assigned_needed:
             data.update({"material": material_available_assigned_needed})
-        data.update(
-            {
-                "personnel": self.personnel_available_assigned_needed(),
-                "material": self.material_available_assigned_needed(),
-            }
-        )
+        required_actions = self.required_actions()
+        if required_actions:
+            data.update({"requiredActions": required_actions})
+        prohibitive_actions = self.prohibitive_actions()
+        if prohibitive_actions:
+            data.update({"prohibitiveActions": prohibitive_actions})
         return data
-
+    
+    def required_actions(self):
+        required_actions = self.action.required_actions()
+        single_actions = []
+        group_actions = []
+        for required_action_group in required_actions:
+            if len(required_action_group) > 1:
+                required_action_group_names = [action.name for action in required_action_group]
+                group_actions.append([{"actions": required_action_group_names}])
+            else:
+                single_actions.append(required_action_group[0].name)
+        return {
+            "singleActions": single_actions,
+            "actionGroups": group_actions,
+        }
+    
+    def prohibitive_actions(self):
+        return [action[0].name for action in self.action.prohibitive_actions()]
 
 class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
     def __init__(self, action, patient_instance):
