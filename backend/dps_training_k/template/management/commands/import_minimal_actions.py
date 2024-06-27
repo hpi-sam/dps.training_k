@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 120,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -51,7 +51,7 @@ class Command(BaseCommand):
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 15,
+                "application_duration": 360,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -77,8 +77,8 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 10,
-                "effect_duration": 30,  # depends on type of "Zugang"
+                "application_duration": 60,
+                "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
@@ -99,7 +99,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 5,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [str(ActionIDs.ART_KANUELE)],
@@ -121,7 +121,7 @@ class Command(BaseCommand):
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 180,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [str(ActionIDs.BLUTABNAHME)],
@@ -186,7 +186,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 5,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
@@ -234,7 +234,7 @@ class Command(BaseCommand):
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 120,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
@@ -303,7 +303,7 @@ class Command(BaseCommand):
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": True,
-                "application_duration": 10,
+                "application_duration": 300,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
