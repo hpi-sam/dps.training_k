@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+	import {computed} from 'vue'
+	import {strings} from "@/strings"
 
 	const props = defineProps({
 		personalDetails: {type: String, default: '-'},
@@ -13,13 +14,13 @@ import { computed } from 'vue'
 	})
 
 	const infos = computed(() => [
-		{name: 'Verletzungen', value: props.injury},
-		{name: 'Biometrie', value: props.biometrics},
-		{name: 'Mobilität', value: props.mobility},
-		{name: 'Vorerkrankungen', value: props.preexistingIllnesses},
-		{name: 'Dauer-Medikation', value: props.permanentMedication},
-		{name: 'Aktuelle Anamnese / Rettungsdienst-Übergabe', value: props.currentCaseHistory},
-		{name: 'Vorbehandlung', value: props.pretreatment},
+		{name: strings.patientInfo.injury, value: props.injury},
+		{name: strings.patientInfo.biometrics, value: props.biometrics},
+		{name: strings.patientInfo.mobility, value: props.mobility},
+		{name: strings.patientInfo.preexistingIllnesses, value: props.preexistingIllnesses},
+		{name: strings.patientInfo.permanentMedication, value: props.permanentMedication},
+		{name: strings.patientInfo.currentCaseHistory, value: props.currentCaseHistory},
+		{name: strings.patientInfo.pretreatment, value: props.pretreatment},
 	])
 </script>
 

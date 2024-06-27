@@ -2,6 +2,7 @@
 	import {usePatientStore} from '@/stores/Patient'
 	import {useResourceAssignmentsStore} from '@/stores/ResourceAssignments'
 	import {computed, ref} from 'vue'
+	import {strings} from "@/strings"
 	import socketPatient from '@/sockets/SocketPatient'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 	import {useExerciseStore} from "@/stores/Exercise"
@@ -59,7 +60,7 @@
 						<ListItemName :name="exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName" />
 					</ListItemButton>
 					<button class="button-free" @click="releasePersonnel(personnelAssignment.personnelId)">
-						Freigeben
+						{{ strings.releaseButtonText }}
 					</button>
 				</ListItem>
 			</CustomList>
@@ -73,7 +74,7 @@
 						<ListItemName :name="exerciseStore.getPersonnel(personnelAssignment.personnelId)?.personnelName" />
 					</ListItemButton>
 					<button class="button-assign" @click="assignPersonnel(personnelAssignment.personnelId)">
-						Zuweisen
+						{{ strings.assignButtonText }}
 					</button>
 				</ListItem>
 			</CustomList>

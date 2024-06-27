@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import {usePatientStore} from '@/stores/Patient'
+	import {strings} from "../../strings"
 
 	const patientStore = usePatientStore()
 </script>
@@ -9,44 +10,42 @@
 		<tr>
 			<td colspan="2">
 				<hr>
-				<h1>
-					Status
-				</h1>
+				<h1>{{ strings.patientState.title }}</h1>
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<p class="key">
-					Airway
+					{{ strings.patientState.airway }}
 				</p>{{ patientStore.airway }}
 			</td>
 			<td>
 				<p class="key">
-					Breathing
+					{{ strings.patientState.breathing }}
 				</p>{{ patientStore.breathing }}
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<p class="key">
-					Circulation
+					{{ strings.patientState.circulation }}
 				</p>{{ patientStore.circulation }}
 			</td>
 			<td>
 				<p class="key">
-					Consciousness
+					{{ strings.patientState.consciousness }}
 				</p>{{ patientStore.consciousness }}
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<p class="key">
-					Psyche
+					{{ strings.patientState.psyche }}
 				</p>{{ patientStore.psyche }}
 			</td>
 			<td>
 				<p class="key">
-					Skin
+					{{ strings.patientState.skin }}
 				</p>{{ patientStore.skin }}
 			</td>
 		</tr>
@@ -54,63 +53,63 @@
 			<td colspan="2">
 				<hr>
 				<h1>
-					Info
+					{{ strings.patientInfo.title }}
 				</h1>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Verletzungen
+					{{ strings.patientInfo.injury }}
 				</p>{{ patientStore.injury }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Mobilität
+					{{ strings.patientInfo.mobility }}
 				</p>{{ patientStore.mobility }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Vorerkrankungen
+					{{ strings.patientInfo.preexistingIllnesses }}
 				</p>{{ patientStore.preexistingIllnesses }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Dauer-Medikation
+					{{ strings.patientInfo.permanentMedication }}
 				</p>{{ patientStore.permanentMedication }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Aktuelle Anamnese / Rettungsdienst-Übergabe
+					{{ strings.patientInfo.currentCaseHistory }}
 				</p>{{ patientStore.currentCaseHistory }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Vorbehandlung
+					{{ strings.patientInfo.pretreatment }}
 				</p>{{ patientStore.pretreatment }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Biometrie
+					{{ strings.patientInfo.biometrics }}
 				</p>{{ patientStore.biometrics }}
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<p class="key">
-					Patienten-ID
+					{{ strings.patientInfo.patientId }}
 				</p>{{ patientStore.patientId }}
 			</td>
 		</tr>
