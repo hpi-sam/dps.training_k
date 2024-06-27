@@ -109,13 +109,13 @@ class Action(UUIDable, models.Model):
             result_substring = result_dict.get(current_code)
 
             if result_substring:
-                result_string += f" {examination_type}: {result_substring}"
+                result_string += f" {examination_type}: {result_substring}\n"
             else:
                 error_message = f"Could not find corresponding value for code {current_code} in {examination_type}"
                 logging.error(error_message)
                 continue  # skip to avoid crashing
 
-        return result_string
+        return result_string.rstrip()
 
     def generic_result(self):
         return f"{self.name} wurde durchgeführt"
