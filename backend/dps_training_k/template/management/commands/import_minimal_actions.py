@@ -191,7 +191,6 @@ class Command(BaseCommand):
                 "conditions": {
                     "required_actions": [
                         str(ActionIDs.IV_ZUGANG),
-                        str(ActionIDs.KREUZBLUT),
                     ],
                     "prohibitive_actions": None,
                     "material": [str(MaterialIDs.ERYTHROZYTENKONZENTRAT)],
