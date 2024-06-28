@@ -103,6 +103,22 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
 
+    def apply_pretreatments(self):
+        from game.models import ActionInstance
+
+        for pretreatment in self.static_information.get_pretreatments():
+            kwargs = {}
+            needed_arguements = ActionInstance.needed_arguments_create(pretreatment)
+            for arg in needed_arguements:
+                if arg == "patient_instance":
+                    kwargs[arg] = self
+                elif arg == "destination_area":
+                    kwargs[arg] = self.area
+                elif arg == "lab":
+                    kwargs[arg] = self.lab
+
+            ActionInstance.create_in_success_state(template=pretreatment, **kwargs)
+
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
@@ -160,7 +176,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
                 and "freie Atemwege" in self.patient_state.vital_signs["Airway"]
             ):
                 fulfilled_subconditions.add(subcondition)
-            
+
             fulfillment_count = 0
             for action, fulfillment_value in fulfilling_actions.items():
                 fulfillment_count += template_action_count[action] * fulfillment_value
@@ -179,11 +195,12 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
                 )
                 fulfillment_count += num_of_materials_assigned * fulfillment_value
             if (
-                fulfillment_count and subcondition.lower_limit <= fulfillment_count
+                fulfillment_count
+                and subcondition.lower_limit <= fulfillment_count
                 and fulfillment_count <= subcondition.upper_limit
             ):
                 isMaterialFulfilled = True
-            
+
             if isActionFulfilled or isMaterialFulfilled:
                 fulfilled_subconditions.add(subcondition)
 
@@ -274,10 +291,14 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
 
     def get_completed_action_types(self):
         from game.models import ActionInstanceState
+
         action_instances = self.actioninstance_set.select_related("template").all()
         applied_actions = set()
         for action_instance in action_instances:
-            if action_instance.current_state.name in ActionInstanceState.completion_states():
+            if (
+                action_instance.current_state.name
+                in ActionInstanceState.completion_states()
+            ):
                 applied_actions.add(action_instance.template)
         return applied_actions
 
