@@ -7,6 +7,7 @@ from game.models import ScheduledEvent, MaterialInstance
 from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
 from template.constants import ActionIDs
+from template.models import Action
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -42,10 +43,6 @@ class ActionInstanceState(models.Model):
         ]
 
     def update(self, state_name, time, info_text=None):
-        if state_name in self.completion_states():
-            raise ValueError(
-                f"State {state_name} is a completion state so it can't be updated"
-            )
         if state_name == self.name and not info_text:
             return None
         if state_name == self.name and info_text:
@@ -157,10 +154,9 @@ class ActionInstance(LocalTimeable, models.Model):
 
     @classmethod
     def create(cls, template, patient_instance=None, destination_area=None, lab=None):
-        if not patient_instance and not lab:
-            raise ValueError(
-                "Either patient_instance or lab must be provided - an action instance always need a message"
-            )
+        cls._validate_create_arguments(
+            template, patient_instance, destination_area, lab
+        )
         if not destination_area and template.relocates:
             destination_area = patient_instance.area
         action_instance = ActionInstance.objects.create(
@@ -528,3 +524,42 @@ class ActionInstance(LocalTimeable, models.Model):
             codes.update({"Kreuzblut": f"{examination_code}"})
 
         return codes
+
+    @classmethod
+    def _validate_create_arguments(
+        cls, template, patient_instance, destination_area, lab
+    ):
+        if not patient_instance and not lab:
+            raise ValueError(
+                "Either patient_instance or lab must be provided - an action instance always need a message"
+            )
+        if not lab and template.location == Action.Location.LAB:
+            raise ValueError("Lab must be provided for templates with location LAB")
+        if not patient_instance and (
+            template.location == Action.Location.BEDSIDE
+            or template.category == Action.Category.EXAMINATION
+            or template.relocates
+        ):
+            raise ValueError(
+                "Patient_instance must be provided for templates with location BEDSIDE, category EXAMINATION or relocates"
+            )
+
+        if not destination_area and template.category == Action.Category.PRODUCTION:
+            raise ValueError(
+                "Destination area must be provided for templates with category PRODUCTION"
+            )
+
+    @classmethod
+    def needed_arguments_create(cls, template):
+        needed_arguments = []
+        if template.location == Action.Location.LAB:
+            needed_arguments.append("lab")
+        if (
+            template.location == Action.Location.BEDSIDE
+            or template.category == Action.Category.EXAMINATION
+            or template.relocates
+        ):
+            needed_arguments.append("patient_instance")
+        if template.category == Action.Category.PRODUCTION:
+            needed_arguments.append("destination_area")
+        return needed_arguments
