@@ -115,7 +115,11 @@ class Command(BaseCommand):
                 "effect_duration": None,  # None means permanent
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": [str(ActionIDs.TRACHEALTUBUS), str(ActionIDs.LARYNXTUBUS), str(ActionIDs.GUEDELTUBUS)],
+                    "prohibitive_actions": [
+                        str(ActionIDs.TRACHEALTUBUS),
+                        str(ActionIDs.LARYNXTUBUS),
+                        str(ActionIDs.GUEDELTUBUS),
+                    ],
                     "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
                     "num_personnel": 2,
                     "lab_devices": None,
@@ -483,6 +487,28 @@ class Command(BaseCommand):
                     "role": [
                         {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                         {role_map[RoleIDs.ARZT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
+            uuid=ActionIDs.ANTIBIOTIKUM,
+            defaults={
+                "name": "Antibioktikum",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,  # None means permanent
+                "conditions": {
+                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                    "prohibitive_actions": None,
+                    "material": None,
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                     ],
                 },
             },

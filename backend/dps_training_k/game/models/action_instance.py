@@ -201,7 +201,13 @@ class ActionInstance(LocalTimeable, models.Model):
         update_pathes = [
             [AISN.PLANNED, AISN.CANCELED],
             [AISN.PLANNED, AISN.IN_PROGRESS, AISN.FINISHED],
-            [AISN.PLANNED, AISN.IN_PROGRESS, AISN.IN_EFFECT, AISN.EXPIRED],
+            [
+                AISN.PLANNED,
+                AISN.IN_PROGRESS,
+                AISN.FINISHED,
+                AISN.IN_EFFECT,
+                AISN.EXPIRED,
+            ],
         ]
         for path in update_pathes:
             if state_name in path:

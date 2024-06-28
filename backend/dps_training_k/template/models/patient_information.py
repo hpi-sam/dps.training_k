@@ -1,6 +1,7 @@
+import uuid
 from django.db import models
-
 from helpers.triage import Triage
+from .action import Action
 
 
 class PatientInformation(models.Model):
@@ -31,7 +32,7 @@ class PatientInformation(models.Model):
         max_length=300, default="-"
     )  # Aktuelle Anamnese / Rettungsdienst-Übergabe
     pretreatment = models.CharField(max_length=300, default="-")  # Vorbehandlung
-
+    pretreatment_action_templates = models.JSONField(default=dict)
     # internal information
     start_status = models.IntegerField(default=-1)  # Start-Status
     start_location = models.CharField(max_length=100, default="-")  # Start-Ort
@@ -41,3 +42,11 @@ class PatientInformation(models.Model):
     @property
     def examination_codes(self):
         return {"Blutgruppe": self.blood_type}
+
+    def get_pretreatments(self):
+        for key, amount in self.pretreatment_action_templates.items():
+            print(key)
+        return {
+            Action.objects.get(uuid=uuid.UUID(key)): amount
+            for key, amount in self.pretreatment_action_templates.items()
+        }

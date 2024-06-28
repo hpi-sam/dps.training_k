@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from configuration import settings
+from game.models import Exercise
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
@@ -67,7 +68,8 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def save(self, *args, **kwargs):
         from . import User
 
-        if not self.pk:
+        state_adding = False
+        if self._state.adding:
             self.user, _ = User.objects.get_or_create(
                 username=self.frontend_id, user_type=User.UserType.PATIENT
             )
@@ -83,6 +85,7 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
                     code=self.static_information.code,
                     state_id=self.static_information.start_status,
                 )
+            state_adding = True
 
         changes = kwargs.get("update_fields", None)
 
@@ -92,10 +95,13 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             self.triage = self.static_information.triage
             if changes:
                 changes.append("triage")
-
         PatientInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
         )
+
+        if state_adding and self.exercise.state == Exercise.StateTypes.RUNNING:
+            self.apply_pretreatments()
+            self.schedule_state_change()
 
     def delete(self, using=None, keep_parents=False):
         """Is only called when the patient explicitly deleted and not in an e.g. batch or cascade delete"""
@@ -106,18 +112,19 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def apply_pretreatments(self):
         from game.models import ActionInstance
 
-        for pretreatment in self.static_information.get_pretreatments():
-            kwargs = {}
-            needed_arguements = ActionInstance.needed_arguments_create(pretreatment)
-            for arg in needed_arguements:
-                if arg == "patient_instance":
-                    kwargs[arg] = self
-                elif arg == "destination_area":
-                    kwargs[arg] = self.area
-                elif arg == "lab":
-                    kwargs[arg] = self.lab
+        for pretreatment, amount in self.static_information.get_pretreatments().items():
+            for _ in range(amount):
+                kwargs = {}
+                needed_arguements = ActionInstance.needed_arguments_create(pretreatment)
+                for arg in needed_arguements:
+                    if arg == "patient_instance":
+                        kwargs[arg] = self
+                    elif arg == "destination_area":
+                        kwargs[arg] = self.area
+                    elif arg == "lab":
+                        kwargs[arg] = self.lab
 
-            ActionInstance.create_in_success_state(template=pretreatment, **kwargs)
+                ActionInstance.create_in_success_state(template=pretreatment, **kwargs)
 
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
