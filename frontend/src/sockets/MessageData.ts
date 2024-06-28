@@ -170,7 +170,7 @@ interface ActionCheck {
 	material: CheckMaterial[]
 	labDevices: CheckLabDevice[]
 	requiredActions: RequiredActions
-	prohibitedActions: string[]
+	prohibitiveActions: string[]
 }
 
 interface RequiredActions {

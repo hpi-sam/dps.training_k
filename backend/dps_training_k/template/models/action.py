@@ -93,6 +93,34 @@ class Action(UUIDable, models.Model):
         return (
             self.conditions["num_personnel"] if self.conditions["num_personnel"] else 0
         )
+    
+    def required_actions(self):
+        return self.get_action_conditions("required_actions")
+
+    def get_action_conditions(self, conditions_type):
+        if not self.conditions:
+            return []
+        if not conditions_type in self.conditions:
+            return []
+        action_conditions = self.conditions[conditions_type] or []
+
+        action_groups = []
+        for action_condition in action_conditions:
+            if isinstance(action_condition, list):
+                action_group = [
+                    Action.objects.get(uuid=uuid.UUID(action_uuid))
+                    for action_uuid in action_condition
+                ]
+                action_groups.append(action_group)
+        single_action = [
+            [Action.objects.get(uuid=uuid.UUID(action_uuid))]
+            for action_uuid in action_conditions
+            if not isinstance(action_uuid, list)
+        ]
+        return action_groups + single_action
+
+    def prohibitive_actions(self):
+        return self.get_action_conditions("prohibitive_actions")
 
     def get_result(self, action_instance):
         if self.category == Action.Category.EXAMINATION:
@@ -119,3 +147,6 @@ class Action(UUIDable, models.Model):
 
     def generic_result(self):
         return f"{self.name} wurde durchgeführt"
+
+    def __str__(self):
+        return f"Action {self.name}"

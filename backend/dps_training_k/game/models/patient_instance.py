@@ -272,6 +272,15 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             current_state__name=ActionInstanceStateNames.IN_PROGRESS,
         ).exists()
 
+    def get_completed_action_types(self):
+        from game.models import ActionInstanceState
+        action_instances = self.actioninstance_set.select_related("template").all()
+        applied_actions = set()
+        for action_instance in action_instances:
+            if action_instance.current_state.name in ActionInstanceState.completion_states():
+                applied_actions.add(action_instance.template)
+        return applied_actions
+
     def __str__(self):
         return (
             f"Patient #{self.id} called {self.name} with frontend ID {self.frontend_id}"
