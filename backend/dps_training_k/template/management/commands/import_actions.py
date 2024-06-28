@@ -115,11 +115,7 @@ class Command(BaseCommand):
                 "effect_duration": None,  # None means permanent
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": [
-                        str(ActionIDs.TRACHEALTUBUS),
-                        str(ActionIDs.LARYNXTUBUS),
-                        str(ActionIDs.GUEDELTUBUS),
-                    ],
+                    "prohibitive_actions": [str(ActionIDs.TRACHEALTUBUS), str(ActionIDs.LARYNXTUBUS), str(ActionIDs.GUEDELTUBUS)],
                     "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
                     "num_personnel": 2,
                     "lab_devices": None,
