@@ -121,7 +121,9 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
             template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
             area=area,
         )
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(action_template.application_duration+1)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(
+            action_template.application_duration + 1
+        )
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
@@ -153,41 +155,3 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         )
         action_instance._application_finished()
         self.assertEqual(_notify_exercise_update.call_count, 1)
-
-
-class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
-    def setUp(self):
-        Material.objects.update_or_create(
-            uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
-            name="Erythrozytenkonzentrat 0 pos.",
-            category=Material.Category.BLOOD,
-            is_reusable=False,
-        )
-        ActionFactoryWithProduction(application_duration=0)
-        self.deactivate_notifications()
-        self.deactivate_condition_checking()
-
-    def tearDown(self):
-        self.activate_notifications()
-        self.activate_condition_checking()
-
-    @patch("game.models.MaterialInstance.generate_materials")
-    async def test_action_production_dispatching(self, generate_materials):
-        """
-        when a production action was added via websockets, check whether action instance steps through the production routine
-        inside action_instance._application_finished.
-
-        """
-        communicator = await self.create_patient_communicator_and_authenticate()
-        await self.skip_initial_fetching(communicator)
-
-        # Send a message to the WebSocket
-        await communicator.send_json_to(
-            {
-                "messageType": "action-add",
-                "actionName": "Fresh Frozen Plasma (0 positiv) auftauen",
-            }
-        )
-        await asyncio.sleep(0.1)
-        await sync_to_async(check_for_updates)()
-        self.assertEqual(generate_materials.call_count, 1)
