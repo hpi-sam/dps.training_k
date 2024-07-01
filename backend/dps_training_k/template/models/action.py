@@ -97,7 +97,14 @@ class Action(UUIDable, models.Model):
     def required_actions(self):
         return self.get_action_conditions("required_actions")
 
+    def prohibitive_actions(self):
+        return self.get_action_conditions("prohibitive_actions")
+
     def get_action_conditions(self, conditions_type):
+        """
+        :return list of lists: each list entry means that at least
+        one of the actions in the list is needed to fulfill the corresponding condition
+        """
         if not self.conditions:
             return []
         if not conditions_type in self.conditions:
@@ -105,6 +112,7 @@ class Action(UUIDable, models.Model):
         action_conditions = self.conditions[conditions_type] or []
 
         action_groups = []
+        single_actions = []
         for action_condition in action_conditions:
             if isinstance(action_condition, list):
                 action_group = [
@@ -112,15 +120,10 @@ class Action(UUIDable, models.Model):
                     for action_uuid in action_condition
                 ]
                 action_groups.append(action_group)
-        single_action = [
-            [Action.objects.get(uuid=uuid.UUID(action_uuid))]
-            for action_uuid in action_conditions
-            if not isinstance(action_uuid, list)
-        ]
-        return action_groups + single_action
-
-    def prohibitive_actions(self):
-        return self.get_action_conditions("prohibitive_actions")
+            else:
+                single_actions.append([Action.objects.get(uuid=uuid.UUID(action_condition))])
+                    
+        return action_groups + single_actions
 
     def get_result(self, action_instance):
         if self.category == Action.Category.EXAMINATION:

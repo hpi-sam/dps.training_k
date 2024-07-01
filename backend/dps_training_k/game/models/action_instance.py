@@ -195,7 +195,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 f"{self.patient_instance.name} ist bereits woanders",
             )
         else:
-            resources_to_block, message, is_applicable = self._try_acquiring_resources(
+            resources_to_block, message, is_applicable = self._verify_acquiring_resources(
                 self.attached_instance(), self.attached_instance()
             )
             if is_applicable:
@@ -333,13 +333,8 @@ class ActionInstance(LocalTimeable, models.Model):
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
 
-    def __str__(self):
-        return f"""ActionInstance {self.template.name} for 
-            {self.patient_instance.name + str(self.patient_instance.id) 
-             if self.patient_instance 
-             else "Lab " + str(self.lab.exercise.frontend_id)}"""
 
-    def _try_acquiring_resources(self, material_owner, personnel_owner):
+    def _verify_acquiring_resources(self, material_owner, personnel_owner):
         """
         :params material_owner: Instance having a material_available method
         :params personell_owner: Instance having a personell_available method
@@ -390,27 +385,31 @@ class ActionInstance(LocalTimeable, models.Model):
         return False, return_message
 
     def _check_required_actions(self):
-        completed_actions = ActionInstance.objects.filter(patient_instance=self.patient_instance, current_state__name__in=ActionInstanceState.completion_states())
+        completed_actions = set()
+        if self.patient_instance:
+            completed_actions = completed_actions | self.patient_instance.get_completed_action_types()
+        if self.lab:
+            completed_actions = completed_actions | self.lab.get_completed_action_types()
+        
         for required_action_group in self.template.required_actions():
-            fulfilling_action_found = False
-            for required_action in required_action_group:
-                if completed_actions.filter(template=required_action).count() >= 1:
-                    fulfilling_action_found = True
-                    break
-            if not fulfilling_action_found:
-                return False, f"Die Aktion {required_action.name} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann. "
-            return fulfilling_action_found, ""
+            if not (set(required_action_group) & completed_actions):
+                return False, f"Die Aktion {required_action_group[0].name} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann. "
         return True, ""
     
     def _check_prohibitive_actions(self):
-        performed_actions = ActionInstance.objects.filter(patient_instance=self.patient_instance)
+        all_action_instances = ActionInstance.objects.none()
+        if self.patient_instance:
+            all_action_instances = all_action_instances | ActionInstance.objects.filter(patient_instance=self.patient_instance)
+        if self.lab:
+            all_action_instances = all_action_instances | ActionInstance.objects.filter(lab=self.lab)
+
         for prohibitive_action_group in self.template.prohibitive_actions():
             prohibitive_action_found = False
             for prohibitive_action in prohibitive_action_group:
                 # allow first application of action, but no subsequent ones
-                if prohibitive_action.name == self.template.name and performed_actions.filter(template=prohibitive_action).count() == 1:
+                if prohibitive_action.name == self.template.name and all_action_instances.filter(template=prohibitive_action).count() == 1:
                     continue
-                if performed_actions.filter(template=prohibitive_action).count() >= 1:
+                if all_action_instances.filter(template=prohibitive_action).count() >= 1:
                     prohibitive_action_found = True
                     break
             if prohibitive_action_found:
@@ -450,3 +449,9 @@ class ActionInstance(LocalTimeable, models.Model):
             codes.update({"Kreuzblut": f"{examination_code}"})
 
         return codes
+
+    def __str__(self):
+        return f"""ActionInstance {self.template.name} for 
+            {self.patient_instance.name + str(self.patient_instance.id) 
+             if self.patient_instance 
+             else "Lab " + str(self.lab.exercise.frontend_id)}"""
