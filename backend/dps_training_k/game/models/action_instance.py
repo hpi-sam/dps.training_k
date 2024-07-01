@@ -403,6 +403,7 @@ class ActionInstance(LocalTimeable, models.Model):
         if self.lab:
             all_action_instances = all_action_instances | ActionInstance.objects.filter(lab=self.lab)
 
+        all_action_instances = all_action_instances.exclude(current_state__name__in=[ActionInstanceStateNames.PLANNED, ActionInstanceStateNames.ON_HOLD])
         for prohibitive_action_group in self.template.prohibitive_actions():
             prohibitive_action_found = False
             for prohibitive_action in prohibitive_action_group:

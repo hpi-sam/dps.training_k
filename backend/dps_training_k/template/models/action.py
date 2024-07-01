@@ -69,6 +69,7 @@ class Action(UUIDable, models.Model):
             return []
 
         needed_material_groups = []
+        needed_single_material = []
         for material_condition_uuid in material_uuids:
             if isinstance(material_condition_uuid, list):
                 needed_material_group = [
@@ -76,11 +77,9 @@ class Action(UUIDable, models.Model):
                     for material_uuid in material_condition_uuid
                 ]
                 needed_material_groups.append(needed_material_group)
-        needed_single_material = [
-            [Material.objects.get(uuid=uuid.UUID(material_uuid))]
-            for material_uuid in material_uuids
-            if not isinstance(material_uuid, list)
-        ]
+            else:
+                needed_single_material.append([Material.objects.get(uuid=uuid.UUID(material_condition_uuid))])
+    
         return needed_material_groups + needed_single_material
 
     def personnel_count_needed(self):
