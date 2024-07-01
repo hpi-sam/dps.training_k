@@ -52,7 +52,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=action_template, patient_instance=PatientFactory()
         )
         self.assertEqual(
-            action_instance._try_acquiring_resources(
+            action_instance._verify_acquiring_resources(
                 action_instance.attached_instance(), action_instance.attached_instance()
             ),
             ([], "", True),
@@ -73,7 +73,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             template=action_template, patient_instance=PatientFactory()
         )
         aquired_resources, message, conditions_satisfied = (
-            action_instance._try_acquiring_resources(
+            action_instance._verify_acquiring_resources(
                 action_instance.attached_instance(), action_instance.attached_instance()
             )
         )
@@ -94,7 +94,7 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             patient_instance=action_instance.patient_instance,
         )
         aquired_resources, message, conditions_satisfied = (
-            action_instance._try_acquiring_resources(
+            action_instance._verify_acquiring_resources(
                 action_instance.attached_instance(), action_instance.attached_instance()
             )
         )

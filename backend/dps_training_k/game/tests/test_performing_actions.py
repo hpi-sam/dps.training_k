@@ -20,15 +20,15 @@ from .mixin import TestUtilsMixin
 class ActionInstanceTestCase(TestCase):
     def setUp(self):
         self.check_conditions_and_block_resources_patch = patch(
-            "game.models.ActionInstance._try_acquiring_resources"
+            "game.models.ActionInstance._verify_acquiring_resources"
         )
         self.get_local_time_patch = patch("game.models.ActionInstance.get_local_time")
-        self._try_acquiring_resources = (
+        self._verify_acquiring_resources = (
             self.check_conditions_and_block_resources_patch.start()
         )
         self.get_local_time = self.get_local_time_patch.start()
         self.get_local_time.return_value = 10
-        self._try_acquiring_resources.return_value = [], "", True
+        self._verify_acquiring_resources.return_value = [], "", True
 
     def tearDown(self):
         self.check_conditions_and_block_resources_patch.stop()
@@ -54,7 +54,7 @@ class ActionInstanceTestCase(TestCase):
             action_instance.state_name, ActionInstanceStateNames.IN_PROGRESS
         )
 
-        self._try_acquiring_resources.return_value = ([], "Not applicable", False)
+        self._verify_acquiring_resources.return_value = ([], "Not applicable", False)
         condition_succeeded, _ = action_instance.try_application()
         self.assertFalse(condition_succeeded)
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.ON_HOLD)
@@ -77,7 +77,7 @@ class ActionInstanceTestCase(TestCase):
         )
 
         action_instance = ActionInstance.create(ActionFactory(), PatientFactory())
-        self._try_acquiring_resources.return_value = ([], "Not applicable", False)
+        self._verify_acquiring_resources.return_value = ([], "Not applicable", False)
         action_instance.try_application()
         # send action-list 4 times, send confirmation event twice = 6
         self.assertEqual(_notify_action_event.call_count, 6)

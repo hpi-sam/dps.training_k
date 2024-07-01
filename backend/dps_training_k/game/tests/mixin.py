@@ -77,7 +77,7 @@ class TestUtilsMixin:
 
     def deactivate_condition_checking(self):
         self._deactivate_condition_checking_patch = patch(
-            "game.models.ActionInstance._try_acquiring_resources"
+            "game.models.ActionInstance._verify_acquiring_resources"
         )
         self._deactivate_condition_checking = (
             self._deactivate_condition_checking_patch.start()
