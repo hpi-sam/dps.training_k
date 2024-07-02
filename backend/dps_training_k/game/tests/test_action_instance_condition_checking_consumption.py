@@ -15,9 +15,9 @@ from .factories import (
     LabFactory,
 )
 from .mixin import TestUtilsMixin
-from ..models import MaterialInstance
+from ..models import MaterialInstance, ActionInstanceStateNames
 from template.models import Action
-
+from template.constants import ActionIDs
 
 class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
     def setUp(self):
@@ -284,3 +284,50 @@ class ActionCheckAndBlockingTestCase(TestUtilsMixin, TestCase):
             material_instance_3,
         ]
         self.assertEqual(old_state, new_state)
+
+    def test_prerequisite_action_check(self):
+        # test chain of actions that has been bugged previously
+        condition1 = ConditionFactory(num_personnel=1)
+        action_template1 = ActionFactory(conditions=condition1, uuid=ActionIDs.ART_KANUELE, name="Art. Kanüle")
+        condition2 = ConditionFactory(num_personnel=1, required_actions=[str(ActionIDs.ART_KANUELE)])
+        action_template2 = ActionFactory(conditions=condition2, uuid=ActionIDs.BLUTABNAHME, name="Blutabnahme")
+        condition3 = ConditionFactory(num_personnel=1, required_actions=[str(ActionIDs.BLUTABNAHME)])
+        action_template3 = ActionFactory(conditions=condition3, uuid=ActionIDs.LEBERANALYSE, name="Leberanalyse")
+
+        patient_instance = PatientFactory()
+        action_instance1 = ActionInstanceFactory(template=action_template1, patient_instance=patient_instance)
+        action_instance2 = ActionInstanceFactory(template=action_template2, patient_instance=patient_instance)
+        action_instance3 = ActionInstanceFactory(template=action_template3, patient_instance=patient_instance)
+        
+        is_applicable, message = action_instance1._verify_prerequisite_actions()
+        self.assertTrue(is_applicable, message)
+        action_instance1._update_state(ActionInstanceStateNames.FINISHED)
+        
+        is_applicable, message = action_instance2._verify_prerequisite_actions()
+        self.assertTrue(is_applicable, message)
+        action_instance2._update_state(ActionInstanceStateNames.FINISHED)
+
+        is_applicable, message = action_instance3._verify_prerequisite_actions()
+        self.assertTrue(is_applicable, message)
+
+        # test prohibitive actions prohibiting other actions
+        action_instance3._update_state(ActionInstanceStateNames.FINISHED)
+        condition4 = ConditionFactory(num_personnel=1, prohibitive_actions=[str(ActionIDs.LEBERANALYSE)])
+        # the following is not data set accurate but should behave the same
+        action_template4 = ActionFactory(conditions=condition4, uuid=ActionIDs.STABILE_SEITENLAGE, name="Stabile Seitenlage")
+        action_instance4 = ActionInstanceFactory(template=action_template4, patient_instance=patient_instance)
+        is_applicable, message = action_instance4._verify_prerequisite_actions()
+        self.assertFalse(is_applicable, message)
+
+        # test cancelled state not impacting prohibiting actions
+        action_instance3._update_state(ActionInstanceStateNames.CANCELED)
+        condition5 = ConditionFactory(num_personnel=1, prohibitive_actions=[str(ActionIDs.LEBERANALYSE)])
+        # the following is not data set accurate but should behave the same
+        action_template5 = ActionFactory(conditions=condition5, uuid=ActionIDs.SCHOCKLAGE, name="Schocklage")
+        action_instance5 = ActionInstanceFactory(template=action_template5, patient_instance=patient_instance)
+        is_applicable, message = action_instance5._verify_prerequisite_actions()
+        self.assertTrue(is_applicable, message)
+
+
+
+
