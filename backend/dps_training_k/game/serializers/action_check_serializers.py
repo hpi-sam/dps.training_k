@@ -5,6 +5,7 @@ from rest_framework import serializers
 import template.models.action as a
 from django.db.models import Q
 
+
 class ActionSerializer(serializers.ModelSerializer):
     actionName = serializers.CharField(source="name")
     applicationDuration = serializers.IntegerField(source="application_duration")
@@ -37,6 +38,7 @@ class ActionCheckSerializer(ABC):
         if prohibitive_actions:
             data.update({"prohibitiveActions": prohibitive_actions})
         return data
+
 
 class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
     def __init__(self, action, patient_instance):
@@ -71,7 +73,7 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
                 }
             )
         return material_entries
-    
+
     def required_actions(self):
         required_actions = self.action.required_actions()
         applied_actions = self.patient_instance.get_completed_action_types()
@@ -83,7 +85,9 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
                 for action in required_action_group:
                     if action not in applied_actions:
                         required_action_group_names.append(action.name)
-                group_actions.append([{"actions": required_action_group_names}])
+                group_actions.append(
+                    {"groupName": "", "actions": required_action_group_names}
+                )
             else:
                 if required_action_group[0] not in applied_actions:
                     single_actions.append(required_action_group[0].name)
@@ -91,17 +95,16 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
             "singleActions": single_actions,
             "actionGroups": group_actions,
         }
-    
+
     def prohibitive_actions(self):
         from game.models import ActionInstance
-        applied_action_instances = ActionInstance.objects.filter(patient_instance=self.patient_instance).select_related('template')
-        applied_actions = {action_instance.template for action_instance in applied_action_instances}
+
+        applied_actions = ActionInstance.get_prohibiting_actions(self.patient_instance, self.patient_instance.lab)
         prohibitive_actions = []
         for action in self.action.prohibitive_actions():
             if action[0] in applied_actions:
                 prohibitive_actions.append(action[0].name)
         return prohibitive_actions
-
 
 
 class LabActionCheckSerializer(ActionCheckSerializer):
@@ -142,7 +145,9 @@ class LabActionCheckSerializer(ActionCheckSerializer):
     def required_actions(self):
         required_actions = self.action.required_actions()
         applied_actions = self.lab.get_completed_action_types()
-        applied_actions = applied_actions | self.patient_instance.get_completed_action_types()
+        applied_actions = (
+            applied_actions | self.patient_instance.get_completed_action_types()
+        )
         single_actions = []
         group_actions = []
         for required_action_group in required_actions:
@@ -151,7 +156,12 @@ class LabActionCheckSerializer(ActionCheckSerializer):
                 for action in required_action_group:
                     if action not in applied_actions:
                         required_action_group_names.append(action.name)
-                group_actions.append([{"actions": required_action_group_names}])
+                group_actions.append(
+                    {
+                        "groupName": "",
+                        "actions": required_action_group_names,
+                    }
+                )
             else:
                 if required_action_group[0] not in applied_actions:
                     single_actions.append(required_action_group[0].name)
@@ -159,12 +169,11 @@ class LabActionCheckSerializer(ActionCheckSerializer):
             "singleActions": single_actions,
             "actionGroups": group_actions,
         }
-    
+
     def prohibitive_actions(self):
         from game.models import ActionInstance
 
-        applied_action_instances = ActionInstance.objects.filter(Q(lab=self.lab) | Q(patient_instance=self.patient_instance))
-        applied_actions = {action_instance.template for action_instance in applied_action_instances}
+        applied_actions = ActionInstance.get_prohibiting_actions(self.patient_instance, self.lab)
         prohibitive_actions = []
         for action in self.action.prohibitive_actions():
             if action[0] in applied_actions:

@@ -369,34 +369,33 @@ export const serverMockEvents = [
 		id: 'action-check',
 		data: `{
 			"messageType": "action-check",
-			"actionCheck": {
-				"actionName": "Beatmungsmaske anlegen",
-				"applicationDuration": 40,
-				"effectDuration": null,
-				"personnel": [
-				{
-					"name": "Ärzte",
-					"available": 1,
-					"assigned": 2,
-					"needed": 2
-				}
-				],
-				"material": [
-				{
-					"name": "Beatmungsmaske",
-					"available": 0,
-					"assigned": 0,
-					"needed": 1
-				}
-				],
-				"labDevices": [
-				{
-					"name": "EKG",
-					"available": 4,
-					"needed": 1
-				}
-				],
-				"requiredActions": {
+			"actionName": "Beatmungsmaske anlegen",
+			"applicationDuration": 40,
+			"effectDuration": null,
+			"personnel": [
+			{
+				"name": "Ärzte",
+				"available": 1,
+				"assigned": 2,
+				"needed": 2
+			}
+			],
+			"material": [
+			{
+				"name": "Beatmungsmaske",
+				"available": 0,
+				"assigned": 0,
+				"needed": 1
+			}
+			],
+			"labDevices": [
+			{
+				"name": "EKG",
+				"available": 4,
+				"needed": 1
+			}
+			],
+			"requiredActions": {
 				"singleActions": [
 					"Stabile Seitenlage"
 				],
@@ -417,7 +416,6 @@ export const serverMockEvents = [
 						]
 					}
 				]
-				}
 			}
 		}`
 	},

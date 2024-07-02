@@ -144,7 +144,7 @@
 					</ListItemButton>
 				</ListItem>
 			</CustomList>
-			<CustomList v-if="actionCheckStore?.requiredActions?.singleActions?.length > 0">
+			<CustomList v-if="actionCheckStore?.requiredActions?.singleActions?.length > 0 || actionCheckStore?.requiredActions?.actionGroups?.length > 0">
 				<p>
 					Folgende Aktionen müssen zuvor durchgeführt werden
 				</p>

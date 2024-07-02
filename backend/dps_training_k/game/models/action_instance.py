@@ -64,7 +64,18 @@ class ActionInstanceState(models.Model):
         return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT]
 
     def completion_states():
-        return [ActionInstanceStateNames.FINISHED, ActionInstanceStateNames.IN_EFFECT, ActionInstanceStateNames.EXPIRED]
+        return [
+            ActionInstanceStateNames.FINISHED,
+            ActionInstanceStateNames.IN_EFFECT,
+            ActionInstanceStateNames.EXPIRED,
+        ]
+
+    def non_prohibiting_states():
+        return [
+            ActionInstanceStateNames.PLANNED,
+            ActionInstanceStateNames.ON_HOLD,
+            ActionInstanceStateNames.CANCELED,
+        ]
 
 
 class ActionInstance(LocalTimeable, models.Model):
@@ -195,14 +206,15 @@ class ActionInstance(LocalTimeable, models.Model):
                 f"{self.patient_instance.name} ist bereits woanders",
             )
         else:
-            resources_to_block, message, is_applicable = self._verify_acquiring_resources(
-                self.attached_instance(), self.attached_instance()
+            resources_to_block, message, is_applicable = (
+                self._verify_acquiring_resources(
+                    self.attached_instance(), self.attached_instance()
+                )
             )
             if is_applicable:
                 is_applicable, relocates, message = self._check_relocating()
                 if is_applicable:
                     is_applicable, message = self._verify_prerequisite_actions()
-            
 
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, message)
@@ -333,7 +345,6 @@ class ActionInstance(LocalTimeable, models.Model):
     def _effect_expired(self):
         self._update_state(ActionInstanceStateNames.EXPIRED)
 
-
     def _verify_acquiring_resources(self, material_owner, personnel_owner):
         """
         :params material_owner: Instance having a material_available method
@@ -365,13 +376,13 @@ class ActionInstance(LocalTimeable, models.Model):
 
         available_personnel = personnel_owner.personnel_available()
         if len(available_personnel) < self.template.personnel_count_needed():
-            return [], f"Nicht genug Personal verfügbar", False 
+            return [], f"Nicht genug Personal verfügbar", False
         for i in range(self.template.personnel_count_needed()):
             resources_to_block.append(available_personnel[i])
         if not resources_to_block:
             return [], "", True
         return resources_to_block, "", True
-    
+
     def _verify_prerequisite_actions(self):
         required_actions_fulfilled, message1 = self._check_required_actions()
         no_prohibitive_actions, message2 = self._check_prohibitive_actions()
@@ -387,34 +398,58 @@ class ActionInstance(LocalTimeable, models.Model):
     def _check_required_actions(self):
         completed_actions = set()
         if self.patient_instance:
-            completed_actions = completed_actions | self.patient_instance.get_completed_action_types()
+            completed_actions = completed_actions.union(
+                self.patient_instance.get_completed_action_types()
+            )
         if self.lab:
-            completed_actions = completed_actions | self.lab.get_completed_action_types()
-        
+            completed_actions = completed_actions.union(
+                self.lab.get_completed_action_types()
+            )
+
         for required_action_group in self.template.required_actions():
             if not (set(required_action_group) & completed_actions):
-                return False, f"Die Aktion {required_action_group[0].name} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann. "
+                return (
+                    False,
+                    f"Die Aktion {required_action_group[0].name} muss ausgeführt werden, bevor {self.template.name} ausgeführt werden kann. ",
+                )
         return True, ""
-    
+
     def _check_prohibitive_actions(self):
         all_action_instances = ActionInstance.objects.none()
         if self.patient_instance:
-            all_action_instances = all_action_instances | ActionInstance.objects.filter(patient_instance=self.patient_instance)
+            all_action_instances = all_action_instances | ActionInstance.objects.filter(
+                patient_instance=self.patient_instance
+            ).exclude(
+                current_state__name__in=ActionInstanceState.non_prohibiting_states()
+            )
         if self.lab:
-            all_action_instances = all_action_instances | ActionInstance.objects.filter(lab=self.lab)
+            all_action_instances = all_action_instances | ActionInstance.objects.filter(
+                lab=self.lab
+            ).exclude(
+                current_state__name__in=ActionInstanceState.non_prohibiting_states()
+            )
 
-        all_action_instances = all_action_instances.exclude(current_state__name__in=[ActionInstanceStateNames.PLANNED, ActionInstanceStateNames.ON_HOLD])
         for prohibitive_action_group in self.template.prohibitive_actions():
             prohibitive_action_found = False
             for prohibitive_action in prohibitive_action_group:
                 # allow first application of action, but no subsequent ones
-                if prohibitive_action.name == self.template.name and all_action_instances.filter(template=prohibitive_action).count() == 1:
+                if (
+                    prohibitive_action.name == self.template.name
+                    and all_action_instances.filter(template=prohibitive_action).count()
+                    == 1
+                ):
                     continue
-                if all_action_instances.filter(template=prohibitive_action).count() >= 1:
+                if (
+                    all_action_instances.filter(template=prohibitive_action).count()
+                    >= 1
+                ):
                     prohibitive_action_found = True
                     break
             if prohibitive_action_found:
-                return False, f"Die Aktion {self.template.name} kann nicht ausgeführt werden, weil bereits die Aktion {prohibitive_action.name} ausgeführt wurde. "
+                return (
+                    False,
+                    f"Die Aktion {self.template.name} kann nicht ausgeführt werden, weil bereits die Aktion {prohibitive_action.name} ausgeführt wurde. ",
+                )
         return True, ""
 
     def _free_resources(self):
@@ -456,3 +491,26 @@ class ActionInstance(LocalTimeable, models.Model):
             {self.patient_instance.name + str(self.patient_instance.id) 
              if self.patient_instance 
              else "Lab " + str(self.lab.exercise.frontend_id)}"""
+
+    @classmethod
+    def get_prohibiting_actions(cls, patient_instance, lab):
+        prohibiting_action_instances = ActionInstance.objects.none()
+        if lab:
+            # the following exclude needs to be done here instead of later. otherwise union won't work.
+            prohibiting_action_instances = prohibiting_action_instances.union(
+                ActionInstance.objects.filter(lab=lab).exclude(
+                    current_state__name__in=ActionInstanceState.non_prohibiting_states()
+                )
+            )
+        if patient_instance:
+            prohibiting_action_instances = prohibiting_action_instances.union(
+                ActionInstance.objects.filter(
+                    patient_instance=patient_instance
+                ).exclude(
+                    current_state__name__in=ActionInstanceState.non_prohibiting_states()
+                )
+            )
+        prohibiting_actions = {
+            action_instance.template for action_instance in prohibiting_action_instances
+        }
+        return prohibiting_actions
