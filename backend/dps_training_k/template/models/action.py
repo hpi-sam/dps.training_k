@@ -10,7 +10,7 @@ from .material import Material
 class Action(UUIDable, models.Model):
     class Category(models.TextChoices):
         TREATMENT = "TR", "treatment"
-        EXAMINATION = "EX", "examination"
+        EXAMINATION = "EX", "examination"  # requires results to be set
         PRODUCTION = "PR", "production"
         OTHER = "OT", "other"
 
