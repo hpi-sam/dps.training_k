@@ -204,7 +204,7 @@ class ActionInstance(LocalTimeable, models.Model):
         lab=None,
     ):
         """:param state_name: The state the action should be created in. The method creates
-        an action_isntance in the state by applying the states beween the state_name and the initial state.
+        an action_instance in the state by applying the states between the state_name and the initial state.
         If there are several paths it chooses the shortest one."""
         action_instance = cls.create(template, patient_instance, destination_area, lab)
         AISN = ActionInstanceStateNames
