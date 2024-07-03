@@ -423,25 +423,13 @@ class ActionInstance(LocalTimeable, models.Model):
         return True, ""
 
     def _check_prohibitive_actions(self):
-        all_action_instances = ActionInstance.objects.none()
-        if self.patient_instance:
-            all_action_instances = all_action_instances | ActionInstance.objects.filter(
-                patient_instance=self.patient_instance
-            ).exclude(
-                current_state__name__in=ActionInstanceState.non_prohibiting_states()
-            )
-        if self.lab:
-            all_action_instances = all_action_instances | ActionInstance.objects.filter(
-                lab=self.lab
-            ).exclude(
-                current_state__name__in=ActionInstanceState.non_prohibiting_states()
-            )
+        action_instances = ActionInstance.get_potentially_prohibiting_action_instances(self.patient_instance, self.lab)
 
         for prohibitive_action_group in self.template.prohibitive_actions():
             prohibitive_action_found = False
             for prohibitive_action in prohibitive_action_group:
                 # allow first application of action, but no subsequent ones
-                if all_action_instances.filter(template=prohibitive_action).exists():
+                if action_instances.filter(template=prohibitive_action).exists():
                     prohibitive_action_found = True
                     break
             if prohibitive_action_found:
@@ -450,6 +438,28 @@ class ActionInstance(LocalTimeable, models.Model):
                     f"Die Aktion {self.template.name} kann nicht ausgeführt werden, weil bereits die Aktion {prohibitive_action.name} ausgeführt wurde. ",
                 )
         return True, ""
+    
+    @classmethod
+    def get_potentially_prohibiting_action_instances(cls, patient_instance, lab):
+        prohibiting_action_instances = ActionInstance.objects.none()
+        if lab:
+            # the following exclude needs to be done here instead of later. otherwise union won't work.
+            prohibiting_action_instances = (
+                prohibiting_action_instances
+                | ActionInstance.objects.filter(lab=lab).exclude(
+                    current_state__name__in=ActionInstanceState.non_prohibiting_states()
+                )
+            )
+        if patient_instance:
+            prohibiting_action_instances = (
+                prohibiting_action_instances
+                | ActionInstance.objects.filter(
+                    patient_instance=patient_instance
+                ).exclude(
+                    current_state__name__in=ActionInstanceState.non_prohibiting_states()
+                )
+            )
+        return prohibiting_action_instances
 
     def _free_resources(self):
         for material in self.materialinstance_set.all():
@@ -491,27 +501,3 @@ class ActionInstance(LocalTimeable, models.Model):
              if self.patient_instance 
              else "Lab " + str(self.lab.exercise.frontend_id)}"""
 
-    @classmethod
-    def get_prohibiting_actions(cls, patient_instance, lab):
-        prohibiting_action_instances = ActionInstance.objects.none()
-        if lab:
-            # the following exclude needs to be done here instead of later. otherwise union won't work.
-            prohibiting_action_instances = (
-                prohibiting_action_instances
-                | ActionInstance.objects.filter(lab=lab).exclude(
-                    current_state__name__in=ActionInstanceState.non_prohibiting_states()
-                )
-            )
-        if patient_instance:
-            prohibiting_action_instances = (
-                prohibiting_action_instances
-                | ActionInstance.objects.filter(
-                    patient_instance=patient_instance
-                ).exclude(
-                    current_state__name__in=ActionInstanceState.non_prohibiting_states()
-                )
-            )
-        prohibiting_actions = {
-            action_instance.template for action_instance in prohibiting_action_instances
-        }
-        return prohibiting_actions

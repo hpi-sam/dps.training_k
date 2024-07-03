@@ -103,9 +103,12 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
     def prohibitive_actions(self):
         from game.models import ActionInstance
 
-        applied_actions = ActionInstance.get_prohibiting_actions(
+        applied_action_instances = ActionInstance.get_potentially_prohibiting_action_instances(
             self.patient_instance, self.patient_instance.lab
         )
+        applied_actions = {
+            action_instance.template for action_instance in applied_action_instances
+        }
         prohibitive_actions = []
         for action in self.action.prohibitive_actions():
             if action[0] in applied_actions:
@@ -179,9 +182,12 @@ class LabActionCheckSerializer(ActionCheckSerializer):
     def prohibitive_actions(self):
         from game.models import ActionInstance
 
-        applied_actions = ActionInstance.get_prohibiting_actions(
+        applied_action_instances = ActionInstance.get_potentially_prohibiting_action_instances(
             self.patient_instance, self.lab
         )
+        applied_actions = {
+            action_instance.template for action_instance in applied_action_instances
+        }
         prohibitive_actions = []
         for action in self.action.prohibitive_actions():
             if action[0] in applied_actions:
