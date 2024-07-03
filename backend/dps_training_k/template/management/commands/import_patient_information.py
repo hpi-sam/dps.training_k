@@ -1,5 +1,4 @@
 import csv
-import re
 
 from django.core.management.base import BaseCommand
 
@@ -17,10 +16,6 @@ def import_patients(file_path):
         reader = csv.DictReader(csvfile)
         for row in reader:
             triage = get_triage_from_string(row["PAK Info"].split(";")[0].strip())
-            consecutiveUniqueNumber = int(
-                re.sub("[^0-9]", "", row["PAK Info"].split(";")[1]) or -1
-            )  # first half is interpreted as boolean and if it's false / undefined / not valid, -1 is saved as default value. Otherwise,
-            # the number is extracted from the string
 
             biometrics = (
                 row["Geschlecht"].strip()
@@ -37,7 +32,6 @@ def import_patients(file_path):
                 injury=row["Verletzungen"].strip(),
                 biometrics=biometrics,
                 triage=triage,
-                consecutive_unique_number=consecutiveUniqueNumber,
                 mobility=row["Mobilität"].strip(),
                 preexisting_illnesses=row["Vorerkrankungen"].strip(),
                 permanent_medication=row["Dauer-Medikation"].strip(),
