@@ -1,31 +1,62 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { createEditor as createPatientEditor } from '@/rete/patient'
-import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
-import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
-import { useTransitionStore } from '@/stores/patienteditor/Transition'
-import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
-import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
+  import { ref, Ref, onMounted } from 'vue'
+  import { createEditor as createPatientEditor } from '@/rete/patient'
+  import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
+  import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
+  import { useTransitionStore } from '@/stores/patienteditor/Transition'
+  import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
+  import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
 
-const rete = ref(null)
+  interface ReteEditor {
+    layout: () => Promise<void>;
+    destroy: () => void;
+  }
+
+  const rete = ref(null)
+  const reteEditor: Ref<ReteEditor | null> = ref(null)
 
   onMounted(async () => {
     const patientEditorStore = usePatientEditorStore()
     const patientStateStore = usePatientStateStore()
     const transitionStore = useTransitionStore()
 
+    patientStateStore.clear()
+    transitionStore.clear()
+
     patientStateStore.addPatientState(
       {
         id: 1,
         nodeId: '',
         nextTransition: 1,
-        airway: 'open',
-        breathing: 'normal',
-        circulation: 'normal',
-        consciousness: 'awake',
-        psyche: 'normal',
-        pupils: 'normal',
-        skin: 'normal'
+        airway: "freie Atemwege",
+        breathingRate: 1,
+        oxygenSaturation: 1,
+        breathing: "vertiefte Atmung",
+        breathingSound: true,
+        breathingLoudness: "sehr leises AG hörbar",
+        heartRate: 1,
+        pulsePalpable:"peripher tastbar",
+        rivaRocci: "1/1",
+        consciousness: "wach, orientiert",
+        pupils: "mittelweit",
+        psyche: "unauffällig",
+        skinFining: "trocken",
+        skinDiscoloration: "rosig",
+        bgaOxy: 601,
+        bgaSbh: 652,
+        hb: 401,
+        bz: 916,
+        clotting: 100,
+        liver: 111,
+        kidney: 120,
+        infarct: 134,
+        lactate: 144,
+        extremities: 523,
+        thorax: 340,
+        trauma: 108,
+        ultraschall: 621,
+        ekg: 746,
+        zvd: 805 
       }
     )
 
@@ -34,13 +65,35 @@ const rete = ref(null)
         id: 2,
         nodeId: '',
         nextTransition: 2,
-        airway: 'open',
-        breathing: 'normal',
-        circulation: 'normal',
-        consciousness: 'awake',
-        psyche: 'normal',
-        pupils: 'normal',
-        skin: 'normal'
+        airway: "freie Atemwege",
+        breathingRate: 2,
+        oxygenSaturation: 1,
+        breathing: "vertiefte Atmung",
+        breathingSound: true,
+        breathingLoudness: "sehr leises AG hörbar",
+        heartRate: 1,
+        pulsePalpable:"peripher tastbar",
+        rivaRocci: "1/1",
+        consciousness: "wach, orientiert",
+        pupils: "mittelweit",
+        psyche: "unauffällig",
+        skinFining: "trocken",
+        skinDiscoloration: "rosig",
+        bgaOxy: 601,
+        bgaSbh: 652,
+        hb: 401,
+        bz: 916,
+        clotting: 100,
+        liver: 111,
+        kidney: 120,
+        infarct: 134,
+        lactate: 144,
+        extremities: 523,
+        thorax: 340,
+        trauma: 108,
+        ultraschall: 621,
+        ekg: 746,
+        zvd: 805 
       }
     )
 
@@ -48,14 +101,73 @@ const rete = ref(null)
       {
         id: 3,
         nodeId: '',
-        nextTransition: Number.NEGATIVE_INFINITY,
-        airway: 'open',
-        breathing: 'normal',
-        circulation: 'normal',
-        consciousness: 'awake',
-        psyche: 'normal',
-        pupils: 'normal',
-        skin: 'normal'
+        nextTransition: 2,
+        airway: "freie Atemwege",
+        breathingRate: 3,
+        oxygenSaturation: 1,
+        breathing: "vertiefte Atmung",
+        breathingSound: true,
+        breathingLoudness: "sehr leises AG hörbar",
+        heartRate: 1,
+        pulsePalpable:"peripher tastbar",
+        rivaRocci: "1/1",
+        consciousness: "wach, orientiert",
+        pupils: "mittelweit",
+        psyche: "unauffällig",
+        skinFining: "trocken",
+        skinDiscoloration: "rosig",
+        bgaOxy: 601,
+        bgaSbh: 652,
+        hb: 401,
+        bz: 916,
+        clotting: 100,
+        liver: 111,
+        kidney: 120,
+        infarct: 134,
+        lactate: 144,
+        extremities: 523,
+        thorax: 340,
+        trauma: 108,
+        ultraschall: 621,
+        ekg: 746,
+        zvd: 805 
+      }
+    )
+
+    patientStateStore.addPatientState(
+      {
+        id: 4,
+        nodeId: '',
+        nextTransition: null,
+        airway: "freie Atemwege",
+        breathingRate: 4,
+        oxygenSaturation: 1,
+        breathing: "vertiefte Atmung",
+        breathingSound: true,
+        breathingLoudness: "sehr leises AG hörbar",
+        heartRate: 1,
+        pulsePalpable:"peripher tastbar",
+        rivaRocci: "1/1",
+        consciousness: "wach, orientiert",
+        pupils: "mittelweit",
+        psyche: "unauffällig",
+        skinFining: "trocken",
+        skinDiscoloration: "rosig",
+        bgaOxy: 601,
+        bgaSbh: 652,
+        hb: 401,
+        bz: 916,
+        clotting: 100,
+        liver: 111,
+        kidney: 120,
+        infarct: 134,
+        lactate: 144,
+        extremities: 523,
+        thorax: 340,
+        trauma: 108,
+        ultraschall: 621,
+        ekg: 746,
+        zvd: 805 
       }
     )
 
@@ -64,7 +176,7 @@ const rete = ref(null)
         id: 1,
         nodeId: '',
         firstCondition: Number.NEGATIVE_INFINITY,
-        nextStates: [2]
+        nextStates: [2, 3]
       }
     )
 
@@ -73,15 +185,17 @@ const rete = ref(null)
         id: 2,
         nodeId: '',
         firstCondition: Number.NEGATIVE_INFINITY,
-        nextStates: [3]
+        nextStates: [4]
       }
     )
 
     if (rete.value) {
-      await createPatientEditor(rete.value as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
+      reteEditor.value = await createPatientEditor(rete.value as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
+      await reteEditor?.value?.layout()
     } else {
       console.error('No Rete container found')
-}
+    }
+
   })
 </script>
 
@@ -90,8 +204,11 @@ const rete = ref(null)
 	<div v-if="false" class="sidebar">
 		<PatientInfoForm />
 	</div>
-  <div class="sidebar">
+	<div class="sidebar">
 		<PatientStateForm />
+		<button @click="reteEditor?.layout(); console.log('Clicked Layout-Button')">
+			Layout
+		</button>
 	</div>
 </template>
 

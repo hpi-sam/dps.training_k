@@ -1,21 +1,31 @@
 import { defineStore } from 'pinia'
 
 export const usePatientStateStore = defineStore('patient-state', {
-  state: (): { patientStates: Record<number, PatientState> } => ({
-    patientStates: {},
+  state: (): PatientStates => ({
+    patientStates: [],
   }),
   getters: {
-    getNextTransition: (state) => Object.values(state.patientStates).map(patientState => patientState.nextTransition),
+    getNextTransition: (state) => state.patientStates.map(patientState => patientState.nextTransition),
+    getPatientStateById: (state) => {
+      return (id: number) => state.patientStates.find(patientState => patientState.id === id)
+    },
+    getPatientStateByNodeId: (state) => {
+      return (nodeId: string) => state.patientStates.find(patientState => patientState.nodeId === nodeId)
+    }
   },
   actions: {
     addPatientState(patientState: PatientState) {
-      this.patientStates[patientState.id] = patientState
+      this.patientStates.push(patientState)
     },
     removePatientState(id: number) {
-      delete this.patientStates[id]
+      this.patientStates.filter(patientState => patientState.id !== id)
     },
     updatePatientState(id: number, newPatientState: PatientState) {
-      this.patientStates[id] = newPatientState
+      const index = this.patientStates.findIndex(patientState => patientState.id === id)
+      this.patientStates[index] = newPatientState
     },
+    clear() {
+      this.patientStates = []
+    }
   }
 })

@@ -85,16 +85,16 @@ export default defineComponent({
 .node {
     background: $node-color;
     border: 2px solid #4e58bf;
-  border-radius: 100%;
-  cursor: pointer;
-  box-sizing: border-box;
-  width: $node-width;
-  height: auto;
-  padding-bottom: 6px;
-  position: relative;
-  user-select: none;
-  line-height: initial;
-  font-family: Arial;
+    border-radius: 100%;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: $node-width;
+    height: auto;
+    padding-bottom: 6px;
+    position: relative;
+    user-select: none;
+    line-height: initial;
+    font-family: Arial;
 
     display: flex;
     justify-content: center;

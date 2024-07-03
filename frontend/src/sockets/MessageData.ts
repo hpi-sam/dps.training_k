@@ -218,17 +218,47 @@ interface PatientEditor {
 	pretreatment: string
 }
 
+interface PatientStates {
+	patientStates: PatientState[]
+}
+
 interface PatientState {
 	id: number
 	nodeId: string
-	nextTransition: number
+	nextTransition: number | null
 	airway: string
+	breathingRate: number
+	oxygenSaturation: number
 	breathing: string
-	circulation: string
+	breathingSound: true,
+	breathingLoudness: string
+	heartRate: number,
+	pulsePalpable:string
+	rivaRocci: string
 	consciousness: string
-	psyche: string
 	pupils: string
-	skin: string
+	psyche: string
+	skinFining: string
+	skinDiscoloration: string
+	bgaOxy: number
+	bgaSbh: number
+	hb: number
+	bz: number
+	clotting: number
+	liver: number
+	kidney: number
+	infarct: number
+	lactate: number
+	extremities: number
+	thorax: number
+	trauma: number
+	ultraschall: number
+	ekg: number
+	zvd: number
+}
+
+interface Transitions {
+	transitions: Transition[]
 }
 
 interface Transition {
@@ -236,4 +266,15 @@ interface Transition {
 	nodeId: string
 	firstCondition: number
 	nextStates: number[]
+}
+
+interface PatientStateStore {
+	patientStates: PatientState[]
+	getPatientStateById: (id: number) => PatientState
+}
+
+interface TransitionStore {
+	transitions: Transition[]
+	getTransitionById: (id: number) => Transition
+	getTransitionByNodeId: (nodeId: string) => Transition
 }
