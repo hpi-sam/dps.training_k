@@ -15,6 +15,7 @@ import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
 import CircleNode from './customization/CircleNode.vue'
 import SquareNode from './customization/SquareNode.vue'
 import { loadPatientState } from '@/components/componentsPatientEditor/PatientStateForm.vue'
+import { showPatientStateForm } from '@/components/ModulePatientEditor.vue'
 
 type Node = StateNode | TransitionNode;
 type Conn =
@@ -138,7 +139,7 @@ export async function createEditor(
   area.addPipe(context => {
     if (context.type === 'nodepicked') {
       const node = editor.getNode(context.data.id)
-      console.log("Node: " + node.id + " Label: " + node.label)
+      showPatientStateForm()
       loadPatientState(node.id)
     }
     return context

@@ -199,30 +199,70 @@
   })
 </script>
 
+<script lang="ts">
+  const patientInfoFormIsVisible = ref(true)
+
+  export function showPatientStateForm() {
+    patientInfoFormIsVisible.value = false
+  }
+</script>
+
 <template>
+	<div class="left-sidebar">
+		<button @click="patientInfoFormIsVisible = true">
+			Patienteninfos bearbeiten
+		</button>
+		<button @click="reteEditor?.layout(); console.log('Clicked Layout-Button')">
+			Auto Layout
+		</button>
+	</div>
 	<div ref="rete" class="rete" />
-	<div v-if="false" class="sidebar">
+	<div v-if="patientInfoFormIsVisible" class="right-sidebar overlay">
 		<PatientInfoForm />
 	</div>
-	<div class="sidebar">
+	<div class="right-sidebar">
 		<PatientStateForm />
-		<button @click="reteEditor?.layout(); console.log('Clicked Layout-Button')">
-			Layout
-		</button>
 	</div>
 </template>
 
 <style scoped>
+  .left-sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    padding: 20px;
+    overflow: auto;
+    z-index: 1;
+  }
+
+  .left-sidebar button {
+    margin-bottom: 10px;
+    width: fit-content;
+    padding: 10px;
+
+    height: 40px;
+    border: none;
+    border-radius: .5rem;
+    font-size: 1.25rem;
+    line-height: 1.25rem;
+    background-color: var(--green);
+    color: white;
+  }
+
   .rete {
     position: relative;
     height: 90vh;
+    width: calc(100% - 400px);
     font-size: 1rem;
     background: white;
     text-align: left;
     line-height: 1;
   }
 
-  .sidebar {
+  .right-sidebar {
     position: absolute;
     top: 0;
     right: 0;
@@ -231,5 +271,9 @@
     background: #f0f0f0;
     padding: 20px;
     overflow: auto;
+  }
+
+  .overlay {
+    z-index: 1;
   }
 </style>

@@ -1,20 +1,13 @@
 <script setup lang="ts">
     import { getNode } from '@formkit/core'
     import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
-
-    const createPatient = async (stateId, fields) => {
-        await new Promise((r) => setTimeout(r, 1000))
-        alert(JSON.stringify(fields))
-
-        usePatientStateStore().setPatientState(stateId, fields)
-    }
 </script>
 
 <script lang="ts">
 	import { ref } from 'vue'
 	const patientStateId = ref(null)
 
-    export function loadPatientState(nodeId) {
+    export function loadPatientState(nodeId: string) {
         const patientStateStore = usePatientStateStore()
         const patientState = patientStateStore.getPatientStateByNodeId(nodeId)
         const patientStateFormNode = getNode('patientStateForm')
@@ -31,8 +24,6 @@
 		id="patientStateForm"
 		v-slot="{ value }"
 		type="form"
-		submit-label="Patient erstellen"
-		@submit="createPatient"
 	>
 		<FormKit
 			id="airway"
