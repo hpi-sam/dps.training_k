@@ -195,27 +195,35 @@ class ActionInstance(LocalTimeable, models.Model):
         return new_order_id
 
     def try_application(self):
+        is_applicable = True
+
+        # Check applicability
         if not self.attached_instance().can_receive_actions():
             is_applicable, message = (
                 False,
                 f"{self.attached_instance().frontend_model_name()} kann keine Aktionen mehr empfangen",
             )
-        elif self.patient_instance and self.patient_instance.is_absent():
+        if (
+            is_applicable
+            and self.patient_instance
+            and self.patient_instance.is_absent()
+        ):
             is_applicable, message = (
                 False,
                 f"{self.patient_instance.name} ist bereits woanders",
             )
-        else:
+        if is_applicable:
             resources_to_block, message, is_applicable = (
                 self._verify_acquiring_resources(
                     self.attached_instance(), self.attached_instance()
                 )
             )
-            if is_applicable:
-                is_applicable, relocates, message = self._check_relocating()
-                if is_applicable:
-                    is_applicable, message = self._verify_prerequisite_actions()
+        if is_applicable:
+            is_applicable, relocates, message = self._check_relocating()
+        if is_applicable:
+            is_applicable, message = self._verify_prerequisite_actions()
 
+        # Act on applicability
         if not is_applicable:
             self._update_state(ActionInstanceStateNames.ON_HOLD, message)
             return False, message
