@@ -60,7 +60,10 @@ class Command(BaseCommand):
             upper_limit=999,
             lower_limit=0,
             fulfilling_measures={
-                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "actions": {
+                    str(ActionIDs.VOLLELEKTROLYT_1000): 1000,
+                    str(ActionIDs.VOLLELEKTROLYT_500): 500,
+                },
                 "materials": {},
             },
         )
@@ -69,7 +72,10 @@ class Command(BaseCommand):
             upper_limit=1999,
             lower_limit=1000,
             fulfilling_measures={
-                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "actions": {
+                    str(ActionIDs.VOLLELEKTROLYT_1000): 1000,
+                    str(ActionIDs.VOLLELEKTROLYT_500): 500,
+                },
                 "materials": {},
             },
         )
@@ -78,7 +84,10 @@ class Command(BaseCommand):
             upper_limit=2999,
             lower_limit=2000,
             fulfilling_measures={
-                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "actions": {
+                    str(ActionIDs.VOLLELEKTROLYT_1000): 1000,
+                    str(ActionIDs.VOLLELEKTROLYT_500): 500,
+                },
                 "materials": {},
             },
         )
@@ -87,7 +96,10 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=3000,
             fulfilling_measures={
-                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "actions": {
+                    str(ActionIDs.VOLLELEKTROLYT_1000): 1000,
+                    str(ActionIDs.VOLLELEKTROLYT_500): 500,
+                },
                 "materials": {},
             },
         )
@@ -97,7 +109,10 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=2000,
             fulfilling_measures={
-                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "actions": {
+                    str(ActionIDs.VOLLELEKTROLYT_1000): 1000,
+                    str(ActionIDs.VOLLELEKTROLYT_500): 500,
+                },
                 "materials": {},
             },
         )
@@ -129,7 +144,10 @@ class Command(BaseCommand):
             name="Nitrat",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={"actions": {str(ActionIDs.NITRAT): 1}, "materials": {}},
+            fulfilling_measures={
+                "actions": {str(ActionIDs.NITRAT): 1},
+                "materials": {},
+            },
         )
         # corresponds to O2
         Subcondition.objects.update_or_create(
@@ -180,7 +198,7 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": {str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN): 1},
+                "actions": {str(ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN): 1},
                 "materials": {},
             },
         )
@@ -298,7 +316,7 @@ class Command(BaseCommand):
 
     def create_patient_states_and_transitions(self):
         # outer loop to create all patients
-        for code in range(1004, 1005):
+        for code in range(1001, 1042):
             print("working on: ", code)
             self.code = code
             # parse data for specific patient

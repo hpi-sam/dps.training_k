@@ -24,6 +24,7 @@ pretreatment_to_ActionIDs = {
     "Antikoagulanz": ActionIDs.ANTIKOAGULANZ,
     "Kortikosteroid": ActionIDs.KORTIKOSTEROID,
     "Narkotikum": ActionIDs.NARKOTIKUM,
+    "Diuretikum": ActionIDs.DIURETIKUM,
     "künstlicher Atemweg": ActionIDs.TRACHEALTUBUS,
     "ZVK": ActionIDs.ZVK,
     "Glukose": ActionIDs.GLUCOSE_VERABREICHEN,
@@ -31,6 +32,8 @@ pretreatment_to_ActionIDs = {
     "Antibiotikum": ActionIDs.ANTIBIOTIKUM,
     "Sauerstoff": ActionIDs.SAUERSTOFF_ANBRINGEN,
     "Beatmung": ActionIDs.BEATMUNGSGERAET_ANBRINGEN,
+    "EKG ablesen": ActionIDs.EKG_ABLESEN,
+    "CPAP": ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN,
     "Rettungsdienst-Beatmung": None,
     "Rettungsdienst-Sauerstoff": None,
     "Rettungsdienst-Stifneck": None,
@@ -82,7 +85,7 @@ def import_patients(file_path):
             pretreatments_list = [pt for pt in pretreatments_list if pt]
             for pretreatment in pretreatments_list:
                 if (
-                    pretreatment[-1] == "P"
+                    pretreatment[-1] == "P" and pretreatment != "CPAP"
                 ):  # we don't distinguish between oral and intravenous medication
                     pretreatment = pretreatment[:-1]
                 amount = re.match(r"(\d+x)", pretreatment)

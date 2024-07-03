@@ -157,6 +157,15 @@ class Command(BaseCommand):
             },
         )
         Material.objects.update_or_create(
+            uuid=MaterialIDs.BEATMUNGSGERAET_CPAP,
+            defaults={
+                "name": "Beatmungsgerät (CPAP)",
+                "category": Material.Category.DEVICE,
+                "is_reusable": True,
+                "is_moveable": False,
+            },
+        )
+        Material.objects.update_or_create(
             uuid=MaterialIDs.SAUERSTOFF_TRAGBAR,
             defaults={
                 "name": "Sauerstoff (Tragbarer)",
