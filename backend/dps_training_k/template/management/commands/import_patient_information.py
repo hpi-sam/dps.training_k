@@ -19,7 +19,6 @@ pretreatment_to_ActionIDs = {
     "Wundversorgung": ActionIDs.WUNDVERSORGUNG,
     "VEL": ActionIDs.VOLLELEKTROLYT_500,
     "Analgetikum": ActionIDs.ANALGETIKUM,
-    "AnalgetikumP": ActionIDs.ANALGETIKUM,
     "Sedativum": ActionIDs.SEDATIVUM,
     "Katecholamin": ActionIDs.KATECHOLAMIN,
     "Antikoagulanz": ActionIDs.ANTIKOAGULANZ,
@@ -80,10 +79,8 @@ def import_patients(file_path):
             pretreatments_list = [
                 pt.strip() for pt in patient_information.pretreatment.split(",")
             ]
+            pretreatments_list = [pt for pt in pretreatments_list if pt]
             for pretreatment in pretreatments_list:
-                if not pretreatment:
-                    continue
-
                 if (
                     pretreatment[-1] == "P"
                 ):  # we don't distinguish between oral and intravenous medication

@@ -44,8 +44,6 @@ class PatientInformation(models.Model):
         return {"Blutgruppe": self.blood_type}
 
     def get_pretreatments(self):
-        for key, amount in self.pretreatment_action_templates.items():
-            print(key)
         return {
             Action.objects.get(uuid=uuid.UUID(key)): amount
             for key, amount in self.pretreatment_action_templates.items()

@@ -196,9 +196,12 @@ class ActionInstance(LocalTimeable, models.Model):
         destination_area=None,
         lab=None,
     ):
+        """:param state_name: The state the action should be created in. The method creates
+        an action_isntance in the state by applying the states beween the state_name and the initial state.
+        If there are several paths it chooses the shortest one."""
         action_instance = cls.create(template, patient_instance, destination_area, lab)
         AISN = ActionInstanceStateNames
-        update_pathes = [
+        update_paths = [
             [AISN.PLANNED, AISN.CANCELED],
             [AISN.PLANNED, AISN.IN_PROGRESS, AISN.FINISHED],
             [
@@ -209,7 +212,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 AISN.EXPIRED,
             ],
         ]
-        for path in update_pathes:
+        for path in update_paths:
             if state_name in path:
                 update_path = path[: path.index(state_name) + 1]
                 break
@@ -219,7 +222,7 @@ class ActionInstance(LocalTimeable, models.Model):
                 and template.category == template.Category.EXAMINATION
             ):
                 action_instance.historic_patient_state = (
-                    action_instance.patient_instance.patient_state
+                    action_instance.patient_instance.patient_state  # EXAMINATIONs always have a patient_instance
                 )
                 action_instance.save(update_fields=["historic_patient_state"])
                 action_instance._update_state(
