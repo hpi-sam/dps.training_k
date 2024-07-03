@@ -115,7 +115,11 @@ class Command(BaseCommand):
                 "effect_duration": None,  # None means permanent
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
+                    "prohibitive_actions": [
+                        str(ActionIDs.TRACHEALTUBUS),
+                        str(ActionIDs.LARYNXTUBUS),
+                        str(ActionIDs.GUEDELTUBUS),
+                    ],
                     "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
                     "num_personnel": 2,
                     "lab_devices": None,
@@ -1496,7 +1500,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.EKG_ANBRINGEN,
             defaults={
                 "name": "EKG anbringen",
-                "category": Action.Category.EXAMINATION,
+                "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 60,
@@ -1524,7 +1528,7 @@ class Command(BaseCommand):
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": {
-                    "required_actions": None,
+                    "required_actions": [str(ActionIDs.EKG_ANBRINGEN)],
                     "prohibitive_actions": None,
                     "material": [str(MaterialIDs.EKG)],
                     "num_personnel": 1,
