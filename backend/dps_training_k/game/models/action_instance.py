@@ -7,6 +7,7 @@ from game.models import ScheduledEvent, MaterialInstance
 from helpers.fields_not_null import one_or_more_field_not_null
 from helpers.local_timable import LocalTimeable
 from template.constants import ActionIDs
+from template.models import Action
 
 
 class ActionInstanceStateNames(models.TextChoices):
@@ -160,10 +161,9 @@ class ActionInstance(LocalTimeable, models.Model):
 
     @classmethod
     def create(cls, template, patient_instance=None, destination_area=None, lab=None):
-        if not patient_instance and not lab:
-            raise ValueError(
-                "Either patient_instance or lab must be provided - an action instance always need a message"
-            )
+        cls._validate_create_arguments(
+            template, patient_instance, destination_area, lab
+        )
         if not destination_area and template.relocates:
             destination_area = patient_instance.area
         action_instance = ActionInstance.objects.create(
@@ -193,6 +193,73 @@ class ActionInstance(LocalTimeable, models.Model):
         else:
             new_order_id = max_order_id + 1
         return new_order_id
+
+    @classmethod
+    def create_in_state(
+        cls,
+        template,
+        state_name,
+        patient_instance=None,
+        destination_area=None,
+        lab=None,
+    ):
+        """:param state_name: The state the action should be created in. The method creates
+        an action_instance in the state by applying the states between the state_name and the initial state.
+        If there are several paths it chooses the shortest one."""
+        action_instance = cls.create(template, patient_instance, destination_area, lab)
+        AISN = ActionInstanceStateNames
+        update_paths = [
+            [AISN.PLANNED, AISN.CANCELED],
+            [AISN.PLANNED, AISN.IN_PROGRESS, AISN.FINISHED],
+            [
+                AISN.PLANNED,
+                AISN.IN_PROGRESS,
+                AISN.FINISHED,
+                AISN.IN_EFFECT,
+                AISN.EXPIRED,
+            ],
+        ]
+        for path in update_paths:
+            if state_name in path:
+                update_path = path[: path.index(state_name) + 1]
+                break
+        for current_state_name in update_path:
+            if (
+                current_state_name == ActionInstanceStateNames.FINISHED
+                and template.category == template.Category.EXAMINATION
+            ):
+                action_instance.historic_patient_state = (
+                    action_instance.patient_instance.patient_state  # EXAMINATIONs always have a patient_instance
+                )
+                action_instance.save(update_fields=["historic_patient_state"])
+                action_instance._update_state(
+                    current_state_name, template.get_result(action_instance)
+                )
+            else:
+                action_instance._update_state(current_state_name)
+        if state_name == ActionInstanceStateNames.IN_EFFECT:
+            action_instance._try_starting_action_effects()
+        return action_instance
+
+    @classmethod
+    def create_in_success_state(
+        cls,
+        template,
+        patient_instance=None,
+        destination_area=None,
+        lab=None,
+    ):
+        return cls.create_in_state(
+            template,
+            (
+                ActionInstanceStateNames.IN_EFFECT
+                if template.effect_duration
+                else ActionInstanceStateNames.FINISHED
+            ),
+            patient_instance,
+            destination_area,
+            lab,
+        )
 
     def try_application(self):
         is_applicable = True
@@ -423,7 +490,9 @@ class ActionInstance(LocalTimeable, models.Model):
         return True, ""
 
     def _check_prohibitive_actions(self):
-        action_instances = ActionInstance.get_potentially_prohibiting_action_instances(self.patient_instance, self.lab)
+        action_instances = ActionInstance.get_potentially_prohibiting_action_instances(
+            self.patient_instance, self.lab
+        )
 
         for prohibitive_action_group in self.template.prohibitive_actions():
             prohibitive_action_found = False
@@ -438,7 +507,7 @@ class ActionInstance(LocalTimeable, models.Model):
                     f"Die Aktion {self.template.name} kann nicht ausgeführt werden, weil bereits die Aktion {prohibitive_action.name} ausgeführt wurde. ",
                 )
         return True, ""
-    
+
     @classmethod
     def get_potentially_prohibiting_action_instances(cls, patient_instance, lab):
         prohibiting_action_instances = ActionInstance.objects.none()
@@ -495,9 +564,47 @@ class ActionInstance(LocalTimeable, models.Model):
 
         return codes
 
+    @classmethod
+    def _validate_create_arguments(
+        cls, template, patient_instance, destination_area, lab
+    ):
+        if not patient_instance and not lab:
+            raise ValueError(
+                "Either patient_instance or lab must be provided - an action instance always need a message"
+            )
+        if not lab and template.location == Action.Location.LAB:
+            raise ValueError("Lab must be provided for templates with location LAB")
+        if not patient_instance and (
+            template.location == Action.Location.BEDSIDE
+            or template.category == Action.Category.EXAMINATION
+            or template.relocates
+        ):
+            raise ValueError(
+                "Patient_instance must be provided for templates with location BEDSIDE, category EXAMINATION or relocates"
+            )
+
+        if not destination_area and template.category == Action.Category.PRODUCTION:
+            raise ValueError(
+                "Destination area must be provided for templates with category PRODUCTION"
+            )
+
+    @classmethod
+    def needed_arguments_create(cls, template):
+        needed_arguments = []
+        if template.location == Action.Location.LAB:
+            needed_arguments.append("lab")
+        if (
+            template.location == Action.Location.BEDSIDE
+            or template.category == Action.Category.EXAMINATION
+            or template.relocates
+        ):
+            needed_arguments.append("patient_instance")
+        if template.category == Action.Category.PRODUCTION:
+            needed_arguments.append("destination_area")
+        return needed_arguments
+
     def __str__(self):
         return f"""ActionInstance {self.template.name} for 
             {self.patient_instance.name + str(self.patient_instance.id) 
              if self.patient_instance 
              else "Lab " + str(self.lab.exercise.frontend_id)}"""
-

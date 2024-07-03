@@ -13,9 +13,12 @@ from ..models import PatientInstance, Exercise, Area, User
 
 class TestUtilsMixin:
     async def create_patient_communicator_and_authenticate(self):
+        await sync_to_async(call_command)("import_actions")
         await sync_to_async(call_command)("import_patient_information")
         await sync_to_async(call_command)("loaddata", "patient_state_1004.json")
-        self.trainer = await sync_to_async(User.objects.create_user)(username="test", password="test", user_type=User.UserType.TRAINER)
+        self.trainer = await sync_to_async(User.objects.create_user)(
+            username="test", password="test", user_type=User.UserType.TRAINER
+        )
         self.exercise = await sync_to_async(Exercise.createExercise)(self.trainer)
         self.patient_information = await sync_to_async(PatientInformation.objects.get)(
             code=1004
@@ -41,10 +44,12 @@ class TestUtilsMixin:
         self.assertTrue(connected, "Failed to connect to WebSocket")
 
         return communicator
-    
+
     async def create_trainer_communicator_and_authenticate(self):
-        self.trainer = await sync_to_async(User.objects.create_user)(username="test2", password="test2", user_type=User.UserType.TRAINER)
-        
+        self.trainer = await sync_to_async(User.objects.create_user)(
+            username="test2", password="test2", user_type=User.UserType.TRAINER
+        )
+
         self.token, _ = await sync_to_async(Token.objects.get_or_create)(
             user=self.trainer
         )

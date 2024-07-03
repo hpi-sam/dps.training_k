@@ -492,6 +492,28 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
+            uuid=ActionIDs.ANTIBIOTIKUM,
+            defaults={
+                "name": "Antibioktikum",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,  # None means permanent
+                "conditions": {
+                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                    "prohibitive_actions": None,
+                    "material": None,
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
             uuid=ActionIDs.VOLLELEKTROLYT_1000,
             defaults={
                 "name": "Vollelektrolyt 1000ml",
@@ -953,11 +975,40 @@ class Command(BaseCommand):
                     "required_actions": [
                         str(ActionIDs.TRACHEALTUBUS),
                     ],
-                    "prohibitive_actions": None,
+                    "prohibitive_actions": [
+                        str(ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN)
+                    ],
                     "material": [
                         [
                             str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
                             str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                        ]
+                    ],
+                    "num_personnel": 2,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        {role_map[RoleIDs.ARZT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
+            uuid=ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN,
+            defaults={
+                "name": "CPAP-Beatmungsgerät anbringen",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
+                    "material": [
+                        [
+                            str(MaterialIDs.BEATMUNGSGERAET_CPAP),
                         ]
                     ],
                     "num_personnel": 2,
