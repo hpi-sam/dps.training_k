@@ -441,16 +441,7 @@ class ActionInstance(LocalTimeable, models.Model):
             prohibitive_action_found = False
             for prohibitive_action in prohibitive_action_group:
                 # allow first application of action, but no subsequent ones
-                if (
-                    prohibitive_action.name == self.template.name
-                    and all_action_instances.filter(template=prohibitive_action).count()
-                    == 1
-                ):
-                    continue
-                if (
-                    all_action_instances.filter(template=prohibitive_action).count()
-                    >= 1
-                ):
+                if all_action_instances.filter(template=prohibitive_action).exists():
                     prohibitive_action_found = True
                     break
             if prohibitive_action_found:
@@ -505,14 +496,16 @@ class ActionInstance(LocalTimeable, models.Model):
         prohibiting_action_instances = ActionInstance.objects.none()
         if lab:
             # the following exclude needs to be done here instead of later. otherwise union won't work.
-            prohibiting_action_instances = prohibiting_action_instances.union(
-                ActionInstance.objects.filter(lab=lab).exclude(
+            prohibiting_action_instances = (
+                prohibiting_action_instances
+                | ActionInstance.objects.filter(lab=lab).exclude(
                     current_state__name__in=ActionInstanceState.non_prohibiting_states()
                 )
             )
         if patient_instance:
-            prohibiting_action_instances = prohibiting_action_instances.union(
-                ActionInstance.objects.filter(
+            prohibiting_action_instances = (
+                prohibiting_action_instances
+                | ActionInstance.objects.filter(
                     patient_instance=patient_instance
                 ).exclude(
                     current_state__name__in=ActionInstanceState.non_prohibiting_states()
