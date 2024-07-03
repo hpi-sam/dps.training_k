@@ -2,11 +2,14 @@ from django.db import models
 
 from game.models import MaterialInstance
 from helpers.moveable_to import MoveableTo
+from helpers.completed_actions import CompletedActionsMixin
+from game.models import MaterialInstance
+from template.models import Material
 from template.constants import MaterialIDs
 from template.models import Material
 
 
-class Lab(MoveableTo):
+class Lab(MoveableTo, CompletedActionsMixin):
     exercise = models.OneToOneField(
         "Exercise",
         on_delete=models.CASCADE,

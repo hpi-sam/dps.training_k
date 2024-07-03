@@ -69,6 +69,7 @@ class Action(UUIDable, models.Model):
             return []
 
         needed_material_groups = []
+        needed_single_material = []
         for material_condition_uuid in material_uuids:
             if isinstance(material_condition_uuid, list):
                 needed_material_group = [
@@ -76,11 +77,9 @@ class Action(UUIDable, models.Model):
                     for material_uuid in material_condition_uuid
                 ]
                 needed_material_groups.append(needed_material_group)
-        needed_single_material = [
-            [Material.objects.get(uuid=uuid.UUID(material_uuid))]
-            for material_uuid in material_uuids
-            if not isinstance(material_uuid, list)
-        ]
+            else:
+                needed_single_material.append([Material.objects.get(uuid=uuid.UUID(material_condition_uuid))])
+    
         return needed_material_groups + needed_single_material
 
     def personnel_count_needed(self):
@@ -93,6 +92,37 @@ class Action(UUIDable, models.Model):
         return (
             self.conditions["num_personnel"] if self.conditions["num_personnel"] else 0
         )
+    
+    def required_actions(self):
+        return self.get_action_conditions("required_actions")
+
+    def prohibitive_actions(self):
+        return self.get_action_conditions("prohibitive_actions")
+
+    def get_action_conditions(self, conditions_type):
+        """
+        :return list of lists: each list entry means that at least
+        one of the actions in the list is needed to fulfill the corresponding condition
+        """
+        if not self.conditions:
+            return []
+        if not conditions_type in self.conditions:
+            return []
+        action_conditions = self.conditions[conditions_type] or []
+
+        action_groups = []
+        single_actions = []
+        for action_condition in action_conditions:
+            if isinstance(action_condition, list):
+                action_group = [
+                    Action.objects.get(uuid=uuid.UUID(action_uuid))
+                    for action_uuid in action_condition
+                ]
+                action_groups.append(action_group)
+            else:
+                single_actions.append([Action.objects.get(uuid=uuid.UUID(action_condition))])
+                    
+        return action_groups + single_actions
 
     def get_result(self, action_instance):
         if self.category == Action.Category.EXAMINATION:
@@ -119,3 +149,6 @@ class Action(UUIDable, models.Model):
 
     def generic_result(self):
         return f"{self.name} wurde durchgeführt"
+
+    def __str__(self):
+        return f"Action {self.name}"

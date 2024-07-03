@@ -124,7 +124,7 @@ class SocketPatient {
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				case 'action-check':
-					actionCheckStore.loadActionCheck(data as unknown as ActionCheck)
+					actionCheckStore.loadActionCheck(data.actionCheck as ActionCheck)
 					break
 				case 'patient-relocating':
 					setScreen(Screens.WAITING, ScreenPosition.FULL)
@@ -397,26 +397,26 @@ export const serverMockEvents = [
 				}
 				],
 				"requiredActions": {
-				"singleActions": [
-					"Stabile Seitenlage"
-				],
-				"actionGroups": [
-					{
-					"groupName": "Tubus anlegen",
-					"actions": [
-						"Güdeltubus anlegen",
-						"Endotrachealtubus anlegen"
-					]
-					},
-					{
-						"groupName": "",
+					"singleActions": [
+						"Stabile Seitenlage"
+					],
+					"actionGroups": [
+						{
+						"groupName": "Tubus anlegen",
 						"actions": [
-							"Blutdruck messen",
-							"Infusion anlegen",
-							"Zugang legen"
+							"Güdeltubus anlegen",
+							"Endotrachealtubus anlegen"
 						]
-					}
-				]
+						},
+						{
+							"groupName": "",
+							"actions": [
+								"Blutdruck messen",
+								"Infusion anlegen",
+								"Zugang legen"
+							]
+						}
+					]
 				}
 			}
 		}`

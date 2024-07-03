@@ -10,6 +10,7 @@ from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
+from helpers.completed_actions import CompletedActionsMixin
 from template.models import PatientState, Action, Subcondition, Material
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
@@ -26,7 +27,7 @@ def validate_patient_frontend_id(value):
         )
 
 
-class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
+class PatientInstance(CompletedActionsMixin, Eventable, Moveable, MoveableTo, models.Model):
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)

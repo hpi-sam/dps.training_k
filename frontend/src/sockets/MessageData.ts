@@ -26,7 +26,7 @@ interface MessageData {
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
-	actionCheck: ActionCheck
+	actionCheck?: ActionCheck
 	relocatingInfo: string
 	timeUntilBack: number
 }
@@ -170,7 +170,7 @@ interface ActionCheck {
 	material: CheckMaterial[]
 	labDevices: CheckLabDevice[]
 	requiredActions: RequiredActions
-	prohibitedActions: string[]
+	prohibitiveActions: string[]
 }
 
 interface RequiredActions {
