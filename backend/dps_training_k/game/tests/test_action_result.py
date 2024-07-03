@@ -121,7 +121,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
             template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
             area=area,
         )
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(action_template.application_duration+1)
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(

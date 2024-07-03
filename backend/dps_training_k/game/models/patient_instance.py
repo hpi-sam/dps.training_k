@@ -149,7 +149,6 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
                 in ActionInstanceState.success_states()
             ):
                 template_action_count[str(action_instance.template.uuid)] += 1
-        # TODO: add handling for OP if it's not an action
         fulfilled_subconditions = set()
 
         for subcondition in subconditions:
@@ -161,25 +160,30 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
                 and "freie Atemwege" in self.patient_state.vital_signs["Airway"]
             ):
                 fulfilled_subconditions.add(subcondition)
-
-            for action in fulfilling_actions:
-                if (
-                    subcondition.lower_limit <= template_action_count[action]
-                    and template_action_count[action] <= subcondition.upper_limit
-                ):
-                    isActionFulfilled = True
+            
+            fulfillment_count = 0
+            for action, fulfillment_value in fulfilling_actions.items():
+                fulfillment_count += template_action_count[action] * fulfillment_value
+            if (
+                subcondition.lower_limit <= fulfillment_count
+                and fulfillment_count <= subcondition.upper_limit
+            ):
+                isActionFulfilled = True
 
             isMaterialFulfilled = False
             fulfilling_materials = subcondition.fulfilling_measures["materials"]
-            for material in fulfilling_materials:
+            fulfillment_count = 0
+            for material, fulfillment_value in fulfilling_materials.items():
                 num_of_materials_assigned = len(
                     self.material_assigned(materials.get(uuid=material))
                 )
-                if (
-                    subcondition.lower_limit <= num_of_materials_assigned
-                    and num_of_materials_assigned <= subcondition.upper_limit
-                ):
-                    isMaterialFulfilled = True
+                fulfillment_count += num_of_materials_assigned * fulfillment_value
+            if (
+                fulfillment_count and subcondition.lower_limit <= fulfillment_count
+                and fulfillment_count <= subcondition.upper_limit
+            ):
+                isMaterialFulfilled = True
+            
             if isActionFulfilled or isMaterialFulfilled:
                 fulfilled_subconditions.add(subcondition)
 
