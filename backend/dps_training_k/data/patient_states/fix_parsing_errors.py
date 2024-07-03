@@ -22,6 +22,7 @@ for i in range(1001, 1042):
         end_state_table_ids = set()
         other_state_table_ids = set()
         for row in reader:
+            row[3] = row[3].replace(".", "/")
             if row[0] == "502":
                 row[7] = "kalt|grau/marmoriert"  # fix typo
                 # overwrite useless stuff the parser found
@@ -35,7 +36,9 @@ for i in range(1001, 1042):
                 row[21] = ""
             if "ZVD" in row[21]:
                 row[21] = row[21].replace("ZVD : ", "")
-            row = [field.replace("feucht|blass|", "feucht|blass") for field in row]
+            row = [field[:-1] if field != "" and field[-1] == "|" else field for field in row]
+            row = [field.replace("bewußtlos", "bewusstlos") for field in row]
+            row = [field.replace("|", "") for field in row]
             # find dead tables (result of parsing errors) -> should no longer return anything
             if row[0] != "Status" and int(row[0]) % 10 == 0:
                 if row[24] != "":
