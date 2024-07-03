@@ -26,6 +26,51 @@ export const usePatientStateStore = defineStore('patient-state', {
     },
     clear() {
       this.patientStates = []
+    },
+    exportToCSV() {
+      const csv = this.patientStates.map(patientState => {
+        const values = [
+          patientState.id,
+          patientState.nextTransition,
+          patientState.airway,
+          patientState.breathingRate,
+          patientState.oxygenSaturation,
+          patientState.breathing,
+          patientState.breathingSound,
+          patientState.breathingLoudness,
+          patientState.heartRate,
+          patientState.pulsePalpable,
+          patientState.rivaRocci,
+          patientState.consciousness,
+          patientState.pupils,
+          patientState.psyche,
+          patientState.skinFining,
+          patientState.skinDiscoloration,
+          patientState.bgaOxy,
+          patientState.bgaSbh,
+          patientState.hb,
+          patientState.bz,
+          patientState.clotting,
+          patientState.liver,
+          patientState.kidney,
+          patientState.infarct,
+          patientState.lactate,
+          patientState.extremities,
+          patientState.thorax,
+          patientState.trauma,
+          patientState.ultraschall,
+          patientState.ekg,
+          patientState.zvd
+        ]
+        return values.join(',')
+      }).join('\n')
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'patient-states.csv'
+      a.click()
+      URL.revokeObjectURL(url)
     }
   }
 })

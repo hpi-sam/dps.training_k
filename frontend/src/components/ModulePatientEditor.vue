@@ -197,6 +197,11 @@
     }
 
   })
+
+  function download(){
+    console.log('Download')
+    usePatientStateStore().exportToCSV()
+  }
 </script>
 
 <script lang="ts">
@@ -209,6 +214,9 @@
 
 <template>
 	<div class="left-sidebar">
+    <button @click="download">
+			Patient herunterladen
+		</button>
 		<button @click="patientInfoFormIsVisible = true">
 			Patienteninfos bearbeiten
 		</button>
