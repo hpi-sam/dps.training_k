@@ -26,7 +26,7 @@ interface MessageData {
 	actions: Action[]
 	injuries: Injury[]
 	speed: number
-	actionCheck: ActionCheck
+	actionCheck?: ActionCheck
 	relocatingInfo: string
 	timeUntilBack: number
 }

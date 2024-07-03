@@ -11,6 +11,7 @@ from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
+from helpers.completed_actions import CompletedActionsMixin
 from template.models import PatientState, Action, Subcondition, Material
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
@@ -27,7 +28,9 @@ def validate_patient_frontend_id(value):
         )
 
 
-class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
+class PatientInstance(
+    CompletedActionsMixin, Eventable, Moveable, MoveableTo, models.Model
+):
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
@@ -295,19 +298,6 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             template__relocates=True,
             current_state__name=ActionInstanceStateNames.IN_PROGRESS,
         ).exists()
-
-    def get_completed_action_types(self):
-        from game.models import ActionInstanceState
-
-        action_instances = self.actioninstance_set.select_related("template").all()
-        applied_actions = set()
-        for action_instance in action_instances:
-            if (
-                action_instance.current_state.name
-                in ActionInstanceState.completion_states()
-            ):
-                applied_actions.add(action_instance.template)
-        return applied_actions
 
     def __str__(self):
         return (

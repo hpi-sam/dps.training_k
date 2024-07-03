@@ -180,7 +180,7 @@ class PatientConsumer(AbstractConsumer):
         action_template = Action.objects.get(name=action_name)
         if action_template.location == Action.Location.LAB:
             action_check_message = LabActionCheckSerializer(
-                action_template, self.exercise.lab
+                action_template, self.exercise.lab, self.patient_instance
             ).data
         else:
             action_check_message = PatientInstanceActionCheckSerializer(
