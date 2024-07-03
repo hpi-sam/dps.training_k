@@ -37,9 +37,9 @@ class Command(BaseCommand):
         """
 
         Action.objects.update_or_create(
-            name="Blut abnehmen",
             uuid=ActionIDs.BLUTABNAHME,
             defaults={
+                "name": "Blut abnehmen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -59,9 +59,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Thoraxdrainage",
             uuid=ActionIDs.THORAXDRAINAGE,
             defaults={
+                "name": "Thoraxdrainage",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -82,9 +82,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Pleurapunktion",
             uuid=ActionIDs.PLEURAPUNKTION,
             defaults={
+                "name": "Pleurapunktion",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -105,9 +105,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Trachealtubus",
             uuid=ActionIDs.TRACHEALTUBUS,
             defaults={
+                "name": "Trachealtubus",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -128,9 +128,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Larynxmaske",
             uuid=ActionIDs.LARYNXMASKE,
             defaults={
+                "name": "Larynxmaske",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -151,9 +151,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Larynxtubus",
             uuid=ActionIDs.LARYNXTUBUS,
             defaults={
+                "name": "Larynxtubus",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -174,9 +174,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Guedeltubus",
             uuid=ActionIDs.GUEDELTUBUS,
             defaults={
+                "name": "Guedeltubus",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -196,9 +196,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Wendeltubus",
             uuid=ActionIDs.WENDELTUBUS,
             defaults={
+                "name": "Wendeltubus",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -218,9 +218,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Koniotomietubus",
             uuid=ActionIDs.KONIOTOMIETUBUS,
             defaults={
+                "name": "Koniotomietubus",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -243,9 +243,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Analgetikum",
             uuid=ActionIDs.ANALGETIKUM,
             defaults={
+                "name": "Analgetikum",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -265,9 +265,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Antiasthmatikum",
             uuid=ActionIDs.ANTIASTHMATIKUM,
             defaults={
+                "name": "Antiasthmatikum",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -287,9 +287,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Kortikosteroid",
             uuid=ActionIDs.KORTIKOSTEROID,
             defaults={
+                "name": "Kortikosteroid",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -309,9 +309,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Nitrat",
             uuid=ActionIDs.NITRAT,
             defaults={
+                "name": "Nitrat",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -331,9 +331,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Diuretikum",
             uuid=ActionIDs.DIURETIKUM,
             defaults={
+                "name": "Diuretikum",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -353,9 +353,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Katecholamin",
             uuid=ActionIDs.KATECHOLAMIN,
             defaults={
+                "name": "Katecholamin",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -377,9 +377,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Sedativum",
             uuid=ActionIDs.SEDATIVUM,
             defaults={
+                "name": "Sedativum",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -399,9 +399,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Regional-Narkotikum",
             uuid=ActionIDs.REGIONAL_NARKOTIKUM,
             defaults={
+                "name": "Regional-Narkotikum",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -421,9 +421,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Tetanusprophylaxe",
             uuid=ActionIDs.TETANUSPROPHYLAXE,
             defaults={
+                "name": "Tetanusprophylaxe",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -443,9 +443,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Antikoagulanz",
             uuid=ActionIDs.ANTIKOAGULANZ,
             defaults={
+                "name": "Antikoagulanz",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -465,9 +465,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="(Voll-)Narkotikum",
             uuid=ActionIDs.NARKOTIKUM,
             defaults={
+                "name": "(Voll-)Narkotikum",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -488,9 +488,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Vollelektrolyt",
-            uuid=ActionIDs.VOLLELEKTROLYT,
+            uuid=ActionIDs.VOLLELEKTROLYT_1000,
             defaults={
+                "name": "Vollelektrolyt 1000ml",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -510,9 +510,31 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Plasmaexpander",
+            uuid=ActionIDs.VOLLELEKTROLYT_500,
+            defaults={
+                "name": "Vollelektrolyt 500ml",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,  # Depends of type of "Zugang"
+                "conditions": {
+                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                    "prohibitive_actions": None,
+                    "material": None,
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
             uuid=ActionIDs.PLASMAEXPANDER,
             defaults={
+                "name": "Plasmaexpander",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -532,14 +554,14 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="i.V. Zugang",
             uuid=ActionIDs.IV_ZUGANG,
             defaults={
+                "name": "i.V. Zugang",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 60,
-                "effect_duration": 120,  # depends on type of "Zugang"
+                "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
@@ -554,9 +576,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="ZVK",
             uuid=ActionIDs.ZVK,
             defaults={
+                "name": "ZVK",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -577,9 +599,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Schleuse",
             uuid=ActionIDs.SCHLEUSE,
             defaults={
+                "name": "Schleuse",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -600,9 +622,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="art. Kanüle",
             uuid=ActionIDs.ART_KANUELE,
             defaults={
+                "name": "art. Kanüle",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -622,9 +644,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="mehrlumen ZVK",
             uuid=ActionIDs.MEHRLUMEN_ZVK,
             defaults={
+                "name": "mehrlumen ZVK",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -645,9 +667,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Regional-Narkose",
             uuid=ActionIDs.REGIONAL_NARKOSE,
             defaults={
+                "name": "Regional-Narkose",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -668,9 +690,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Druckverband",
             uuid=ActionIDs.DRUCKVERBAND,
             defaults={
+                "name": "Druckverband",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -690,9 +712,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Turniquet",
             uuid=ActionIDs.TURNIQUET,
             defaults={
+                "name": "Turniquet",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -712,9 +734,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Wundversorgung",
             uuid=ActionIDs.WUNDVERSORGUNG,
             defaults={
+                "name": "Wundversorgung",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -734,9 +756,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="chir. Blutstillung",
             uuid=ActionIDs.CHIR_BLUTSTILLUNG,
             defaults={
+                "name": "chir. Blutstillung",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -756,9 +778,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Stifneck",
             uuid=ActionIDs.STIFNECK,
             defaults={
+                "name": "Stifneck",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -778,9 +800,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Vakuumschiene",
             uuid=ActionIDs.VAKUUMSCHIENE,
             defaults={
+                "name": "Vakuumschiene",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -800,9 +822,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Beckenschlinge",
             uuid=ActionIDs.BECKENSCHLINGE,
             defaults={
+                "name": "Beckenschlinge",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -822,9 +844,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Gipsverband",
             uuid=ActionIDs.GIPSVERBAND,
             defaults={
+                "name": "Gipsverband",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -845,9 +867,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Stabile Seitenlage",
             uuid=ActionIDs.STABILE_SEITENLAGE,
             defaults={
+                "name": "Stabile Seitenlage",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -867,9 +889,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Schocklage",
             uuid=ActionIDs.SCHOCKLAGE,
             defaults={
+                "name": "Schocklage",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -889,9 +911,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Defi + transcutaner Pacer",
-            uuid=ActionIDs.DEFI_TRANSCUTANER_PACER,
+            uuid=ActionIDs.DEFI_TRANSKUTANER_PACER,
             defaults={
+                "name": "Defi + transkutaner Pacer",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -903,7 +925,7 @@ class Command(BaseCommand):
                         [str(ActionIDs.NARKOTIKUM), str(ActionIDs.ANALGETIKUM)],
                     ],
                     "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.DEFI_TRANSCUTANER_PACER)],
+                    "material": [str(MaterialIDs.DEFI_TRANSKUTANER_PACER)],
                     "num_personnel": 2,
                     "lab_devices": None,
                     "area": None,
@@ -915,9 +937,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Beatmungsgerät anbringen",
             uuid=ActionIDs.BEATMUNGSGERAET_ANBRINGEN,
             defaults={
+                "name": "Beatmungsgerät anbringen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -945,9 +967,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Sauerstoff anbringen",
             uuid=ActionIDs.SAUERSTOFF_ANBRINGEN,
             defaults={
+                "name": "Sauerstoff anbringen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -972,9 +994,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutdruck messen",
             uuid=ActionIDs.BLUTDRUCK_MESSEN,
             defaults={
+                "name": "Blutdruck messen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1140,9 +1162,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Sättigungsmessgerät anbringen",
             uuid=ActionIDs.SAETTIGUNGSMESSGERAET_ANBRINGEN,
             defaults={
+                "name": "Sättigungsmessgerät anbringen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1162,9 +1184,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="passageren Pacer anbringen",
             uuid=ActionIDs.PASSAGEREN_PACER_ANBRINGEN,
             defaults={
+                "name": "passageren Pacer anbringen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1188,9 +1210,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Perfusorpumpe aktivieren",
             uuid=ActionIDs.PERFUSORPUMPE_AKTIVIEREN,
             defaults={
+                "name": "Perfusorpumpe aktivieren",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1212,9 +1234,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Perfusorpumpe mit Wirkstoff bestücken",
             uuid=ActionIDs.PERFUSORPUMPE_MIT_WIRKSTOFF_BESTUECKEN,
             defaults={
+                "name": "Perfusorpumpe mit Wirkstoff bestücken",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1234,9 +1256,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Glucose verabreichen",
             uuid=ActionIDs.GLUCOSE_VERABREICHEN,
             defaults={
+                "name": "Glucose verabreichen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1258,9 +1280,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Lyse verabreichen",
             uuid=ActionIDs.LYSE_VERARBREICHEN,
             defaults={
+                "name": "Lyse verabreichen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1282,9 +1304,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgaseanalyse für Oxygenierungsleistung durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
             defaults={
+                "name": "Blutgaseanalyse für Oxygenierungsleistung durchführen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1324,9 +1346,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgaseanalyse für Säure-Base-Haushalt durchführen",
             uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
             defaults={
+                "name": "Blutgaseanalyse für Säure-Base-Haushalt durchführen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1386,9 +1408,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutzucker analysieren",
             uuid=ActionIDs.BLUTZUCKER_ANALYSIEREN,
             defaults={
+                "name": "Blutzucker analysieren",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1471,9 +1493,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="EKG anbringen",
             uuid=ActionIDs.EKG_ANBRINGEN,
             defaults={
+                "name": "EKG anbringen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1493,9 +1515,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="EKG ablesen",
             uuid=ActionIDs.EKG_ABLESEN,
             defaults={
+                "name": "EKG ablesen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1539,9 +1561,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Zentralen Venendruck messen",
             uuid=ActionIDs.ZENTRALEN_VENENDRUCK_MESSEN,
             defaults={
+                "name": "Zentralen Venendruck messen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1604,12 +1626,12 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Extremitäten Röntgen",
             uuid=ActionIDs.EXTREMITAETEN_ROENTGEN,
             defaults={
+                "name": "Extremitäten Röntgen",
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
+                "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": {
@@ -1669,12 +1691,12 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Thorax Röntgen",
             uuid=ActionIDs.THORAX_ROENTGEN,
             defaults={
+                "name": "Thorax Röntgen",
                 "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
+                "location": Action.Location.LAB,
+                "relocates": True,
                 "application_duration": 240,
                 "effect_duration": None,
                 "conditions": {
@@ -1735,9 +1757,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
+                "name": "Trauma CT",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": True,
@@ -1803,9 +1825,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Ultraschall Abdomen",
             uuid=ActionIDs.ULTRASCHALL_ABDOMEN,
             defaults={
+                "name": "Ultraschall Abdomen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1852,9 +1874,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Ultraschall Thorax",
             uuid=ActionIDs.ULTRASCHALL_THORAX,
             defaults={
+                "name": "Ultraschall Thorax",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1901,13 +1923,13 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Kreuzblut",
             uuid=ActionIDs.KREUZBLUT,
             defaults={
+                "name": "Kreuzblut",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 120,
+                "application_duration": 2700,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
@@ -1932,9 +1954,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgruppe bestimmen",
             uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
             defaults={
+                "name": "Blutgruppe bestimmen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -1966,9 +1988,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
+                "name": "Hämoglobinanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2034,9 +2056,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Lactatanalyse",  # can also be written as "Laktatanalyse"
             uuid=ActionIDs.LACTATANALYSE,
             defaults={
+                "name": "Lactatanalyse",  # can also be written as "Laktatanalyse"
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2072,9 +2094,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Gerinnungsanalyse",
             uuid=ActionIDs.GERINNUNGSANALYSE,
             defaults={
+                "name": "Gerinnungsanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2110,9 +2132,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Leberanalyse",
             uuid=ActionIDs.LEBERANALYSE,
             defaults={
+                "name": "Leberanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2148,9 +2170,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Nierenanalyse",
             uuid=ActionIDs.NIERENANALYSE,
             defaults={
+                "name": "Nierenanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2186,9 +2208,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Infarktanalyse",
             uuid=ActionIDs.INFARKTANALYSE,
             defaults={
+                "name": "Infarktanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2224,13 +2246,13 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Lyophilisiertes Frischplasma auflösen",
             uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_VORBEREITEN,
             defaults={
+                "name": "Lyophilisiertes Frischplasma auflösen",
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 300,
+                "application_duration": 600,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -2251,9 +2273,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Lyophilisiertes Frischplasma anwenden",
             uuid=ActionIDs.LYOPHILISIERTES_FRISCHPLASMA_ANWENDEN,
             defaults={
+                "name": "Lyophilisiertes Frischplasma anwenden",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -2273,9 +2295,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Fresh Frozen Plasma auftauen",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN,
             defaults={
+                "name": "Fresh Frozen Plasma auftauen",
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2298,9 +2320,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Fresh Frozen Plasma anwenden",
             uuid=ActionIDs.FRESH_FROZEN_PLASMA_ANWENDEN,
             defaults={
+                "name": "Fresh Frozen Plasma anwenden",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -2320,9 +2342,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Enthrozytenkonzentrat erwärmen",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
+            uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_VORBEREITEN,
             defaults={
+                "name": "Erythrozytenkonzentrat erwärmen",
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
@@ -2340,14 +2362,14 @@ class Command(BaseCommand):
                     ],
                 },
                 "results": {
-                    "produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}
+                    "produced_material": {str(MaterialIDs.ERYTHROZYTENKONZENTRAT): 1}
                 },
             },
         )
         Action.objects.update_or_create(
-            name="Enthrozytenkonzentrate anwenden",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN,
+            uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN,
             defaults={
+                "name": "Erythrozytenkonzentrate anwenden",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -2356,10 +2378,9 @@ class Command(BaseCommand):
                 "conditions": {
                     "required_actions": [
                         str(ActionIDs.IV_ZUGANG),
-                        str(ActionIDs.KREUZBLUT),
                     ],
                     "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.ENTHROZYTENKONZENTRAT)],
+                    "material": [str(MaterialIDs.ERYTHROZYTENKONZENTRAT)],
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,
@@ -2370,9 +2391,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Operation einleiten",
             uuid=ActionIDs.OP_EINLEITEN,
             defaults={
+                "name": "Operation einleiten",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.LAB,
                 "relocates": True,

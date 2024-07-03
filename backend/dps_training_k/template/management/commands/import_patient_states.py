@@ -29,8 +29,8 @@ class Command(BaseCommand):
         upper_limit=CUSTOM_MAXINT, // maximum number of occurrences of fulfilling actions or fulfilling materials
         lower_limit=1, // minimum number of occurrences of fulfilling actions or fulfilling materials
         fulfilling_measures={
-            "actions": [str(ActionIDs.LYSE_VERARBREICHEN)],
-            "materials": [],
+            "actions": {str(ActionIDs.LYSE_VERARBREICHEN): 1},
+            "materials": {},
         }, // actions / materials that fulfill this subcondition. everything is or-connected. and-connection is not possible with current implementation
         """
 
@@ -40,8 +40,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.LYSE_VERARBREICHEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.LYSE_VERARBREICHEN): 1},
+                "materials": {},
             },
         )
         # corresponds to "4 EK´s"
@@ -50,55 +50,55 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=4,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN): 1},
+                "materials": {},
             },
         )
         # corresponds to "Infusion"
         Subcondition.objects.update_or_create(
             name="0-1l Infusion",
-            upper_limit=0,
+            upper_limit=999,
             lower_limit=0,
             fulfilling_measures={
-                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
-                "materials": [],
+                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "materials": {},
             },
         )
         Subcondition.objects.update_or_create(
             name="1-2l Infusion",
-            upper_limit=1,
-            lower_limit=1,
+            upper_limit=1999,
+            lower_limit=1000,
             fulfilling_measures={
-                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
-                "materials": [],
+                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "materials": {},
             },
         )
         Subcondition.objects.update_or_create(
             name="2-3l Infusion",
-            upper_limit=2,
-            lower_limit=2,
+            upper_limit=2999,
+            lower_limit=2000,
             fulfilling_measures={
-                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
-                "materials": [],
+                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "materials": {},
             },
         )
         Subcondition.objects.update_or_create(
             name="3l-inf Infusion",
             upper_limit=CUSTOM_MAXINT,
-            lower_limit=3,
+            lower_limit=3000,
             fulfilling_measures={
-                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
-                "materials": [],
+                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "materials": {},
             },
         )
         # corresponds to "2l Infusion"
         Subcondition.objects.update_or_create(
             name="2l Infusion",
             upper_limit=CUSTOM_MAXINT,
-            lower_limit=2,
+            lower_limit=2000,
             fulfilling_measures={
-                "actions": [str(ActionIDs.VOLLELEKTROLYT)],
-                "materials": [],
+                "actions": {str(ActionIDs.VOLLELEKTROLYT_1000): 1000, str(ActionIDs.VOLLELEKTROLYT_500): 500},
+                "materials": {},
             },
         )
         # corresponds to "Thoraxdrainage/ Pleurapunktion"
@@ -107,11 +107,11 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [
-                    str(ActionIDs.THORAXDRAINAGE),
-                    str(ActionIDs.PLEURAPUNKTION),
-                ],
-                "materials": [],
+                "actions": {
+                    str(ActionIDs.THORAXDRAINAGE): 1,
+                    str(ActionIDs.PLEURAPUNKTION): 1,
+                },
+                "materials": {},
             },
         )
         # corresponds to "Glucose"
@@ -120,8 +120,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.GLUCOSE_VERABREICHEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.GLUCOSE_VERABREICHEN): 1},
+                "materials": {},
             },
         )
         # corresponds to "Nitrat"
@@ -129,7 +129,7 @@ class Command(BaseCommand):
             name="Nitrat",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={"actions": [str(ActionIDs.NITRAT)], "materials": []},
+            fulfilling_measures={"actions": {str(ActionIDs.NITRAT): 1}, "materials": {}},
         )
         # corresponds to O2
         Subcondition.objects.update_or_create(
@@ -137,11 +137,11 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [
-                    str(ActionIDs.SAUERSTOFF_ANBRINGEN),
-                    str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
-                ],
-                "materials": [],
+                "actions": {
+                    str(ActionIDs.SAUERSTOFF_ANBRINGEN): 1,
+                    str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN): 1,
+                },
+                "materials": {},
             },
         )
         # corresponds to "OP läuft / ist gelaufen" as well as "keine OP"
@@ -149,7 +149,7 @@ class Command(BaseCommand):
             name="OP läuft / ist gelaufen",
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
-            fulfilling_measures={"actions": [], "materials": []},
+            fulfilling_measures={"actions": {}, "materials": {}},
         )
         # corresponds to "Analgesie"
         Subcondition.objects.update_or_create(
@@ -157,8 +157,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ANALGETIKUM)],
-                "materials": [],
+                "actions": {str(ActionIDs.ANALGETIKUM): 1},
+                "materials": {},
             },
         )
         # corresponds to "O2 Inhalation"
@@ -167,11 +167,11 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [
-                    str(ActionIDs.SAUERSTOFF_ANBRINGEN),
-                    str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
-                ],
-                "materials": [],
+                "actions": {
+                    str(ActionIDs.SAUERSTOFF_ANBRINGEN): 1,
+                    str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN): 1,
+                },
+                "materials": {},
             },
         )
         # corresponds to "CPAP"
@@ -180,8 +180,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN): 1},
+                "materials": {},
             },
         )
         # corresponds to "Antiasthmatikum"
@@ -190,8 +190,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ANTIASTHMATIKUM)],
-                "materials": [],
+                "actions": {str(ActionIDs.ANTIASTHMATIKUM): 1},
+                "materials": {},
             },
         )
         # corresponds to "Sedativum"
@@ -200,8 +200,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.SEDATIVUM)],
-                "materials": [],
+                "actions": {str(ActionIDs.SEDATIVUM): 1},
+                "materials": {},
             },
         )
         # corresponds to "freie Atemwege"
@@ -210,15 +210,15 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [
-                    str(ActionIDs.STABILE_SEITENLAGE),
-                    str(ActionIDs.GUEDELTUBUS),
-                    str(ActionIDs.WENDELTUBUS),
-                    str(ActionIDs.TRACHEALTUBUS),
-                    str(ActionIDs.LARYNXMASKE),
-                    str(ActionIDs.LARYNXTUBUS),
-                ],
-                "materials": [],
+                "actions": {
+                    str(ActionIDs.STABILE_SEITENLAGE): 1,
+                    str(ActionIDs.GUEDELTUBUS): 1,
+                    str(ActionIDs.WENDELTUBUS): 1,
+                    str(ActionIDs.TRACHEALTUBUS): 1,
+                    str(ActionIDs.LARYNXMASKE): 1,
+                    str(ActionIDs.LARYNXTUBUS): 1,
+                },
+                "materials": {},
             },
         )
         # corresponds to "EK´s"
@@ -227,8 +227,8 @@ class Command(BaseCommand):
             upper_limit=1,
             lower_limit=0,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN): 1},
+                "materials": {},
             },
         )
         Subcondition.objects.update_or_create(
@@ -236,8 +236,8 @@ class Command(BaseCommand):
             upper_limit=3,
             lower_limit=2,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN): 1},
+                "materials": {},
             },
         )
         Subcondition.objects.update_or_create(
@@ -245,8 +245,8 @@ class Command(BaseCommand):
             upper_limit=5,
             lower_limit=4,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN): 1},
+                "materials": {},
             },
         )
         Subcondition.objects.update_or_create(
@@ -254,8 +254,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=6,
             fulfilling_measures={
-                "actions": [str(ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN)],
-                "materials": [],
+                "actions": {str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN): 1},
+                "materials": {},
             },
         )
         # corresponds to "Beatmet"
@@ -264,11 +264,11 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
-                "materials": [
-                    str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
-                    str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
-                ],
+                "actions": {str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN): 1},
+                "materials": {
+                    str(MaterialIDs.BEATMUNGSGERAET_STATIONAER): 1,
+                    str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR): 1,
+                },
             },
         )
         # corresponds to Blutstillung
@@ -277,8 +277,8 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [str(ActionIDs.CHIR_BLUTSTILLUNG)],
-                "materials": [],
+                "actions": {str(ActionIDs.CHIR_BLUTSTILLUNG): 1},
+                "materials": {},
             },
         )
         # corresponds to "Regional-/ Vollnarkose"
@@ -287,18 +287,18 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": [
-                    str(ActionIDs.REGIONAL_NARKOSE),
-                    str(ActionIDs.REGIONAL_NARKOTIKUM),
-                    str(ActionIDs.NARKOTIKUM),
-                ],
-                "materials": [],
+                "actions": {
+                    str(ActionIDs.REGIONAL_NARKOSE): 1,
+                    str(ActionIDs.REGIONAL_NARKOTIKUM): 1,
+                    str(ActionIDs.NARKOTIKUM): 1,
+                },
+                "materials": {},
             },
         )
 
     def create_patient_states_and_transitions(self):
         # outer loop to create all patients
-        for code in range(1001, 1042):
+        for code in range(1004, 1005):
             print("working on: ", code)
             self.code = code
             # parse data for specific patient
@@ -715,10 +715,6 @@ class Command(BaseCommand):
                 value = int(match.group())
                 next_higher_value = self.find_next_higher_value(value, table_lines, i)
                 subcondition_name = table_subconditions[i]
-                if (
-                    value >= 1000
-                ):  # Infusion has values in thousands, we assume only 1000ml Infusion is possible
-                    value = value // 1000
                 try:
                     subcondition = Subcondition.objects.get(
                         name__contains=subcondition_name,
@@ -749,10 +745,6 @@ class Command(BaseCommand):
             match = re.search(r"\d+", line[line_index])
             value = int(match.group())
             if value > int(current_value):
-                if (
-                    value >= 1000
-                ):  # Infusion has values in thousands, we assume only 1000ml Infusion is possible
-                    return value // 1000
                 return value
         return CUSTOM_MAXINT + 1
 

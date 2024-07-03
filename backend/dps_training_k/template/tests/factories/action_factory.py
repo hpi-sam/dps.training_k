@@ -92,6 +92,6 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
     uuid = ActionIDs.FRESH_FROZEN_PLASMA_VORBEREITEN
     results = {
         "produced_material": {
-            str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1,
+            str(MaterialIDs.ERYTHROZYTENKONZENTRAT): 1,
         }
     }
