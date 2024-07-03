@@ -3,7 +3,6 @@ from abc import ABC
 from rest_framework import serializers
 
 import template.models.action as a
-from django.db.models import Q
 
 
 class ActionSerializer(serializers.ModelSerializer):
@@ -25,19 +24,24 @@ class ActionCheckSerializer(ABC):
     @property
     def data(self):
         data = ActionSerializer(self.action).data
+
         personnel_available_assigned_needed = self.personnel_available_assigned_needed()
         if personnel_available_assigned_needed:
             data.update({"personnel": personnel_available_assigned_needed})
+
         material_available_assigned_needed = self.material_available_assigned_needed()
         if material_available_assigned_needed:
             data.update({"material": material_available_assigned_needed})
+
         required_actions = self.required_actions()
         if required_actions:
             data.update({"requiredActions": required_actions})
+
         prohibitive_actions = self.prohibitive_actions()
         if prohibitive_actions:
             data.update({"prohibitiveActions": prohibitive_actions})
-        return data
+
+        return {"actionCheck": data}
 
 
 class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
@@ -99,7 +103,9 @@ class PatientInstanceActionCheckSerializer(ActionCheckSerializer):
     def prohibitive_actions(self):
         from game.models import ActionInstance
 
-        applied_actions = ActionInstance.get_prohibiting_actions(self.patient_instance, self.patient_instance.lab)
+        applied_actions = ActionInstance.get_prohibiting_actions(
+            self.patient_instance, self.patient_instance.lab
+        )
         prohibitive_actions = []
         for action in self.action.prohibitive_actions():
             if action[0] in applied_actions:
@@ -173,7 +179,9 @@ class LabActionCheckSerializer(ActionCheckSerializer):
     def prohibitive_actions(self):
         from game.models import ActionInstance
 
-        applied_actions = ActionInstance.get_prohibiting_actions(self.patient_instance, self.lab)
+        applied_actions = ActionInstance.get_prohibiting_actions(
+            self.patient_instance, self.lab
+        )
         prohibitive_actions = []
         for action in self.action.prohibitive_actions():
             if action[0] in applied_actions:

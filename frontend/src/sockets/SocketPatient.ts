@@ -124,7 +124,7 @@ class SocketPatient {
 					visibleInjuriesStore.loadVisibleInjuries(data.injuries as Injury[])
 					break
 				case 'action-check':
-					actionCheckStore.loadActionCheck(data as unknown as ActionCheck)
+					actionCheckStore.loadActionCheck(data.actionCheck as ActionCheck)
 					break
 				case 'patient-relocating':
 					setScreen(Screens.WAITING, ScreenPosition.FULL)
@@ -369,53 +369,55 @@ export const serverMockEvents = [
 		id: 'action-check',
 		data: `{
 			"messageType": "action-check",
-			"actionName": "Beatmungsmaske anlegen",
-			"applicationDuration": 40,
-			"effectDuration": null,
-			"personnel": [
-			{
-				"name": "Ärzte",
-				"available": 1,
-				"assigned": 2,
-				"needed": 2
-			}
-			],
-			"material": [
-			{
-				"name": "Beatmungsmaske",
-				"available": 0,
-				"assigned": 0,
-				"needed": 1
-			}
-			],
-			"labDevices": [
-			{
-				"name": "EKG",
-				"available": 4,
-				"needed": 1
-			}
-			],
-			"requiredActions": {
-				"singleActions": [
-					"Stabile Seitenlage"
+			"actionCheck": {
+				"actionName": "Beatmungsmaske anlegen",
+				"applicationDuration": 40,
+				"effectDuration": null,
+				"personnel": [
+				{
+					"name": "Ärzte",
+					"available": 1,
+					"assigned": 2,
+					"needed": 2
+				}
 				],
-				"actionGroups": [
-					{
-					"groupName": "Tubus anlegen",
-					"actions": [
-						"Güdeltubus anlegen",
-						"Endotrachealtubus anlegen"
-					]
-					},
-					{
-						"groupName": "",
+				"material": [
+				{
+					"name": "Beatmungsmaske",
+					"available": 0,
+					"assigned": 0,
+					"needed": 1
+				}
+				],
+				"labDevices": [
+				{
+					"name": "EKG",
+					"available": 4,
+					"needed": 1
+				}
+				],
+				"requiredActions": {
+					"singleActions": [
+						"Stabile Seitenlage"
+					],
+					"actionGroups": [
+						{
+						"groupName": "Tubus anlegen",
 						"actions": [
-							"Blutdruck messen",
-							"Infusion anlegen",
-							"Zugang legen"
+							"Güdeltubus anlegen",
+							"Endotrachealtubus anlegen"
 						]
-					}
-				]
+						},
+						{
+							"groupName": "",
+							"actions": [
+								"Blutdruck messen",
+								"Infusion anlegen",
+								"Zugang legen"
+							]
+						}
+					]
+				}
 			}
 		}`
 	},
