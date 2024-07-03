@@ -1,5 +1,4 @@
 # Interface Definition
-
 This document describes the interface between the frontend and the backend of the K-dPS project. The events are divided into three categories: 
 events used to log in, events available on the patient route and event available on the trainer route. They are then further divided within their 
 categories into events that can be sent from the frontend to the backend and events that can be sent from the backend to the frontend. Within 
@@ -349,45 +348,47 @@ will only be sent if `action-check` was sent by frontend before
 ```json
 {
   "messageType": "action-check",
-  "actionName": "X",
-  "applicationDuration": 4,
-  "effectDuration": 3,
-  "personnel": [
-    {
-      "name": "X",
-      "available": 1,
-      "assigned": 1,
-      "needed": 1
-    }
-  ],
-  "material": [
-    {
-      "name": "X",
-      "available": 1,
-      "assigned": 1,
-      "needed": 1
-    }
-  ],
-  "lab_devices": [
-    {
-      "name": "X",
-      "available": 1,
-      "needed": 1
-    }
-  ],
-  "requiredActions": {
-    "singleActions": ["A1"],
-    "actionGroups": [
+  "actionCheck": {
+    "actionName": "X",
+    "applicationDuration": 4,
+    "effectDuration": 3,
+    "personnel": [
       {
-        "groupName": "Tubusse",
-        "actions": [
-          "A2",
-          "A3"
-        ]
+        "name": "X",
+        "available": 1,
+        "assigned": 1,
+        "needed": 1
       }
-    ]
-  }, 
-  "prohibitiveActions":["A1"]
+    ],
+    "material": [
+      {
+        "name": "X",
+        "available": 1,
+        "assigned": 1,
+        "needed": 1
+      }
+    ],
+    "lab_devices": [
+      {
+        "name": "X",
+        "available": 1,
+        "needed": 1
+      }
+    ],
+    "requiredActions": {
+      "singleActions": ["A1"],
+      "actionGroups": [
+        {
+          "groupName": "Tubusse",
+          "actions": [
+            "A2",
+            "A3"
+          ]
+        }
+      ]
+    },
+    "prohibitiveActions":["A1"]
+  }
 }
 ```
 `actionName`: important if the user already opened another action
