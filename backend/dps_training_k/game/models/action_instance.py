@@ -237,6 +237,8 @@ class ActionInstance(LocalTimeable, models.Model):
                 )
             else:
                 action_instance._update_state(current_state_name)
+        if state_name == ActionInstanceStateNames.IN_EFFECT:
+            action_instance._try_starting_action_effects()
         return action_instance
 
     @classmethod
