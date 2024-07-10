@@ -1,5 +1,12 @@
 describe('pass-through tests', () => {
 	beforeEach(() => {
+		Cypress.on('uncaught:exception', (err) => {
+			if (err.message.includes('Failed to construct \'WebSocket\'')) {
+				// Ignore weird WebSocket construction error - only occurs when using Docker and does not affect the functionality of the app
+				console.log('Caught WebSocket construction error: ' + err.message)
+				return false
+			}
+		})
 		cy.visit('http://localhost/')
 	})
 

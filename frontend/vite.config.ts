@@ -17,10 +17,5 @@ export default defineConfig({
   envPrefix: 'VITE_',
   define: {
     'process.env': process.env
-  },
-  server: {
-    hmr: {
-      host: 'localhost'
-    }
   }
 })
