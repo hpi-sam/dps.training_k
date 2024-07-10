@@ -1,12 +1,10 @@
 import asyncio
-
 from unittest.mock import patch
+
 from channels.db import database_sync_to_async
-from channels.testing import WebsocketCommunicator
 from django.core.management import call_command
 from django.test import TransactionTestCase
 
-from configuration.asgi import application
 from game.models import ActionInstance
 from .mixin import TestUtilsMixin
 
@@ -62,7 +60,7 @@ class PatientConsumerTestCase(TestUtilsMixin, TransactionTestCase):
     maxDiff = None
 
     def setUp(self):
-        call_command("import_minimal_actions")
+        call_command("import_actions")
 
     @database_sync_to_async
     def action_instance_exists(self, action_name):
