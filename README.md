@@ -43,7 +43,7 @@ The application is now deployed and the website should be accessible on port 517
 the containers restarted accordingly.
 
 Keep in mind that the IP address of the server running the back- and frontend are hardcoded in the environment files. For 
-the backend a simple correction of the `FRONTEND_URL` variable within the `.env.<prod/dev>` file on the server is enough, but fot the frontend the 
+the backend a simple correction of the `FRONTEND_URL` variable within the `.env.<prod/dev>` file on the server is enough, but for the frontend the 
 `SERVER_URL` variable (and `VITE_SERVER_URL` variable for building without docker) has to be adjusted in the associated env file and the image has 
 to be rebuilt and re-uploaded to the GitHub Packages registry.
 
