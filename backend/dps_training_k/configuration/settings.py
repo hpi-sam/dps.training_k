@@ -32,7 +32,7 @@ Env.read_env(os.path.join(BASE_DIR, ".env.dev"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
-CORS_ALLOWED_ORIGINS = [env.str("FRONTEND_URL")]
+CORS_ALLOWED_ORIGINS = ["https://klinik-dps.de", "https://www.klinik-dps.de", "http://localhost"]
 RUN_CONFIG = env.str("RUN_CONFIG", default="dev")
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
