@@ -17,7 +17,7 @@
 			"password": password,
 		}
 
-		fetch('http://' + import.meta.env.VITE_SERVER_URL + '/api/trainer/login', {
+		fetch(import.meta.env.VITE_SERVER_URL_HTTP + '/api/trainer/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
