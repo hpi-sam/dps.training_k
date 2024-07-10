@@ -48,7 +48,7 @@ jobs:
       - name: Prepare deployment files
         run: |
           mkdir deployment_files
-          cp docker-compose.yml deployment_files/
+          cp docker-compose.prod.yml deployment_files/
           cp ./.env.prod deployment_files/
           cp ./.env.dev deployment_files/
 
