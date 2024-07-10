@@ -6,7 +6,7 @@ The interactive K-dPS website which displays the backend information. For the si
 
 ### Recommended IDE Setups
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + 
+- [VSCode](https://code.visualstudio.com/) + [Vue](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + 
 [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 - [WebStorm](https://www.jetbrains.com/webstorm/) (with Vue.js plugin installed)
 
@@ -14,9 +14,10 @@ The interactive K-dPS website which displays the backend information. For the si
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-For more information on the difference between `prod` and `dev`, see the project README.
+For more information on the difference between `prod` and `dev`, see [docs file](../docs/deployment-process.md).
 
 ### run locally without docker
+Doesn't work
 
 Install dependencies:
 
@@ -26,7 +27,7 @@ npm install
 
 Compile and start:
 Note that only the dev version supports e.g. hot-reloading.
-
+Node needs to be v.20.5.0 or later. If your node package is to old, you can update the version with the n package for npm
 ```bash
 npm run <prod/dev>
 ```
@@ -51,9 +52,6 @@ The components are divided by following structure:
 Correspondingly, our component folder setup looks like this (note that 1, 2, A, B are just example names):
 ```
 components/
-├── ModuleLogin.vue
-├── ModulePatient.vue
-├── ModuleTrainer.vue
 ├── screensLogin/
 │   ├── Screen1.vue
 │   ├── Screen2.vue
@@ -70,4 +68,7 @@ components/
 │   └── ...
 └── widgets/
     └── ...
+├── ModuleLogin.vue
+├── ModulePatient.vue
+├── ModuleTrainer.vue
 ```

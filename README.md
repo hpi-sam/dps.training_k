@@ -2,7 +2,7 @@
 The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personnel on how to act during medical 
 surges / during mass casualty incidents. 
 
-It is currently only available in German at http://139.162.170.6:5173/.
+It is currently only available in German at https://www.klinik-dps.de/.
 
 The software is developed as part of a project at the Hasso Plattner Institute in Potsdam, Germany: 
 [Project Website](https://hpi.de/giese/teaching/bachelor-projects/digitale-simulationsuebungen-fuer-krankenhaeuser.html).
@@ -10,7 +10,7 @@ The software is developed as part of a project at the Hasso Plattner Institute i
 ## Features
 The K-dPS offers the following features:
 - **Create Exercises**: Trainers can quickly create exercises by adding areas, patients, personnel and material to them and customize names.
-- **Dynamic Patients**: Patients dynamically change their state based on the material assigned and actions applied to them.
+- **Dynamic Patients**: Patients dynamically change their state based on the current state as well as the material assigned and actions applied to them.
 - **Real-time Interaction**: Trainees can interact with the patients in real-time by applying treatments, conducting examinations and more.
 - **Resource Management**: Trainees can assign personnel and material to different patients and manage the resources effectively.
 - **Triaging**: Trainees can triage patients based on their state and assign them different triage categories and move them to different areas.

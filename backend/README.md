@@ -9,7 +9,6 @@ meaning it will expect the frontend to run on localhost.
 - inside dps_training_k folder, run `docker-compose --env-file .env.<prod/dev> up -d`
 - create superuser account: `docker exec -it K-dPS-django python manage.py createsuperuser`
 
-## Running the project locally (NOT UP TO DATE)
 ### Install Python
 - install from official [python website](https://www.python.org/downloads/)
 - version should be at least 3.12
