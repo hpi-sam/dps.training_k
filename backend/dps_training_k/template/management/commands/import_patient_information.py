@@ -1,11 +1,11 @@
 import csv
 import re
-import uuid
+
 from django.core.management.base import BaseCommand
 
 from helpers.triage import Triage
-from template.models import PatientInformation
 from template.constants import ActionIDs
+from template.models import PatientInformation
 
 
 def get_triage_from_string(string):

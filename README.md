@@ -41,4 +41,4 @@ The following list describes where to find the documentation for the different p
 - Interface definition (Frontend <-> Backend): [docs file](./docs/interface-definition.md).
 - Deployment process: [docs file](./docs/deployment-process.md).
 - Tips regarding the project configuration: [docs file](./docs/configuration-tips.md).
-- MoSCoW and future plans: [MoSCoW Notion page](https://k-dps.notion.site/MoSCoW-78d8a9b852f7499bb7fb47a770c30723?pvs=4).
+- MoSCoW and future plans: [docs file](./docs/moscow.md).
