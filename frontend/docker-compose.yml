@@ -5,9 +5,6 @@ services:
   web:
     build:
       context: .
-      args:
-        SERVER_URL: ${SERVER_URL}
-        RUN_CONFIG: ${RUN_CONFIG}
     image: dps_training_k-frontend
     container_name: K-dPS-frontend
     env_file:
