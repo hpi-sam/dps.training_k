@@ -6,6 +6,7 @@
 	import {computed, ref} from 'vue'
 	import MovePopup from '@/components/widgets/MovePopup.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemRight} from "@/components/widgets/List"
+	import {strings} from "@/strings"
 
 	const patientStore = usePatientStore()
 	const resourceAssignmentStore = useResourceAssignmentsStore()
@@ -59,7 +60,7 @@
 						<ListItemName :name="exerciseStore.getMaterial(materialAssignment.materialId)?.materialName" />
 					</ListItemButton>
 					<button class="button-free" @click="releaseMaterial(materialAssignment.materialId)">
-						Freigeben
+						{{ strings.releaseButtonText }}
 					</button>
 				</ListItem>
 			</CustomList>
@@ -73,7 +74,7 @@
 						<ListItemName :name="exerciseStore.getMaterial(materialAssignment.materialId)?.materialName" />
 					</ListItemButton>
 					<button class="button-assign" @click="assignMaterial(materialAssignment.materialId)">
-						Zuweisen
+						{{ strings.assignButtonText }}
 					</button>
 				</ListItem>
 			</CustomList>

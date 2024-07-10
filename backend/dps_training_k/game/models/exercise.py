@@ -46,6 +46,17 @@ class Exercise(NonEventable, models.Model):
         Lab.objects.create(exercise=new_Exercise)
         return new_Exercise
 
+    def start_exercise(self):
+        from .patient_instance import PatientInstance
+
+        owned_patients = PatientInstance.objects.filter(exercise=self)
+        for time_offset, patient in enumerate(owned_patients):
+            # we don't start all patients at once to balance out the work for our celery workers
+            patient.schedule_state_change(time_offset)
+        self.update_state(Exercise.StateTypes.RUNNING)
+        for patient in owned_patients:
+            patient.apply_pretreatments()
+
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)
         ExerciseDispatcher.save_and_notify(self, changes, super(), *args, **kwargs)
