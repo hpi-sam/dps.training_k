@@ -7,7 +7,6 @@ if [ "${RUN_MIGRATIONS:-0}" = "1" ]; then
 
     python manage.py makemigrations
     python manage.py migrate
-    python manage.py collectstatic --noinput
     python manage.py import_patient_information
     python manage.py loaddata patient_states.json
     python manage.py import_actions

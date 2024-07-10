@@ -48,8 +48,8 @@ services:
       - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
       - static_volume:/app/staticfiles
-    expose:
-      - 8000
+    ports:
+      - 8000:8000
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
 
   # Celery worker service (e.g. scheduled tasks)
@@ -86,11 +86,15 @@ services:
       - django
     volumes:
       - static_volume:/app/staticfiles
+      - /etc/letsencrypt/live/klinik-dps.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/klinik-dps.de/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - /etc/nginx/conf.d:/etc/nginx/conf.d
     ports:
-      - "8000:80"
+      - "80:80"
+      - "443:443"
 
   # Frontend service
-  web:
+  frontend:
     image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
     container_name: K-dPS-frontend
     labels:

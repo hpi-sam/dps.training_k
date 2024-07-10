@@ -42,8 +42,8 @@ services:
     volumes:
       - static_volume:/app/staticfiles
       - .:/app:z
-    expose:
-      - 8000
+    ports:
+      - 8000:8000
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
     stdin_open: true
     tty: true
@@ -82,8 +82,9 @@ services:
     container_name: K-dPS-nginx
     volumes:
       - static_volume:/app/staticfiles
+      - ./deployment/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
-      - "8000:80"
+      - "80:80"
     depends_on:
       - django
 

@@ -26,7 +26,7 @@
 			"patientId": patientId,
 		}
 
-		fetch('http://' + import.meta.env.VITE_SERVER_URL + ':8000/patient/access', {
+		fetch('http://' + import.meta.env.VITE_SERVER_URL + '/api/patient/access', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

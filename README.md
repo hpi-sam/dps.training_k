@@ -24,7 +24,7 @@ Replace `<prod/dev>` with `prod` or `dev` in the following commands to use the r
    /docker-compose.yml, ./.env.<prod/dev>).
 2. Recommended: As the env files are probably stored in a public repository, it is strongly encouraged to change the SECRET_KEY and the 
    POSTGRES_PASSWORD variables in the used `.env.<prod/dev>` file.
-3. Log into the GitHub Packages registry with the following command. Ask a team member for valid credentials.
+3. Log into the GitHub Packages registry with the following command. Ask a team member for valid credentials. Note: passing secrets as command line arguments is insecure. consider using `--password-stdin` instead
 ```bash
 docker login ghcr.io -u <username> -p <token>
 ```
