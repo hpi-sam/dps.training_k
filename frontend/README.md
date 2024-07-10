@@ -1,5 +1,4 @@
-# frontend
-
+# Klinik-dPS Frontend
 The interactive K-dPS website which displays the backend information. For the simulation logic see backend.
 
 For general information on the project like e.g. licensing information or future plans, see the [Project README](../README.md).
@@ -16,7 +15,7 @@ For general information on the project like e.g. licensing information or future
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-For more information on the difference between `prod` and `dev`, see [docs file](../docs/deployment-process.md).
+For more information on the difference between `prod` and `dev`, see the [docs file](../docs/deployment-process.md).
 
 ### run locally without docker
 Note that only the dev version supports e.g. hot-reloading.

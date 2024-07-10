@@ -1,4 +1,4 @@
-# ![img.png](./frontend/public/favicon-32x32.png) K-dPS
+# ![img.png](./frontend/public/favicon-32x32.png) Klinik-dPS
 The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personnel on how to act during medical 
 surges / during mass casualty incidents. 
 
