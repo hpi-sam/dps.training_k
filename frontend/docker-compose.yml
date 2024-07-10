@@ -8,9 +8,10 @@ services:
       args:
         - VITE_SERVER_URL_HTTP=${VITE_SERVER_URL_HTTP}
         - VITE_SERVER_URL_WS=${VITE_SERVER_URL_WS}
+        - VITE_RUN_CONFIG=${VITE_RUN_CONFIG}
     image: dps_training_k-frontend
     container_name: K-dPS-frontend
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.${VITE_RUN_CONFIG}
     ports:
       - "5173:5173"
