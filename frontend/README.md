@@ -2,6 +2,8 @@
 
 The interactive K-dPS website which displays the backend information. For the simulation logic see backend.
 
+For general information on the project like e.g. licensing information or future plans, see the [Project README](../README.md).
+
 ## Project Setup
 
 ### Recommended IDE Setups
@@ -17,17 +19,15 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 For more information on the difference between `prod` and `dev`, see [docs file](../docs/deployment-process.md).
 
 ### run locally without docker
-Doesn't work
+Note that only the dev version supports e.g. hot-reloading.
+Node needs to be v.20.5.0 or later. If your node package is too old, you can update the version with e.g. the n package for npm
 
 Install dependencies:
-
 ```bash
 npm install
 ```
 
 Compile and start:
-Note that only the dev version supports e.g. hot-reloading.
-Node needs to be v.20.5.0 or later. If your node package is to old, you can update the version with the n package for npm
 ```bash
 npm run <prod/dev>
 ```
@@ -45,8 +45,10 @@ The components are divided by following structure:
 
 1. App: The top Level component App.vue. Loads the different modules
 2. Modules: The main parts of our application, namely: login, trainer & patient. Consists of different screens.
-3. Screens: A container which may hold a specific set of pages and navigation or information bars. Fills either the whole screen or only the left or right half.
-4. Pages: A UI container for a specific set of information or interactions. They are the main UI-holders and get loaded in by the screens when navigated to.
+3. Screens: A container which may hold a specific set of pages and navigation or information bars. Fills either the whole screen or only the left 
+   or right half.
+4. Pages: A UI container for a specific set of information or interactions. They are the main UI-holders and get loaded in by the screens when 
+   navigated to.
 5. Widgets: Custom components which build basic views like buttons or lists.
 
 Correspondingly, our component folder setup looks like this (note that 1, 2, A, B are just example names):
@@ -66,9 +68,12 @@ components/
 │   └── ...
 ├── screensTrainer/
 │   └── ...
-└── widgets/
-    └── ...
+├── widgets/
+│   └── ...
 ├── ModuleLogin.vue
 ├── ModulePatient.vue
-├── ModuleTrainer.vue
+└── ModuleTrainer.vue
 ```
+
+Moreover, the WebSocket communication with the backend is handled in the 'sockets' folder. And the 'stores' folder contains the pinia stores for 
+managing the state of the application.
