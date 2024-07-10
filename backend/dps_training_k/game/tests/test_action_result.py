@@ -63,7 +63,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
         self.assertEqual(
             action_instance.result,
-            "Recovery Position Ergebnis: BZ: Ergebnis2\n Hb: Ergebnis1",
+            "BZ: Ergebnis2\nHb: Ergebnis1",
         )
 
     def test_action_production(self):
@@ -121,7 +121,9 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
             template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
             area=area,
         )
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(action_template.application_duration+1)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(
+            action_template.application_duration + 1
+        )
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(

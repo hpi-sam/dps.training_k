@@ -103,13 +103,13 @@ class Action(UUIDable, models.Model):
             return self.generic_result()
 
     def examination_result(self, examination_codes):
-        result_string = f"{self.name} Ergebnis:"
+        result_string = ""
         for examination_type, result_dict in self.results.items():
             current_code = examination_codes.get(examination_type, "")
             result_substring = result_dict.get(current_code)
 
             if result_substring:
-                result_string += f" {examination_type}: {result_substring}\n"
+                result_string += f"{examination_type}: {result_substring}\n"
             else:
                 error_message = f"Could not find corresponding value for code {current_code} in {examination_type}"
                 logging.error(error_message)
