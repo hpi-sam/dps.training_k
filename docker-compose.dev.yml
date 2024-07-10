@@ -17,7 +17,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.dev
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -43,13 +43,11 @@ services:
       - postgres
       - redis
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.dev
     environment:
       - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
       - static_volume:/app/staticfiles
-    ports:
-      - 8000:8000
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
 
   # Celery worker service (e.g. scheduled tasks)
@@ -61,7 +59,7 @@ services:
     depends_on:
       - django
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.dev
     command: /start-celeryworker
 
   # Celery beat service (e.g. scheduled tasks)
@@ -73,7 +71,7 @@ services:
     depends_on:
       - django
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.dev
     command: /start-celerybeat
 
   # Nginx service (reverse proxy for Backend)
@@ -86,9 +84,7 @@ services:
       - django
     volumes:
       - static_volume:/app/staticfiles
-      - /etc/letsencrypt/live/klinik-dps.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-      - /etc/letsencrypt/live/klinik-dps.de/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
-      - /etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./backend/dps_training_k/deployment/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
       - "80:80"
       - "443:443"
@@ -99,8 +95,6 @@ services:
     container_name: K-dPS-frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "5173:5173"
 
 volumes:
   local_postgres_data: { }

@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  # Update service for self-hosted Docker images for completely automatic deployment
+  # Only updates images marked with the label "com.centurylinklabs.watchtower.enable=true"
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 60 --label-enable
+
+  # Database service
+  postgres:
+    image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
+    container_name: K-dPS-postgres
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    env_file:
+      - .env.${RUN_CONFIG}
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Caching service
+  redis:
+    image: redis:7.2.5
+    container_name: K-dPS-redis
+
+  # Backend service
+  django:
+    image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
+    container_name: K-dPS-django
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env.${RUN_CONFIG}
+    environment:
+      - RUN_MIGRATIONS=1 # only django should run migrations
+    volumes:
+      - static_volume:/app/staticfiles
+    command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
+
+  # Celery worker service (e.g. scheduled tasks)
+  celeryworker:
+    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
+    container_name: K-dPS-celeryworker
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - django
+    env_file:
+      - .env.${RUN_CONFIG}
+    command: /start-celeryworker
+
+  # Celery beat service (e.g. scheduled tasks)
+  celerybeat:
+    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
+    container_name: K-dPS-celerybeat
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - django
+    env_file:
+      - .env.${RUN_CONFIG}
+    command: /start-celerybeat
+
+  # Nginx service (reverse proxy for Backend)
+  nginx:
+    image: ghcr.io/hpi-sam/dps_training_k-nginx:${IMAGE_TAG}
+    container_name: K-dPS-nginx
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - django
+    volumes:
+      - static_volume:/app/staticfiles
+      - /etc/letsencrypt/live/klinik-dps.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/klinik-dps.de/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - /etc/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # Frontend service
+  frontend:
+    image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
+    container_name: K-dPS-frontend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+volumes:
+  local_postgres_data: { }
+  local_postgres_data_backups: { }
+  static_volume: { }
