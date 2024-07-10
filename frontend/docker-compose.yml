@@ -5,6 +5,9 @@ services:
   web:
     build:
       context: .
+      args:
+        - VITE_SERVER_URL_HTTP=${VITE_SERVER_URL_HTTP}
+        - VITE_SERVER_URL_WS=${VITE_SERVER_URL_WS}
     image: dps_training_k-frontend
     container_name: K-dPS-frontend
     env_file:
