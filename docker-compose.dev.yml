@@ -84,7 +84,7 @@ services:
       - django
     volumes:
       - static_volume:/app/staticfiles
-      - ./backend/dps_training_k/deployment/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./backend/dps_training_k/deployment/nginx/nginx_deploy_dev.conf:/etc/nginx/conf.d/nginx.conf
     ports:
       - "80:80"
       - "443:443"
