@@ -12,12 +12,12 @@ services:
 
   # Database service
   postgres:
-    image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-postgres:prod
     container_name: K-dPS-postgres
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -34,7 +34,7 @@ services:
 
   # Backend service
   django:
-    image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-django:prod
     container_name: K-dPS-django
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -43,7 +43,7 @@ services:
       - postgres
       - redis
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     environment:
       - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
@@ -52,31 +52,31 @@ services:
 
   # Celery worker service (e.g. scheduled tasks)
   celeryworker:
-    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:prod
     container_name: K-dPS-celeryworker
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     command: /start-celeryworker
 
   # Celery beat service (e.g. scheduled tasks)
   celerybeat:
-    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:prod
     container_name: K-dPS-celerybeat
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     command: /start-celerybeat
 
   # Nginx service (reverse proxy for Backend)
   nginx:
-    image: ghcr.io/hpi-sam/dps_training_k-nginx:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-nginx:prod
     container_name: K-dPS-nginx
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -93,7 +93,7 @@ services:
 
   # Frontend service
   frontend:
-    image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-frontend:prod
     container_name: K-dPS-frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
