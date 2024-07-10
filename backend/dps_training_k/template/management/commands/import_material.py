@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 "category": Material.Category.BLOOD,
                 "is_reusable": False,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.FRESH_FROZEN_PLASMA,
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 "category": Material.Category.BLOOD,
                 "is_reusable": False,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LYOPHILISIERTES_FRISCHPLASMA,
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 "category": Material.Category.BLOOD,
                 "is_reusable": False,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.WAERMEGERAET_FUER_BLUTPRODUKTE,
@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": True,
                 "is_lab": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_1,
@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": False,
                 "is_lab": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_2,
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": False,
                 "is_lab": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.LAB_GERAET_3,
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": False,
                 "is_lab": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.SONOGRAPHIE,
@@ -89,7 +89,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.EKG,
@@ -98,7 +98,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.COMPUTERTOMOGRAPHIE,
@@ -108,7 +108,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": False,
                 "is_lab": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ROENTGENGERAET,
@@ -118,7 +118,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": False,
                 "is_lab": True,
-            }  # in reality there also exist mobile devices
+            },  # in reality there also exist mobile devices
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.ZVD_MESSGERAET,
@@ -127,7 +127,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BZ_MESSGERAET,
@@ -136,43 +136,52 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSGERAET_TRAGBAR,
             defaults={
-                "name": "Tragbares Beatmungsgerät",
+                "name": "Beatmungsgerät (Tragbar)",
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSGERAET_STATIONAER,
             defaults={
-                "name": "Stationäres Beatmungsgerät",
+                "name": "Beatmungsgerät (Stationäres)",
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": False,
-            }
+            },
+        )
+        Material.objects.update_or_create(
+            uuid=MaterialIDs.BEATMUNGSGERAET_CPAP,
+            defaults={
+                "name": "Beatmungsgerät (CPAP)",
+                "category": Material.Category.DEVICE,
+                "is_reusable": True,
+                "is_moveable": False,
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.SAUERSTOFF_TRAGBAR,
             defaults={
-                "name": "Tragbarer Sauerstoff",
+                "name": "Sauerstoff (Tragbarer)",
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.SAUERSTOFF_STATIONAER,
             defaults={
-                "name": "Stationärer Sauerstoff",
+                "name": "Sauerstoff (Stationärer)",
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": False,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.DEFI_TRANSKUTANER_PACER,
@@ -181,7 +190,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.PASSAGERER_PACER,
@@ -190,7 +199,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": False,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.PERFUSORPUMPE,
@@ -199,7 +208,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.NARKOSEGERAET,
@@ -208,7 +217,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": False,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BLUTGASANALYSE,
@@ -217,7 +226,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }  # in reality there also exist stationary devices
+            },  # in reality there also exist stationary devices
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BLUTBANK,
@@ -227,7 +236,7 @@ class Command(BaseCommand):
                 "is_reusable": True,
                 "is_moveable": False,
                 "is_lab": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.BEATMUNGSBEUTEL,
@@ -236,7 +245,7 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": False,
                 "is_moveable": True,
-            }
+            },
         )
         Material.objects.update_or_create(
             uuid=MaterialIDs.SPRITZENPUMPE,
@@ -245,5 +254,5 @@ class Command(BaseCommand):
                 "category": Material.Category.DEVICE,
                 "is_reusable": True,
                 "is_moveable": True,
-            }
+            },
         )

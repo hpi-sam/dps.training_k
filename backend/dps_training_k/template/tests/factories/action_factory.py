@@ -82,7 +82,7 @@ class ActionFactoryWithProduction(factory.django.DjangoModelFactory):
             "results",
         )
 
-    name = "Fresh Frozen Plasma (0 positiv) auftauen"
+    name = "Fresh Frozen Plasma auftauen"
     category = Action.Category.PRODUCTION
     location = Action.Location.LAB
     relocates = False

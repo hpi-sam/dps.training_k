@@ -1,15 +1,45 @@
 import csv
 import re
-
+import uuid
 from django.core.management.base import BaseCommand
 
 from helpers.triage import Triage
 from template.models import PatientInformation
+from template.constants import ActionIDs
 
 
 def get_triage_from_string(string):
     switch = {"grün": Triage.GREEN, "rot": Triage.RED, "gelb": Triage.YELLOW}
     return switch.get(string, Triage.UNDEFINED)
+
+
+pretreatment_to_ActionIDs = {
+    "Zugang": ActionIDs.IV_ZUGANG,
+    "Nitrat": ActionIDs.NITRAT,
+    "Wundversorgung": ActionIDs.WUNDVERSORGUNG,
+    "VEL": ActionIDs.VOLLELEKTROLYT_500,
+    "Analgetikum": ActionIDs.ANALGETIKUM,
+    "Sedativum": ActionIDs.SEDATIVUM,
+    "Katecholamin": ActionIDs.KATECHOLAMIN,
+    "Antikoagulanz": ActionIDs.ANTIKOAGULANZ,
+    "Kortikosteroid": ActionIDs.KORTIKOSTEROID,
+    "Narkotikum": ActionIDs.NARKOTIKUM,
+    "Diuretikum": ActionIDs.DIURETIKUM,
+    "künstlicher Atemweg": ActionIDs.TRACHEALTUBUS,
+    "ZVK": ActionIDs.ZVK,
+    "Glukose": ActionIDs.GLUCOSE_VERABREICHEN,
+    "Glucose": ActionIDs.GLUCOSE_VERABREICHEN,
+    "Antibiotikum": ActionIDs.ANTIBIOTIKUM,
+    "Sauerstoff": ActionIDs.SAUERSTOFF_ANBRINGEN,
+    "Beatmung": ActionIDs.BEATMUNGSGERAET_ANBRINGEN,
+    "EKG ablesen": ActionIDs.EKG_ABLESEN,
+    "CPAP": ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN,
+    "Rettungsdienst-Beatmung": None,
+    "Rettungsdienst-Sauerstoff": None,
+    "Rettungsdienst-Stifneck": None,
+    "Rettungsdienst-Vacuum-Matratze": None,
+    "Rettungsdienst-Extremitätenschiene": None,
+}
 
 
 def import_patients(file_path):
@@ -30,7 +60,7 @@ def import_patients(file_path):
                 + row["Biometrie"].strip()
             )
 
-            PatientInformation.objects.update_or_create(
+            patient_information, _ = PatientInformation.objects.update_or_create(
                 code=row["Pat-Nr."].strip(),
                 personal_details=row["Personalien"].strip(),
                 blood_type=row["Blutgruppe"].strip(),
@@ -49,6 +79,28 @@ def import_patients(file_path):
                 start_location=row["Start-Ort"].strip(),
                 op=row["OP / Interventions-Verlauf"].strip(),
             )
+            pretreatments_list = [
+                pt.strip() for pt in patient_information.pretreatment.split(",")
+            ]
+            pretreatments_list = [pt for pt in pretreatments_list if pt]
+            for pretreatment in pretreatments_list:
+                if (
+                    pretreatment[-1] == "P" and pretreatment != "CPAP"
+                ):  # we don't distinguish between oral and intravenous medication
+                    pretreatment = pretreatment[:-1]
+                amount = re.match(r"(\d+x)", pretreatment)
+                if amount:
+                    amount = amount.group(1)
+                    pretreatment = pretreatment.replace(amount, "")
+                    amount = int(amount[:-1])
+                else:
+                    amount = 1
+                translated_pretreatment = pretreatment_to_ActionIDs.get(pretreatment)
+                if translated_pretreatment:
+                    patient_information.pretreatment_action_templates[
+                        str(translated_pretreatment)
+                    ] = amount
+            patient_information.save()
 
 
 class Command(BaseCommand):

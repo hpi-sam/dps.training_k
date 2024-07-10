@@ -115,7 +115,11 @@ class Command(BaseCommand):
                 "effect_duration": None,  # None means permanent
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
-                    "prohibitive_actions": None,
+                    "prohibitive_actions": [
+                        str(ActionIDs.TRACHEALTUBUS),
+                        str(ActionIDs.LARYNXTUBUS),
+                        str(ActionIDs.GUEDELTUBUS),
+                    ],
                     "material": [str(MaterialIDs.BEATMUNGSBEUTEL)],
                     "num_personnel": 2,
                     "lab_devices": None,
@@ -483,6 +487,28 @@ class Command(BaseCommand):
                     "role": [
                         {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                         {role_map[RoleIDs.ARZT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
+            uuid=ActionIDs.ANTIBIOTIKUM,
+            defaults={
+                "name": "Antibioktikum",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,  # None means permanent
+                "conditions": {
+                    "required_actions": [str(ActionIDs.IV_ZUGANG)],
+                    "prohibitive_actions": None,
+                    "material": None,
+                    "num_personnel": 1,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
                     ],
                 },
             },
@@ -949,11 +975,40 @@ class Command(BaseCommand):
                     "required_actions": [
                         str(ActionIDs.TRACHEALTUBUS),
                     ],
-                    "prohibitive_actions": None,
+                    "prohibitive_actions": [
+                        str(ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN)
+                    ],
                     "material": [
                         [
                             str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
                             str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                        ]
+                    ],
+                    "num_personnel": 2,
+                    "lab_devices": None,
+                    "area": None,
+                    "role": [
+                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
+                        {role_map[RoleIDs.ARZT]: 1},
+                    ],
+                },
+            },
+        )
+        Action.objects.update_or_create(
+            uuid=ActionIDs.CPAP_BEATMUNGSGERAET_ANBRINGEN,
+            defaults={
+                "name": "CPAP-Beatmungsgerät anbringen",
+                "category": Action.Category.TREATMENT,
+                "location": Action.Location.BEDSIDE,
+                "relocates": False,
+                "application_duration": 15,
+                "effect_duration": None,
+                "conditions": {
+                    "required_actions": None,
+                    "prohibitive_actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
+                    "material": [
+                        [
+                            str(MaterialIDs.BEATMUNGSGERAET_CPAP),
                         ]
                     ],
                     "num_personnel": 2,
@@ -1304,9 +1359,9 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            uuid=ActionIDs.BLUTGASEANALYSE_FUER_OXYGENIERUNGSLEISTUNG,
+            uuid=ActionIDs.BLUTGASEANALYSE,
             defaults={
-                "name": "Blutgaseanalyse für Oxygenierungsleistung durchführen",
+                "name": "Blutgaseanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
@@ -1341,33 +1396,7 @@ class Command(BaseCommand):
                         613: "nicht verwertbar",
                         614: "mäßige Hypoxie",
                         615: "schwere Hypoxie",
-                    }
-                },
-            },
-        )
-        Action.objects.update_or_create(
-            uuid=ActionIDs.BLUTGASEANALYSE_FUER_SAEURE_BASE_HAUSHALT,
-            defaults={
-                "name": "Blutgaseanalyse für Säure-Base-Haushalt durchführen",
-                "category": Action.Category.EXAMINATION,
-                "location": Action.Location.BEDSIDE,
-                "relocates": False,
-                "application_duration": 15,
-                "effect_duration": None,
-                "conditions": {
-                    "required_actions": [
-                        [str(ActionIDs.ART_KANUELE), str(ActionIDs.ZVK)]
-                    ],
-                    "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.BLUTGASANALYSE)],
-                    "num_personnel": 1,
-                    "lab_devices": None,
-                    "area": None,
-                    "role": [
-                        {role_map[RoleIDs.PFLEGEFACHKRAFT]: 1},
-                    ],
-                },
-                "results": {
+                    },
                     "BGA-SBH": {
                         650: "resp. Alkalose",
                         651: "kompensierte resp. Alkalose",
@@ -1496,7 +1525,7 @@ class Command(BaseCommand):
             uuid=ActionIDs.EKG_ANBRINGEN,
             defaults={
                 "name": "EKG anbringen",
-                "category": Action.Category.EXAMINATION,
+                "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
                 "application_duration": 60,
@@ -1524,7 +1553,7 @@ class Command(BaseCommand):
                 "application_duration": 15,
                 "effect_duration": None,
                 "conditions": {
-                    "required_actions": None,
+                    "required_actions": [str(ActionIDs.EKG_ANBRINGEN)],
                     "prohibitive_actions": None,
                     "material": [str(MaterialIDs.EKG)],
                     "num_personnel": 1,

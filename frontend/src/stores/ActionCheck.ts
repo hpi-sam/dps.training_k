@@ -9,7 +9,7 @@ export const useActionCheckStore = defineStore('actionCheck', {
         material: [] as CheckMaterial[],
         labDevices: [] as CheckLabDevice[],
         requiredActions: {} as RequiredActions,
-        prohibitedActions: [] as string[],
+        prohibitiveActions: [] as string[],
 	}),
 	actions: {
         loadActionCheck(actionCheck: ActionCheck) {
@@ -20,7 +20,7 @@ export const useActionCheckStore = defineStore('actionCheck', {
             this.material = actionCheck.material
             this.labDevices = actionCheck.labDevices
             this.requiredActions = actionCheck.requiredActions
-            this.prohibitedActions = actionCheck.prohibitedActions
+            this.prohibitiveActions = actionCheck.prohibitiveActions
         }
 	}
 })
