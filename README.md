@@ -42,3 +42,12 @@ The following list describes where to find the documentation for the different p
 - Deployment process: [docs file](./docs/deployment-process.md).
 - Tips regarding the project configuration: [docs file](./docs/configuration-tips.md).
 - MoSCoW and future plans: [docs file](./docs/moscow.md).
+
+## Project Licensing
+The majority of this project is licensed under the MIT License, as found in the [LICENSE](./LICENSE) file at the root of this project. However, 
+some components are licensed differently:
+
+- **data**: The code and content within `backend/dps_training_k/data` are licensed under the CC BY-NC license, as detailed in the 
+  [backend/dps_training_k/data/LICENSE](./backend/dps_training_k/data/LICENSE) file. This license prohibits the use of the data for commercial use.
+  Consequently, the data needs to be removed or replaced or licensing addendums have to be negotiated if the project should be used commercially. For 
+  more details, see the [backend/dps_training_k/data/README.md](./backend/dps_training_k/data/README.md) file.
