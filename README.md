@@ -2,7 +2,7 @@
 The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personnel on how to act during medical 
 surges / during mass casualty incidents. 
 
-It is currently only available in German at https://www.klinik-dps.de/.
+It is currently only available in German at https://klinik-dps.de/.
 
 The software is developed as part of a project at the Hasso Plattner Institute in Potsdam, Germany: 
 [Project Website](https://hpi.de/giese/teaching/bachelor-projects/digitale-simulationsuebungen-fuer-krankenhaeuser.html).
