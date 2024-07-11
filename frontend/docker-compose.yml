@@ -15,3 +15,5 @@ services:
       - .env.${VITE_RUN_CONFIG}
     ports:
       - "5173:5173"
+    extra_hosts: # is used to ensure host.docker.internal resolves correctly on Linux systems
+      - "host.docker.internal:host-gateway"
