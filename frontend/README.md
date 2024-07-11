@@ -36,7 +36,7 @@ npm run <prod/dev>
 Note that neither version supports hot-reloading.
 
 ```bash
-docker-compose --env-file .env.<prod/dev> up --build -d
+docker-compose --env-file .env.<prod/dev> up --build
 ```
 
 ## Project structure

@@ -40,7 +40,7 @@ Optionally, to access the database, create a superuser account:
 ```bash
 docker exec -it K-dPS-django python manage.py createsuperuser
 ```
-Afterwards, you can log into the admin interface at e.g. `http://localhost:8000/admin/`<br/>
+Afterwards, you can log into the admin interface at e.g. `http://localhost:80/admin/`<br/>
 Note: this is only available if DEBUG = true, which is the case in the dev environment.
 
 
