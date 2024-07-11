@@ -62,22 +62,24 @@ def import_patients(file_path):
 
             patient_information, _ = PatientInformation.objects.update_or_create(
                 code=row["Pat-Nr."].strip(),
-                personal_details=row["Personalien"].strip(),
-                blood_type=row["Blutgruppe"].strip(),
-                injury=row["Verletzungen"].strip(),
-                biometrics=biometrics,
-                triage=triage,
-                consecutive_unique_number=consecutiveUniqueNumber,
-                mobility=row["Mobilität"].strip(),
-                preexisting_illnesses=row["Vorerkrankungen"].strip(),
-                permanent_medication=row["Dauer-Medikation"].strip(),
-                current_case_history=row[
-                    "Aktuelle Anamnese / Rettungsdienst-Übergabe"
-                ].strip(),
-                pretreatment=row["Vorbehandlung"].strip(),
-                start_status=row["Start-Status"].strip(),
-                start_location=row["Start-Ort"].strip(),
-                op=row["OP / Interventions-Verlauf"].strip(),
+                defaults={
+                    "personal_details": row["Personalien"].strip(),
+                    "blood_type": row["Blutgruppe"].strip(),
+                    "injury": row["Verletzungen"].strip(),
+                    "biometrics": biometrics,
+                    "triage": triage,
+                    "consecutive_unique_number": consecutiveUniqueNumber,
+                    "mobility": row["Mobilität"].strip(),
+                    "preexisting_illnesses": row["Vorerkrankungen"].strip(),
+                    "permanent_medication": row["Dauer-Medikation"].strip(),
+                    "current_case_history": row[
+                        "Aktuelle Anamnese / Rettungsdienst-Übergabe"
+                    ].strip(),
+                    "pretreatment": row["Vorbehandlung"].strip(),
+                    "start_status": row["Start-Status"].strip(),
+                    "start_location": row["Start-Ort"].strip(),
+                    "op": row["OP / Interventions-Verlauf"].strip(),
+                }
             )
             pretreatments_list = [
                 pt.strip() for pt in patient_information.pretreatment.split(",")
