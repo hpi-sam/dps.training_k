@@ -189,14 +189,14 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
     # methods used internally
     # ------------------------------------------------------------------------------------------------------------------------------------------------
     def send_available_actions(self):
-        actions = Action.objects.all()
+        actions = Action.objects.all().order_by("name")
         actions = [ActionSerializer(action).data for action in actions]
         self.send_event(
             self.OutgoingMessageTypes.AVAILABLE_ACTIONS, availableActions=actions
         )
 
     def send_available_materials(self):
-        materials = Material.objects.all().exclude(is_lab=True)
+        materials = Material.objects.all().exclude(is_lab=True).order_by("name")
         availableMaterials = [
             MaterialSerializer(material).data for material in materials
         ]
@@ -206,7 +206,7 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         )
 
     def send_available_patients(self):
-        patientsInformation = PatientInformation.objects.all()
+        patientsInformation = PatientInformation.objects.all().order_by("code")
         availablePatients = [
             PatientInformationSerializer(patient_information).data
             for patient_information in patientsInformation

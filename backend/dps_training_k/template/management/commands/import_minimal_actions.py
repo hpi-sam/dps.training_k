@@ -22,13 +22,13 @@ class Command(BaseCommand):
     def create_actions():
         # Simple basic action
         Action.objects.update_or_create(
-            name="art. Kanüle",
             uuid=ActionIDs.ART_KANUELE,
             defaults={
+                "name": "art. Kanüle",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 120,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -45,13 +45,13 @@ class Command(BaseCommand):
         )
         # Produce Material
         Action.objects.update_or_create(
-            name="Enthrozytenkonzentrat erwärmen",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_VORBEREITEN,
+            uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_VORBEREITEN,
             defaults={
+                "name": "Erythrozytenkonzentrat erwärmen",
                 "category": Action.Category.PRODUCTION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 15,
+                "application_duration": 360,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -65,20 +65,20 @@ class Command(BaseCommand):
                     ],
                 },
                 "results": {
-                    "produced_material": {str(MaterialIDs.ENTHROZYTENKONZENTRAT): 1}
+                    "produced_material": {str(MaterialIDs.ERYTHROZYTENKONZENTRAT): 1}
                 },
             },
         )
         # Use Blood
         Action.objects.update_or_create(
-            name="i.V. Zugang",
             uuid=ActionIDs.IV_ZUGANG,
             defaults={
+                "name": "i.V. Zugang",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 10,
-                "effect_duration": 30,  # depends on type of "Zugang"
+                "application_duration": 60,
+                "effect_duration": 120,  # depends on type of "Zugang"
                 "conditions": {
                     "required_actions": None,
                     "prohibitive_actions": None,
@@ -93,13 +93,13 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blut abnehmen",
             uuid=ActionIDs.BLUTABNAHME,
             defaults={
+                "name": "Blut abnehmen",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 5,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [str(ActionIDs.ART_KANUELE)],
@@ -115,13 +115,13 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Blutgruppe bestimmen",
             uuid=ActionIDs.BLUTGRUPPE_BESTIMMEN,
             defaults={
+                "name": "Blutgruppe bestimmen",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 180,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [str(ActionIDs.BLUTABNAHME)],
@@ -149,13 +149,13 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Kreuzblut",
             uuid=ActionIDs.KREUZBLUT,
             defaults={
+                "name": "Kreuzblut",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 2700,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
@@ -180,21 +180,20 @@ class Command(BaseCommand):
             },
         )
         Action.objects.update_or_create(
-            name="Enthrozytenkonzentrate anwenden",
-            uuid=ActionIDs.ENTHROZYTENKONZENTRATE_ANWENDEN,
+            uuid=ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN,
             defaults={
+                "name": "Erythrozytenkonzentrate anwenden",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 5,
+                "application_duration": 15,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
                         str(ActionIDs.IV_ZUGANG),
-                        str(ActionIDs.KREUZBLUT),
                     ],
                     "prohibitive_actions": None,
-                    "material": [str(MaterialIDs.ENTHROZYTENKONZENTRAT)],
+                    "material": [str(MaterialIDs.ERYTHROZYTENKONZENTRAT)],
                     "num_personnel": 1,
                     "lab_devices": None,
                     "area": None,
@@ -206,9 +205,9 @@ class Command(BaseCommand):
         )
         # OP
         Action.objects.update_or_create(
-            name="Operation einleiten",
             uuid=ActionIDs.OP_EINLEITEN,
             defaults={
+                "name": "Operation einleiten",
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.LAB,
                 "relocates": True,
@@ -229,13 +228,13 @@ class Command(BaseCommand):
         )
         # Non-relocating examinations
         Action.objects.update_or_create(
-            name="Hämoglobinanalyse",
             uuid=ActionIDs.HAEMOGLOBINANALYSE,
             defaults={
+                "name": "Hämoglobinanalyse",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": False,
-                "application_duration": 10,
+                "application_duration": 120,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
@@ -298,13 +297,13 @@ class Command(BaseCommand):
         )
         # Relocating and lab side examinations
         Action.objects.update_or_create(
-            name="Trauma CT",
             uuid=ActionIDs.TRAUMA_CT,
             defaults={
+                "name": "Trauma CT",
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.LAB,
                 "relocates": True,
-                "application_duration": 10,
+                "application_duration": 300,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,

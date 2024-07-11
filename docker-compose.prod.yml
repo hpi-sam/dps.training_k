@@ -12,12 +12,12 @@ services:
 
   # Database service
   postgres:
-    image: ghcr.io/hpi-sam/dps_training_k-postgres:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-postgres:latest
     container_name: K-dPS-postgres
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -34,7 +34,7 @@ services:
 
   # Backend service
   django:
-    image: ghcr.io/hpi-sam/dps_training_k-django:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-django:latest
     container_name: K-dPS-django
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -43,42 +43,40 @@ services:
       - postgres
       - redis
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     environment:
       - RUN_MIGRATIONS=1 # only django should run migrations
     volumes:
       - static_volume:/app/staticfiles
-    expose:
-      - 8000
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
 
   # Celery worker service (e.g. scheduled tasks)
   celeryworker:
-    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-celeryworker:latest
     container_name: K-dPS-celeryworker
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     command: /start-celeryworker
 
   # Celery beat service (e.g. scheduled tasks)
   celerybeat:
-    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-celerybeat:latest
     container_name: K-dPS-celerybeat
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - django
     env_file:
-      - .env.${RUN_CONFIG}
+      - .env.prod
     command: /start-celerybeat
 
   # Nginx service (reverse proxy for Backend)
   nginx:
-    image: ghcr.io/hpi-sam/dps_training_k-nginx:${IMAGE_TAG}
+    image: ghcr.io/hpi-sam/dps_training_k-nginx:latest
     container_name: K-dPS-nginx
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -86,17 +84,19 @@ services:
       - django
     volumes:
       - static_volume:/app/staticfiles
+      - /etc/letsencrypt/live/klinik-dps.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/klinik-dps.de/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
-      - "8000:80"
+      - "80:80"
+      - "443:443"
 
   # Frontend service
-  web:
-    image: ghcr.io/hpi-sam/dps_training_k-frontend:${IMAGE_TAG}
+  frontend:
+    image: ghcr.io/hpi-sam/dps_training_k-frontend:latest
     container_name: K-dPS-frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "5173:5173"
 
 volumes:
   local_postgres_data: { }

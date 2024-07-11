@@ -105,7 +105,7 @@ class TrainerConsumer(AbstractConsumer):
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
                 "areaId",
-                "personnelName"
+                "personnelName",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_DELETE: (
                 self.handle_delete_personnel,
@@ -172,14 +172,9 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_end_exercise(self, exercise):
         exercise.update_state(Exercise.StateTypes.FINISHED)
-        exercise.delete()
 
     def handle_start_exercise(self, exercise):
-        owned_patients = PatientInstance.objects.filter(exercise=exercise)
-        for time_offset, patient in enumerate(owned_patients):
-            # we don't start all patients at once to balance out the work for our celery workers
-            patient.schedule_state_change(time_offset)
-        exercise.update_state(Exercise.StateTypes.RUNNING)
+        exercise.start_exercise()
 
     def handle_add_material(self, _, areaId, materialName):
         try:

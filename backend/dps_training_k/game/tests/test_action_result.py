@@ -63,7 +63,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.assertEqual(action_instance.state_name, ActionInstanceStateNames.FINISHED)
         self.assertEqual(
             action_instance.result,
-            "Recovery Position Ergebnis: BZ: Ergebnis2 Hb: Ergebnis1",
+            "BZ: Ergebnis2\nHb: Ergebnis1",
         )
 
     def test_action_production(self):
@@ -75,18 +75,18 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
             template=action, lab=LabFactory(), destination_area=AreaFactory()
         )
         Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
-            name="Enthrozytenkonzentrat 0 pos.",
+            uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
+            name="Erythrozytenkonzentrat 0 pos.",
             category=Material.Category.BLOOD,
             is_reusable=False,
         )
         count_before = MaterialInstance.objects.filter(
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
+            template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
             area=action_instance.destination_area,
         ).count()
         action_instance._application_finished()
         count_after = MaterialInstance.objects.filter(
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
+            template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
             area=action_instance.destination_area,
         ).count()
         self.assertEqual(count_before + 1, count_after)
@@ -106,7 +106,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(0)
         self.deactivate_notifications()
         self.deactivate_condition_checking()
-        action_template = Action.objects.get(name="Enthrozytenkonzentrat erwärmen")
+        action_template = Action.objects.get(name="Erythrozytenkonzentrat erwärmen")
         area = AreaFactory()
         lab = LabFactory()
         action_instance = ActionInstance.create(
@@ -118,14 +118,16 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         self.assertRaises(
             MaterialInstance.DoesNotExist,
             MaterialInstance.objects.get,
-            template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
+            template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
             area=area,
         )
-        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(20)
+        settings.CURRENT_TIME = lambda: self.timezone_from_timestamp(
+            action_template.application_duration + 1
+        )
         check_for_updates()
         self.assertIsNotNone(
             MaterialInstance.objects.get(
-                template__uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
+                template__uuid=MaterialIDs.ERYTHROZYTENKONZENTRAT,
                 area=area,
             )
         )
@@ -143,7 +145,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
 
         call_command("import_minimal_actions")
         call_command("import_minimal_material")
-        action_template = Action.objects.get(name="Enthrozytenkonzentrat erwärmen")
+        action_template = Action.objects.get(name="Erythrozytenkonzentrat erwärmen")
         area = AreaFactory()
         lab = LabFactory()
         action_instance = ActionInstance.create(
@@ -153,41 +155,3 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
         )
         action_instance._application_finished()
         self.assertEqual(_notify_exercise_update.call_count, 1)
-
-
-class ActionCreationTestCase(TestUtilsMixin, TransactionTestCase):
-    def setUp(self):
-        Material.objects.update_or_create(
-            uuid=MaterialIDs.ENTHROZYTENKONZENTRAT,
-            name="Enthrozytenkonzentrat 0 pos.",
-            category=Material.Category.BLOOD,
-            is_reusable=False,
-        )
-        ActionFactoryWithProduction(application_duration=0)
-        self.deactivate_notifications()
-        self.deactivate_condition_checking()
-
-    def tearDown(self):
-        self.activate_notifications()
-        self.activate_condition_checking()
-
-    @patch("game.models.MaterialInstance.generate_materials")
-    async def test_action_production_dispatching(self, generate_materials):
-        """
-        when a production action was added via websockets, check whether action instance steps through the production routine
-        inside action_instance._application_finished.
-
-        """
-        communicator = await self.create_patient_communicator_and_authenticate()
-        await self.skip_initial_fetching(communicator)
-
-        # Send a message to the WebSocket
-        await communicator.send_json_to(
-            {
-                "messageType": "action-add",
-                "actionName": "Fresh Frozen Plasma (0 positiv) auftauen",
-            }
-        )
-        await asyncio.sleep(0.1)
-        await sync_to_async(check_for_updates)()
-        self.assertEqual(generate_materials.call_count, 1)

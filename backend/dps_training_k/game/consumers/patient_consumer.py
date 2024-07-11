@@ -156,17 +156,14 @@ class PatientConsumer(AbstractConsumer):
     def handle_action_add(self, patient_instance, action_name):
         action_template = Action.objects.get(name=action_name)
         kwargs = {}
-        if action_template.location == Action.Location.LAB:
-            kwargs["lab"] = self.exercise.lab
-        if (
-            action_template.location == Action.Location.BEDSIDE
-            or action_template.category == Action.Category.EXAMINATION
-            or action_template.relocates
-        ):
-            kwargs["patient_instance"] = patient_instance
-
-        if action_template.category == Action.Category.PRODUCTION:
-            kwargs["destination_area"] = patient_instance.area
+        needed_arguments = ActionInstance.needed_arguments_create(action_template)
+        for argument in needed_arguments:
+            if argument == "patient_instance":
+                kwargs["patient_instance"] = patient_instance
+            elif argument == "destination_area":
+                kwargs["destination_area"] = patient_instance.area
+            elif argument == "lab":
+                kwargs["lab"] = self.exercise.lab
         action_instance = ActionInstance.create(action_template, **kwargs)
         application_succeded, message = action_instance.try_application()
         if not application_succeded:
@@ -183,7 +180,7 @@ class PatientConsumer(AbstractConsumer):
         action_template = Action.objects.get(name=action_name)
         if action_template.location == Action.Location.LAB:
             action_check_message = LabActionCheckSerializer(
-                action_template, self.exercise.lab
+                action_template, self.exercise.lab, self.patient_instance
             ).data
         else:
             action_check_message = PatientInstanceActionCheckSerializer(

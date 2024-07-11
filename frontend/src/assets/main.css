@@ -28,6 +28,7 @@ main{
   height:100vh;
   margin: 0 auto;
   font-weight: normal;
+  white-space: pre-wrap;
 }
 
 h1 {

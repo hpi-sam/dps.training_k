@@ -5,11 +5,13 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from configuration import settings
+from game.models import Exercise
 from game.channel_notifications import PatientInstanceDispatcher
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
+from helpers.completed_actions import CompletedActionsMixin
 from template.models import PatientState, Action, Subcondition, Material
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
@@ -26,7 +28,9 @@ def validate_patient_frontend_id(value):
         )
 
 
-class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
+class PatientInstance(
+    CompletedActionsMixin, Eventable, Moveable, MoveableTo, models.Model
+):
     area = models.ForeignKey("Area", on_delete=models.CASCADE, null=True, blank=True)
     lab = models.ForeignKey("Lab", on_delete=models.CASCADE, null=True, blank=True)
     exercise = models.ForeignKey("Exercise", on_delete=models.CASCADE)
@@ -67,7 +71,10 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
     def save(self, *args, **kwargs):
         from . import User
 
-        if not self.pk:
+        _state_adding = False  # saves historic value of self._state.adding, as it is changed after saving
+        if (
+            self._state.adding
+        ):  # _state.adding is True if the instance does not exist in the database, so it is a new instance
             self.user, _ = User.objects.get_or_create(
                 username=self.frontend_id, user_type=User.UserType.PATIENT
             )
@@ -76,13 +83,12 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             )  # Properly hash the password
             self.user.save()
 
-            if (
-                not self.patient_state
-            ):  # factory already has it set, so we don't want to overwrite that here
+            if not self.patient_state:
                 self.patient_state = PatientState.objects.get(
                     code=self.static_information.code,
                     state_id=self.static_information.start_status,
                 )
+            _state_adding = True
 
         changes = kwargs.get("update_fields", None)
 
@@ -92,16 +98,36 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             self.triage = self.static_information.triage
             if changes:
                 changes.append("triage")
-
         PatientInstanceDispatcher.save_and_notify(
             self, changes, super(), *args, **kwargs
         )
+
+        if _state_adding and self.exercise.state == Exercise.StateTypes.RUNNING:
+            self.apply_pretreatments()
+            self.schedule_state_change()
 
     def delete(self, using=None, keep_parents=False):
         """Is only called when the patient explicitly deleted and not in an e.g. batch or cascade delete"""
         if self.user:
             self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
+
+    def apply_pretreatments(self):
+        from game.models import ActionInstance
+
+        for pretreatment, amount in self.static_information.get_pretreatments().items():
+            for _ in range(amount):
+                kwargs = {}
+                needed_arguments = ActionInstance.needed_arguments_create(pretreatment)
+                for arg in needed_arguments:
+                    if arg == "patient_instance":
+                        kwargs[arg] = self
+                    elif arg == "destination_area":
+                        kwargs[arg] = self.area
+                    elif arg == "lab":
+                        kwargs[arg] = self.lab
+
+                ActionInstance.create_in_success_state(template=pretreatment, **kwargs)
 
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
@@ -149,7 +175,6 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
                 in ActionInstanceState.success_states()
             ):
                 template_action_count[str(action_instance.template.uuid)] += 1
-        # TODO: add handling for OP if it's not an action
         fulfilled_subconditions = set()
 
         for subcondition in subconditions:
@@ -162,24 +187,30 @@ class PatientInstance(Eventable, Moveable, MoveableTo, models.Model):
             ):
                 fulfilled_subconditions.add(subcondition)
 
-            for action in fulfilling_actions:
-                if (
-                    subcondition.lower_limit <= template_action_count[action]
-                    and template_action_count[action] <= subcondition.upper_limit
-                ):
-                    isActionFulfilled = True
+            fulfillment_count = 0
+            for action, fulfillment_value in fulfilling_actions.items():
+                fulfillment_count += template_action_count[action] * fulfillment_value
+            if (
+                subcondition.lower_limit <= fulfillment_count
+                and fulfillment_count <= subcondition.upper_limit
+            ):
+                isActionFulfilled = True
 
             isMaterialFulfilled = False
             fulfilling_materials = subcondition.fulfilling_measures["materials"]
-            for material in fulfilling_materials:
+            fulfillment_count = 0
+            for material, fulfillment_value in fulfilling_materials.items():
                 num_of_materials_assigned = len(
                     self.material_assigned(materials.get(uuid=material))
                 )
-                if (
-                    subcondition.lower_limit <= num_of_materials_assigned
-                    and num_of_materials_assigned <= subcondition.upper_limit
-                ):
-                    isMaterialFulfilled = True
+                fulfillment_count += num_of_materials_assigned * fulfillment_value
+            if (
+                fulfillment_count
+                and subcondition.lower_limit <= fulfillment_count
+                and fulfillment_count <= subcondition.upper_limit
+            ):
+                isMaterialFulfilled = True
+
             if isActionFulfilled or isMaterialFulfilled:
                 fulfilled_subconditions.add(subcondition)
 

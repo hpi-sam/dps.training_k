@@ -251,7 +251,7 @@ class SocketTrainer {
 	}
 }
 
-const socketTrainer = new SocketTrainer('ws://' + import.meta.env.VITE_SERVER_URL + ':8000/ws/trainer/?token=')
+const socketTrainer = new SocketTrainer(import.meta.env.VITE_SERVER_URL_WS + '/ws/trainer/?token=')
 export default socketTrainer
 
 export const serverMockEvents = [

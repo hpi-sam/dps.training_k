@@ -2,6 +2,7 @@ import factory
 
 from helpers.triage import Triage
 from template.models import PatientInformation
+from template.constants import ActionIDs
 
 
 class PatientInformationFactory(factory.django.DjangoModelFactory):
@@ -26,3 +27,4 @@ class PatientInformationFactory(factory.django.DjangoModelFactory):
         "Verband durchgeblutet; nicht bewusstlos gewesen."
     )
     pretreatment = "Wundversorgung,"
+    pretreatment_action_templates = {str(ActionIDs.WUNDVERSORGUNG): 1}

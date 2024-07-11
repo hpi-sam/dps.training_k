@@ -88,7 +88,7 @@ jobs:
 
       - name: Run docker containers with deploy dev configuration
         run: |
-          docker-compose --env-file .env.dev up -d
+          docker-compose -f docker-compose.dev.yml up -d
 
       - name: Run integration tests
         run: |
