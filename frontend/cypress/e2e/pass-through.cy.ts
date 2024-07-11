@@ -1,6 +1,6 @@
 describe('pass-through tests', () => {
 	beforeEach(() => {
-		cy.visit('http://localhost:5173/')
+		cy.visit('http://localhost/')
 	})
 
 	it('trainer failed login test', () => {

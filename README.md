@@ -1,8 +1,8 @@
-# ![img.png](./frontend/public/favicon-32x32.png) K-dPS
+# ![img.png](./frontend/public/favicon-32x32.png) Klinik-dPS
 The K-dPS (the clinic variant of the dynamic patient simulation) simulation software for training medical personnel on how to act during medical 
 surges / during mass casualty incidents. 
 
-It is currently only available in German at http://139.162.170.6:5173/.
+It is currently only available in German at https://klinik-dps.de/.
 
 The software is developed as part of a project at the Hasso Plattner Institute in Potsdam, Germany: 
 [Project Website](https://hpi.de/giese/teaching/bachelor-projects/digitale-simulationsuebungen-fuer-krankenhaeuser.html).
@@ -10,7 +10,7 @@ The software is developed as part of a project at the Hasso Plattner Institute i
 ## Features
 The K-dPS offers the following features:
 - **Create Exercises**: Trainers can quickly create exercises by adding areas, patients, personnel and material to them and customize names.
-- **Dynamic Patients**: Patients dynamically change their state based on the material assigned and actions applied to them.
+- **Dynamic Patients**: Patients dynamically change their state based on the current state as well as the material assigned and actions applied to them.
 - **Real-time Interaction**: Trainees can interact with the patients in real-time by applying treatments, conducting examinations and more.
 - **Resource Management**: Trainees can assign personnel and material to different patients and manage the resources effectively.
 - **Triaging**: Trainees can triage patients based on their state and assign them different triage categories and move them to different areas.
@@ -51,3 +51,26 @@ some components are licensed differently:
   [backend/dps_training_k/data/LICENSE](./backend/dps_training_k/data/LICENSE) file. This license prohibits the use of the data for commercial use.
   Consequently, the data needs to be removed or replaced or licensing addendums have to be negotiated if the project should be used commercially. For 
   more details, see the [backend/dps_training_k/data/README.md](./backend/dps_training_k/data/README.md) file.
+
+
+## Thank you
+First and foremost, we would like to thank the [Hasso Plattner Institute](https://hpi.de/) for giving us the opportunity to work on this project as well as our 
+supervisors Christian Schäffer and Matthias Barkowsky for their guidance and organization of the project.
+
+Right after that come our official project partners, the [ZaNowi](https://zanowi.de/) ("Zentrum für angewandte Notfallwissenschaft") and the 
+[Johanniter](https://www.johanniter.de/bildungseinrichtungen/johanniter-akademie/johanniter-akademie-nordrhein-westfalen/standorte-der-akademie-in-nordrhein-westfalen/campus-muenster/) 
+("Johanniter Akademie NRW, Campus Münster"), for making the project possible by providing the necessary data and insights.
+
+And last but not least, we would like to thank our supporters: 
+- [BABZ](https://www.bbk.bund.de/DE/Themen/Akademie-BABZ/akademie-babz_node.html) ("Bundesakademie für Bevölkerungsschutz und Zivile Verteidigung")
+  of the [BBK](https://www.bbk.bund.de/DE/Home/home_node.html) ("Bundesamtes für Bevölkerungsschutz und Katastrophenhilfe")
+- [Evangelisches Krankenhaus Hubertus](https://www.johannesstift-diakonie.de/medizinische-versorgung/evangelisches-krankenhaus-hubertus) 
+  Berlin-Zehlendorf
+- [Universitätsklinikum Düsseldorf](https://www.uniklinik-duesseldorf.de/)
+
+Special thanks to the following people for being directly available to us and providing us with valuable insights and feedback: Frank Sensen 
+(ZaNowi), Philipp Rocker (Johanniter) and Daniel Schmitz (Evangelisches Krankenhaus Hubertus).
+
+![](./docs/hpi_logo.png)
+![](./docs/johanniter_logo.png)
+![](./docs/zanowi_logo.png)
