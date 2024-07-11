@@ -32,7 +32,7 @@ Env.read_env(os.path.join(BASE_DIR, ".env.dev"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
-CORS_ALLOWED_ORIGINS = ["http://" + env.str("FRONTEND_URL") + ":5173"]
+CORS_ALLOWED_ORIGINS = ["https://klinik-dps.de", "https://www.klinik-dps.de", "http://localhost"]
 RUN_CONFIG = env.str("RUN_CONFIG", default="dev")
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
     "corsheaders",
     "game.apps.GameConfig",
     "helpers.apps.GameConfig",
@@ -134,12 +133,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -162,8 +155,6 @@ CHANNEL_LAYERS = {
 DEFAULT_NAME_GENERATOR = DateTimeNameGenerator()
 
 AUTH_USER_MODEL = "game.User"
-
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Celery
 # ------------------------------------------------------------------------------

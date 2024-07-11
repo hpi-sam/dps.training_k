@@ -247,7 +247,7 @@ class SocketPatient {
 	}
 }
 
-const socketPatient = new SocketPatient('ws://' + import.meta.env.VITE_SERVER_URL + ':8000/ws/patient/?token=')
+const socketPatient = new SocketPatient(import.meta.env.VITE_SERVER_URL_WS + '/ws/patient/?token=')
 export default socketPatient
 
 export const serverMockEvents = [
