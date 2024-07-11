@@ -76,6 +76,7 @@ def import_patients(file_path):
                         "Aktuelle Anamnese / Rettungsdienst-Übergabe"
                     ].strip(),
                     "pretreatment": row["Vorbehandlung"].strip(),
+                    "pretreatment_action_templates": {},
                     "start_status": row["Start-Status"].strip(),
                     "start_location": row["Start-Ort"].strip(),
                     "op": row["OP / Interventions-Verlauf"].strip(),
