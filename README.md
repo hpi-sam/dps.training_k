@@ -42,3 +42,25 @@ The following list describes where to find the documentation for the different p
 - Deployment process: [docs file](./docs/deployment-process.md).
 - Tips regarding the project configuration: [docs file](./docs/configuration-tips.md).
 - MoSCoW and future plans: [docs file](./docs/moscow.md).
+
+## Thank you
+First and foremost, we would like to thank the [Hasso Plattner Institute](https://hpi.de/) for giving us the opportunity to work on this project as well as our 
+supervisors Christian Schäffer and Matthias Barkowsky for their guidance and organization of the project.
+
+Right after that come our official project partners, the [ZaNowi](https://zanowi.de/) ("Zentrum für angewandte Notfallwissenschaft") and the 
+[Johanniter](https://www.johanniter.de/bildungseinrichtungen/johanniter-akademie/johanniter-akademie-nordrhein-westfalen/standorte-der-akademie-in-nordrhein-westfalen/campus-muenster/) 
+("Johanniter Akademie NRW, Campus Münster"), for making the project possible by providing the necessary data and insights.
+
+And last but not least, we would like to thank our supporters: 
+- [BABZ](https://www.bbk.bund.de/DE/Themen/Akademie-BABZ/akademie-babz_node.html) ("Bundesakademie für Bevölkerungsschutz und Zivile Verteidigung")
+  of the [BBK](https://www.bbk.bund.de/DE/Home/home_node.html) ("Bundesamtes für Bevölkerungsschutz und Katastrophenhilfe")
+- [Evangelisches Krankenhaus Hubertus](https://www.johannesstift-diakonie.de/medizinische-versorgung/evangelisches-krankenhaus-hubertus) 
+  Berlin-Zehlendorf
+- [Universitätsklinikum Düsseldorf](https://www.uniklinik-duesseldorf.de/)
+
+Special thanks to the following people for being directly available to us and providing us with valuable insights and feedback: Frank Sensen 
+(ZaNowi), Philipp Rocker (Johanniter) and Daniel Schmitz (Evangelisches Krankenhaus Hubertus).
+
+![](docs/hpi_logo.png)
+![](./docs/johanniter_logo.png)
+![](./docs/zanowi_logo.png)
