@@ -18,9 +18,6 @@ class PatientInformation(models.Model):
         choices=Triage.choices,
         default=Triage.UNDEFINED,
     )  # PAK Info erster Teil
-    consecutive_unique_number = models.IntegerField(
-        default=-1
-    )  # PAK Info zweiter Teil eineindeutige Nummer (nicht bei jedem Patienten vorhanden → nicht unique)
     mobility = models.CharField(max_length=100, default="-")  # Mobilität
     preexisting_illnesses = models.CharField(
         max_length=300, default="-"

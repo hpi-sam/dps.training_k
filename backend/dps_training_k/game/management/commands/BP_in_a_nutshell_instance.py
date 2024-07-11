@@ -309,7 +309,6 @@ def import_patients(file_path):
                 injury=row["Verletzungen"].strip(),
                 biometrics=biometrics,
                 triage=triage,
-                consecutive_unique_number=consecutiveUniqueNumber,
                 mobility=row["Mobilität"].strip(),
                 preexisting_illnesses=row["Vorerkrankungen"].strip(),
                 permanent_medication=row["Dauer-Medikation"].strip(),

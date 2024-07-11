@@ -18,7 +18,6 @@ class PatientInformationFactory(factory.django.DjangoModelFactory):
     injury = "ca. 8 cm große, weit klaffende Kopfplatzwunde re. temporal, blutet noch; im Wundgrund vermutlich Knochensplitter sichtbar."
     biometrics = "weiblich; ca. 52; blond, braune Augen, Brille, 1,82 m"
     triage = (Triage.GREEN,)
-    consecutive_unique_number = 5225
     mobility = "initial gehfähig"
     preexisting_illnesses = "funktionelle Herzbeschwerden; beginnender Bechterew"
     permanent_medication = "Schlafmittel"

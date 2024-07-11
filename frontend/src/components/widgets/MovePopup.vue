@@ -3,7 +3,6 @@
 	import CloseButton from "./CloseButton.vue"
 	import {useExerciseStore} from "@/stores/Exercise"
 	import socketPatient from "@/sockets/SocketPatient"
-	import socketTrainer from "@/sockets/SocketTrainer"
 	import {CustomList, ListItem, ListItemButton, ListItemName} from "@/components/widgets/List"
 
 	const emit = defineEmits(['close-popup'])
@@ -40,15 +39,6 @@
 			else if (props.typeToMove === 'Material')
 				socketPatient.moveMaterial(props.idOfMoveable, areaId)
 			else 
-				console.error('Invalid type to move')
-		} else if (props.module === 'Trainer') {
-			if (props.typeToMove === 'Patient') 
-				socketTrainer.movePatient(areaId)
-			else if (props.typeToMove === 'Personnel')
-				socketTrainer.movePersonnel(props.idOfMoveable, areaId)
-			else if (props.typeToMove === 'Material')
-				socketTrainer.moveMaterial(props.idOfMoveable, areaId)
-			else
 				console.error('Invalid type to move')
 		} else 
 			console.error('Invalid module')

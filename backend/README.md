@@ -1,64 +1,23 @@
-# K-dPS Backend
+# Klinik-dPS Backend
+The simulation logic and database management for the K-dPS project. For the interactive website see the [frontend folder](../frontend/README.md).
 
-## Running the project using Docker
+For general information on the project like e.g. licensing information or future plans, see the [Project README](../README.md).
 
-For more information on the difference between `prod` and `dev`, see the project README.
-Note that the `prod` env file here still assumes this is running locally - 
-meaning it will expect the frontend to run on localhost.
-
-- inside dps_training_k folder, run `docker-compose --env-file .env.<prod/dev> up -d`
-- create superuser account: `docker exec -it K-dPS-django python manage.py createsuperuser`
-
-## Running the project locally (NOT UP TO DATE)
+## Setup
 ### Install Python
 - install from official [python website](https://www.python.org/downloads/)
 - version should be at least 3.12
 
-### Setup a virtual environment for python
-#### Linux
 
-- navigate to backend folder
-- `python3 -m venv env`
-- `source env/bin/activate`
-
-#### Windows
-
-- navigate to backend folder
-- `python -m venv env`
-- `env/Scripts/Activate.ps1`
-- in case the previous command failed due to execution policy, run: `powershell.exe -exec bypass`
-
-### install requirements
-
+### Install requirements
+- navigate into backend folder
 - `pip install -r requirements.txt`
 
-## Setup Black Formatter
-### Linux (for this project only)
-
-- make sure python extension is installed
-- type "Python: Select Interpreter" in command palette and set newest interpreter for virtual environment
-- neavigate to venv in terminal
-- pip install black
-- create .vscode file in venv
-- create settings.json file in .vscode folder
-- paste: 
-```json
-{
-  "python.formatting.blackPath": "path/to/bin/of black/formatter/in/venv",
-  "python.formatting.blackArgs": [
-    "-l 150"
-  ],
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "editor.formatOnType": true,
-}
-```
-
-### Windows (for all python files open with VS Code)
-
+### Setup Black Formatter
+We are using black as a biased formatter for the whole project. For more information about black see: [Black](https://black.readthedocs.io/en/stable/)
 - make sure you have python extension installed
 - download "Black Formatter" from marketplace
-- right click on a python file
+- right-click on a python file
 - select "Format Document with"
 - select "Configure Default formatter"
 - select "Black"
@@ -66,14 +25,43 @@ meaning it will expect the frontend to run on localhost.
 - search for "format on save"
 - enable "Editor: Format on Save"
 
+## Running the project using Docker
+Running the project without docker is currently not tested/supported. 
+For more information on the difference between `prod` and `dev`, see the [docs file](../docs/deployment-process.md).
+Note that the `prod` env file here still assumes this is running locally - 
+meaning it will expect the frontend to run on localhost.
+
+Build and run:
+```bash
+docker compose --env-file .env.<prod/dev> up
+```
+
+Optionally, to access the database, create a superuser account: 
+```bash
+docker exec -it K-dPS-django python manage.py createsuperuser
+```
+Afterwards, you can log into the admin interface at e.g. `http://localhost:80/admin/`<br/>
+Note: this is only available if DEBUG = true, which is the case in the dev environment.
+
+
 ## Development
 
-- to run tests: `docker exec -it K-dPS-django python manage.py test`
+### Migrations
+When changing models, you need to create migrations in order to update existing databases.
+- Create new migrations: `docker exec -it K-dPS-django python manage.py makemigrations`
+- Optionally, if you have conflicting migrations: `docker exec -it K-dPS-django python manage.py migrate --merge`
+- Execute these migrations to update the database: `docker exec -it K-dPS-django python manage.py migrate`
+
+### Running Tests
+- start docker container with docker compose(see Running the project using Docker)
+- wait until Application Startup is Completed
+- run: `docker exec -it K-dPS-django python manage.py test`
 
 ### Working with Fixtures
 - (clear database)
 - fill database with data you want to export as fixture (e.g. `docker exec -it K-dPS-django python manage.py import_patient_states`)
-  - in this example, make PatientState.transition null=True and blank=True, migrate that
+  - if updating a fixture that is used by a model that doesn't allow null fields, make them nullable, migrate and discard the migration file 
+    afterwards.
 - create fixture: 
   - `docker exec -it K-dPS-django bash`
   - `export PYTHONIOENCODING=utf8`
