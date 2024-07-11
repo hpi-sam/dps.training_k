@@ -24,7 +24,8 @@ Replace `<prod/dev>` with `prod` or `dev` in the following commands to use the r
    /docker-compose.yml, ./.env.<prod/dev>).
 2. Recommended: As the env files are probably stored in a public repository, it is strongly encouraged to change the SECRET_KEY and the 
    POSTGRES_PASSWORD variables in the used `.env.<prod/dev>` file.
-3. Log into the GitHub Packages registry with the following command. Ask a team member for valid credentials. Note: passing secrets as command line arguments is insecure. consider using `--password-stdin` instead
+3. Log into the GitHub Packages registry with the following command. Ask a team member for valid credentials. Note: passing secrets as 
+   command line arguments is insecure. consider using `--password-stdin` instead
 ```bash
 docker login ghcr.io -u <username> -p <token>
 ```
@@ -43,8 +44,8 @@ The application is now deployed and the website should be accessible on port 517
 the containers restarted accordingly.
 
 Keep in mind that the IP address of the server running the back- and frontend are hardcoded in the environment files. For 
-the backend a simple correction of the `FRONTEND_URL` variable within the `.env.<prod/dev>` file on the server is enough, but for the frontend the 
-`SERVER_URL` variable (and `VITE_SERVER_URL` variable for building without docker) has to be adjusted in the associated env file and the image has 
+the backend a simple correction of the `CORS_ALLOWED_ORIGINS` variable within the `backend/dps_training_k/configuration/settings.py` file on the 
+server is enough, but for the frontend the `VITE_SERVER_URL` variable has to be adjusted in the associated env file and the image has 
 to be rebuilt and re-uploaded to the GitHub Packages registry.
 
 ## Changing the project configuration

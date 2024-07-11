@@ -2,7 +2,7 @@ version: '3'
 
 services:
   # Frontend web service
-  web:
+  frontend:
     build:
       context: .
       args:

@@ -86,7 +86,7 @@ services:
       - static_volume:/app/staticfiles
       - /etc/letsencrypt/live/klinik-dps.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
       - /etc/letsencrypt/live/klinik-dps.de/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
-      - /etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
       - "80:80"
       - "443:443"
