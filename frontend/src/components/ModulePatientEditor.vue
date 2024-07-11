@@ -1,19 +1,16 @@
 <script setup lang="ts">
-  import { ref, Ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
   import { createEditor as createPatientEditor } from '@/rete/patient'
   import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
   import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
   import { useTransitionStore } from '@/stores/patienteditor/Transition'
   import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
   import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
+  import 'antd/dist/reset.css'
 
-  interface ReteEditor {
-    layout: () => Promise<void>;
-    destroy: () => void;
-  }
-
-  const rete = ref(null)
-  const reteEditor: Ref<ReteEditor | null> = ref(null)
+  const modules = ref([])
+  const editorContainer = ref(null)
+  const editor = ref(null)
 
   onMounted(async () => {
     const patientEditorStore = usePatientEditorStore()
@@ -189,19 +186,50 @@
       }
     )
 
-    if (rete.value) {
-      reteEditor.value = await createPatientEditor(rete.value as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
-      await reteEditor?.value?.layout()
-    } else {
-      console.error('No Rete container found')
-    }
-
+    editor.value = await createPatientEditor(editorContainer.value as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
+    await editor?.value?.layout()
   })
 
   function download(){
     console.log('Download')
     usePatientStateStore().exportToCSV()
   }
+
+onMounted(() => {
+  if (editor.value) {
+    const list = editor.value.getModules()
+    modules.value = list
+    editor.value.openModule(list[0])
+  }
+})
+
+watch(editor, (newEditor) => {
+  if (newEditor) {
+    const list = newEditor.getModules()
+    modules.value = list
+    newEditor.openModule(list[0])
+  }
+})
+
+function openModule(path) {
+  editor.value?.openModule(path)
+}
+
+function newModule() {
+  const name = prompt('Module name')
+  if (name) {
+    editor.value?.newModule(name)
+    modules.value = editor.value.getModules()
+  }
+}
+
+function saveModule() {
+  editor.value?.saveModule()
+}
+
+function restoreModule() {
+  editor.value?.restoreModule()
+}
 </script>
 
 <script lang="ts">
@@ -214,17 +242,33 @@
 
 <template>
 	<div class="left-sidebar">
-    <button @click="download">
+		<button @click="download">
 			Patient herunterladen
 		</button>
 		<button @click="patientInfoFormIsVisible = true">
 			Patienteninfos bearbeiten
 		</button>
-		<button @click="reteEditor?.layout(); console.log('Clicked Layout-Button')">
+		<button @click="editor?.layout(); console.log('Clicked Layout-Button')">
 			Auto Layout
 		</button>
+		<button
+			v-for="path in modules"
+			:key="path"
+			@click="openModule(path)"
+		>
+			{{ path }}
+		</button>
+		<button size="small" @click="newModule">
+			New
+		</button>
+		<button size="small" @click="saveModule">
+			Save
+		</button>
+		<button size="small" @click="restoreModule">
+			Restore
+		</button>
 	</div>
-	<div ref="rete" class="rete" />
+	<div ref="editorContainer" class="rete" />
 	<div v-if="patientInfoFormIsVisible" class="right-sidebar overlay">
 		<PatientInfoForm />
 	</div>

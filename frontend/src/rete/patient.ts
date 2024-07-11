@@ -16,14 +16,40 @@ import CircleNode from './customization/CircleNode.vue'
 import SquareNode from './customization/SquareNode.vue'
 import { loadPatientState } from '@/components/componentsPatientEditor/PatientStateForm.vue'
 import { showPatientStateForm } from '@/components/ModulePatientEditor.vue'
+import {
+  AddNode,
+  NumberNode,
+  InputNode,
+  OutputNode,
+  ModuleNode
+} from "./nodes"
+import { DataflowEngine } from "rete-engine"
+import { Modules } from "./modules"
+import { clearEditor } from "./utils"
+import { createNode, exportEditor, importEditor } from "./import"
+import rootModule from "./modules/root.json"
+import transitModule from "./modules/transit.json"
+import doubleModule from "./modules/double.json"
+import { createEngine } from "./processing"
 
-type Node = StateNode | TransitionNode;
+const modulesData: { [key in string]: any } = {
+  root: rootModule,
+  transit: transitModule,
+  double: doubleModule
+}
+
+type Node = StateNode | TransitionNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode;
+
 type Conn =
   | Connection<StateNode, TransitionNode>
-  | Connection<TransitionNode, StateNode>;
-type Schemes = GetSchemes<Node, Conn>;
+  | Connection<TransitionNode, StateNode>
+  | Connection<NumberNode, AddNode>
+  | Connection<AddNode, AddNode>
+  | Connection<InputNode, OutputNode>
 
-class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
+type Schemes = GetSchemes<Node, Conn>
+
+export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 
 class StateNode extends Classic.Node {
   width = 100
@@ -56,7 +82,15 @@ class TransitionNode extends Classic.Node {
 type AreaExtra =
   | Area2D<Schemes>
   | VueArea2D<Schemes>
-  | ContextMenuExtra;
+  | ContextMenuExtra
+
+export type Context = {
+  process: () => void
+  modules: Modules<Schemes>
+  editor: NodeEditor<Schemes>
+  area: AreaPlugin<Schemes, any>
+  dataflow: DataflowEngine<Schemes>
+}
 
 const socket = new Classic.Socket('socket')
 
@@ -106,6 +140,7 @@ export async function createEditor(
   const area = new AreaPlugin<Schemes, AreaExtra>(container)
   const connection = new ConnectionPlugin<Schemes, AreaExtra>()
   const vueRender = new VuePlugin<Schemes, AreaExtra>()
+  const arrange = new AutoArrangePlugin<Schemes, AreaExtra>()
   
   vueRender.addPreset(
     VuePresets.classic.setup({
@@ -121,12 +156,17 @@ export async function createEditor(
       },
     })
   )
-  
+
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
       ['State', () => new StateNode()],
       ['Transition', () => new TransitionNode()],
-    ]),
+      ["Number", () => createNode(context, "Number", { value: 0 })],
+      ["Add", () => createNode(context, "Add", {})],
+      ["Input", () => createNode(context, "Input", { key: "key" })],
+      ["Output", () => createNode(context, "Output", { key: "key" })],
+      ["Module", () => createNode(context, "Module", { name: "" })]
+    ])
   })
   
   editor.use(area)
@@ -172,26 +212,89 @@ export async function createEditor(
 
   await createNodesAndConnections(patientStateStore, transitionStore, editor)
   
-  const arrange = new AutoArrangePlugin<Schemes>()
   arrange.addPreset(ArrangePresets.classic.setup())
   area.use(arrange)
-  await arrange.layout()
-
   AreaExtensions.zoomAt(area, editor.getNodes())
-
   AreaExtensions.simpleNodesOrder(area)
-
   const selector = AreaExtensions.selector()
   const accumulating = AreaExtensions.accumulateOnCtrl()
-
   AreaExtensions.selectableNodes(area, selector, { accumulating })
+  
+  const { dataflow, process } = createEngine(editor, area)
+  editor.use(dataflow)
+
+  const modules = new Modules<Schemes>(
+    (path) => modulesData[path],
+    async (path, editor) => {
+      const data = modulesData[path];
+
+      if (!data) throw new Error("cannot find module");
+      await importEditor(
+        {
+          ...context,
+          editor
+        },
+        data
+      );
+    }
+  );
+  const context: Context = {
+    editor,
+    area,
+    modules,
+    dataflow,
+    process
+  }
+
+  await process()
+
+  let currentModulePath: null | string = null
+
+  async function openModule(path: string) {
+    currentModulePath = null
+
+    await clearEditor(editor)
+
+    const module = modules.findModule(path)
+
+    if (module) {
+      currentModulePath = path
+      await module.apply(editor)
+    }
+
+    await arrange.layout()
+    AreaExtensions.zoomAt(area, editor.getNodes())
+  }
+  (window as any).area = area
+
+  await arrange.layout()
 
   return {
+    getModules() {
+      return Object.keys(modulesData)
+    },
+    saveModule: () => {
+      if (currentModulePath) {
+        const data = exportEditor(context)
+        modulesData[currentModulePath] = data
+      }
+    },
+    restoreModule: () => {
+      if (currentModulePath) openModule(currentModulePath)
+    },
+    newModule: (path: string) => {
+      modulesData[path] = { nodes: [], connections: [] }
+    },
+    openModule,
     layout: async () => {
       await arrange.layout()
       console.log("Layout arranged")
       AreaExtensions.zoomAt(area, editor.getNodes())
     },
-    destroy: () => area.destroy(),
+    destroy: () => {
+      console.log("area.destroy1", area.nodeViews.size)
+
+      area.destroy()
+    }
   }
 }
