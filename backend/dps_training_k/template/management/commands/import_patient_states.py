@@ -295,7 +295,10 @@ class Command(BaseCommand):
             upper_limit=CUSTOM_MAXINT,
             lower_limit=1,
             fulfilling_measures={
-                "actions": {str(ActionIDs.CHIR_BLUTSTILLUNG): 1},
+                "actions": {
+                    str(ActionIDs.CHIR_BLUTSTILLUNG): 1,
+                    str(ActionIDs.TURNIQUET): 1,
+                },
                 "materials": {},
             },
         )

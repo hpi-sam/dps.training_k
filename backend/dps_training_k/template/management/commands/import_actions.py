@@ -111,7 +111,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 120,
+                "application_duration": 10,
                 "effect_duration": None,  # None means permanent
                 "conditions": {
                     "required_actions": [str(ActionIDs.IV_ZUGANG)],
@@ -586,7 +586,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 60,
+                "application_duration": 10,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -744,7 +744,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 15,
+                "application_duration": 10,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": None,
@@ -969,7 +969,7 @@ class Command(BaseCommand):
                 "category": Action.Category.TREATMENT,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 15,
+                "application_duration": 10,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [
