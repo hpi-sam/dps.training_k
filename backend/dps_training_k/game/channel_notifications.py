@@ -186,16 +186,16 @@ class ActionInstanceDispatcher(ChannelNotifier):
         message = None
         send_personnel_and_material = False
         if applied_action.state_name == models.ActionInstanceStateNames.IN_PROGRESS:
-            message = f'"{applied_action.name}" wurde gestartet'
+            message = f'"{applied_action.name}" gestartet'
             send_personnel_and_material = True
         elif applied_action.state_name == models.ActionInstanceStateNames.FINISHED:
-            message = f'"{applied_action.name}" wurde abgeschlossen'
+            message = f'"{applied_action.name}" abgeschlossen'
             if applied_action.template.category == template.Action.Category.PRODUCTION:
                 named_produced_resources = {
                     material.name: amount
                     for material, amount in applied_action.template.produced_resources().items()
                 }
-                message += f" und hat {str(named_produced_resources)} produziert"
+                message += f" und {str(named_produced_resources)} produziert"
         elif (
             applied_action.state_name == models.ActionInstanceStateNames.CANCELED
             and applied_action.states.filter(
@@ -350,11 +350,12 @@ class MaterialInstanceDispatcher(ChannelNotifier):
         assignment_changes = {"patient_instance", "area", "lab"}
 
         if not is_updated:
-            message = f"{material.name} ist erschienen"
+            message = f"{material.name}"
             if material.area:
-                message += f" in {material.area}"
+                message += f' zu "{material.area}"'
             if material.lab:
-                message += f" in {material.lab}"
+                message += f" ins Labor"
+            message += f" gebracht"
             log_entry = models.LogEntry.objects.create(
                 exercise=cls.get_exercise(material),
                 message=message,
@@ -429,7 +430,7 @@ class PatientInstanceDispatcher(ChannelNotifier):
         message = None
 
         if not is_updated:
-            message = f"Patient*in {patient_instance.name}({patient_instance.code}) wurde eingeliefert."
+            message = f"Patient*in {patient_instance.name}({patient_instance.code}) eingeliefert."
             if (
                 patient_instance.static_information
                 and patient_instance.static_information.injury
@@ -437,9 +438,11 @@ class PatientInstanceDispatcher(ChannelNotifier):
                 message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
         elif changes and "triage" in changes:
             # get_triage_display gets the long version of a ChoiceField
-            message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"
+            message = f"Patient*in {patient_instance.name} triagiert auf {patient_instance.get_triage_display()}"
+        elif changes and "patient_state" in changes and patient_instance.is_dead():
+            message = f"Patient*in {patient_instance.name} verstorben!"
         elif changes and changes_set & cls.location_changes:
-            message = f"Patient*in {patient_instance.name} wurde verlegt"
+            message = f"Patient*in {patient_instance.name} verlegt"
             current_location = patient_instance.attached_instance()
 
             if isinstance(current_location, models.Area):
@@ -509,11 +512,11 @@ class PersonnelDispatcher(ChannelNotifier):
         changes_set = set(changes) if changes else set()
 
         if not is_updated:
-            message = f"{personnel.name} ist eingetroffen"
+            message = f"Personal {personnel.name} eingetroffen"
             if personnel.area:
                 message += f" in {personnel.area}"
             if personnel.lab:
-                message += f" in {personnel.lab}"
+                message += f" im Labor"
             log_entry = models.LogEntry.objects.create(
                 exercise=cls.get_exercise(personnel),
                 message=message,

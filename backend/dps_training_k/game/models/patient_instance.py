@@ -134,7 +134,7 @@ class PatientInstance(
 
         state_change_time = 600
 
-        if self.patient_state.is_dead:
+        if self.is_dead():
             return False
         if self.patient_state.is_final():
             return False
@@ -146,7 +146,7 @@ class PatientInstance(
         )
 
     def execute_state_change(self):
-        if self.patient_state.is_dead or self.patient_state.is_final():
+        if self.is_dead() or self.patient_state.is_final():
             raise Exception(
                 f"Patient is dead or in final state, state change should have never been scheduled"
             )
@@ -221,7 +221,7 @@ class PatientInstance(
         return "Patient*in"
 
     def can_receive_actions(self):
-        return not (self.patient_state.is_dead or self.patient_state.is_final())
+        return not (self.is_dead() or self.patient_state.is_final())
 
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames
@@ -298,6 +298,9 @@ class PatientInstance(
             template__relocates=True,
             current_state__name=ActionInstanceStateNames.IN_PROGRESS,
         ).exists()
+
+    def is_dead(self):
+        return self.patient_state.is_dead
 
     def __str__(self):
         return (
