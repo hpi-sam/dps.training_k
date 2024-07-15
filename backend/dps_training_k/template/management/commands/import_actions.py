@@ -1365,7 +1365,7 @@ class Command(BaseCommand):
                 "category": Action.Category.EXAMINATION,
                 "location": Action.Location.BEDSIDE,
                 "relocates": False,
-                "application_duration": 15,
+                "application_duration": 10,
                 "effect_duration": None,
                 "conditions": {
                     "required_actions": [str(ActionIDs.ART_KANUELE)],
@@ -1432,7 +1432,7 @@ class Command(BaseCommand):
                         681: "metabol. Alkalose",
                         682: "kompensierte metabol. Alkalose",
                         683: "metabol. Alkalose",
-                    }
+                    },
                 },
             },
         )
