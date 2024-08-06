@@ -2,13 +2,12 @@ from django.conf import settings
 from django.db import models
 
 from game.channel_notifications import ExerciseDispatcher
-from helpers.eventable import NonEventable
 from .lab import Lab
 from .scheduled_event import ScheduledEvent
 from .log_entry import LogEntry
 
 
-class Exercise(NonEventable, models.Model):
+class Exercise(models.Model):
     class StateTypes(models.TextChoices):
         CONFIGURATION = "C", "configuration"
         RUNNING = "R", "running"
