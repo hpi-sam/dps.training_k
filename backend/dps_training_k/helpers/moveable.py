@@ -30,9 +30,7 @@ class Moveable(models.Model):
 
     def check_moving_to(self, obj) -> tuple[bool, str]:
         """Returns whether the object might be moved successfully and an error message if not."""
-        from helpers.moveable_to import MoveableTo
-
-        if not isinstance(obj, MoveableTo):
+        if not getattr(obj, "can_be_moved_to", False)():
             raise TypeError(
                 f"Object must inherit from MoveableTo, got {type(obj).__name__} instead."
             )

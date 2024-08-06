@@ -40,6 +40,10 @@ class MoveableTo(models.Model):
         return list(self.personnel_set.filter(action_instance=None))
 
     @staticmethod
+    def can_be_moved_to():
+        return True
+
+    @staticmethod
     @abstractmethod
     def frontend_model_name():
         pass
