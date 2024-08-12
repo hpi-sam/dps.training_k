@@ -1,10 +1,12 @@
-import { Connection, Context } from "./patient"
+import { Connection, Context } from "./types"
 import {
   AddNode,
   InputNode,
   ModuleNode,
   NumberNode,
-  OutputNode
+  OutputNode,
+  StateNode,
+  isTrueNode
 } from "./nodes"
 import { removeConnections } from "./utils"
 
@@ -31,6 +33,8 @@ export async function createNode(
 
     return node
   }
+  if (name === "State") return new StateNode()
+  if (name === "isTrue") return new isTrueNode()
   throw new Error("Unsupported node")
 }
 

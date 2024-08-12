@@ -1,8 +1,8 @@
-import { ClassicPreset as Classic, NodeEditor } from "rete";
-import { DataflowNode } from "rete-engine";
-import { socket } from "../sockets";
-import { Module, Modules } from "../modules";
-import { Schemes } from "../editor";
+import { ClassicPreset as Classic, NodeEditor } from "rete"
+import { DataflowNode } from "rete-engine"
+import { socket } from "../sockets"
+import { Module, Modules } from "../modules"
+import { Schemes } from "../types"
 
 export class ModuleNode
   extends Classic.Node<
@@ -11,9 +11,9 @@ export class ModuleNode
     { module: Classic.InputControl<"text"> }
   >
   implements DataflowNode {
-  width = 180;
-  height = 140;
-  module: null | Module<Schemes> = null;
+  width = 180
+  height = 140
+  module: null | Module<Schemes> = null
 
   constructor(
     public path: string,
@@ -21,63 +21,63 @@ export class ModuleNode
     private reset: (nodeId: string) => Promise<void>,
     updateUI: (nodeId: string) => void
   ) {
-    super("Module");
+    super("Module")
 
     this.addControl(
       "module",
       new Classic.InputControl("text", {
         initial: path,
         change: async (value) => {
-          this.path = value;
-          await this.update();
-          updateUI(this.id);
+          this.path = value
+          await this.update()
+          updateUI(this.id)
         }
       })
-    );
-    this.update();
+    )
+    this.update()
   }
 
   async update() {
-    this.module = this.findModule(this.path);
+    this.module = this.findModule(this.path)
 
-    await this.reset(this.id);
+    await this.reset(this.id)
     if (this.module) {
-      const editor = new NodeEditor<Schemes>();
-      await this.module.apply(editor);
+      const editor = new NodeEditor<Schemes>()
+      await this.module.apply(editor)
 
-      const { inputs, outputs } = Modules.getPorts(editor);
-      this.syncPorts(inputs, outputs);
-    } else this.syncPorts([], []);
+      const { inputs, outputs } = Modules.getPorts(editor)
+      this.syncPorts(inputs, outputs)
+    } else this.syncPorts([], [])
   }
 
   syncPorts(inputs: string[], outputs: string[]) {
     Object.keys(this.inputs).forEach((key: keyof typeof this.inputs) =>
       this.removeInput(key)
-    );
+    )
     Object.keys(this.outputs).forEach((key: keyof typeof this.outputs) =>
       this.removeOutput(key)
-    );
+    )
 
     inputs.forEach((key) => {
-      this.addInput(key, new Classic.Input(socket, key));
-    });
+      this.addInput(key, new Classic.Input(socket, key))
+    })
     outputs.forEach((key) => {
-      this.addOutput(key, new Classic.Output(socket, key));
-    });
+      this.addOutput(key, new Classic.Output(socket, key))
+    })
     this.height =
       110 +
-      25 * (Object.keys(this.inputs).length + Object.keys(this.outputs).length);
+      25 * (Object.keys(this.inputs).length + Object.keys(this.outputs).length)
   }
 
   async data(inputs: Record<string, any>) {
-    const data = await this.module?.exec(inputs);
+    const data = await this.module?.exec(inputs)
 
-    return data || {};
+    return data || {}
   }
 
   serialize() {
     return {
       name: this.controls.module.value
-    };
+    }
   }
 }

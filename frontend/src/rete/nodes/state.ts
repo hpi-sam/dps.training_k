@@ -2,23 +2,18 @@ import { ClassicPreset as Classic } from "rete"
 import { DataflowNode } from "rete-engine"
 import { socket } from "../sockets"
 
-export class NumberNode
+export class StateNode
   extends Classic.Node<
-    { value: Classic.Socket },
-    { value: Classic.Socket },
-    { value: Classic.InputControl<"number"> }
+    { value: Classic.Socket }
   >
   implements DataflowNode {
   width = 180
   height = 140
-  constructor(initial: number, change?: (value: number) => void) {
-    super("Number")
+  constructor() {
+    super("State")
 
-    this.addOutput("value", new Classic.Output(socket, "Number"))
-    this.addControl(
-      "value",
-      new Classic.InputControl("number", { initial, change })
-    )
+    this.addInput("value", new Classic.Input(socket))
+    this.addOutput("value", new Classic.Output(socket))
   }
   data() {
     const value = this.controls["value"].value

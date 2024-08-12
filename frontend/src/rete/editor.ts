@@ -1,100 +1,34 @@
-import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete'
-import { Area2D, AreaExtensions, AreaPlugin } from 'rete-area-plugin'
+import { ClassicPreset as Classic, NodeEditor } from 'rete'
+import { AreaExtensions, AreaPlugin } from 'rete-area-plugin'
 import { ConnectionPlugin } from 'rete-connection-plugin'
-import { VuePlugin, VueArea2D, Presets as VuePresets } from 'rete-vue-plugin'
+import { VuePlugin, Presets as VuePresets } from 'rete-vue-plugin'
 import {
   AutoArrangePlugin,
   Presets as ArrangePresets,
 } from 'rete-auto-arrange-plugin'
-import {
-  ContextMenuPlugin,
-  ContextMenuExtra,
-  Presets as ContextMenuPresets,
-} from 'rete-context-menu-plugin'
+import { ContextMenuPlugin, Presets as ContextMenuPresets } from 'rete-context-menu-plugin'
 import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
-import CircleNode from './customization/CircleNode.vue'
-import SquareNode from './customization/SquareNode.vue'
+
 import { loadPatientState } from '@/components/componentsPatientEditor/PatientStateForm.vue'
 import { showPatientStateForm } from '@/components/ModulePatientEditor.vue'
-import {
-  AddNode,
-  NumberNode,
-  InputNode,
-  OutputNode,
-  ModuleNode
-} from "./nodes"
-import { DataflowEngine } from "rete-engine"
-import { Modules } from "./modules"
-import { clearEditor } from "./utils"
-import { createNode, exportEditor, importEditor } from "./import"
+import { Modules } from "./modules.js"
+import { clearEditor } from "./utils.js"
+import { createNode, exportEditor, importEditor } from "./import.js"
 import rootModule from "./modules/root.json"
 import transitModule from "./modules/transit.json"
 import doubleModule from "./modules/double.json"
-import { createEngine } from "./processing"
+import { createEngine } from "./processing.js"
+
+import { Schemes, AreaExtra, Context, Connection } from './types'
+import CustomDropdown from './customization/CustomDropdown.vue'
+import { DropdownControl } from './nodes/isTrue'
 
 const modulesData: { [key in string]: any } = {
   root: rootModule,
   transit: transitModule,
   double: doubleModule
 }
-
-type Node = StateNode | TransitionNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode;
-
-type Conn =
-  | Connection<StateNode, TransitionNode>
-  | Connection<TransitionNode, StateNode>
-  | Connection<NumberNode, AddNode>
-  | Connection<AddNode, AddNode>
-  | Connection<InputNode, OutputNode>
-
-type Schemes = GetSchemes<Node, Conn>
-
-export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
-
-class StateNode extends Classic.Node {
-  width = 100
-  height = 100
-
-  constructor() {
-    super('State')
-
-    this.label = 'State'
-
-    this.addInput('in', new Classic.Input(socket, undefined, false))
-    this.addOutput('out', new Classic.Output(socket, undefined, false))
-  }
-}
-
-class TransitionNode extends Classic.Node {
-  width = 150
-  height = 100
-
-  constructor() {
-    super('Transition')
-
-    this.label = 'Transition'
-
-    this.addInput('in', new Classic.Input(socket, undefined, true))
-    this.addOutput('out', new Classic.Output(socket, undefined, true))
-  }
-}
-
-type AreaExtra =
-  | Area2D<Schemes>
-  | VueArea2D<Schemes>
-  | ContextMenuExtra
-
-export type Context = {
-  process: () => void
-  modules: Modules<Schemes>
-  editor: NodeEditor<Schemes>
-  area: AreaPlugin<Schemes, any>
-  dataflow: DataflowEngine<Schemes>
-}
-
-const socket = new Classic.Socket('socket')
-
-async function createNodesAndConnections(patientStateStore: PatientStateStore, transitionStore: TransitionStore, editor: NodeEditor<Schemes>) {
+/*async function createNodesAndConnections(patientStateStore: PatientStateStore, transitionStore: TransitionStore, editor: NodeEditor<Schemes>) {
   console.log("Creating nodes and connections")
   // Create nodes from patient states and store them in an object
    for (const patientState of Object.values(patientStateStore.patientStates)) {
@@ -128,7 +62,7 @@ async function createNodesAndConnections(patientStateStore: PatientStateStore, t
       await editor.addConnection(new Connection(node, 'out', nextNode, 'in'))
     }
   }
-}
+}*/
 
 export async function createEditor(
   container: HTMLElement,
@@ -142,7 +76,7 @@ export async function createEditor(
   const vueRender = new VuePlugin<Schemes, AreaExtra>()
   const arrange = new AutoArrangePlugin<Schemes, AreaExtra>()
   
-  vueRender.addPreset(
+  /*vueRender.addPreset(
     VuePresets.classic.setup({
       customize: {
         node(context) {
@@ -155,17 +89,17 @@ export async function createEditor(
             },
       },
     })
-  )
+  )*/
 
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
-      ['State', () => new StateNode()],
-      ['Transition', () => new TransitionNode()],
+      ['State', () => createNode(context, "State", { value: 0 })],
       ["Number", () => createNode(context, "Number", { value: 0 })],
       ["Add", () => createNode(context, "Add", {})],
       ["Input", () => createNode(context, "Input", { key: "key" })],
       ["Output", () => createNode(context, "Output", { key: "key" })],
-      ["Module", () => createNode(context, "Module", { name: "" })]
+      ["Module", () => createNode(context, "Module", { name: "" })],
+      ["ist wahr", () => createNode(context, "isTrue", {})],
     ])
   })
   
@@ -210,7 +144,22 @@ export async function createEditor(
   vueRender.addPreset(VuePresets.classic.setup())
   vueRender.addPreset(VuePresets.contextMenu.setup())
 
-  await createNodesAndConnections(patientStateStore, transitionStore, editor)
+  vueRender.addPreset(
+    VuePresets.classic.setup({
+      customize: {
+        control(data) {
+          if (data.payload instanceof DropdownControl) {
+            return CustomDropdown
+          }
+          if (data.payload instanceof Classic.InputControl) {
+            return VuePresets.classic.Control
+          }
+        }
+      }
+    })
+  )
+
+  //await createNodesAndConnections(patientStateStore, transitionStore, editor)
   
   arrange.addPreset(ArrangePresets.classic.setup())
   area.use(arrange)
@@ -226,18 +175,18 @@ export async function createEditor(
   const modules = new Modules<Schemes>(
     (path) => modulesData[path],
     async (path, editor) => {
-      const data = modulesData[path];
+      const data = modulesData[path]
 
-      if (!data) throw new Error("cannot find module");
+      if (!data) throw new Error("cannot find module")
       await importEditor(
         {
           ...context,
           editor
         },
         data
-      );
+      )
     }
-  );
+  )
   const context: Context = {
     editor,
     area,

@@ -1,16 +1,17 @@
 <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue'
-  import { createEditor as createPatientEditor } from '@/rete/patient'
+  import { createEditor as createPatientEditor } from '@/rete/editor'
   import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
   import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
   import { useTransitionStore } from '@/stores/patienteditor/Transition'
   import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
   import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
   import 'antd/dist/reset.css'
+  import { Editor } from '@/rete/types'
 
   const modules = ref([])
   const editorContainer = ref(null)
-  const editor = ref(null)
+  const editor = ref(null as unknown as Editor)
 
   onMounted(async () => {
     const patientEditorStore = usePatientEditorStore()
@@ -186,8 +187,9 @@
       }
     )
 
-    editor.value = await createPatientEditor(editorContainer.value as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
-    await editor?.value?.layout()
+    editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
+    
+    await editor.value?.layout()
   })
 
   function download(){
@@ -329,3 +331,4 @@ function restoreModule() {
     z-index: 1;
   }
 </style>
+@/rete/editor@/rete/editor

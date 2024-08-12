@@ -1,4 +1,4 @@
-import { BaseSchemes, NodeEditor, NodeId } from "rete";
+import { BaseSchemes, NodeEditor, NodeId } from "rete"
 
 export async function removeConnections(
   editor: NodeEditor<BaseSchemes>,
@@ -6,16 +6,16 @@ export async function removeConnections(
 ) {
   for (const c of [...editor.getConnections()]) {
     if (c.source === nodeId || c.target === nodeId) {
-      await editor.removeConnection(c.id);
+      await editor.removeConnection(c.id)
     }
   }
 }
 
 export async function clearEditor(editor: NodeEditor<BaseSchemes>) {
   for (const c of [...editor.getConnections()]) {
-    await editor.removeConnection(c.id);
+    await editor.removeConnection(c.id)
   }
   for (const n of [...editor.getNodes()]) {
-    await editor.removeNode(n.id);
+    await editor.removeNode(n.id)
   }
 }
