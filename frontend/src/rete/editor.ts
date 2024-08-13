@@ -100,6 +100,7 @@ export async function createEditor(
       ["Output", () => createNode(context, "Output", { key: "key" })],
       ["Module", () => createNode(context, "Module", { name: "" })],
       ["ist wahr", () => createNode(context, "isTrue", {})],
+      ["ist im Wertebereich", () => createNode(context, "isInRange", { fromValue: 1, toValue: 2 })]
     ])
   })
   

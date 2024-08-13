@@ -308,7 +308,7 @@ function restoreModule() {
 
   .rete {
     position: relative;
-    height: 90vh;
+    height: 100%;
     width: calc(100% - 400px);
     font-size: 1rem;
     background: white;

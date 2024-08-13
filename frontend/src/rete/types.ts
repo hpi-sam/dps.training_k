@@ -12,10 +12,11 @@ import {
     OutputNode,
     ModuleNode,
     StateNode,
-    isTrueNode
+    isTrueNode,
+    isInRangeNode
   } from "./nodes/index.js"
 
-export type Node = StateNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode | isTrueNode;
+export type Node = StateNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode | isTrueNode | isInRangeNode;
 
 export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 

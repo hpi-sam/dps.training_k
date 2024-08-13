@@ -6,7 +6,8 @@ import {
   NumberNode,
   OutputNode,
   StateNode,
-  isTrueNode
+  isTrueNode,
+  isInRangeNode
 } from "./nodes"
 import { removeConnections } from "./utils"
 
@@ -35,6 +36,7 @@ export async function createNode(
   }
   if (name === "State") return new StateNode()
   if (name === "isTrue") return new isTrueNode()
+  if (name === "isInRange") return new isInRangeNode(data.fromValue, data.toValue)
   throw new Error("Unsupported node")
 }
 

@@ -21,8 +21,8 @@ export class isTrueNode
     super("ist wahr")
 
     this.addInput("input", new Classic.Input(socket, "input"))
-    this.addOutput("true", new Classic.Output(socket, "Wahr"))
-    this.addOutput("false", new Classic.Output(socket, "Falsch"))
+    this.addOutput("true", new Classic.Output(socket, "wahr"))
+    this.addOutput("false", new Classic.Output(socket, "falsch"))
     this.addControl(
       "value",
       new DropdownControl(["A", "B", "C"])
