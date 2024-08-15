@@ -150,11 +150,13 @@ class PatientInstance(
             raise Exception(
                 f"Patient is dead or in final state, state change should have never been scheduled"
             )
-        # fulfilled_subconditions = self.get_fulfilled_subconditions()
-        # future_state = self.patient_state.transition.activate(fulfilled_subconditions)
-
-        transition_interpreter = self.exercise.transition_interpreter
-        future_state = transition_interpreter.get_future_state(self, self.patient_state.transition)
+        # remove the following two lines
+        fulfilled_subconditions = self.get_fulfilled_subconditions()
+        future_state = self.patient_state.transition.activate(fulfilled_subconditions)
+        
+        # add the following two lines
+        # transition_interpreter = self.exercise.transition_interpreter
+        # future_state = transition_interpreter.get_future_state(self, self.patient_state.transition)
 
         if not future_state:
             return False
