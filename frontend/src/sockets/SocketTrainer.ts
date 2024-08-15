@@ -226,29 +226,6 @@ class SocketTrainer {
 			'speed': speed
 		}))
 	}
-
-	movePatient(areaId: number) {
-		this.#sendMessage(JSON.stringify({
-			'messageType': 'patient-move',
-			'areaId': areaId,
-		}))
-	}
-
-	movePersonnel(personnelId: number, areaId: number) {
-		this.#sendMessage(JSON.stringify({
-			'messageType': 'personnel-move',
-			'personnelId': personnelId,
-			'areaId': areaId,
-		}))
-	}
-
-	moveMaterial(materialId: number, areaId: number) {
-		this.#sendMessage(JSON.stringify({
-			'messageType': 'material-move',
-			'materialId': materialId,
-			'areaId': areaId,
-		}))
-	}
 }
 
 const socketTrainer = new SocketTrainer(import.meta.env.VITE_SERVER_URL_WS + '/ws/trainer/?token=')

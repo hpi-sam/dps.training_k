@@ -23,9 +23,8 @@ from ..channel_notifications import (
     PersonnelDispatcher,
     MaterialInstanceDispatcher,
 )
-from ..serializers.resource_assignment_serializer import AreaResourceSerializer
-
 from ..serializers.patient_relocating_serializer import PatientRelocatingSerializer
+from ..serializers.resource_assignment_serializer import AreaResourceSerializer
 
 
 class PatientConsumer(AbstractConsumer):
@@ -44,7 +43,6 @@ class PatientConsumer(AbstractConsumer):
         PATIENT_MOVE = "patient-move"
         PERSONNEL_ASSIGN = "personnel-assign"
         PERSONNEL_RELEASE = "personnel-release"
-        TEST_PASSTHROUGH = "test-passthrough"
         TRIAGE = "triage"
 
     class PatientOutgoingMessageTypes:
@@ -52,12 +50,11 @@ class PatientConsumer(AbstractConsumer):
         ACTION_CONFIRMATION = "action-confirmation"
         ACTION_DECLINATION = "action-declination"
         ACTION_LIST = "action-list"
-        EXERCISE = "exercise"
         RESOURCE_ASSIGNMENTS = "resource-assignments"
         RESPONSE = "response"
-        STATE_CHANGE = "state"
-        PATIENT_RELOCATING = "patient-relocating"
+        STATE = "state"
         PATIENT_BACK = "patient-back"
+        PATIENT_RELOCATING = "patient-relocating"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -281,7 +278,7 @@ class PatientConsumer(AbstractConsumer):
             self.get_patient_instance().patient_state
         ).data
         self.send_event(
-            self.PatientOutgoingMessageTypes.STATE_CHANGE,
+            self.PatientOutgoingMessageTypes.STATE,
             state=serialized_state,
         )
 
