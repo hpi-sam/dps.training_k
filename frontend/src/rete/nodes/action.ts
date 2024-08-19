@@ -1,6 +1,7 @@
 import { ClassicPreset as Classic } from "rete"
 import { DataflowNode } from "rete-engine"
 import { socket } from "../sockets"
+import { ActionIDs } from "../constants"
 
 interface DropdownOption {
   name: string;
@@ -43,6 +44,7 @@ export class ActionNode
 
   constructor(change?: (option: DropdownOption) => void) {
     super("Action")
+    ActionIDs.sort((a, b) => a.name.localeCompare(b.name))
 
     this.addInput("input", new Classic.Input(socket, "input"))
     this.addOutput("true", new Classic.Output(socket, "true"))
@@ -50,11 +52,10 @@ export class ActionNode
     this.addControl(
       "selection",
       new DropdownControl(
-        [
-          { name: "Option 1", value: "00001" },
-          { name: "Option 2", value: "00002" },
-          { name: "Option 3", value: "00003" },
-        ],
+        ActionIDs.map((action) => ({
+          name: action.name,
+          value: action.id,
+        })),
         change,
       )
     )
