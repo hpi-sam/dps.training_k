@@ -1,0 +1,6 @@
+{
+    "nodes": [
+        { "id": "0001", "type": "Action", "actionId": "123", "next": { "true": "0002", "false": null } },
+        { "id": "0002", "type": "Action", "actionId": "123", "next": { "true": null, "false": null } }
+    ]
+}

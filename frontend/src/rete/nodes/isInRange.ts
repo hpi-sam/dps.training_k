@@ -26,17 +26,4 @@ export class isInRangeNode
         new Classic.InputControl("number", { initial: toValue })
     )
   }
-  data() {
-    const value = this.controls["value"].value
-
-    return {
-      value
-    }
-  }
-
-  serialize() {
-    return {
-      value: this.controls.value.value
-    }
-  }
 }

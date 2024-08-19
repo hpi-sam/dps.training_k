@@ -14,55 +14,19 @@ import { showPatientStateForm } from '@/components/ModulePatientEditor.vue'
 import { Modules } from "./modules.js"
 import { clearEditor } from "./utils.js"
 import { createNode, exportEditor, importEditor } from "./import.js"
-import rootModule from "./modules/root.json"
-import transitModule from "./modules/transit.json"
-import doubleModule from "./modules/double.json"
+import { patientModule, rootModule, transitModule, doubleModule } from "./modules/index.js"
 import { createEngine } from "./processing.js"
 
 import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
-import { DropdownControl } from './nodes/isTrue'
+import { DropdownControl } from './nodes/action.js'
 
 const modulesData: { [key in string]: any } = {
+  patient: patientModule,
   root: rootModule,
   transit: transitModule,
   double: doubleModule
 }
-/*async function createNodesAndConnections(patientStateStore: PatientStateStore, transitionStore: TransitionStore, editor: NodeEditor<Schemes>) {
-  console.log("Creating nodes and connections")
-  // Create nodes from patient states and store them in an object
-   for (const patientState of Object.values(patientStateStore.patientStates)) {
-    const node = new StateNode()
-    await editor.addNode(node)
-    patientState.nodeId = node.id
-  }
-  
-  // Create nodes from transitions and store them in an object
-  for (const transition of Object.values(transitionStore.transitions)) {
-    const node = new TransitionNode()
-    await editor.addNode(node)
-    transition.nodeId = node.id
-  }
-  
-  // Create connections from patient states to transitions
-  for (const patientState of patientStateStore.patientStates) {
-    const node = editor.getNode(patientState.nodeId)
-    if (patientState.nextTransition == null) continue
-    const nextTransition = transitionStore.getTransitionById(patientState.nextTransition)
-    const nextNode = editor.getNode(nextTransition.nodeId)
-    await editor.addConnection(new Connection(node, 'out', nextNode, 'in'))
-  }
-  
-  // Create connections from transitions to patient states
-  for (const transition of transitionStore.transitions) {
-    const node = editor.getNode(transition.nodeId)
-    for(const nextStateId of transition.nextStates) {
-      const nextState = patientStateStore.getPatientStateById(nextStateId)
-      const nextNode = editor.getNode(nextState.nodeId)
-      await editor.addConnection(new Connection(node, 'out', nextNode, 'in'))
-    }
-  }
-}*/
 
 export async function createEditor(
   container: HTMLElement,
@@ -99,7 +63,7 @@ export async function createEditor(
       ["Input", () => createNode(context, "Input", { key: "key" })],
       ["Output", () => createNode(context, "Output", { key: "key" })],
       ["Module", () => createNode(context, "Module", { name: "" })],
-      ["ist wahr", () => createNode(context, "isTrue", {})],
+      ["Action", () => createNode(context, "Action", {})],
       ["ist im Wertebereich", () => createNode(context, "isInRange", { fromValue: 1, toValue: 2 })]
     ])
   })
@@ -126,15 +90,15 @@ export async function createEditor(
       const { editor } = context
 
       // no connections with nodes with the same label
-      if (editor.getNode(source?.nodeId || '').label ===  editor.getNode(target?.nodeId || '').label) return false
+      // if (editor.getNode(source?.nodeId || '').label ===  editor.getNode(target?.nodeId || '').label) return false
   
       if (source && target) {
         editor.addConnection(
           new Connection(
             editor.getNode(source.nodeId),
-            source.key,
+            source.key as never,
             editor.getNode(target.nodeId),
-            target.key
+            target.key as never
           )
         )
         return true
@@ -159,8 +123,6 @@ export async function createEditor(
       }
     })
   )
-
-  //await createNodesAndConnections(patientStateStore, transitionStore, editor)
   
   arrange.addPreset(ArrangePresets.classic.setup())
   area.use(arrange)
@@ -227,6 +189,15 @@ export async function createEditor(
       if (currentModulePath) {
         const data = exportEditor(context)
         modulesData[currentModulePath] = data
+
+        const json = JSON.stringify(data)
+        const blob = new Blob([json], { type: 'text/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${currentModulePath}.json`
+        a.click()
+        URL.revokeObjectURL(url)
       }
     },
     restoreModule: () => {

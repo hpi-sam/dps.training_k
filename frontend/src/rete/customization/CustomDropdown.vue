@@ -1,15 +1,17 @@
-<script>
+<script lang="ts">
   export default {
     props: ['data']
   }
 </script>
 
 <template>
-  <div id="dropdown">
-    <select v-model="data.value">
-      <option v-for="option in data.list" :value="option.value">{{option}}</option>
-    </select>
-  </div>
+	<div id="dropdown">
+		<select v-model="data.selection.value">
+			<option v-for="option in data.optionsList" :key="option" :value="option">
+				{{ option.name }}
+			</option>
+		</select>
+	</div>
 </template>
 
 <style scoped>

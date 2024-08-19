@@ -1,17 +1,17 @@
 {
     "nodes": [
-      { "id": "9430e011bdba2ac4", "name": "Number", "data": { "value": 1 } },
-      { "id": "aca6fefcdc42bbf4", "name": "Number", "data": { "value": 1 } },
-      { "id": "5d8f2b68eca628bf", "name": "Add", "data": {} },
+      { "id": "9430e011bdba2ac4", "type": "Number", "data": { "value": 1 } },
+      { "id": "aca6fefcdc42bbf4", "type": "Number", "data": { "value": 1 } },
+      { "id": "5d8f2b68eca628bf", "type": "Add", "data": {} },
       {
         "id": "9d6d24e39c9c2d0a",
-        "name": "Module",
-        "data": { "name": "transit" }
+        "type": "Module",
+        "data": { "type": "transit" }
       },
       {
         "id": "437dce703a24d4b9",
-        "name": "Module",
-        "data": { "name": "double" }
+        "type": "Module",
+        "data": { "type": "double" }
       }
     ],
     "connections": [

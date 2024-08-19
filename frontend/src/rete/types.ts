@@ -12,11 +12,11 @@ import {
     OutputNode,
     ModuleNode,
     StateNode,
-    isTrueNode,
+    ActionNode,
     isInRangeNode
   } from "./nodes/index.js"
 
-export type Node = StateNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode | isTrueNode | isInRangeNode;
+export type Node = StateNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode | ActionNode | isInRangeNode;
 
 export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 
@@ -24,6 +24,7 @@ export type Conn =
   | Connection<NumberNode, AddNode>
   | Connection<AddNode, AddNode>
   | Connection<InputNode, OutputNode>
+  | Connection<ActionNode, ActionNode>
 
 export type Schemes = GetSchemes<Node, Conn>
 

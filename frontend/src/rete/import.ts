@@ -6,23 +6,23 @@ import {
   NumberNode,
   OutputNode,
   StateNode,
-  isTrueNode,
+  ActionNode,
   isInRangeNode
-} from "./nodes"
+} from "./nodes/index"
 import { removeConnections } from "./utils"
 
 export async function createNode(
   { editor, area, dataflow, modules, process }: Context,
-  name: string,
+  type: string,
   data: any
 ) {
-  if (name === "Number") return new NumberNode(data.value, process)
-  if (name === "Add") return new AddNode(process, data)
-  if (name === "Input") return new InputNode(data.key)
-  if (name === "Output") return new OutputNode(data.key)
-  if (name === "Module") {
+  if (type === "Number") return new NumberNode(data.value, process)
+  if (type === "Add") return new AddNode(process, data)
+  if (type === "Input") return new InputNode(data.key)
+  if (type === "Output") return new OutputNode(data.key)
+  if (type === "Module") {
     const node = new ModuleNode(
-      data.name,
+      data.type,
       modules.findModule,
       (id) => removeConnections(editor, id),
       (id) => {
@@ -34,64 +34,82 @@ export async function createNode(
 
     return node
   }
-  if (name === "State") return new StateNode()
-  if (name === "isTrue") return new isTrueNode()
-  if (name === "isInRange") return new isInRangeNode(data.fromValue, data.toValue)
+  if (type === "State") return new StateNode()
+  if (type === "Action") return new ActionNode()
+  if (type === "isInRange") return new isInRangeNode(data.fromValue, data.toValue)
   throw new Error("Unsupported node")
 }
 
-export async function importEditor(context: Context, data: any) {
-  const { nodes, connections } = data
+export async function importEditor(context: Context, nodes: any) {
 
   for (const n of nodes) {
-    const node = await createNode(context, n.name, n.data)
+    const node = await createNode(context, n.type, n.data)
     node.id = n.id
     await context.editor.addNode(node)
   }
-  for (const c of connections) {
-    const source = context.editor.getNode(c.source)
-    const target = context.editor.getNode(c.target)
 
-    if (
-      source &&
-      target &&
-      (source.outputs as any)[c.sourceOutput] &&
-      (target.inputs as any)[c.targetInput]
-    ) {
-      const conn = new Connection(
-        source,
-        c.sourceOutput as never,
-        target,
-        c.targetInput as never
-      )
-
-      await context.editor.addConnection(conn)
+  for (const n of nodes) {
+    if (n.type === "Action") {
+      const source = context.editor.getNode(n.id)
+      const target1 = context.editor.getNode(n.next.true)
+      const target2 = context.editor.getNode(n.next.false)
+      createConnection(source, "true", target1, "in", context)
+      createConnection(source, "false", target2, "in", context)
     }
+    
+    if (n.type === "State" || n.type === "Transition" || n.type === "Input") {
+      const source = context.editor.getNode(n.id)
+      const target = context.editor.getNode(n.next)
+      createConnection(source, "next", target, "in", context)
+    }
+  }
+}
+
+async function createConnection(source: any, sourceOutput: any, target: any, targetInput: any, context: Context) {
+  if (
+    source &&
+    target &&
+    (source.outputs as any)[sourceOutput] &&
+    (target.inputs as any)[targetInput]
+  ) {
+    const conn = new Connection(
+      source,
+      sourceOutput as never,
+      target,
+      targetInput as never
+    )
+
+    await context.editor.addConnection(conn)
   }
 }
 
 export function exportEditor(context: Context) {
   const nodes = []
-  const connections = []
+  const connections = context.editor.getConnections()
 
   for (const n of context.editor.getNodes()) {
-    nodes.push({
-      id: n.id,
-      name: n.label,
-      data: n.serialize()
-    })
-  }
-  for (const c of context.editor.getConnections()) {
-    connections.push({
-      source: c.source,
-      sourceOutput: c.sourceOutput,
-      target: c.target,
-      targetInput: c.targetInput
-    })
+    console.log(n)
+
+    if (n.label === "Action") {
+      nodes.push({
+        id: n.id,
+        type: n.label,
+        action: n.selection().value,
+        next: {
+          true: connections.filter(c => c.source === n.id && c.sourceOutput === "true")[0]?.target || null,
+          false: connections.filter(c => c.source === n.id && c.sourceOutput === "false")[0]?.target || null,
+        }
+      })
+    }
+
+    if (n.label === "State" || n.label === "Transition" || n.label === "Input") {
+      nodes.push({
+        id: n.id,
+        type: n.label,
+        //next: n.outputs.get("out").connections[0].input.node.id
+      })
+    }
   }
 
-  return {
-    nodes,
-    connections
-  }
+  return nodes
 }
