@@ -46,19 +46,19 @@ export async function importEditor(context: Context, nodes: any) {
 
   for (const n of nodes) {
     if (n.type === "Action") {
-      let initial: DropdownOption = {
+      let initialSelection: DropdownOption = {
         name: "",
         value: "",
       }
       ActionIDs.find((action) => {
         if (action.id === n.action) {
-          initial = {
+          initialSelection = {
             name: action.name,
             value: action.id,
           }
         }
       })
-      const node = new ActionNode(initial)
+      const node = new ActionNode(initialSelection, undefined, n.quantity)
       node.id = n.id
       await context.editor.addNode(node)
     } else { 
@@ -113,6 +113,7 @@ export function exportEditor(context: Context) {
         id: n.id,
         type: n.label,
         action: n.selection().value,
+        quantity: n.quantity(),
         next: {
           true: connections.filter(c => c.source === n.id && c.sourceOutput === "true")[0]?.target || null,
           false: connections.filter(c => c.source === n.id && c.sourceOutput === "false")[0]?.target || null,

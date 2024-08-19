@@ -35,14 +35,19 @@ export class ActionNode
   extends Classic.Node<
     { input: Classic.Socket; true: Classic.Socket; false: Classic.Socket },
     { true: Classic.Socket; false: Classic.Socket },
-    { selection: DropdownControl }
+    { selection: DropdownControl, quantity: Classic.InputControl<"number"> }
   >
   implements DataflowNode
 {
   width = 180
-  height = 190
+  height = 230
 
-  constructor(initial?: DropdownOption, change?: (option: DropdownOption) => void) {
+  constructor(
+    initialSelection?: DropdownOption,
+    changeSelection?: (option: DropdownOption) => void,
+    initialQuantity?: number,
+    changeQuantity?: (value: number) => void
+  ) {
     super("Action")
 
     ActionIDs.sort((a, b) => a.name.localeCompare(b.name))
@@ -57,14 +62,22 @@ export class ActionNode
           name: action.name,
           value: action.id,
         })),
-        initial,
-        change,
+        initialSelection,
+        changeSelection,
       )
+    )
+    this.addControl(
+      "quantity",
+      new Classic.InputControl("number", { initial: initialQuantity, change: changeQuantity })
     )
   }
 
   selection() {
     return this.controls["selection"].selection
+  }
+
+  quantity() {
+    return this.controls["quantity"].value
   }
 
   data() {
