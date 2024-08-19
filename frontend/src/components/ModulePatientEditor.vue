@@ -214,7 +214,9 @@ watch(editor, (newEditor) => {
 })
 
 function openModule(path) {
-  editor.value?.openModule(path)
+  editor.value?.openModule(path).then(() => {
+    editor.value?.layout()
+  })
 }
 
 function newModule() {
@@ -331,4 +333,3 @@ function restoreModule() {
     z-index: 1;
   }
 </style>
-@/rete/editor@/rete/editor

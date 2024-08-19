@@ -43,7 +43,6 @@ export async function createNode(
 }
 
 export async function importEditor(context: Context, nodes: any) {
-
   for (const n of nodes) {
     if (n.type === "Action") {
       let initialSelection: DropdownOption = {

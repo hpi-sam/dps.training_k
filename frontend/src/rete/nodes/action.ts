@@ -33,7 +33,7 @@ export class DropdownControl extends Classic.Control {
 
 export class ActionNode
   extends Classic.Node<
-    { input: Classic.Socket; true: Classic.Socket; false: Classic.Socket },
+    { in: Classic.Socket; true: Classic.Socket; false: Classic.Socket },
     { true: Classic.Socket; false: Classic.Socket },
     { selection: DropdownControl, quantity: Classic.InputControl<"number"> }
   >
@@ -52,7 +52,7 @@ export class ActionNode
 
     ActionIDs.sort((a, b) => a.name.localeCompare(b.name))
 
-    this.addInput("input", new Classic.Input(socket, "input"))
+    this.addInput("in", new Classic.Input(socket, "in"))
     this.addOutput("true", new Classic.Output(socket, "true"))
     this.addOutput("false", new Classic.Output(socket, "false"))
     this.addControl(
