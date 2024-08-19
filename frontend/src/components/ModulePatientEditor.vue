@@ -244,22 +244,26 @@ function restoreModule() {
 
 <template>
 	<div class="left-sidebar">
-		<button @click="download">
-			Patient herunterladen
-		</button>
 		<button @click="patientInfoFormIsVisible = true">
-			Patienteninfos bearbeiten
+			Patient
 		</button>
-		<button @click="editor?.layout(); console.log('Clicked Layout-Button')">
-			Auto Layout
-		</button>
+		<p>Transitionen</p>
 		<button
-			v-for="module in modules"
+			v-for="module in modules as any"
 			:key="module.id"
 			@click="openModule(module.id)"
 		>
 			{{ module.name }}
 		</button>
+		<p>Komponenten</p>
+		<button
+			v-for="module in modules as any"
+			:key="module.id"
+			@click="openModule(module.id)"
+		>
+			{{ module.name }}
+		</button>
+		<p>Bearbeitung</p>
 		<button size="small" @click="newModule">
 			New
 		</button>
@@ -268,6 +272,12 @@ function restoreModule() {
 		</button>
 		<button size="small" @click="restoreModule">
 			Restore
+		</button>
+		<button @click="editor?.layout(); console.log('Clicked Layout-Button')">
+			Auto Layout
+		</button>
+		<button @click="download; saveModule">
+			Export
 		</button>
 	</div>
 	<div ref="editorContainer" class="rete" />
