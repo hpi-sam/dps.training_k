@@ -68,7 +68,7 @@ export class ActionNode
     )
     this.addControl(
       "quantity",
-      new Classic.InputControl("number", { initial: initialQuantity, change: changeQuantity })
+      new Classic.InputControl("number", { initial: initialQuantity || 1, change: changeQuantity })
     )
   }
 
