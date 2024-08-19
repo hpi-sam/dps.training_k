@@ -199,22 +199,20 @@
 
 onMounted(() => {
   if (editor.value) {
-    const list = editor.value.getModules()
-    modules.value = list
-    editor.value.openModule(list[0])
+    modules.value = editor.value.getModules()
+    editor.value.openModule(modules.value[0])
   }
 })
 
 watch(editor, (newEditor) => {
   if (newEditor) {
-    const list = newEditor.getModules()
-    modules.value = list
-    newEditor.openModule(list[0])
+    modules.value = newEditor.getModules()
+    newEditor.openModule(modules.value[0])
   }
 })
 
-function openModule(path) {
-  editor.value?.openModule(path).then(() => {
+function openModule(id: string) {
+  editor.value?.openModule(id).then(() => {
     editor.value?.layout()
   })
 }
@@ -256,11 +254,11 @@ function restoreModule() {
 			Auto Layout
 		</button>
 		<button
-			v-for="path in modules"
-			:key="path"
-			@click="openModule(path)"
+			v-for="module in modules"
+			:key="module.id"
+			@click="openModule(module.id)"
 		>
-			{{ path }}
+			{{ module.name }}
 		</button>
 		<button size="small" @click="newModule">
 			New

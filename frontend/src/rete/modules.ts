@@ -12,22 +12,22 @@ export type Module<S extends Schemes> = {
 
 export class Modules<S extends Schemes> {
   constructor(
-    private has: (path: string) => boolean,
-    private graph: (path: string, editor: NodeEditor<S>) => Promise<void>
+    private has: (id: string) => boolean,
+    private graph: (id: string, editor: NodeEditor<S>) => Promise<void>
   ) {}
 
-  public findModule = (path: string): null | Module<S> => {
-    if (!this.has(path)) return null
+  public findModule = (id: string): null | Module<S> => {
+    if (!this.has(id)) return null
 
     return {
-      apply: (editor: NodeEditor<S>) => this.graph(path, editor),
+      apply: (editor: NodeEditor<S>) => this.graph(id, editor),
       exec: async (inputData: Record<string, any>) => {
         const engine = new DataflowEngine<S>()
         const editor = new NodeEditor<S>()
 
         editor.use(engine)
 
-        await this.graph(path, editor)
+        await this.graph(id, editor)
 
         return this.execute(inputData, editor, engine)
       }

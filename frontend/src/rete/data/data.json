@@ -1,0 +1,31 @@
+{
+	"static": {},
+	"flow": [
+        {"id":"86ebeaf375f35d3d","type":"Action","action":"72d6f3ad-b9a5-4b16-b289-815766b27c4f","quantity":1,"next":{"true":"84fceae523792447","false":"0adde205c19f0837"}},
+        {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":1,"next":{"true":null,"false":null}},
+        {"id":"84fceae523792447","type":"Action","action":"7613f009-cb28-411d-91a9-26fe438a3bc2","quantity":1,"next":{"true":"5974baa226eb4354","false":null}},
+        {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":4,"next":{"true":null,"false":null}}
+    ],
+	"states": [],
+	"transitions": [
+        {
+            "id": "1",
+            "name": "Transition 1",
+            "flow": [
+                {"id":"86ebeaf375f35d3d","type":"Action","action":"72d6f3ad-b9a5-4b16-b289-815766b27c4f","quantity":1,"next":{"true":"84fceae523792447","false":"0adde205c19f0837"}},
+                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":1,"next":{"true":null,"false":null}},
+                {"id":"84fceae523792447","type":"Action","action":"7613f009-cb28-411d-91a9-26fe438a3bc2","quantity":1,"next":{"true":"5974baa226eb4354","false":null}},
+                {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":4,"next":{"true":null,"false":null}}
+            ]
+        },
+        {
+            "id": "2",
+            "name": "Transition 2",
+            "flow": [
+                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":2,"next":{"true":null,"false":null}},
+                {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":2,"next":{"true":null,"false":null}}
+            ]
+        }
+    ],
+	"modules": []
+}

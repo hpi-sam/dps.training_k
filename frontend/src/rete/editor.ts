@@ -20,13 +20,14 @@ import { createEngine } from "./processing.js"
 import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
+import data from './data/data.json'
 
-const modulesData: { [key in string]: any } = {
+/* const modulesData: { [key in string]: any } = {
   patient: patientModule,
   root: rootModule,
   transit: transitModule,
   double: doubleModule
-}
+}*/
 
 export async function createEditor(
   container: HTMLElement,
@@ -135,10 +136,12 @@ export async function createEditor(
   const { dataflow, process } = createEngine(editor, area)
   editor.use(dataflow)
 
+  const modulesData = data.transitions
+
   const modules = new Modules<Schemes>(
-    (path) => modulesData[path],
-    async (path, editor) => {
-      const data = modulesData[path]
+    (id) => modulesData.find((module) => module.id === id),
+    async (id, editor) => {
+      const data = modulesData.find((module) => module.id === id)?.flow
 
       if (!data) throw new Error("cannot find module")
       await importEditor(
@@ -160,17 +163,17 @@ export async function createEditor(
 
   await process()
 
-  let currentModulePath: null | string = null
+  let currentModuleId: null | string = null
 
-  async function openModule(path: string) {
-    currentModulePath = null
+  async function openModule(id: string) {
+    currentModuleId = null
 
     await clearEditor(editor)
 
-    const module = modules.findModule(path)
+    const module = modules.findModule(id)
 
     if (module) {
-      currentModulePath = path
+      currentModuleId = id
       await module.apply(editor)
     }
 
@@ -183,19 +186,19 @@ export async function createEditor(
 
   return {
     getModules() {
-      return Object.keys(modulesData)
+      return modulesData
     },
     saveModule: () => {
-      if (currentModulePath) {
+      if (currentModuleId) {
         const data = exportEditor(context)
-        modulesData[currentModulePath] = data
+        modulesData[currentModuleId] = data
 
         const json = JSON.stringify(data)
         const blob = new Blob([json], { type: 'text/json' })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `${currentModulePath}.json`
+        a.download = `${currentModuleId}.json`
         a.click()
         URL.revokeObjectURL(url)
       }
@@ -203,8 +206,8 @@ export async function createEditor(
     restoreModule: () => {
       if (currentModulePath) openModule(currentModulePath)
     },
-    newModule: (path: string) => {
-      modulesData[path] = { nodes: [], connections: [] }
+    newModule: (id: string) => {
+      modulesData[id] = { nodes: [], connections: [] }
     },
     openModule,
     layout: async () => {
