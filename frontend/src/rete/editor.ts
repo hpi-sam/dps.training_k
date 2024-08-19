@@ -19,7 +19,7 @@ import { createEngine } from "./processing.js"
 
 import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
-import { DropdownControl } from './nodes/action.js'
+import { DropdownControl } from './dropdown'
 
 const modulesData: { [key in string]: any } = {
   patient: patientModule,
