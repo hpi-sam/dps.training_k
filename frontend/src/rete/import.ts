@@ -10,6 +10,8 @@ import {
   isInRangeNode
 } from "./nodes/index"
 import { removeConnections } from "./utils"
+import { ActionIDs } from "./constants"
+import { DropdownOption } from "./nodes/action"
 
 export async function createNode(
   { editor, area, dataflow, modules, process }: Context,
@@ -43,9 +45,27 @@ export async function createNode(
 export async function importEditor(context: Context, nodes: any) {
 
   for (const n of nodes) {
-    const node = await createNode(context, n.type, n.data)
-    node.id = n.id
-    await context.editor.addNode(node)
+    if (n.type === "Action") {
+      let initial: DropdownOption = {
+        name: "",
+        value: "",
+      }
+      ActionIDs.find((action) => {
+        if (action.id === n.action) {
+          initial = {
+            name: action.name,
+            value: action.id,
+          }
+        }
+      })
+      const node = new ActionNode(initial)
+      node.id = n.id
+      await context.editor.addNode(node)
+    } else { 
+      const node = await createNode(context, n.type, n.data)
+      node.id = n.id
+      await context.editor.addNode(node)
+    }
   }
 
   for (const n of nodes) {
@@ -88,8 +108,6 @@ export function exportEditor(context: Context) {
   const connections = context.editor.getConnections()
 
   for (const n of context.editor.getNodes()) {
-    console.log(n)
-
     if (n.label === "Action") {
       nodes.push({
         id: n.id,

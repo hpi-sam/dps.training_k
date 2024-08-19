@@ -6,7 +6,7 @@
 
 <template>
 	<div id="dropdown">
-		<select v-model="data.selection.value">
+		<select v-model="data.selection">
 			<option v-for="option in data.optionsList" :key="option" :value="option">
 				{{ option.name }}
 			</option>
