@@ -9,7 +9,9 @@
   import 'antd/dist/reset.css'
   import { Editor } from '@/rete/types'
 
-  const modules = ref([])
+  const patientModule = ref("" as string)
+  const transitionModules = ref([] as string[])
+  const componentModules = ref([] as string[])
   const editorContainer = ref(null)
   const editor = ref(null as unknown as Editor)
 
@@ -197,22 +199,33 @@
     usePatientStateStore().exportToCSV()
   }
 
+  function openPatient() {
+    editor.value?.openModule('', 'patient').then(() => {
+      editor.value?.layout()
+    })
+    patientInfoFormIsVisible.value = true
+  }
+
 onMounted(() => {
   if (editor.value) {
-    modules.value = editor.value.getModules()
-    editor.value.openModule(modules.value[0])
+    patientModule.value = editor.value.getModules().patientModuleData
+    transitionModules.value = editor.value.getModules().transitionModulesData
+    componentModules.value = editor.value.getModules().componentModulesData
+    editor.value.openModule('', 'patient')
   }
 })
 
 watch(editor, (newEditor) => {
   if (newEditor) {
-    modules.value = newEditor.getModules()
-    newEditor.openModule(modules.value[0])
+    patientModule.value = newEditor.getModules().patientModuleData
+    transitionModules.value = newEditor.getModules().transitionModulesData
+    componentModules.value = newEditor.getModules().componentModulesData
+    newEditor.openModule('', 'patient')
   }
 })
 
-function openModule(id: string) {
-  editor.value?.openModule(id).then(() => {
+function openModule(id: string, type: string) {
+  editor.value?.openModule(id, type).then(() => {
     editor.value?.layout()
   })
 }
@@ -244,22 +257,22 @@ function restoreModule() {
 
 <template>
 	<div class="left-sidebar">
-		<button @click="patientInfoFormIsVisible = true">
+		<button @click="openPatient">
 			Patient
 		</button>
 		<p>Transitionen</p>
 		<button
-			v-for="module in modules as any"
+			v-for="module in transitionModules as any"
 			:key="module.id"
-			@click="openModule(module.id)"
+			@click="openModule(module.id, 'transition')"
 		>
 			{{ module.name }}
 		</button>
 		<p>Komponenten</p>
 		<button
-			v-for="module in modules as any"
+			v-for="module in componentModules as any"
 			:key="module.id"
-			@click="openModule(module.id)"
+			@click="openModule(module.id, 'component')"
 		>
 			{{ module.name }}
 		</button>
@@ -276,7 +289,7 @@ function restoreModule() {
 		<button @click="editor?.layout(); console.log('Clicked Layout-Button')">
 			Auto Layout
 		</button>
-		<button @click="download; saveModule">
+		<button @click="download(); saveModule()">
 			Export
 		</button>
 	</div>

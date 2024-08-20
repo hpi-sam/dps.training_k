@@ -1,3 +1,4 @@
+import { ref, watch } from 'vue'
 import { ClassicPreset as Classic, NodeEditor } from 'rete'
 import { AreaExtensions, AreaPlugin } from 'rete-area-plugin'
 import { ConnectionPlugin } from 'rete-connection-plugin'
@@ -14,7 +15,6 @@ import { showPatientStateForm } from '@/components/ModulePatientEditor.vue'
 import { Modules } from "./modules.js"
 import { clearEditor } from "./utils.js"
 import { createNode, exportEditor, importEditor } from "./import.js"
-import { patientModule, rootModule, transitModule, doubleModule } from "./modules/index.js"
 import { createEngine } from "./processing.js"
 
 import { Schemes, AreaExtra, Context, Connection } from './types'
@@ -22,12 +22,7 @@ import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
 import data from './data/data.json'
 
-/* const modulesData: { [key in string]: any } = {
-  patient: patientModule,
-  root: rootModule,
-  transit: transitModule,
-  double: doubleModule
-}*/
+const editorMode = ref<string>("patient")
 
 export async function createEditor(
   container: HTMLElement,
@@ -56,23 +51,45 @@ export async function createEditor(
     })
   )*/
 
-  const contextMenu = new ContextMenuPlugin<Schemes>({
-    items: ContextMenuPresets.classic.setup([
-      ['State', () => createNode(context, "State", { value: 0 })],
-      ["Number", () => createNode(context, "Number", { value: 0 })],
-      ["Add", () => createNode(context, "Add", {})],
-      ["Input", () => createNode(context, "Input", { key: "key" })],
-      ["Output", () => createNode(context, "Output", { key: "key" })],
-      ["Module", () => createNode(context, "Module", { name: "" })],
-      ["Action", () => createNode(context, "Action", {})],
-      ["ist im Wertebereich", () => createNode(context, "isInRange", { fromValue: 1, toValue: 2 })]
-    ])
-  })
+    let contextMenu = new ContextMenuPlugin<Schemes>({
+      items: ContextMenuPresets.classic.setup([])
+    })
   
-  editor.use(area)
-  area.use(vueRender)
-  area.use(connection)
-  area.use(contextMenu)
+    function updateContextMenu() {
+      let items = <BSchemes>[]
+  
+      if (editorMode.value === "patient") {
+        items = ContextMenuPresets.classic.setup([
+          ['State', () => createNode(context, "State", { value: 0 })],
+          ["Module", () => createNode(context, "Module", { name: "" })]
+        ])
+      } else if (editorMode.value === "transition") {
+        items = ContextMenuPresets.classic.setup([
+          ["Input", () => createNode(context, "Input", { key: "key" })],
+          ["Output", () => createNode(context, "Output", { key: "key" })],
+          ["Module", () => createNode(context, "Module", { name: "" })],
+          ["Action", () => createNode(context, "Action", {})]
+        ])
+      } else if (editorMode.value === "component") {
+        items = ContextMenuPresets.classic.setup([
+          ["Input", () => createNode(context, "Input", { key: "key" })],
+          ["Output", () => createNode(context, "Output", { key: "key" })],
+          ["Module", () => createNode(context, "Module", { name: "" })],
+          ["Action", () => createNode(context, "Action", {})]
+        ])
+      }
+  
+      contextMenu = new ContextMenuPlugin<Schemes>({ items })
+    }
+  
+    updateContextMenu()
+    watch(editorMode, updateContextMenu)
+  
+    editor.use(area)
+    area.use(vueRender)
+    area.use(connection)
+    area.use(contextMenu)
+  
 
   area.area.setZoomHandler(null)
 
@@ -136,12 +153,16 @@ export async function createEditor(
   const { dataflow, process } = createEngine(editor, area)
   editor.use(dataflow)
 
-  const modulesData = data.transitions
+  // Modules
 
-  const modules = new Modules<Schemes>(
-    (id) => modulesData.find((module) => module.id === id),
+  const patientModuleData = data.flow
+  const transitionModulesData = data.transitions
+  const componentModulesData = data.components
+
+  const patientModule = new Modules<Schemes>(
+    true,
     async (id, editor) => {
-      const data = modulesData.find((module) => module.id === id)?.flow
+      const data = patientModuleData
 
       if (!data) throw new Error("cannot find module")
       await importEditor(
@@ -153,10 +174,43 @@ export async function createEditor(
       )
     }
   )
+
+  const transitionModules = new Modules<Schemes>(
+    (id) => transitionModulesData.find((module) => module.id === id),
+    async (id, editor) => {
+      const data = transitionModulesData.find((module) => module.id === id)?.flow
+
+      if (!data) throw new Error("cannot find module")
+      await importEditor(
+        {
+          ...context,
+          editor
+        },
+        data
+      )
+    }
+  )
+
+  const componentModules = new Modules<Schemes>(
+    (id) => componentModulesData.find((module) => module.id === id),
+    async (id, editor) => {
+      const data = componentModulesData.find((module) => module.id === id)?.flow
+
+      if (!data) throw new Error("cannot find module")
+      await importEditor(
+        {
+          ...context,
+          editor
+        },
+        data
+      )
+    }
+  )
+
   const context: Context = {
     editor,
     area,
-    modules,
+    modules: transitionModules,
     dataflow,
     process
   }
@@ -165,12 +219,22 @@ export async function createEditor(
 
   let currentModuleId: null | string = null
 
-  async function openModule(id: string) {
+  async function openModule(id: string, type: string) {
     currentModuleId = null
 
     await clearEditor(editor)
 
-    const module = modules.findModule(id)
+    editorMode.value = type
+
+    let module = null
+
+    if (type === "patient") {
+      module = patientModule.findModule(id)
+    } else if (type === "transition") {
+      module = transitionModules.findModule(id)
+    } else if (type === "component") {
+      module = componentModules.findModule(id)
+    }
 
     if (module) {
       currentModuleId = id
@@ -186,12 +250,16 @@ export async function createEditor(
 
   return {
     getModules() {
-      return modulesData
+      return {
+        patientModuleData,
+        transitionModulesData,
+        componentModulesData
+      }
     },
     saveModule: () => {
       if (currentModuleId) {
         const data = exportEditor(context)
-        modulesData[currentModuleId] = data
+        transitionModulesData[currentModuleId] = data
 
         const json = JSON.stringify(data)
         const blob = new Blob([json], { type: 'text/json' })
@@ -207,7 +275,7 @@ export async function createEditor(
       if (currentModulePath) openModule(currentModulePath)
     },
     newModule: (id: string) => {
-      modulesData[id] = { nodes: [], connections: [] }
+      transitionModulesData[id] = { nodes: [], connections: [] }
     },
     openModule,
     layout: async () => {

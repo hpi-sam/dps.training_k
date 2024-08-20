@@ -42,11 +42,11 @@ export type Context = {
 }
 
 export interface Editor {
-    getModules(): string[];
+    getModules(): { patientModuleData: string, transitionModulesData: string[], componentModulesData: string[] };
     saveModule(): void;
     restoreModule(): void;
     newModule(path: string): void;
-    openModule(path: string): Promise<void>;
+    openModule(id: string, type: string): Promise<void>;
     layout(): Promise<void>;
     destroy(): void;
   }
