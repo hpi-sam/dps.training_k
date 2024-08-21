@@ -1,18 +1,17 @@
 <script setup lang="ts">
     import { getNode } from '@formkit/core'
-    import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
+	import data from '@/rete/data/data.json'
 </script>
 
 <script lang="ts">
 	import { ref } from 'vue'
-	const patientStateId = ref(null)
+	const patientStateId = ref('')
 
-    export function loadPatientState(nodeId: string) {
-        const patientStateStore = usePatientStateStore()
-        const patientState = patientStateStore.getPatientStateByNodeId(nodeId)
+    export function loadPatientState(stateId: string) {
+		const  patientState = data.states.find(state => state.id === stateId)
         const patientStateFormNode = getNode('patientStateForm')
-        patientStateFormNode.input(patientState)
-		patientStateId.value = patientState.id
+        patientStateFormNode?.input(patientState)
+		patientStateId.value = patientState?.id || ''
     }
 </script>
 

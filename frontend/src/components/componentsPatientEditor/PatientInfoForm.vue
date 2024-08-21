@@ -1,25 +1,22 @@
-<script setup>
-const castRangeToNumber = (node) => {
-  // We add a check to add the cast only to range inputs
-  if (node.props.type !== 'range') return
+<script setup lang="ts">
+	import { getNode } from '@formkit/core'
+	import data from '@/rete/data/data.json'
+</script>
 
-  node.hook.input((value, next) => next(Number(value)))
-}
-
-const createPatient = async (fields) => {
-  await new Promise((r) => setTimeout(r, 1000))
-  alert(JSON.stringify(fields))
-}
+<script lang="ts">
+	export function loadPatientInfo() {
+		const patientInfo = data.static
+        const patientInfoFormNode = getNode('patientInfoForm')
+        patientInfoFormNode?.input(patientInfo)
+    }
 </script>
 
 <template>
 	<h1>Patient</h1>
 	<FormKit
+		id="patientInfoForm"
 		v-slot="{ value }"
 		type="form"
-		:plugins="[castRangeToNumber]"
-		submit-label="Patient erstellen"
-		@submit="createPatient"
 	>
 		<FormKit
 			id="triage"
@@ -122,7 +119,5 @@ const createPatient = async (fields) => {
 			placeholder="Wie wurde der Patient bereits behandelt?"
 			validation="required"
 		/>
-
-		<pre wrap>{{ value }}</pre>
 	</FormKit>
 </template>
