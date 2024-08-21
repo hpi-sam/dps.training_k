@@ -45,7 +45,8 @@ export interface Editor {
     getModules(): { patientModuleData: string, transitionModulesData: string[], componentModulesData: string[] };
     saveModule(): void;
     restoreModule(): void;
-    newModule(path: string): void;
+    newTransitionModule(id: string): void;
+    newComponentModule(id: string): void;
     openModule(id: string, type: string): Promise<void>;
     layout(): Promise<void>;
     destroy(): void;

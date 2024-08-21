@@ -107,7 +107,7 @@ export function exportEditor(context: Context) {
   const connections = context.editor.getConnections()
 
   for (const n of context.editor.getNodes()) {
-    if (n.label === "Action") {
+    if (n.label === "Action" && n instanceof ActionNode) {
       nodes.push({
         id: n.id,
         type: n.label,

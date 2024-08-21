@@ -230,11 +230,21 @@ function openModule(id: string, type: string) {
   })
 }
 
-function newModule() {
-  const name = prompt('Module name')
-  if (name) {
-    editor.value?.newModule(name)
-    modules.value = editor.value.getModules()
+function newTransitionModule() {
+  const id = prompt('Module id')
+  if (id) {
+    editor.value?.newTransitionModule(id)
+    transitionModules.value = editor.value.getModules().transitionModulesData
+    openModule(id, 'transition')
+  }
+}
+
+function newComponentModule() {
+  const id = prompt('Module name')
+  if (id) {
+    editor.value?.newComponentModule(id)
+    componentModules.value = editor.value.getModules().componentModulesData
+    openModule(id, 'component')
   }
 }
 
@@ -266,7 +276,7 @@ function restoreModule() {
 			:key="module.id"
 			@click="openModule(module.id, 'transition')"
 		>
-			{{ module.name }}
+			{{ module.id }}
 		</button>
 		<p>Komponenten</p>
 		<button
@@ -274,11 +284,14 @@ function restoreModule() {
 			:key="module.id"
 			@click="openModule(module.id, 'component')"
 		>
-			{{ module.name }}
+			{{ module.id }}
 		</button>
 		<p>Bearbeitung</p>
-		<button size="small" @click="newModule">
-			New
+		<button size="small" @click="newTransitionModule">
+			Neue Transition
+		</button>
+		<button size="small" @click="newComponentModule">
+			Neue Komponente
 		</button>
 		<button size="small" @click="saveModule">
 			Save

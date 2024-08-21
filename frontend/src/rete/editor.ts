@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { ClassicPreset as Classic, NodeEditor } from 'rete'
 import { AreaExtensions, AreaPlugin } from 'rete-area-plugin'
 import { ConnectionPlugin } from 'rete-connection-plugin'
@@ -51,39 +51,15 @@ export async function createEditor(
     })
   )*/
 
-    let contextMenu = new ContextMenuPlugin<Schemes>({
-      items: ContextMenuPresets.classic.setup([])
+    const contextMenu = new ContextMenuPlugin<Schemes>({
+      items: ContextMenuPresets.classic.setup([
+        ['State', () => createNode(context, "State", { value: 0 })],
+        ["Input", () => createNode(context, "Input", { key: "key" })],
+        ["Output", () => createNode(context, "Output", { key: "key" })],
+        ["Module", () => createNode(context, "Module", { name: "" })],
+        ["Action", () => createNode(context, "Action", {})]
+      ])
     })
-  
-    function updateContextMenu() {
-      let items = <BSchemes>[]
-  
-      if (editorMode.value === "patient") {
-        items = ContextMenuPresets.classic.setup([
-          ['State', () => createNode(context, "State", { value: 0 })],
-          ["Module", () => createNode(context, "Module", { name: "" })]
-        ])
-      } else if (editorMode.value === "transition") {
-        items = ContextMenuPresets.classic.setup([
-          ["Input", () => createNode(context, "Input", { key: "key" })],
-          ["Output", () => createNode(context, "Output", { key: "key" })],
-          ["Module", () => createNode(context, "Module", { name: "" })],
-          ["Action", () => createNode(context, "Action", {})]
-        ])
-      } else if (editorMode.value === "component") {
-        items = ContextMenuPresets.classic.setup([
-          ["Input", () => createNode(context, "Input", { key: "key" })],
-          ["Output", () => createNode(context, "Output", { key: "key" })],
-          ["Module", () => createNode(context, "Module", { name: "" })],
-          ["Action", () => createNode(context, "Action", {})]
-        ])
-      }
-  
-      contextMenu = new ContextMenuPlugin<Schemes>({ items })
-    }
-  
-    updateContextMenu()
-    watch(editorMode, updateContextMenu)
   
     editor.use(area)
     area.use(vueRender)
@@ -150,14 +126,14 @@ export async function createEditor(
   const accumulating = AreaExtensions.accumulateOnCtrl()
   AreaExtensions.selectableNodes(area, selector, { accumulating })
   
-  const { dataflow, process } = createEngine(editor, area)
-  editor.use(dataflow)
+  const { dataflow, process } = createEngine(editor as any, area as any)
+  editor.use(dataflow as any)
 
   // Modules
 
-  const patientModuleData = data.flow
-  const transitionModulesData = data.transitions
-  const componentModulesData = data.components
+  let patientModuleData = data.flow
+  let transitionModulesData = data.transitions
+  let componentModulesData = data.components
 
   const patientModule = new Modules<Schemes>(
     true,
@@ -257,25 +233,39 @@ export async function createEditor(
       }
     },
     saveModule: () => {
-      if (currentModuleId) {
-        const data = exportEditor(context)
-        transitionModulesData[currentModuleId] = data
+      const data = exportEditor(context)
 
-        const json = JSON.stringify(data)
-        const blob = new Blob([json], { type: 'text/json' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${currentModuleId}.json`
-        a.click()
-        URL.revokeObjectURL(url)
+      if (editorMode.value === "patient") {
+        patientModuleData = data as any
+      } else if (editorMode.value === "transition") {
+        const module = transitionModulesData.find(
+          (module) => module.id === currentModuleId
+        )
+        if (module) module.flow = data as any
+      } else if (editorMode.value === "component") {
+        const module = componentModulesData.find(
+          (module) => module.id === currentModuleId
+        )
+        if (module) module.flow = data as any
       }
+
+      const json = JSON.stringify(data)
+      const blob = new Blob([json], { type: 'text/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${currentModuleId}.json`
+      a.click()
+      URL.revokeObjectURL(url)
     },
     restoreModule: () => {
-      if (currentModulePath) openModule(currentModulePath)
+      openModule(currentModuleId!, editorMode.value)
     },
-    newModule: (id: string) => {
-      transitionModulesData[id] = { nodes: [], connections: [] }
+    newTransitionModule: (id: string) => {
+      transitionModulesData = [ ...transitionModulesData, {id: id, flow: []}]
+    },
+    newComponentModule: (id: string) => {
+      componentModulesData = [ ...componentModulesData, {id: id, flow: []}]
     },
     openModule,
     layout: async () => {
