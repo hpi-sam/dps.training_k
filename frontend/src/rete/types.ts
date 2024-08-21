@@ -50,4 +50,5 @@ export interface Editor {
     openModule(id: string, type: string): Promise<void>;
     layout(): Promise<void>;
     destroy(): void;
+    exportData(): void;
   }

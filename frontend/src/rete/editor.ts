@@ -21,15 +21,11 @@ import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
 import data from './data/data.json'
+import { StateNode } from './nodes/index'
 
 const editorMode = ref<string>("patient")
 
-export async function createEditor(
-  container: HTMLElement,
-  patientEditorStore: any,
-  patientStateStore: any,
-  transitionStore: any
-) {
+export async function createEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>()
   const area = new AreaPlugin<Schemes, AreaExtra>(container)
   const connection = new ConnectionPlugin<Schemes, AreaExtra>()
@@ -65,15 +61,16 @@ export async function createEditor(
     area.use(vueRender)
     area.use(connection)
     area.use(contextMenu)
-  
 
   area.area.setZoomHandler(null)
 
   area.addPipe(context => {
     if (context.type === 'nodepicked') {
       const node = editor.getNode(context.data.id)
-      showPatientStateForm()
-      loadPatientState(node.id)
+      if (node instanceof StateNode) {
+        showPatientStateForm()
+        loadPatientState(node.id)
+      }
     }
     return context
   })
@@ -193,9 +190,29 @@ export async function createEditor(
 
   await process()
 
+  function saveModule() {
+    const data = exportEditor(context)
+
+    if (editorMode.value === "patient") {
+      patientModuleData = data as any
+    } else if (editorMode.value === "transition") {
+      const module = transitionModulesData.find(
+        (module) => module.id === currentModuleId
+      )
+      if (module) module.flow = data as any
+    } else if (editorMode.value === "component") {
+      const module = componentModulesData.find(
+        (module) => module.id === currentModuleId
+      )
+      if (module) module.flow = data as any
+    }
+  }
+
   let currentModuleId: null | string = null
 
   async function openModule(id: string, type: string) {
+    if (editor.getNodes().length) saveModule()
+
     currentModuleId = null
 
     await clearEditor(editor)
@@ -224,40 +241,17 @@ export async function createEditor(
 
   await arrange.layout()
 
+  function getModules() {
+    return {
+      patientModuleData,
+      transitionModulesData,
+      componentModulesData
+    }
+  }
+
   return {
-    getModules() {
-      return {
-        patientModuleData,
-        transitionModulesData,
-        componentModulesData
-      }
-    },
-    saveModule: () => {
-      const data = exportEditor(context)
-
-      if (editorMode.value === "patient") {
-        patientModuleData = data as any
-      } else if (editorMode.value === "transition") {
-        const module = transitionModulesData.find(
-          (module) => module.id === currentModuleId
-        )
-        if (module) module.flow = data as any
-      } else if (editorMode.value === "component") {
-        const module = componentModulesData.find(
-          (module) => module.id === currentModuleId
-        )
-        if (module) module.flow = data as any
-      }
-
-      const json = JSON.stringify(data)
-      const blob = new Blob([json], { type: 'text/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${currentModuleId}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-    },
+    getModules,
+    saveModule,
     restoreModule: () => {
       openModule(currentModuleId!, editorMode.value)
     },
@@ -277,6 +271,24 @@ export async function createEditor(
       console.log("area.destroy1", area.nodeViews.size)
 
       area.destroy()
+    },
+    exportData: () => {
+      saveModule()
+      const data = {
+        static: {},
+        flow: getModules().patientModuleData,
+        states: [],
+        transitions: getModules().transitionModulesData,
+        components: getModules().componentModulesData
+      }
+      const json = JSON.stringify(data)
+      const blob = new Blob([json], { type: 'text/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'patient.json'
+      a.click()
+      URL.revokeObjectURL(url)
     }
   }
 }

@@ -1,39 +1,219 @@
 {
-	"static": {},
-	"flow": [
-        {"id":"86ebeaf375f35d3d","type":"Action","action":"72d6f3ad-b9a5-4b16-b289-815766b27c4f","quantity":10,"next":{"true":"84fceae523792447","false":"0adde205c19f0837"}},
-        {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":10,"next":{"true":null,"false":null}},
-        {"id":"84fceae523792447","type":"Action","action":"7613f009-cb28-411d-91a9-26fe438a3bc2","quantity":10,"next":{"true":"5974baa226eb4354","false":null}},
-        {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":10,"next":{"true":null,"false":null}}
+    "static": {
+        "triage": "rot",
+        "sex": "männlich",
+        "age": "21",
+        "address": "Neue Straße, 10101 Burgstadt",
+        "injury": "Abgetrennter Arm",
+        "biometrics": "rote Haare, blaue Augen, 1.85m",
+        "mobility": "initial gefähig",
+        "preexistingIllnesses": "keine",
+        "permanentMedication": "keine",
+        "currentCaseHistory": "keine",
+        "pretreatment": "Tourniquet"
+    },
+    "flow": [
+        {
+            "id": "9235871077f3ce09",
+            "type": "State"
+        },
+        {
+            "id": "412dd1fc78142fbe",
+            "type": "State"
+        }
     ],
-	"states": [],
-	"transitions": [
+    "states": [
+        {
+            "id": "9235871077f3ce09",
+            "airway": "freie Atemwege",
+            "breathingRate": 1,
+            "oxygenSaturation": 1,
+            "breathing": "vertiefte Atmung",
+            "breathingSound": true,
+            "breathingLoudness": "sehr leises AG hörbar",
+            "heartRate": 1,
+            "pulsePalpable": "peripher tastbar",
+            "rivaRocci": "1/1",
+            "consciousness": "wach, orientiert",
+            "pupils": "mittelweit",
+            "psyche": "unauffällig",
+            "skinFining": "trocken",
+            "skinDiscoloration": "rosig",
+            "bgaOxy": 601,
+            "bgaSbh": 652,
+            "hb": 401,
+            "bz": 916,
+            "clotting": 100,
+            "liver": 111,
+            "kidney": 120,
+            "infarct": 134,
+            "lactate": 144,
+            "extremities": 523,
+            "thorax": 340,
+            "trauma": 108,
+            "ultraschall": 621,
+            "ekg": 746,
+            "zvd": 805
+        },
+        {
+          "id": "412dd1fc78142fbe",
+          "airway": "freie Atemwege",
+          "breathingRate": 2,
+          "oxygenSaturation": 1,
+          "breathing": "vertiefte Atmung",
+          "breathingSound": true,
+          "breathingLoudness": "sehr leises AG hörbar",
+          "heartRate": 1,
+          "pulsePalpable": "peripher tastbar",
+          "rivaRocci": "1/1",
+          "consciousness": "wach, orientiert",
+          "pupils": "mittelweit",
+          "psyche": "unauffällig",
+          "skinFining": "trocken",
+          "skinDiscoloration": "rosig",
+          "bgaOxy": 601,
+          "bgaSbh": 652,
+          "hb": 401,
+          "bz": 916,
+          "clotting": 100,
+          "liver": 111,
+          "kidney": 120,
+          "infarct": 134,
+          "lactate": 144,
+          "extremities": 523,
+          "thorax": 340,
+          "trauma": 108,
+          "ultraschall": 621,
+          "ekg": 746,
+          "zvd": 805
+        }
+    ],
+    "transitions": [
         {
             "id": "Transition 1",
             "flow": [
-                {"id":"86ebeaf375f35d3d","type":"Action","action":"72d6f3ad-b9a5-4b16-b289-815766b27c4f","quantity":1,"next":{"true":"84fceae523792447","false":"0adde205c19f0837"}},
-                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":1,"next":{"true":null,"false":null}},
-                {"id":"84fceae523792447","type":"Action","action":"7613f009-cb28-411d-91a9-26fe438a3bc2","quantity":1,"next":{"true":"5974baa226eb4354","false":null}},
-                {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":4,"next":{"true":null,"false":null}}
+                {
+                    "id": "86ebeaf375f35d3d",
+                    "type": "Action",
+                    "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                    "quantity": 1,
+                    "next": {
+                        "true": "84fceae523792447",
+                        "false": "0adde205c19f0837"
+                    }
+                },
+                {
+                    "id": "0adde205c19f0837",
+                    "type": "Action",
+                    "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                    "quantity": 1,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                },
+                {
+                    "id": "84fceae523792447",
+                    "type": "Action",
+                    "action": "7613f009-cb28-411d-91a9-26fe438a3bc2",
+                    "quantity": 1,
+                    "next": {
+                        "true": "5974baa226eb4354",
+                        "false": null
+                    }
+                },
+                {
+                    "id": "5974baa226eb4354",
+                    "type": "Action",
+                    "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                    "quantity": 4,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                }
             ]
         },
         {
             "id": "Transition 2",
             "flow": [
-                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":2,"next":{"true":null,"false":null}},
-                {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":2,"next":{"true":null,"false":null}}
+                {
+                    "id": "0adde205c19f0837",
+                    "type": "Action",
+                    "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                    "quantity": 2,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                },
+                {
+                    "id": "5974baa226eb4354",
+                    "type": "Action",
+                    "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                    "quantity": 2,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                }
             ]
         }
     ],
-	"components": [
+    "components": [
         {
             "id": "Komponente 1",
             "flow": [
-                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":1,"next":{"true":null,"false":null}},
-                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":2,"next":{"true":null,"false":null}},
-                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":3,"next":{"true":null,"false":null}},
-                {"id":"0adde205c19f0837","type":"Action","action":"cc8a5284-765d-4854-b634-6c9e5a85d916","quantity":4,"next":{"true":null,"false":null}},
-                {"id":"5974baa226eb4354","type":"Action","action":"9ed9b301-d4f8-4e81-8e33-f26bbdc24104","quantity":5,"next":{"true":null,"false":null}}
+                {
+                    "id": "0adde205c19f0837",
+                    "type": "Action",
+                    "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                    "quantity": 1,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                },
+                {
+                    "id": "0adde205c19f0837",
+                    "type": "Action",
+                    "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                    "quantity": 2,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                },
+                {
+                    "id": "0adde205c19f0837",
+                    "type": "Action",
+                    "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                    "quantity": 3,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                },
+                {
+                    "id": "0adde205c19f0837",
+                    "type": "Action",
+                    "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                    "quantity": 4,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                },
+                {
+                    "id": "5974baa226eb4354",
+                    "type": "Action",
+                    "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                    "quantity": 5,
+                    "next": {
+                        "true": null,
+                        "false": null
+                    }
+                }
             ]
         }
     ]

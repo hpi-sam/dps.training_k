@@ -1,13 +1,11 @@
 <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue'
   import { createEditor as createPatientEditor } from '@/rete/editor'
-  import { usePatientEditorStore } from '@/stores/patienteditor/PatientEditor'
-  import { usePatientStateStore } from '@/stores/patienteditor/PatientState'
-  import { useTransitionStore } from '@/stores/patienteditor/Transition'
   import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
   import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
   import 'antd/dist/reset.css'
   import { Editor } from '@/rete/types'
+  import { loadPatientInfo } from '@/components/componentsPatientEditor/PatientInfoForm.vue'
 
   const patientModule = ref("" as string)
   const transitionModules = ref([] as string[])
@@ -16,204 +14,27 @@
   const editor = ref(null as unknown as Editor)
 
   onMounted(async () => {
-    const patientEditorStore = usePatientEditorStore()
-    const patientStateStore = usePatientStateStore()
-    const transitionStore = useTransitionStore()
-
-    patientStateStore.clear()
-    transitionStore.clear()
-
-    patientStateStore.addPatientState(
-      {
-        id: 1,
-        nodeId: '',
-        nextTransition: 1,
-        airway: "freie Atemwege",
-        breathingRate: 1,
-        oxygenSaturation: 1,
-        breathing: "vertiefte Atmung",
-        breathingSound: true,
-        breathingLoudness: "sehr leises AG hörbar",
-        heartRate: 1,
-        pulsePalpable:"peripher tastbar",
-        rivaRocci: "1/1",
-        consciousness: "wach, orientiert",
-        pupils: "mittelweit",
-        psyche: "unauffällig",
-        skinFining: "trocken",
-        skinDiscoloration: "rosig",
-        bgaOxy: 601,
-        bgaSbh: 652,
-        hb: 401,
-        bz: 916,
-        clotting: 100,
-        liver: 111,
-        kidney: 120,
-        infarct: 134,
-        lactate: 144,
-        extremities: 523,
-        thorax: 340,
-        trauma: 108,
-        ultraschall: 621,
-        ekg: 746,
-        zvd: 805 
-      }
-    )
-
-    patientStateStore.addPatientState(
-      {
-        id: 2,
-        nodeId: '',
-        nextTransition: 2,
-        airway: "freie Atemwege",
-        breathingRate: 2,
-        oxygenSaturation: 1,
-        breathing: "vertiefte Atmung",
-        breathingSound: true,
-        breathingLoudness: "sehr leises AG hörbar",
-        heartRate: 1,
-        pulsePalpable:"peripher tastbar",
-        rivaRocci: "1/1",
-        consciousness: "wach, orientiert",
-        pupils: "mittelweit",
-        psyche: "unauffällig",
-        skinFining: "trocken",
-        skinDiscoloration: "rosig",
-        bgaOxy: 601,
-        bgaSbh: 652,
-        hb: 401,
-        bz: 916,
-        clotting: 100,
-        liver: 111,
-        kidney: 120,
-        infarct: 134,
-        lactate: 144,
-        extremities: 523,
-        thorax: 340,
-        trauma: 108,
-        ultraschall: 621,
-        ekg: 746,
-        zvd: 805 
-      }
-    )
-
-    patientStateStore.addPatientState(
-      {
-        id: 3,
-        nodeId: '',
-        nextTransition: 2,
-        airway: "freie Atemwege",
-        breathingRate: 3,
-        oxygenSaturation: 1,
-        breathing: "vertiefte Atmung",
-        breathingSound: true,
-        breathingLoudness: "sehr leises AG hörbar",
-        heartRate: 1,
-        pulsePalpable:"peripher tastbar",
-        rivaRocci: "1/1",
-        consciousness: "wach, orientiert",
-        pupils: "mittelweit",
-        psyche: "unauffällig",
-        skinFining: "trocken",
-        skinDiscoloration: "rosig",
-        bgaOxy: 601,
-        bgaSbh: 652,
-        hb: 401,
-        bz: 916,
-        clotting: 100,
-        liver: 111,
-        kidney: 120,
-        infarct: 134,
-        lactate: 144,
-        extremities: 523,
-        thorax: 340,
-        trauma: 108,
-        ultraschall: 621,
-        ekg: 746,
-        zvd: 805 
-      }
-    )
-
-    patientStateStore.addPatientState(
-      {
-        id: 4,
-        nodeId: '',
-        nextTransition: null,
-        airway: "freie Atemwege",
-        breathingRate: 4,
-        oxygenSaturation: 1,
-        breathing: "vertiefte Atmung",
-        breathingSound: true,
-        breathingLoudness: "sehr leises AG hörbar",
-        heartRate: 1,
-        pulsePalpable:"peripher tastbar",
-        rivaRocci: "1/1",
-        consciousness: "wach, orientiert",
-        pupils: "mittelweit",
-        psyche: "unauffällig",
-        skinFining: "trocken",
-        skinDiscoloration: "rosig",
-        bgaOxy: 601,
-        bgaSbh: 652,
-        hb: 401,
-        bz: 916,
-        clotting: 100,
-        liver: 111,
-        kidney: 120,
-        infarct: 134,
-        lactate: 144,
-        extremities: 523,
-        thorax: 340,
-        trauma: 108,
-        ultraschall: 621,
-        ekg: 746,
-        zvd: 805 
-      }
-    )
-
-    transitionStore.addTransition(
-      {
-        id: 1,
-        nodeId: '',
-        firstCondition: Number.NEGATIVE_INFINITY,
-        nextStates: [2, 3]
-      }
-    )
-
-    transitionStore.addTransition(
-      {
-        id: 2,
-        nodeId: '',
-        firstCondition: Number.NEGATIVE_INFINITY,
-        nextStates: [4]
-      }
-    )
-
-    editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement, patientEditorStore, patientStateStore, transitionStore)
+    editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement)
     
     await editor.value?.layout()
-  })
+    
+    if (editor.value) {
+      patientModule.value = editor.value.getModules().patientModuleData
+      transitionModules.value = editor.value.getModules().transitionModulesData
+      componentModules.value = editor.value.getModules().componentModulesData
+      editor.value.openModule('', 'patient')
+    }
 
-  function download(){
-    console.log('Download')
-    usePatientStateStore().exportToCSV()
-  }
+    loadPatientInfo()
+  })
 
   function openPatient() {
     editor.value?.openModule('', 'patient').then(() => {
       editor.value?.layout()
     })
     patientInfoFormIsVisible.value = true
+    loadPatientInfo()
   }
-
-onMounted(() => {
-  if (editor.value) {
-    patientModule.value = editor.value.getModules().patientModuleData
-    transitionModules.value = editor.value.getModules().transitionModulesData
-    componentModules.value = editor.value.getModules().componentModulesData
-    editor.value.openModule('', 'patient')
-  }
-})
 
 watch(editor, (newEditor) => {
   if (newEditor) {
@@ -231,7 +52,7 @@ function openModule(id: string, type: string) {
 }
 
 function newTransitionModule() {
-  const id = prompt('Module id')
+  const id = prompt('Transition Id')
   if (id) {
     editor.value?.newTransitionModule(id)
     transitionModules.value = editor.value.getModules().transitionModulesData
@@ -240,7 +61,7 @@ function newTransitionModule() {
 }
 
 function newComponentModule() {
-  const id = prompt('Module name')
+  const id = prompt('Komponenten Id')
   if (id) {
     editor.value?.newComponentModule(id)
     componentModules.value = editor.value.getModules().componentModulesData
@@ -254,6 +75,10 @@ function saveModule() {
 
 function restoreModule() {
   editor.value?.restoreModule()
+}
+
+function exportData() {
+  editor.value?.exportData()
 }
 </script>
 
@@ -302,7 +127,7 @@ function restoreModule() {
 		<button @click="editor?.layout(); console.log('Clicked Layout-Button')">
 			Auto Layout
 		</button>
-		<button @click="download(); saveModule()">
+		<button @click="exportData()">
 			Export
 		</button>
 	</div>
