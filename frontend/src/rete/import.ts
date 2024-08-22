@@ -12,6 +12,8 @@ import {
 import { removeConnections } from "./utils"
 import { ActionIDs } from "./constants"
 import { DropdownOption } from "./dropdown"
+import { addState } from "@/components/ModulePatientEditor.vue"
+import { State } from "./types"
 
 export async function createNode(
   { editor, area, dataflow, modules, process }: Context,
@@ -36,7 +38,11 @@ export async function createNode(
 
     return node
   }
-  if (type === "State") return new StateNode()
+  if (type === "State") {
+    const stateNode = new StateNode()
+    addState(stateNode.id)
+    return stateNode
+  }
   if (type === "Action") return new ActionNode()
   if (type === "isInRange") return new isInRangeNode(data.fromValue, data.toValue)
   throw new Error("Unsupported node")
@@ -58,6 +64,10 @@ export async function importEditor(context: Context, nodes: any) {
         }
       })
       const node = new ActionNode(initialSelection, undefined, n.quantity)
+      node.id = n.id
+      await context.editor.addNode(node)
+    } else if (n.type === "State") {
+      const node = new StateNode()
       node.id = n.id
       await context.editor.addNode(node)
     } else { 

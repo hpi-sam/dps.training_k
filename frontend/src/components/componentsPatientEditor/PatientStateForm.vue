@@ -8,6 +8,7 @@
 		(newVal) => {
 			const patientStateFormNode = getNode('patientStateForm')
 			patientStateFormNode?.input(newVal)
+			console.log(newVal)
 		}
 	)
 </script>

@@ -4,7 +4,7 @@
   import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
   import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
   import 'antd/dist/reset.css'
-  import { Editor } from '@/rete/types'
+  import { Editor, State } from '@/rete/types'
   import data from '@/rete/data/data.json'
 
   const patientModule = ref("" as string)
@@ -112,10 +112,47 @@ function exportData() {
     patientInfoFormIsVisible.value = false
     currentStateId.value = stateId
   }
+
   export const info = ref({} as any)
-  export const states = ref([] as any)
+  export const states = ref([] as State[])
   export const currentStateId = ref('')
   export const currentState = ref(computed(() => states.value.find((state) => state.id === currentStateId.value)))
+
+  export function addState(stateId: string) {
+    const state: State = {
+      "id": stateId,
+      "airway": "freie Atemwege",
+      "breathingRate": 1,
+      "oxygenSaturation": 1,
+      "breathing": "vertiefte Atmung",
+      "breathingSound": true,
+      "breathingLoudness": "sehr leises AG hörbar",
+      "heartRate": 1,
+      "pulsePalpable": "peripher tastbar",
+      "rivaRocci": "1/1",
+      "consciousness": "wach, orientiert",
+      "pupils": "mittelweit",
+      "psyche": "unauffällig",
+      "skinFining": "trocken",
+      "skinDiscoloration": "rosig",
+      "bgaOxy": 601,
+      "bgaSbh": 652,
+      "hb": 401,
+      "bz": 916,
+      "clotting": 100,
+      "liver": 111,
+      "kidney": 120,
+      "infarct": 134,
+      "lactate": 144,
+      "extremities": 523,
+      "thorax": 340,
+      "trauma": 108,
+      "ultraschall": 621,
+      "ekg": 746,
+      "zvd": 805
+  }
+    states.value.push(state)
+  }
 </script>
 
 <template>
@@ -152,7 +189,7 @@ function exportData() {
 		<button size="small" @click="restoreModule">
 			Restore
 		</button>
-		<button @click="editor?.layout(); console.log('Clicked Layout-Button')">
+		<button @click="editor?.layout()">
 			Auto Layout
 		</button>
 		<button @click="exportData()">

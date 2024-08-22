@@ -50,4 +50,37 @@ export interface Editor {
     openModule(id: string, type: string): Promise<void>;
     layout(): Promise<void>;
     destroy(): void;
-  }
+}
+
+export interface State {
+    id: string;
+    airway: string;
+    breathingRate: number;
+    oxygenSaturation: number;
+    breathing: string;
+    breathingSound: boolean;
+    breathingLoudness: string;
+    heartRate: number;
+    pulsePalpable: string;
+    rivaRocci: string;
+    consciousness: string;
+    pupils: string;
+    psyche: string;
+    skinFining: string;
+    skinDiscoloration: string;
+    bgaOxy: number;
+    bgaSbh: number;
+    hb: number;
+    bz: number;
+    clotting: number;
+    liver: number;
+    kidney: number;
+    infarct: number;
+    lactate: number;
+    extremities: number;
+    thorax: number;
+    trauma: number;
+    ultraschall: number;
+    ekg: number;
+    zvd: number;
+}
