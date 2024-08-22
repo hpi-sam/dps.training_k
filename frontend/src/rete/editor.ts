@@ -68,6 +68,7 @@ export async function createEditor(container: HTMLElement) {
       if (node instanceof StateNode) {
         openPatientState(node.id)
       }
+      return
     }
     return context
   })
