@@ -51,6 +51,7 @@ export async function createEditor(container: HTMLElement) {
         ["Input", () => createNode(context, "Input", { key: "key" })],
         ["Output", () => createNode(context, "Output", { key: "key" })],
         ["Module", () => createNode(context, "Module", { name: "" })],
+        ["Transition", () => createNode(context, "Transition", {})],
         ["Action", () => createNode(context, "Action", {})]
       ])
     })
@@ -151,7 +152,7 @@ export async function createEditor(container: HTMLElement) {
     async (id, editor) => {
       const data = transitionModulesData.find((module) => module.id === id)?.flow
 
-      if (!data) throw new Error("cannot find module")
+      if (!data) throw new Error("cannot find module "+id)
       await importEditor(
         {
           ...context,
@@ -181,9 +182,10 @@ export async function createEditor(container: HTMLElement) {
   const context: Context = {
     editor,
     area,
-    modules: transitionModules,
     dataflow,
-    process
+    process,
+    transitionModules,
+    componentModules
   }
 
   await process()

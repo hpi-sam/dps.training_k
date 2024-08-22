@@ -5,7 +5,7 @@ import { socket } from "../sockets"
 export class InputNode
   extends Classic.Node<
     {},
-    { value: Classic.Socket },
+    { out: Classic.Socket },
     { key: Classic.InputControl<"text"> }
   >
   implements DataflowNode {
@@ -17,7 +17,7 @@ export class InputNode
     super("Input")
 
     this.addControl("key", new Classic.InputControl("text", { initial }))
-    this.addOutput("value", new Classic.Output(socket, "Number"))
+    this.addOutput("out", new Classic.Output(socket, "out"))
   }
 
   data() {

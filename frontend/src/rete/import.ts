@@ -7,23 +7,23 @@ import {
   OutputNode,
   StateNode,
   ActionNode,
-  isInRangeNode
+  isInRangeNode,
+  TransitionNode
 } from "./nodes/index"
 import { removeConnections } from "./utils"
 import { ActionIDs } from "./constants"
 import { DropdownOption } from "./dropdown"
 import { addState } from "@/components/ModulePatientEditor.vue"
-import { State } from "./types"
 
 export async function createNode(
-  { editor, area, dataflow, modules, process }: Context,
+  { editor, area, dataflow, process, transitionModules, componentModules }: Context,
   type: string,
   data: any
 ) {
   if (type === "Number") return new NumberNode(data.value, process)
   if (type === "Add") return new AddNode(process, data)
-  if (type === "Input") return new InputNode(data.key)
-  if (type === "Output") return new OutputNode(data.key)
+  if (type === "Input") return new InputNode(data?.key || "key")
+  if (type === "Output") return new OutputNode(data?.key || "key")
   if (type === "Module") {
     const node = new ModuleNode(
       data.type,
@@ -35,8 +35,20 @@ export async function createNode(
       }
     )
     await node.update()
-
+    
+    console.log("Module", node)
     return node
+  }
+  if (type === "Transition") {
+    const transitionNode = new TransitionNode(
+      transitionModules.findModule,
+      (id) => removeConnections(editor, id),
+      (id) => {
+        area.update("node", id)
+        process()
+      }
+    )
+    return transitionNode
   }
   if (type === "State") {
     const stateNode = new StateNode()
@@ -86,10 +98,16 @@ export async function importEditor(context: Context, nodes: any) {
       createConnection(source, "false", target2, "in", context)
     }
     
-    if (n.type === "State" || n.type === "Transition" || n.type === "Input") {
+    if (n.type === "State" || n.type === "Transition") {
       const source = context.editor.getNode(n.id)
       const target = context.editor.getNode(n.next)
       createConnection(source, "next", target, "in", context)
+    }
+
+    if (n.type === "Input") {
+      const source = context.editor.getNode(n.id)
+      const target = context.editor.getNode(n.next)
+      createConnection(source, "out", target, "in", context)
     }
   }
 }
@@ -109,6 +127,8 @@ async function createConnection(source: any, sourceOutput: any, target: any, tar
     )
 
     await context.editor.addConnection(conn)
+  } else {
+    //throw new Error("Invalid connection:" + [source?.id, sourceOutput, target?.id, targetInput])
   }
 }
 
@@ -134,7 +154,14 @@ export function exportEditor(context: Context) {
       nodes.push({
         id: n.id,
         type: n.label,
-        //next: n.outputs.get("out").connections[0].input.node.id
+        next: connections.filter(c => c.source === n.id)[0]?.target || null,
+      })
+    }
+
+    if (n.label === "Output") {
+      nodes.push({
+        id: n.id,
+        type: n.label,
       })
     }
   }

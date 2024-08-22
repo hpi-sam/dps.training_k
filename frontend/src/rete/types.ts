@@ -13,10 +13,11 @@ import {
     ModuleNode,
     StateNode,
     ActionNode,
-    isInRangeNode
+    isInRangeNode,
+    TransitionNode
   } from "./nodes/index.js"
 
-export type Node = StateNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode | ActionNode | isInRangeNode;
+export type Node = StateNode | AddNode | NumberNode | InputNode | OutputNode | ModuleNode | ActionNode | isInRangeNode | TransitionNode
 
 export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 
@@ -35,10 +36,11 @@ export type AreaExtra =
 
 export type Context = {
     process: () => void
-    modules: Modules<Schemes>
     editor: NodeEditor<Schemes>
     area: AreaPlugin<Schemes, any>
     dataflow: DataflowEngine<Schemes>
+    transitionModules: Modules<Schemes>
+    componentModules: Modules<Schemes>
 }
 
 export interface Editor {
