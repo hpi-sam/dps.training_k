@@ -1,21 +1,21 @@
 <script setup lang="ts">
 	import { getNode } from '@formkit/core'
-	import data from '@/rete/data/data.json'
-</script>
-
-<script lang="ts">
-	export function loadPatientInfo() {
-		const patientInfo = data.static
-        const patientInfoFormNode = getNode('patientInfoForm')
-        patientInfoFormNode?.input(patientInfo)
-    }
+	import { info } from '@/components/ModulePatientEditor.vue'
+	import { watch } from 'vue'
+	
+	watch(
+		info,
+		(newVal) => {
+			const patientInfoFormNode = getNode('patientInfoForm')
+			patientInfoFormNode?.input(newVal)
+		}
+	)
 </script>
 
 <template>
 	<h1>Patient</h1>
 	<FormKit
 		id="patientInfoForm"
-		v-slot="{ value }"
 		type="form"
 	>
 		<FormKit

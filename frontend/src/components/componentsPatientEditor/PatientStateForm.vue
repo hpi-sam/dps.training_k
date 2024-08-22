@@ -1,27 +1,23 @@
 <script setup lang="ts">
     import { getNode } from '@formkit/core'
-	import data from '@/rete/data/data.json'
-</script>
+	import { currentState } from '@/components/ModulePatientEditor.vue'
+	import { watch } from 'vue'
 
-<script lang="ts">
-	import { ref } from 'vue'
-	const patientStateId = ref('')
-
-    export function loadPatientState(stateId: string) {
-		const  patientState = data.states.find(state => state.id === stateId)
-        const patientStateFormNode = getNode('patientStateForm')
-        patientStateFormNode?.input(patientState)
-		patientStateId.value = patientState?.id || ''
-    }
+	watch(
+		currentState,
+		(newVal) => {
+			const patientStateFormNode = getNode('patientStateForm')
+			patientStateFormNode?.input(newVal)
+		}
+	)
 </script>
 
 <template>
 	<!-- eslint-disable max-len -->
 	<!-- eslint-disable vue/max-len -->
-	<h1>Zustand {{ patientStateId }}</h1>
+	<h1>Zustand {{ currentState?.id }}</h1>
 	<FormKit
 		id="patientStateForm"
-		v-slot="{ value }"
 		type="form"
 	>
 		<FormKit
@@ -583,7 +579,5 @@
 				{ value: 826, label: '23' }
 			]"
 		/>
-        
-		<pre wrap>{{ value }}</pre>
 	</FormKit>
 </template>

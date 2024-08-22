@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import { ref, onMounted, watch } from 'vue'
+  import { ref, onMounted, watch, computed } from 'vue'
   import { createEditor as createPatientEditor } from '@/rete/editor'
   import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
   import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
   import 'antd/dist/reset.css'
   import { Editor } from '@/rete/types'
-  import { loadPatientInfo } from '@/components/componentsPatientEditor/PatientInfoForm.vue'
+  import data from '@/rete/data/data.json'
 
   const patientModule = ref("" as string)
   const transitionModules = ref([] as string[])
@@ -26,14 +26,22 @@
     }
 
     loadPatientInfo()
+    loadPatientStates()
   })
+
+  function loadPatientInfo() {
+    info.value = data.info
+  }
+
+  function loadPatientStates() {
+    states.value = data.states
+  }
 
   function openPatient() {
     editor.value?.openModule('', 'patient').then(() => {
       editor.value?.layout()
     })
     patientInfoFormIsVisible.value = true
-    loadPatientInfo()
   }
 
 watch(editor, (newEditor) => {
@@ -78,16 +86,36 @@ function restoreModule() {
 }
 
 function exportData() {
-  editor.value?.exportData()
+  saveModule()
+  const data = {
+    info: info.value,
+    flow: editor.value?.getModules().patientModuleData,
+    states: states.value,
+    transitions: editor.value?.getModules().transitionModulesData,
+    components: editor.value?.getModules().componentModulesData
+  }
+  const json = JSON.stringify(data)
+  const blob = new Blob([json], { type: 'text/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'patient.json'
+  a.click()
+  URL.revokeObjectURL(url)
 }
 </script>
 
 <script lang="ts">
   const patientInfoFormIsVisible = ref(true)
 
-  export function showPatientStateForm() {
+  export function openPatientState(stateId: string) {
     patientInfoFormIsVisible.value = false
+    currentStateId.value = stateId
   }
+  export const info = ref({} as any)
+  export const states = ref([] as any)
+  export const currentStateId = ref('')
+  export const currentState = ref(computed(() => states.value.find((state) => state.id === currentStateId.value)))
 </script>
 
 <template>
@@ -132,7 +160,7 @@ function exportData() {
 		</button>
 	</div>
 	<div ref="editorContainer" class="rete" />
-	<div v-if="patientInfoFormIsVisible" class="right-sidebar overlay">
+	<div v-show="patientInfoFormIsVisible" class="right-sidebar overlay">
 		<PatientInfoForm />
 	</div>
 	<div class="right-sidebar">

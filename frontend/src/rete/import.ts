@@ -11,7 +11,7 @@ import {
 } from "./nodes/index"
 import { removeConnections } from "./utils"
 import { ActionIDs } from "./constants"
-import { DropdownOption } from "./nodes/action"
+import { DropdownOption } from "./dropdown"
 
 export async function createNode(
   { editor, area, dataflow, modules, process }: Context,

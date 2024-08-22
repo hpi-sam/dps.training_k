@@ -9,9 +9,7 @@ import {
 } from 'rete-auto-arrange-plugin'
 import { ContextMenuPlugin, Presets as ContextMenuPresets } from 'rete-context-menu-plugin'
 import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
-
-import { loadPatientState } from '@/components/componentsPatientEditor/PatientStateForm.vue'
-import { showPatientStateForm } from '@/components/ModulePatientEditor.vue'
+import { openPatientState } from '@/components/ModulePatientEditor.vue'
 import { Modules } from "./modules.js"
 import { clearEditor } from "./utils.js"
 import { createNode, exportEditor, importEditor } from "./import.js"
@@ -68,8 +66,7 @@ export async function createEditor(container: HTMLElement) {
     if (context.type === 'nodepicked') {
       const node = editor.getNode(context.data.id)
       if (node instanceof StateNode) {
-        showPatientStateForm()
-        loadPatientState(node.id)
+        openPatientState(node.id)
       }
     }
     return context
@@ -264,31 +261,12 @@ export async function createEditor(container: HTMLElement) {
     openModule,
     layout: async () => {
       await arrange.layout()
-      console.log("Layout arranged")
       AreaExtensions.zoomAt(area, editor.getNodes())
     },
     destroy: () => {
       console.log("area.destroy1", area.nodeViews.size)
 
       area.destroy()
-    },
-    exportData: () => {
-      saveModule()
-      const data = {
-        static: {},
-        flow: getModules().patientModuleData,
-        states: [],
-        transitions: getModules().transitionModulesData,
-        components: getModules().componentModulesData
-      }
-      const json = JSON.stringify(data)
-      const blob = new Blob([json], { type: 'text/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'patient.json'
-      a.click()
-      URL.revokeObjectURL(url)
     }
   }
 }
