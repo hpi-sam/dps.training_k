@@ -48,8 +48,8 @@ export async function createEditor(container: HTMLElement) {
     const contextMenu = new ContextMenuPlugin<Schemes>({
       items: ContextMenuPresets.classic.setup([
         ['State', () => createNode(context, "State", {})],
-        ["Input", () => createNode(context, "Input", { key: "key" })],
-        ["Output", () => createNode(context, "Output", { key: "key" })],
+        ["Input", () => createNode(context, "Input", { key: "in" })],
+        ["Output", () => createNode(context, "Output", { key: "out" })],
         ["Module", () => createNode(context, "Module", { name: "" })],
         ["Transition", () => createNode(context, "Transition", {})],
         ["Action", () => createNode(context, "Action", {})]

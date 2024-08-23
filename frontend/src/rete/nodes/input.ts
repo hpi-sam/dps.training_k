@@ -11,22 +11,15 @@ export class InputNode
   implements DataflowNode {
   width = 180
   height = 140
-  value: any = null
 
-  constructor(initial: string) {
+  constructor(initial: string, change?: (value: string) => void) {
     super("Input")
 
-    this.addControl("key", new Classic.InputControl("text", { initial }))
+    this.addControl("key", new Classic.InputControl("text", { initial, change }))
     this.addOutput("out", new Classic.Output(socket, "out"))
   }
 
   data() {
-    return {
-      value: this.value
-    }
-  }
-
-  serialize() {
     return {
       key: this.controls.key.value
     }

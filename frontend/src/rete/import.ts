@@ -20,25 +20,8 @@ export async function createNode(
   type: string,
   data: any
 ) {
-  if (type === "Number") return new NumberNode(data.value, process)
-  if (type === "Add") return new AddNode(process, data)
-  if (type === "Input") return new InputNode(data?.key || "key")
-  if (type === "Output") return new OutputNode(data?.key || "key")
-  if (type === "Module") {
-    const node = new ModuleNode(
-      data.type,
-      modules.findModule,
-      (id) => removeConnections(editor, id),
-      (id) => {
-        area.update("node", id)
-        process()
-      }
-    )
-    await node.update()
-    
-    console.log("Module", node)
-    return node
-  }
+  if (type === "Input") return new InputNode(data?.key)
+  if (type === "Output") return new OutputNode(data?.key)
   if (type === "Transition") {
     const transitionNode = new TransitionNode(
       transitionModules.findModule,
@@ -56,7 +39,6 @@ export async function createNode(
     return stateNode
   }
   if (type === "Action") return new ActionNode()
-  if (type === "isInRange") return new isInRangeNode(data.fromValue, data.toValue)
   throw new Error("Unsupported node")
 }
 
@@ -80,6 +62,14 @@ export async function importEditor(context: Context, nodes: any) {
       await context.editor.addNode(node)
     } else if (n.type === "State") {
       const node = new StateNode()
+      node.id = n.id
+      await context.editor.addNode(node)
+    } else if (n.type === "Input") {
+      const node = new InputNode(n.key)
+      node.id = n.id
+      await context.editor.addNode(node)
+    } else if (n.type === "Output") {
+      const node = new OutputNode(n.key)
       node.id = n.id
       await context.editor.addNode(node)
     } else { 
@@ -150,7 +140,7 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "State" || n.label === "Transition" || n.label === "Input") {
+    if (n.label === "State" || n.label === "Transition") {
       nodes.push({
         id: n.id,
         type: n.label,
@@ -158,10 +148,20 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "Output") {
+    if (n.label === "Input" && n instanceof InputNode) {
       nodes.push({
         id: n.id,
         type: n.label,
+        key: n.data().key,
+        next: connections.filter(c => c.source === n.id)[0]?.target || null,
+      })
+    }
+
+    if (n.label === "Output" && n instanceof OutputNode) {
+      nodes.push({
+        id: n.id,
+        type: n.label,
+        key: n.data().key,
       })
     }
   }

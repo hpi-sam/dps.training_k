@@ -20,7 +20,9 @@ export class OutputNode
   }
 
   data() {
-    return {}
+    return {
+      key: this.controls.key.value
+    }
   }
 
   serialize() {
