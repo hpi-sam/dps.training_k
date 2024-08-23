@@ -70,6 +70,23 @@ export async function importEditor(context: Context, nodes: any) {
       const node = new OutputNode(n.key)
       node.id = n.id
       await context.editor.addNode(node)
+    } else if (n.type === "Transition") {
+      const node = new TransitionNode(
+        context.transitionModulesData,
+        context.transitionModules.findModule,
+        (id) => removeConnections(context.editor, id),
+        async (id) => {
+          context.area.update("node", id)
+          context.process()
+        },
+        {
+          name: n.transition,
+          value: n.transition,
+        }
+      )
+      node.id = n.id
+      await node.update()
+      await context.editor.addNode(node)
     } else { 
       const node = await createNode(context, n.type, n.data)
       node.id = n.id
@@ -138,10 +155,19 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "State" || n.label === "Transition") {
+    if (n.label === "State" && n instanceof StateNode) {
       nodes.push({
         id: n.id,
         type: n.label,
+        next: connections.filter(c => c.source === n.id)[0]?.target || null,
+      })
+    }
+
+    if (n.label === "Transition" && n instanceof TransitionNode) {
+      nodes.push({
+        id: n.id,
+        type: n.label,
+        transition: n.controls.selection.selection.name,
         next: connections.filter(c => c.source === n.id)[0]?.target || null,
       })
     }
