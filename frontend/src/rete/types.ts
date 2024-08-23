@@ -36,10 +36,10 @@ export type Context = {
     process: () => void
     editor: NodeEditor<Schemes>
     area: AreaPlugin<Schemes, any>
-    dataflow: DataflowEngine<Schemes>
-    transitionModulesData: string[]
+    //dataflow: DataflowEngine<Schemes>
+    transitionModulesData: any
     transitionModules: Modules<Schemes>
-    componentModulesData: string[]
+    componentModulesData: any
     componentModules: Modules<Schemes>
 }
 

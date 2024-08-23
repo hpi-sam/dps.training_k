@@ -131,7 +131,7 @@ export async function createEditor(container: HTMLElement) {
   let componentModulesData = data.components
 
   const patientModule = new Modules<Schemes>(
-    true,
+    () => true,
     async (id, editor) => {
       const data = patientModuleData
 
@@ -147,7 +147,7 @@ export async function createEditor(container: HTMLElement) {
   )
 
   const transitionModules = new Modules<Schemes>(
-    (id) => transitionModulesData.find((module) => module.id === id),
+    (id) => transitionModulesData.find((module) => module.id === id) !== undefined,
     async (id, editor) => {
       const data = transitionModulesData.find((module) => module.id === id)?.flow
 
@@ -163,7 +163,7 @@ export async function createEditor(container: HTMLElement) {
   )
 
   const componentModules = new Modules<Schemes>(
-    (id) => componentModulesData.find((module) => module.id === id),
+    (id) => componentModulesData.find((module) => module.id === id) !== undefined,
     async (id, editor) => {
       const data = componentModulesData.find((module) => module.id === id)?.flow
 

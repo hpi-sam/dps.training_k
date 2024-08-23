@@ -12,7 +12,7 @@ import { DropdownOption } from "./dropdown"
 import { addState } from "@/components/ModulePatientEditor.vue"
 
 export async function createNode(
-  { editor, area, dataflow, process, transitionModulesData, transitionModules, componentModulesData, componentModules }: Context,
+  { editor, area, process, transitionModulesData, transitionModules, componentModulesData, componentModules }: Context,
   type: string,
   data: any
 ) {

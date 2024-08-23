@@ -3,7 +3,7 @@ import { InputNode } from "./nodes/input"
 import { OutputNode } from "./nodes/output"
 import { DataflowEngine, DataflowNode } from "rete-engine"
 
-export type Schemes = GetSchemes<ClassicPreset.Node & DataflowNode, any>;
+export type Schemes = GetSchemes<any, any>;
 
 export type Module<S extends Schemes> = {
   apply: (editor: NodeEditor<S>) => Promise<void>;

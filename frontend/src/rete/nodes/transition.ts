@@ -30,8 +30,7 @@ export class TransitionNode
       new DropdownControl(
         transitionModulesData.map((module) => ({name: module.id, value: module })),
         initialSelection,
-        async (option) => {
-          this.id = option.name
+        async () => {
           await this.update()
           await updateUI(this.id)
         }
@@ -41,8 +40,7 @@ export class TransitionNode
   }
 
   async update() {
-    this.id = this.controls.selection.selection.name
-    this.module = this.findModule(this.id)
+    this.module = this.findModule(this.controls.selection.selection.name)
 
     await this.reset(this.id)
     if (this.module) {
@@ -69,8 +67,8 @@ export class TransitionNode
       this.addOutput(key, new Classic.Output(socket, key))
     })
     this.height =
-      150 +
-      25 * (Object.keys(this.inputs).length + Object.keys(this.outputs).length)
+      100 +
+      35 * (Object.keys(this.inputs).length + Object.keys(this.outputs).length)
   }
 
   async data(inputs: Record<string, any>) {
