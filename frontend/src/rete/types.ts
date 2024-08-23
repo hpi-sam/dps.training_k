@@ -1,7 +1,6 @@
 import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete'
 import { Modules } from "./modules.js"
 import { Area2D, AreaPlugin } from 'rete-area-plugin'
-import { DataflowEngine } from "rete-engine"
 import { VueArea2D } from 'rete-vue-plugin'
 import { ContextMenuExtra } from 'rete-context-menu-plugin'
 
@@ -33,7 +32,6 @@ export type AreaExtra =
   | ContextMenuExtra
 
 export type Context = {
-    process: () => void
     editor: NodeEditor<Schemes>
     area: AreaPlugin<Schemes, any>
     //dataflow: DataflowEngine<Schemes>

@@ -1,7 +1,7 @@
-import { ClassicPreset, GetSchemes, NodeEditor } from "rete"
+import { GetSchemes, NodeEditor } from "rete"
 import { InputNode } from "./nodes/input"
 import { OutputNode } from "./nodes/output"
-import { DataflowEngine, DataflowNode } from "rete-engine"
+import { DataflowEngine  } from "rete-engine"
 
 export type Schemes = GetSchemes<any, any>;
 

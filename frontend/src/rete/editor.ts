@@ -13,7 +13,6 @@ import { openPatientState } from '@/components/ModulePatientEditor.vue'
 import { Modules } from "./modules.js"
 import { clearEditor } from "./utils.js"
 import { createNode, exportEditor, importEditor } from "./import.js"
-import { createEngine } from "./processing.js"
 
 import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
@@ -120,9 +119,6 @@ export async function createEditor(container: HTMLElement) {
   const selector = AreaExtensions.selector()
   const accumulating = AreaExtensions.accumulateOnCtrl()
   AreaExtensions.selectableNodes(area, selector, { accumulating })
-  
-  const { dataflow, process } = createEngine(editor as any, area as any)
-  editor.use(dataflow as any)
 
   // Modules
 
@@ -181,15 +177,11 @@ export async function createEditor(container: HTMLElement) {
   const context: Context = {
     editor,
     area,
-    dataflow,
-    process,
     transitionModulesData,
     transitionModules,
     componentModulesData,
     componentModules
   }
-
-  await process()
 
   function saveModule() {
     const data = exportEditor(context)

@@ -12,7 +12,7 @@ import { DropdownOption } from "./dropdown"
 import { addState } from "@/components/ModulePatientEditor.vue"
 
 export async function createNode(
-  { editor, area, process, transitionModulesData, transitionModules, componentModulesData, componentModules }: Context,
+  { editor, area, transitionModulesData, transitionModules, componentModulesData, componentModules }: Context,
   type: string,
   data: any
 ) {
@@ -23,10 +23,7 @@ export async function createNode(
       transitionModulesData,
       transitionModules.findModule,
       (id) => removeConnections(editor, id),
-      async (id) => {
-        area.update("node", id)
-        process()
-      }
+      async (id) => area.update("node", id)
     )
     await transitionNode.update()
     return transitionNode
@@ -75,10 +72,7 @@ export async function importEditor(context: Context, nodes: any) {
         context.transitionModulesData,
         context.transitionModules.findModule,
         (id) => removeConnections(context.editor, id),
-        async (id) => {
-          context.area.update("node", id)
-          context.process()
-        },
+        async (id) => context.area.update("node", id),
         {
           name: n.transition,
           value: n.transition,
