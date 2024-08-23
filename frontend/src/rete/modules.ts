@@ -54,7 +54,7 @@ export class Modules<S extends Schemes> {
     inputNodes.forEach((node) => {
       const key = node.controls.key.value
       if (key) {
-        node.value = inputData[key] && inputData[key][0]
+        node.key = inputData[key] && inputData[key][0]
       }
     })
   }

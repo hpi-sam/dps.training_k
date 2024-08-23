@@ -1,13 +1,9 @@
 import { Connection, Context } from "./types"
 import {
-  AddNode,
   InputNode,
-  ModuleNode,
-  NumberNode,
   OutputNode,
   StateNode,
   ActionNode,
-  isInRangeNode,
   TransitionNode
 } from "./nodes/index"
 import { removeConnections } from "./utils"
@@ -16,7 +12,7 @@ import { DropdownOption } from "./dropdown"
 import { addState } from "@/components/ModulePatientEditor.vue"
 
 export async function createNode(
-  { editor, area, dataflow, process, transitionModules, componentModules }: Context,
+  { editor, area, dataflow, process, transitionModulesData, transitionModules, componentModulesData, componentModules }: Context,
   type: string,
   data: any
 ) {
@@ -24,13 +20,15 @@ export async function createNode(
   if (type === "Output") return new OutputNode(data?.key)
   if (type === "Transition") {
     const transitionNode = new TransitionNode(
+      transitionModulesData,
       transitionModules.findModule,
       (id) => removeConnections(editor, id),
-      (id) => {
+      async (id) => {
         area.update("node", id)
         process()
       }
     )
+    await transitionNode.update()
     return transitionNode
   }
   if (type === "State") {

@@ -17,6 +17,7 @@ export class TransitionNode
   module: null | Module<Schemes> = null
 
   constructor(
+    transitionModulesData: string[],
     private findModule: (id: string) => null | Module<Schemes>,
     private reset: (nodeId: string) => Promise<void>,
     updateUI: (nodeId: string) => void,
@@ -27,15 +28,12 @@ export class TransitionNode
     this.addControl(
       "selection",
       new DropdownControl(
-        [
-          { name: "Transition 1", value: "Transition 1" },
-          { name: "Transition 2", value: "Transition 2" }
-        ],
+        transitionModulesData.map((module) => ({name: module.id, value: module })),
         initialSelection,
-        async (value) => {
-            this.id = value
-            await this.update()
-            updateUI(this.id)
+        async (option) => {
+          this.id = option.name
+          await this.update()
+          await updateUI(this.id)
         }
       )
     )
@@ -43,18 +41,19 @@ export class TransitionNode
   }
 
   async update() {
-    this.module = this.findModule(this.path)
+    this.id = this.controls.selection.selection.name
+    this.module = this.findModule(this.id)
 
     await this.reset(this.id)
     if (this.module) {
       const editor = new NodeEditor<Schemes>()
       await this.module.apply(editor)
-
+      
       const { inputs, outputs } = Modules.getPorts(editor)
       this.syncPorts(inputs, outputs)
     } else this.syncPorts([], [])
   }
-
+  
   syncPorts(inputs: string[], outputs: string[]) {
     Object.keys(this.inputs).forEach((key: keyof typeof this.inputs) =>
       this.removeInput(key)
@@ -70,7 +69,7 @@ export class TransitionNode
       this.addOutput(key, new Classic.Output(socket, key))
     })
     this.height =
-      110 +
+      150 +
       25 * (Object.keys(this.inputs).length + Object.keys(this.outputs).length)
   }
 
@@ -78,11 +77,5 @@ export class TransitionNode
     const data = await this.module?.exec(inputs)
 
     return data || {}
-  }
-
-  serialize() {
-    return {
-      name: this.controls.module.value
-    }
   }
 }

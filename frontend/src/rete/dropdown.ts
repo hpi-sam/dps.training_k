@@ -6,24 +6,23 @@ export interface DropdownOption {
   }
   
   export class DropdownControl extends Classic.Control {
-    selection: DropdownOption
+    private _selection: DropdownOption
     optionsList: DropdownOption[]
+    onChange: (option: DropdownOption) => void
   
     constructor(optionsList: DropdownOption[], initial?: DropdownOption, change?: (option: DropdownOption) => void) {
       super()
       this.optionsList = optionsList || []
-      this.selection = initial || this.optionsList[0]
+      this._selection = initial || this.optionsList[0]
       this.onChange = change as any
     }
-  
-    setValue(option: DropdownOption): void {
-      this.selection = option
-      if (this.onChange) {
-        this.onChange(option)
-      }
+
+    get selection(): DropdownOption {
+      return this._selection
     }
-  
-    onChange(option: DropdownOption): void {
-      this.setValue(option)
+
+    set selection(option: DropdownOption) {
+      this._selection = option    
+      this.onChange(option)
     }
   }

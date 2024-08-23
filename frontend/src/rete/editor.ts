@@ -48,10 +48,9 @@ export async function createEditor(container: HTMLElement) {
     const contextMenu = new ContextMenuPlugin<Schemes>({
       items: ContextMenuPresets.classic.setup([
         ['State', () => createNode(context, "State", {})],
+        ["Transition", () => createNode(context, "Transition", {})],
         ["Input", () => createNode(context, "Input", { key: "in" })],
         ["Output", () => createNode(context, "Output", { key: "out" })],
-        ["Module", () => createNode(context, "Module", { name: "" })],
-        ["Transition", () => createNode(context, "Transition", {})],
         ["Action", () => createNode(context, "Action", {})]
       ])
     })
@@ -184,7 +183,9 @@ export async function createEditor(container: HTMLElement) {
     area,
     dataflow,
     process,
+    transitionModulesData,
     transitionModules,
+    componentModulesData,
     componentModules
   }
 
