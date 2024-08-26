@@ -25,9 +25,9 @@ export class ActionNode
 
     ActionIDs.sort((a, b) => a.name.localeCompare(b.name))
 
-    this.addInput("in", new Classic.Input(socket, "in"))
-    this.addOutput("true", new Classic.Output(socket, "true"))
-    this.addOutput("false", new Classic.Output(socket, "false"))
+    this.addInput("in", new Classic.Input(socket, "in", true))
+    this.addOutput("true", new Classic.Output(socket, "true", false))
+    this.addOutput("false", new Classic.Output(socket, "false", false))
     this.addControl(
       "selection",
       new DropdownControl(

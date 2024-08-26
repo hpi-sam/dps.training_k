@@ -15,8 +15,8 @@ export class StateNode
   constructor() {
     super("State")
 
-    this.addInput("in", new Classic.Input(socket, "in"))
-    this.addOutput("next", new Classic.Output(socket, "next"))
+    this.addInput("in", new Classic.Input(socket, "in", true))
+    this.addOutput("next", new Classic.Output(socket, "next", false))
   }
 
   data() {

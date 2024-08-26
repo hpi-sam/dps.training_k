@@ -61,10 +61,10 @@ export class TransitionNode
     )
 
     inputs.forEach((key) => {
-      this.addInput(key, new Classic.Input(socket, key))
+      this.addInput(key, new Classic.Input(socket, key, true))
     })
     outputs.forEach((key) => {
-      this.addOutput(key, new Classic.Output(socket, key))
+      this.addOutput(key, new Classic.Output(socket, key, false))
     })
     this.height =
       100 +

@@ -16,7 +16,7 @@ export class InputNode
     super("Input")
 
     this.addControl("key", new Classic.InputControl("text", { initial, change }))
-    this.addOutput("out", new Classic.Output(socket, "out"))
+    this.addOutput("out", new Classic.Output(socket, "out", false))
   }
 
   data() {

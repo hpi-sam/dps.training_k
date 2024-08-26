@@ -15,7 +15,7 @@ export class InitialStateNode
   constructor() {
     super("InitialState")
 
-    this.addOutput("next", new Classic.Output(socket, "next"))
+    this.addOutput("next", new Classic.Output(socket, "next", false))
   }
 
   data() {
