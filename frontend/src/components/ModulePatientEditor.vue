@@ -17,16 +17,20 @@
     editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement)
     
     await editor.value?.layout()
-    
+
     if (editor.value) {
       patientModule.value = editor.value.getModules().patientModuleData
       transitionModules.value = editor.value.getModules().transitionModulesData
       componentModules.value = editor.value.getModules().componentModulesData
       editor.value.openModule('', 'patient')
     }
-
+    
     loadPatientInfo()
     loadPatientStates()
+
+    setTimeout(() => {
+      editor.value?.layout()
+    }, 100)
   })
 
   function loadPatientInfo() {

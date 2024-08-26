@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { ClassicPreset as Classic, NodeEditor } from 'rete'
 import { AreaExtensions, AreaPlugin } from 'rete-area-plugin'
 import { ConnectionPlugin } from 'rete-connection-plugin'
@@ -7,7 +7,7 @@ import {
   AutoArrangePlugin,
   Presets as ArrangePresets,
 } from 'rete-auto-arrange-plugin'
-import { ContextMenuPlugin, Presets as ContextMenuPresets } from 'rete-context-menu-plugin'
+import { CustomContextMenu, Presets as ContextMenuPresets } from './customization/CustomContextMenu'
 import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
 import { openPatientState } from '@/components/ModulePatientEditor.vue'
 import { Modules } from "./modules.js"
@@ -44,15 +44,35 @@ export async function createEditor(container: HTMLElement) {
     })
   )*/
 
-  const contextMenu = new ContextMenuPlugin<Schemes>({
+  const contextMenu = new CustomContextMenu<Schemes>({
     items: ContextMenuPresets.classic.setup([
+      ['InitialState', () => createNode(context, "InitialState", {})],
       ['State', () => createNode(context, "State", {})],
-      ["Transition", () => createNode(context, "Transition", {})],
-      ["Input", () => createNode(context, "Input", { key: "in" })],
-      ["Output", () => createNode(context, "Output", { key: "out" })],
-      ["Action", () => createNode(context, "Action", {})],
-      ['InitialState', () => createNode(context, "InitialState", {})]
+      ["Transition", () => createNode(context, "Transition", {})]
     ])
+  })
+
+  watch(editorMode, (newMode) => {
+    console.log("editorMode", newMode)
+    if (newMode === "patient") {
+      contextMenu.updateItems(ContextMenuPresets.classic.setup([
+        ['InitialState', () => createNode(context, "InitialState", {})],
+        ['State', () => createNode(context, "State", {})],
+        ["Transition", () => createNode(context, "Transition", {})]
+      ]))
+    } else if (newMode === "transition") {
+      contextMenu.updateItems(ContextMenuPresets.classic.setup([
+        ["Input", () => createNode(context, "Input", { key: "in" })],
+        ["Output", () => createNode(context, "Output", { key: "out" })],
+        ["Action", () => createNode(context, "Action", {})]
+      ]))
+    } else if (newMode === "component") {
+      contextMenu.updateItems(ContextMenuPresets.classic.setup([
+        ["Input", () => createNode(context, "Input", { key: "in" })],
+        ["Output", () => createNode(context, "Output", { key: "out" })],
+        ["Action", () => createNode(context, "Action", {})]
+      ]))
+    }
   })
 
   editor.use(area)
