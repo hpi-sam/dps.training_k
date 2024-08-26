@@ -44,21 +44,21 @@ export async function createEditor(container: HTMLElement) {
     })
   )*/
 
-    const contextMenu = new ContextMenuPlugin<Schemes>({
-      items: ContextMenuPresets.classic.setup([
-        ['State', () => createNode(context, "State", {})],
-        ["Transition", () => createNode(context, "Transition", {})],
-        ["Input", () => createNode(context, "Input", { key: "in" })],
-        ["Output", () => createNode(context, "Output", { key: "out" })],
-        ["Action", () => createNode(context, "Action", {})],
-        ['InitialState', () => createNode(context, "InitialState", {})]
-      ])
-    })
-  
-    editor.use(area)
-    area.use(vueRender)
-    area.use(connection)
-    area.use(contextMenu)
+  const contextMenu = new ContextMenuPlugin<Schemes>({
+    items: ContextMenuPresets.classic.setup([
+      ['State', () => createNode(context, "State", {})],
+      ["Transition", () => createNode(context, "Transition", {})],
+      ["Input", () => createNode(context, "Input", { key: "in" })],
+      ["Output", () => createNode(context, "Output", { key: "out" })],
+      ["Action", () => createNode(context, "Action", {})],
+      ['InitialState', () => createNode(context, "InitialState", {})]
+    ])
+  })
+
+  editor.use(area)
+  area.use(vueRender)
+  area.use(connection)
+  area.use(contextMenu)
 
   area.area.setZoomHandler(null)
 
@@ -251,9 +251,11 @@ export async function createEditor(container: HTMLElement) {
     },
     newTransitionModule: (id: string) => {
       transitionModulesData = [ ...transitionModulesData, {id: id, flow: []}]
+      context.transitionModulesData = transitionModulesData
     },
     newComponentModule: (id: string) => {
       componentModulesData = [ ...componentModulesData, {id: id, flow: []}]
+      context.componentModulesData = componentModulesData
     },
     openModule,
     layout: async () => {
