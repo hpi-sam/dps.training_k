@@ -50,7 +50,8 @@ export async function createEditor(container: HTMLElement) {
         ["Transition", () => createNode(context, "Transition", {})],
         ["Input", () => createNode(context, "Input", { key: "in" })],
         ["Output", () => createNode(context, "Output", { key: "out" })],
-        ["Action", () => createNode(context, "Action", {})]
+        ["Action", () => createNode(context, "Action", {})],
+        ['InitialState', () => createNode(context, "InitialState", {})]
       ])
     })
   

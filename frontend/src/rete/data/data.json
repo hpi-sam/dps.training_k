@@ -22,6 +22,26 @@
             "id": "412dd1fc78142fbe",
             "type": "State",
             "next": null
+        },
+        {
+            "id": "7d4e43b64700be9f",
+            "type": "InitialState",
+            "next": "c77de010ac52b5ec"
+        },
+        {
+            "id": "c77de010ac52b5ec",
+            "type": "Transition",
+            "transition": "Transition 2",
+            "next": [
+                {
+                    "key": "out3",
+                    "value": "9235871077f3ce09"
+                },
+                {
+                    "key": "out1",
+                    "value": "412dd1fc78142fbe"
+                }
+            ]
         }
     ],
     "states": [
@@ -61,6 +81,38 @@
             "id": "412dd1fc78142fbe",
             "airway": "freie Atemwege",
             "breathingRate": 2,
+            "oxygenSaturation": 1,
+            "breathing": "vertiefte Atmung",
+            "breathingSound": true,
+            "breathingLoudness": "sehr leises AG hörbar",
+            "heartRate": 1,
+            "pulsePalpable": "peripher tastbar",
+            "rivaRocci": "1/1",
+            "consciousness": "wach, orientiert",
+            "pupils": "mittelweit",
+            "psyche": "unauffällig",
+            "skinFining": "trocken",
+            "skinDiscoloration": "rosig",
+            "bgaOxy": 601,
+            "bgaSbh": 652,
+            "hb": 401,
+            "bz": 916,
+            "clotting": 100,
+            "liver": 111,
+            "kidney": 120,
+            "infarct": 134,
+            "lactate": 144,
+            "extremities": 523,
+            "thorax": 340,
+            "trauma": 108,
+            "ultraschall": 621,
+            "ekg": 746,
+            "zvd": 805
+        },
+        {
+            "id": "7d4e43b64700be9f",
+            "airway": "freie Atemwege",
+            "breathingRate": 1,
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
             "breathingSound": true,

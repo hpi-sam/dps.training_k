@@ -9,10 +9,11 @@ import {
     OutputNode,
     StateNode,
     ActionNode,
-    TransitionNode
+    TransitionNode,
+    InitialStateNode
   } from "./nodes/index.js"
 
-export type Node = StateNode | InputNode | OutputNode | ActionNode | TransitionNode
+export type Node = StateNode | InputNode | OutputNode | ActionNode | TransitionNode | InitialStateNode
 
 export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 

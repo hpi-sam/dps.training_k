@@ -4,7 +4,8 @@ import {
   OutputNode,
   StateNode,
   ActionNode,
-  TransitionNode
+  TransitionNode,
+  InitialStateNode
 } from "./nodes/index"
 import { removeConnections } from "./utils"
 import { ActionIDs } from "./constants"
@@ -33,11 +34,17 @@ export async function createNode(
     addState(stateNode.id)
     return stateNode
   }
+  if (type === "InitialState") {
+    const initialStateNode = new InitialStateNode()
+    addState(initialStateNode.id)
+    return initialStateNode
+  }
   if (type === "Action") return new ActionNode()
   throw new Error("Unsupported node")
 }
 
 export async function importEditor(context: Context, nodes: any) {
+  // Import nodes
   for (const n of nodes) {
     if (n.type === "Action") {
       let initialSelection: DropdownOption = {
@@ -55,19 +62,29 @@ export async function importEditor(context: Context, nodes: any) {
       const node = new ActionNode(initialSelection, undefined, n.quantity)
       node.id = n.id
       await context.editor.addNode(node)
-    } else if (n.type === "State") {
+    }
+
+    if (n.type === "InitialState") {
+      const node = new InitialStateNode()
+      node.id = n.id
+      await context.editor.addNode(node)
+    }
+    if (n.type === "State") {
       const node = new StateNode()
       node.id = n.id
       await context.editor.addNode(node)
-    } else if (n.type === "Input") {
+    }
+    if (n.type === "Input") {
       const node = new InputNode(n.key)
       node.id = n.id
       await context.editor.addNode(node)
-    } else if (n.type === "Output") {
+    }
+    if (n.type === "Output") {
       const node = new OutputNode(n.key)
       node.id = n.id
       await context.editor.addNode(node)
-    } else if (n.type === "Transition") {
+    }
+    if (n.type === "Transition") {
       const node = new TransitionNode(
         context.transitionModulesData,
         context.transitionModules.findModule,
@@ -81,13 +98,10 @@ export async function importEditor(context: Context, nodes: any) {
       node.id = n.id
       await node.update()
       await context.editor.addNode(node)
-    } else { 
-      const node = await createNode(context, n.type, n.data)
-      node.id = n.id
-      await context.editor.addNode(node)
     }
   }
 
+  // Import connections
   for (const n of nodes) {
     if (n.type === "Action") {
       const source = context.editor.getNode(n.id)
@@ -97,7 +111,7 @@ export async function importEditor(context: Context, nodes: any) {
       createConnection(source, "false", target2, "in", context)
     }
     
-    if (n.type === "State") {
+    if (n.type === "State" || n.type === "InitialState") {
       const source = context.editor.getNode(n.id)
       const target = context.editor.getNode(n.next)
       createConnection(source, "next", target, "in", context)
@@ -156,7 +170,7 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "State" && n instanceof StateNode) {
+    if (n.label === "State" && n instanceof StateNode || n.label === "InitialState" && n instanceof InitialStateNode) {
       nodes.push({
         id: n.id,
         type: n.label,
