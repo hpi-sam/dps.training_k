@@ -5,7 +5,8 @@ import {
   StateNode,
   ActionNode,
   TransitionNode,
-  InitialStateNode
+  InitialStateNode,
+  ComponentNode
 } from "./nodes/index"
 import { removeConnections } from "./utils"
 import { ActionIDs } from "./constants"
@@ -40,6 +41,16 @@ export async function createNode(
     return initialStateNode
   }
   if (type === "Action") return new ActionNode()
+  if (type === "Component") {
+    const componentNode = new ComponentNode(
+      componentModulesData,
+      componentModules.findModule,
+      (id) => removeConnections(editor, id),
+      async (id) => area.update("node", id)
+    )
+    await componentNode.update()
+    return componentNode
+  }
   throw new Error("Unsupported node")
 }
 
@@ -99,6 +110,21 @@ export async function importEditor(context: Context, nodes: any) {
       await node.update()
       await context.editor.addNode(node)
     }
+    if (n.type === "Component") {
+      const node = new ComponentNode(
+        context.componentModulesData,
+        context.componentModules.findModule,
+        (id) => removeConnections(context.editor, id),
+        async (id) => context.area.update("node", id),
+        {
+          name: n.component,
+          value: n.component,
+        }
+      )
+      node.id = n.id
+      await node.update()
+      await context.editor.addNode(node)
+    }
   }
 
   // Import connections
@@ -117,7 +143,7 @@ export async function importEditor(context: Context, nodes: any) {
       createConnection(source, "next", target, "in", context)
     }
     
-    if (n.type === "Transition") {
+    if (n.type === "Transition" || n.type === "Component") {
       const source = context.editor.getNode(n.id)
 
       for (const next of n.next) {
@@ -192,6 +218,24 @@ export function exportEditor(context: Context) {
         id: n.id,
         type: n.label,
         transition: n.controls.selection.selection.name,
+        next: nextList
+      })
+    }
+
+    if (n.label === "Component" && n instanceof ComponentNode) {
+      const nextList = []
+      const outgoingConnections = connections.filter(c => c.source === n.id)
+      for (const o of outgoingConnections) {
+        nextList.push({
+          key: o.sourceOutput,
+          value: o.target
+        })
+      }
+
+      nodes.push({
+        id: n.id,
+        type: n.label,
+        component: n.controls.selection.selection.name,
         next: nextList
       })
     }

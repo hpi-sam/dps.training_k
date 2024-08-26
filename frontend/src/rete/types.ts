@@ -10,10 +10,11 @@ import {
     StateNode,
     ActionNode,
     TransitionNode,
-    InitialStateNode
+    InitialStateNode,
+    ComponentNode
   } from "./nodes/index.js"
 
-export type Node = StateNode | InputNode | OutputNode | ActionNode | TransitionNode | InitialStateNode
+export type Node = StateNode | InputNode | OutputNode | ActionNode | TransitionNode | InitialStateNode | ComponentNode
 
 export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 
@@ -22,6 +23,8 @@ export type Conn =
   | Connection<InputNode, ActionNode>
   | Connection<ActionNode, OutputNode>
   | Connection<ActionNode, ActionNode>
+  | Connection<StateNode, TransitionNode>
+  | Connection<TransitionNode, StateNode>
   | Connection<StateNode, TransitionNode>
   | Connection<TransitionNode, StateNode>
 

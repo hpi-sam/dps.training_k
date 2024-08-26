@@ -64,7 +64,8 @@ export async function createEditor(container: HTMLElement) {
       contextMenu.updateItems(ContextMenuPresets.classic.setup([
         ["Input", () => createNode(context, "Input", { key: "in" })],
         ["Output", () => createNode(context, "Output", { key: "out" })],
-        ["Action", () => createNode(context, "Action", {})]
+        ["Action", () => createNode(context, "Action", {})],
+        ["Component", () => createNode(context, "Component", {})]
       ]))
     } else if (newMode === "component") {
       contextMenu.updateItems(ContextMenuPresets.classic.setup([
