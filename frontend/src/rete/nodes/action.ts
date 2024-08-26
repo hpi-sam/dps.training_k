@@ -6,7 +6,7 @@ import { DropdownControl, DropdownOption } from "../dropdown"
 
 export class ActionNode
   extends Classic.Node<
-    { in: Classic.Socket; true: Classic.Socket; false: Classic.Socket },
+    { in: Classic.Socket },
     { true: Classic.Socket; false: Classic.Socket },
     { selection: DropdownControl, quantity: Classic.InputControl<"number"> }
   >

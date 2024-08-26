@@ -34,7 +34,6 @@ export type AreaExtra =
 export type Context = {
     editor: NodeEditor<Schemes>
     area: AreaPlugin<Schemes, any>
-    //dataflow: DataflowEngine<Schemes>
     transitionModulesData: any
     transitionModules: Modules<Schemes>
     componentModulesData: any

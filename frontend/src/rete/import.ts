@@ -97,10 +97,19 @@ export async function importEditor(context: Context, nodes: any) {
       createConnection(source, "false", target2, "in", context)
     }
     
-    if (n.type === "State" || n.type === "Transition") {
+    if (n.type === "State") {
       const source = context.editor.getNode(n.id)
       const target = context.editor.getNode(n.next)
       createConnection(source, "next", target, "in", context)
+    }
+    
+    if (n.type === "Transition") {
+      const source = context.editor.getNode(n.id)
+
+      for (const next of n.next) {
+        const target = context.editor.getNode(next.value)
+        createConnection(source, next.key, target, "in", context)
+      }
     }
 
     if (n.type === "Input") {
@@ -126,8 +135,6 @@ async function createConnection(source: any, sourceOutput: any, target: any, tar
     )
 
     await context.editor.addConnection(conn)
-  } else {
-    //throw new Error("Invalid connection:" + [source?.id, sourceOutput, target?.id, targetInput])
   }
 }
 
@@ -158,11 +165,20 @@ export function exportEditor(context: Context) {
     }
 
     if (n.label === "Transition" && n instanceof TransitionNode) {
+      const nextList = []
+      const outgoingConnections = connections.filter(c => c.source === n.id)
+      for (const o of outgoingConnections) {
+        nextList.push({
+          key: o.sourceOutput,
+          value: o.target
+        })
+      }
+
       nodes.push({
         id: n.id,
         type: n.label,
         transition: n.controls.selection.selection.name,
-        next: connections.filter(c => c.source === n.id)[0]?.target || null,
+        next: nextList
       })
     }
 

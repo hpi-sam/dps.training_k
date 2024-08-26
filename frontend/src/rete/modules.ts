@@ -17,8 +17,6 @@ export class Modules<S extends Schemes> {
   ) {}
 
   public findModule = (id: string): null | Module<S> => {
-    //if (!this.has(id)) return null
-
     return {
       apply: (editor: NodeEditor<S>) => this.graph(id, editor),
       exec: async (inputData: Record<string, any>) => {
