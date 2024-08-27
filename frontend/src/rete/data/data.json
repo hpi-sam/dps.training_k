@@ -58,10 +58,6 @@
             "transition": "Transition 3",
             "next": [
                 {
-                    "key": "out5",
-                    "value": "2b36b14cf9710a19"
-                },
-                {
                     "key": "out3",
                     "value": "cd4a4f829c6037bc"
                 },
@@ -75,14 +71,9 @@
                 },
                 {
                     "key": "out2",
-                    "value": "b219bf5991a8a4d5"
+                    "value": "5c3c456553b7cf86"
                 }
             ]
-        },
-        {
-            "id": "2b36b14cf9710a19",
-            "type": "State",
-            "next": null
         },
         {
             "id": "cd4a4f829c6037bc",
@@ -98,17 +89,12 @@
             "id": "29006e62132eb202",
             "type": "State",
             "next": null
-        },
-        {
-            "id": "b219bf5991a8a4d5",
-            "type": "State",
-            "next": null
         }
     ],
     "states": [
         {
             "id": "9235871077f3ce09",
-            "airway": "freie Atemwege",
+            "airway": "künstlicher Atemweg",
             "breathingRate": 1,
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
@@ -140,7 +126,7 @@
         },
         {
             "id": "412dd1fc78142fbe",
-            "airway": "freie Atemwege",
+            "airway": "künstlicher Atemweg",
             "breathingRate": 2,
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
@@ -172,7 +158,7 @@
         },
         {
             "id": "7d4e43b64700be9f",
-            "airway": "freie Atemwege",
+            "airway": "Atemwegsverlegung",
             "breathingRate": 1,
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
@@ -204,7 +190,7 @@
         },
         {
             "id": "5c3c456553b7cf86",
-            "airway": "freie Atemwege",
+            "airway": "Atemwegsverlegung",
             "breathingRate": 1,
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
@@ -301,7 +287,7 @@
         {
             "id": "2031b1363731f9da",
             "airway": "freie Atemwege",
-            "breathingRate": 1,
+            "breathingRate": "2",
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
             "breathingSound": true,
@@ -333,7 +319,7 @@
         {
             "id": "29006e62132eb202",
             "airway": "freie Atemwege",
-            "breathingRate": 1,
+            "breathingRate": "3",
             "oxygenSaturation": 1,
             "breathing": "vertiefte Atmung",
             "breathingSound": true,
@@ -536,7 +522,7 @@
                         },
                         {
                             "key": "out3",
-                            "value": "749dae7b1f8b2084"
+                            "value": "045c976c8e0e3f78"
                         }
                     ]
                 },
@@ -565,11 +551,6 @@
                         "true": "10c45b790a50eeee",
                         "false": "045c976c8e0e3f78"
                     }
-                },
-                {
-                    "id": "749dae7b1f8b2084",
-                    "type": "Output",
-                    "key": "out5"
                 },
                 {
                     "id": "10c45b790a50eeee",

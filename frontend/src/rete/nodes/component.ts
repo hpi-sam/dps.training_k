@@ -28,7 +28,7 @@ export class ComponentNode
     this.addControl(
       "selection",
       new DropdownControl(
-        componentModulesData.map((module) => ({name: module.id, value: module.id })),
+        componentModulesData.map((module) => ({name: (module as any).id, value: (module as any).id })),
         initialSelection,
         async () => {
           await this.update()

@@ -45,7 +45,11 @@ export type Context = {
 }
 
 export interface Editor {
-    getModules(): { patientModuleData: string, transitionModulesData: string[], componentModulesData: string[] };
+    getModules(): {
+      patientModuleData: ({ id: string; type: string; next: string; transition?: any; })
+      transitionModulesData: ({ id: string; type: string; next: string; transition?: any; })[]
+      componentModulesData: ({ id: string; type: string; next: string; transition?: any; })[]
+    },
     saveModule(): void;
     restoreModule(): void;
     newTransitionModule(id: string): void;

@@ -18,7 +18,7 @@ import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
 import data from './data/data.json'
-import { StateNode } from './nodes/index'
+import { StateNode, InitialStateNode } from './nodes/index'
 
 const editorMode = ref<string>("patient")
 
@@ -86,7 +86,7 @@ export async function createEditor(container: HTMLElement) {
   area.addPipe(context => {
     if (context.type === 'nodepicked') {
       const node = editor.getNode(context.data.id)
-      if (node instanceof StateNode) {
+      if (node instanceof StateNode || node instanceof InitialStateNode) {
         openPatientState(node.id)
       }
       return

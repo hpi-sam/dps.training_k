@@ -28,7 +28,7 @@ export class TransitionNode
     this.addControl(
       "selection",
       new DropdownControl(
-        transitionModulesData.map((module) => ({name: module.id, value: module.id })),
+        transitionModulesData.map((module) => ({name: (module as any).id, value: (module as any).id })),
         initialSelection,
         async () => {
           await this.update()

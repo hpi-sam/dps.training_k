@@ -7,14 +7,14 @@
   import { Editor, State } from '@/rete/types'
   import data from '@/rete/data/data.json'
 
-  const patientModule = ref("" as string)
-  const transitionModules = ref([] as string[])
-  const componentModules = ref([] as string[])
+  const patientModule = ref("" as any)
+  const transitionModules = ref([] as any)
+  const componentModules = ref([] as any)
   const editorContainer = ref(null)
   const editor = ref(null as unknown as Editor)
 
   onMounted(async () => {
-    editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement)
+    editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement) as any as Editor
     
     await editor.value?.layout()
 
@@ -81,16 +81,8 @@ function newComponentModule() {
   }
 }
 
-function saveModule() {
-  editor.value?.saveModule()
-}
-
-function restoreModule() {
-  editor.value?.restoreModule()
-}
-
 function exportData() {
-  saveModule()
+  editor.value.saveModule()
   const data = {
     info: info.value,
     flow: editor.value?.getModules().patientModuleData,
@@ -186,12 +178,6 @@ function exportData() {
 		</button>
 		<button size="small" @click="newComponentModule">
 			Neue Komponente
-		</button>
-		<button size="small" @click="saveModule">
-			Save
-		</button>
-		<button size="small" @click="restoreModule">
-			Restore
 		</button>
 		<button @click="editor?.layout()">
 			Auto Layout
