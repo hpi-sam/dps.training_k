@@ -80,3 +80,32 @@ export const ActionIDs = [
     {name: "Lyophilisiertes Frischplasma Vorbereiten", id: "bf4c6cd9-6ee1-4b43-aa71-a9f6939b7cdf"},
     {name: "Lyophilisiertes Frischplasma Anwenden", id: "2d160077-141e-4a90-8af0-3a019c7338fc"},
 ]
+
+export const MaterialIDs = [
+    {name: "Erythrozytenkonzentrat", id: "f6576558-c1d3-4548-823b-2c1e2b0636d7"},
+    {name: "Fresh Frozen Plasma", id: "9caf09e2-2cc0-4e6c-bed2-8c932d7afd59"},
+    {name: "Beatmungsbeutel", id: "9ddcbe2f-0c95-4562-8dc9-3e9ab990a526"},
+    {name: "Spritzenpumpe", id: "4f452e8b-ceaf-423d-9a14-04c08217fe99"},
+    {name: "Wärmegerät für Blutprodukte", id: "2ccbae94-b539-4227-ab2c-8cbc15470604"},
+    {name: "Blutgasanalyse", id: "2ea085df-fc13-492f-822c-e44d634247e5"},
+    {name: "EKG", id: "e6d9e9f3-7b0e-4a5a-8b1b-3e8a1e2f1c2d"},
+    {name: "Lab Gerät 1", id: "f37df2ee-46a0-4b50-8c4d-5e67f1397f73"},
+    {name: "Lab Gerät 2", id: "a69cc043-7d61-4dd9-9a54-21b8c0ad80bb"},
+    {name: "Lab Gerät 3", id: "9a39d581-706f-47db-ab4a-6a7a43cec4f5"},
+    {name: "Sonographie", id: "ed289ad9-74d5-4715-8715-111f1d53e487"},
+    {name: "Computertomographie", id: "536df65d-47b3-4d2d-b7fa-aef2ecf780c3"},
+    {name: "Röntgengerät", id: "8cf7c5e1-aec8-49f4-a5a6-4699deb4bc52"},
+    {name: "ZVD Messgerät", id: "308337d8-e765-4790-8b65-5576ed060cb1"},
+    {name: "BZ Messgerät", id: "bec79e8b-14b2-48a1-9ea8-c678e48f352e"},
+    {name: "Beatmungsgerät Tragbar", id: "2752e40f-4b86-43ab-9ebd-95c094a101ab"},
+    {name: "Beatmungsgerät Stationär", id: "0067d4f1-d53d-4ec5-9627-792687dc7510"},
+    {name: "Beatmungsgerät CPAP", id: "8d81c791-1f19-4b98-8bb0-74c2a7d7afb5"},
+    {name: "Sauerstoff Tragbar", id: "0663296c-3df0-44f8-8b3c-386032ee7783"},
+    {name: "Sauerstoff Stationär", id: "78c9cbbc-9919-49ec-8e86-35d7a73cce23"},
+    {name: "Defi Transkutaner Pacer", id: "04443b9e-ac7d-4145-964c-7a495c9efcef"},
+    {name: "Passagerer Pacer", id: "1b0d3e4c-0a1b-4a7e-9b3c-6b2b4b6b5f7b"},
+    {name: "Perfusorpumpe", id: "4ef8aeb4-2281-40f7-99c6-30097b943a63"},
+    {name: "Narkosegerät", id: "ab4af5f7-c215-4d01-a8d5-3a8f1593e883"},
+    {name: "Blutbank", id: "4e230bfe-c0c9-4a14-a661-082b56f2e4b8"},
+    {name: "Lyophilisiertes Frischplasma", id: "9afaa6f4-93e9-49fb-8047-cf5e89f08c34"}
+]

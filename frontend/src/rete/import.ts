@@ -6,10 +6,11 @@ import {
   ActionNode,
   TransitionNode,
   InitialStateNode,
-  ComponentNode
+  ComponentNode,
+  MaterialNode
 } from "./nodes/index"
 import { removeConnections } from "./utils"
-import { ActionIDs } from "./constants"
+import { ActionIDs, MaterialIDs } from "./constants"
 import { DropdownOption } from "./dropdown"
 import { addState } from "@/components/ModulePatientEditor.vue"
 
@@ -41,6 +42,7 @@ export async function createNode(
     return initialStateNode
   }
   if (type === "Action") return new ActionNode()
+  if (type === "Material") return new MaterialNode()
   if (type === "Component") {
     const componentNode = new ComponentNode(
       componentModulesData,
@@ -71,6 +73,24 @@ export async function importEditor(context: Context, nodes: any) {
         }
       })
       const node = new ActionNode(initialSelection, undefined, n.quantity)
+      node.id = n.id
+      await context.editor.addNode(node)
+    }
+
+    if (n.type === "Material") {
+      let initialSelection: DropdownOption = {
+        name: "",
+        value: "",
+      }
+      MaterialIDs.find((material) => {
+        if (material.id === n.material) {
+          initialSelection = {
+            name: material.name,
+            value: material.id,
+          }
+        }
+      })
+      const node = new MaterialNode(initialSelection, undefined, n.quantity)
       node.id = n.id
       await context.editor.addNode(node)
     }
@@ -129,7 +149,7 @@ export async function importEditor(context: Context, nodes: any) {
 
   // Import connections
   for (const n of nodes) {
-    if (n.type === "Action") {
+    if (n.type === "Action" || n.type === "Material") {
       const source = context.editor.getNode(n.id)
       const target1 = context.editor.getNode(n.next.true)
       const target2 = context.editor.getNode(n.next.false)
@@ -183,7 +203,7 @@ export function exportEditor(context: Context) {
   const connections = context.editor.getConnections()
 
   for (const n of context.editor.getNodes()) {
-    if (n.label === "Action" && n instanceof ActionNode) {
+    if (n instanceof ActionNode) {
       nodes.push({
         id: n.id,
         type: n.label,
@@ -196,7 +216,20 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "State" && n instanceof StateNode || n.label === "InitialState" && n instanceof InitialStateNode) {
+    if (n instanceof MaterialNode) {
+      nodes.push({
+        id: n.id,
+        type: n.label,
+        material: n.selection().value,
+        quantity: n.quantity(),
+        next: {
+          true: connections.filter(c => c.source === n.id && c.sourceOutput === "true")[0]?.target || null,
+          false: connections.filter(c => c.source === n.id && c.sourceOutput === "false")[0]?.target || null,
+        }
+      })
+    }
+
+    if (n instanceof StateNode || n instanceof InitialStateNode) {
       nodes.push({
         id: n.id,
         type: n.label,
@@ -204,7 +237,7 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "Transition" && n instanceof TransitionNode) {
+    if (n instanceof TransitionNode) {
       const nextList = []
       const outgoingConnections = connections.filter(c => c.source === n.id)
       for (const o of outgoingConnections) {
@@ -222,7 +255,7 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "Component" && n instanceof ComponentNode) {
+    if (n instanceof ComponentNode) {
       const nextList = []
       const outgoingConnections = connections.filter(c => c.source === n.id)
       for (const o of outgoingConnections) {
@@ -240,7 +273,7 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "Input" && n instanceof InputNode) {
+    if (n instanceof InputNode) {
       nodes.push({
         id: n.id,
         type: n.label,
@@ -249,7 +282,7 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n.label === "Output" && n instanceof OutputNode) {
+    if (n instanceof OutputNode) {
       nodes.push({
         id: n.id,
         type: n.label,

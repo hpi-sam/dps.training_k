@@ -586,7 +586,7 @@
                     "quantity": 1,
                     "next": {
                         "true": "0298b0819337b202",
-                        "false": "399eec2a6204eede"
+                        "false": "abd8cc6e1efa7abd"
                     }
                 },
                 {
@@ -596,27 +596,27 @@
                     "next": "0adde205c19f0837"
                 },
                 {
-                    "id": "399eec2a6204eede",
-                    "type": "Action",
-                    "action": "7e70364d-1a99-40b1-be29-bbe32055f887",
-                    "quantity": 1,
-                    "next": {
-                        "true": "498d2b23c18bbbc6",
-                        "false": "100c699d5b11c844"
-                    }
-                },
-                {
                     "id": "0298b0819337b202",
                     "type": "Output",
                     "key": "out1"
                 },
                 {
-                    "id": "498d2b23c18bbbc6",
+                    "id": "abd8cc6e1efa7abd",
+                    "type": "Material",
+                    "material": "9ddcbe2f-0c95-4562-8dc9-3e9ab990a526",
+                    "quantity": 1,
+                    "next": {
+                        "true": "88518b5ec1de38a4",
+                        "false": "86cc99d2d37993e1"
+                    }
+                },
+                {
+                    "id": "88518b5ec1de38a4",
                     "type": "Output",
                     "key": "out2"
                 },
                 {
-                    "id": "100c699d5b11c844",
+                    "id": "86cc99d2d37993e1",
                     "type": "Output",
                     "key": "out3"
                 }

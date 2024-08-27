@@ -11,10 +11,11 @@ import {
     ActionNode,
     TransitionNode,
     InitialStateNode,
-    ComponentNode
+    ComponentNode,
+    MaterialNode
   } from "./nodes/index.js"
 
-export type Node = StateNode | InputNode | OutputNode | ActionNode | TransitionNode | InitialStateNode | ComponentNode
+export type Node = StateNode | InputNode | OutputNode | ActionNode | TransitionNode | InitialStateNode | ComponentNode | MaterialNode
 
 export class Connection<A extends Node, B extends Node> extends Classic.Connection<A,B> {}
 
@@ -23,10 +24,15 @@ export type Conn =
   | Connection<InputNode, ActionNode>
   | Connection<ActionNode, OutputNode>
   | Connection<ActionNode, ActionNode>
+  | Connection<InputNode, MaterialNode>
+  | Connection<MaterialNode, OutputNode>
+  | Connection<MaterialNode, MaterialNode>
+  | Connection<ActionNode, MaterialNode>
+  | Connection<MaterialNode, ActionNode>
   | Connection<StateNode, TransitionNode>
   | Connection<TransitionNode, StateNode>
-  | Connection<StateNode, TransitionNode>
-  | Connection<TransitionNode, StateNode>
+  | Connection<StateNode, ComponentNode>
+  | Connection<ComponentNode, StateNode>
 
 export type Schemes = GetSchemes<Node, Conn>
 
