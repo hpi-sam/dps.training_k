@@ -1,0 +1,1256 @@
+[
+    {
+        "info": {
+            "code": "2001",
+            "triage": "rot",
+            "sex": "männlich",
+            "age": "21",
+            "address": "Neue Straße, 10101 Burgstadt",
+            "injury": "Abgetrennter Arm",
+            "biometrics": "rote Haare, blaue Augen, 1.85m",
+            "mobility": "initial gefähig",
+            "preexistingIllnesses": "keine",
+            "permanentMedication": "keine",
+            "currentCaseHistory": "keine",
+            "pretreatment": "Tourniquet"
+        },
+        "flow": [
+            {
+                "id": "9235871077f3ce09",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "412dd1fc78142fbe",
+                "type": "State",
+                "next": "1f266834c4e078a9"
+            },
+            {
+                "id": "7d4e43b64700be9f",
+                "type": "InitialState",
+                "next": "d93e8ecfc0b88ea5"
+            },
+            {
+                "id": "d93e8ecfc0b88ea5",
+                "type": "Transition",
+                "transition": "Transition 2",
+                "next": [
+                    {
+                        "key": "out3",
+                        "value": "9235871077f3ce09"
+                    },
+                    {
+                        "key": "out1",
+                        "value": "412dd1fc78142fbe"
+                    },
+                    {
+                        "key": "out2",
+                        "value": "5c3c456553b7cf86"
+                    }
+                ]
+            },
+            {
+                "id": "5c3c456553b7cf86",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "1f266834c4e078a9",
+                "type": "Transition",
+                "transition": "Transition 3",
+                "next": [
+                    {
+                        "key": "out3",
+                        "value": "cd4a4f829c6037bc"
+                    },
+                    {
+                        "key": "out4",
+                        "value": "2031b1363731f9da"
+                    },
+                    {
+                        "key": "out1",
+                        "value": "29006e62132eb202"
+                    },
+                    {
+                        "key": "out2",
+                        "value": "5c3c456553b7cf86"
+                    }
+                ]
+            },
+            {
+                "id": "cd4a4f829c6037bc",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "2031b1363731f9da",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "29006e62132eb202",
+                "type": "State",
+                "next": null
+            }
+        ],
+        "states": [
+            {
+                "id": "9235871077f3ce09",
+                "airway": "künstlicher Atemweg",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "412dd1fc78142fbe",
+                "airway": "künstlicher Atemweg",
+                "breathingRate": 2,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "7d4e43b64700be9f",
+                "airway": "Atemwegsverlegung",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "5c3c456553b7cf86",
+                "airway": "Atemwegsverlegung",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "2b36b14cf9710a19",
+                "airway": "freie Atemwege",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "cd4a4f829c6037bc",
+                "airway": "freie Atemwege",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "2031b1363731f9da",
+                "airway": "freie Atemwege",
+                "breathingRate": "2",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "29006e62132eb202",
+                "airway": "freie Atemwege",
+                "breathingRate": "3",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "b219bf5991a8a4d5",
+                "airway": "freie Atemwege",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            }
+        ],
+        "transitions": [
+            {
+                "id": "Transition 1",
+                "flow": [
+                    {
+                        "id": "86ebeaf375f35d3d",
+                        "type": "Action",
+                        "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                        "quantity": 1,
+                        "next": {
+                            "true": "84fceae523792447",
+                            "false": "0adde205c19f0837"
+                        }
+                    },
+                    {
+                        "id": "0adde205c19f0837",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 1,
+                        "next": {
+                            "true": "f2b7f0324522dc81",
+                            "false": "842ca6f7b14c432b"
+                        }
+                    },
+                    {
+                        "id": "84fceae523792447",
+                        "type": "Action",
+                        "action": "7613f009-cb28-411d-91a9-26fe438a3bc2",
+                        "quantity": 1,
+                        "next": {
+                            "true": "5974baa226eb4354",
+                            "false": "33f2b137f43306ff"
+                        }
+                    },
+                    {
+                        "id": "5974baa226eb4354",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 5,
+                        "next": {
+                            "true": "5823ab6451ec9363",
+                            "false": "14d78b7a5d148bbc"
+                        }
+                    },
+                    {
+                        "id": "97fbc62010d3c267",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "86ebeaf375f35d3d"
+                    },
+                    {
+                        "id": "5823ab6451ec9363",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "14d78b7a5d148bbc",
+                        "type": "Output",
+                        "key": "out2"
+                    },
+                    {
+                        "id": "33f2b137f43306ff",
+                        "type": "Output",
+                        "key": "out3"
+                    },
+                    {
+                        "id": "f2b7f0324522dc81",
+                        "type": "Output",
+                        "key": "out4"
+                    },
+                    {
+                        "id": "842ca6f7b14c432b",
+                        "type": "Output",
+                        "key": "out5"
+                    }
+                ]
+            },
+            {
+                "id": "Transition 2",
+                "flow": [
+                    {
+                        "id": "0adde205c19f0837",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 2,
+                        "next": {
+                            "true": "5974baa226eb4354",
+                            "false": "7cc3bb0b248b43bf"
+                        }
+                    },
+                    {
+                        "id": "5974baa226eb4354",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 2,
+                        "next": {
+                            "true": "51251de38cb58010",
+                            "false": "574af87e3ba62168"
+                        }
+                    },
+                    {
+                        "id": "7cc3bb0b248b43bf",
+                        "type": "Output",
+                        "key": "out3"
+                    },
+                    {
+                        "id": "da0c66e484e5dc8e",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "0adde205c19f0837"
+                    },
+                    {
+                        "id": "51251de38cb58010",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "574af87e3ba62168",
+                        "type": "Output",
+                        "key": "out2"
+                    }
+                ]
+            },
+            {
+                "id": "Transition 3",
+                "flow": [
+                    {
+                        "id": "e37412e35cf9b1b7",
+                        "type": "Component",
+                        "component": "Komponente 1",
+                        "next": [
+                            {
+                                "key": "out1",
+                                "value": "7dd7a6d5eac10ef8"
+                            },
+                            {
+                                "key": "out2",
+                                "value": "ed94b0d0430c7b0a"
+                            },
+                            {
+                                "key": "out3",
+                                "value": "045c976c8e0e3f78"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "9100c912d99d1c98",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "e37412e35cf9b1b7"
+                    },
+                    {
+                        "id": "7dd7a6d5eac10ef8",
+                        "type": "Action",
+                        "action": "9f442b68-736f-4117-9c0e-f1f0ec26a1c2",
+                        "quantity": 1,
+                        "next": {
+                            "true": "1d08db7ad8745370",
+                            "false": "7c261f8277692536"
+                        }
+                    },
+                    {
+                        "id": "ed94b0d0430c7b0a",
+                        "type": "Action",
+                        "action": "9f442b68-736f-4117-9c0e-f1f0ec26a1c2",
+                        "quantity": 1,
+                        "next": {
+                            "true": "10c45b790a50eeee",
+                            "false": "045c976c8e0e3f78"
+                        }
+                    },
+                    {
+                        "id": "10c45b790a50eeee",
+                        "type": "Output",
+                        "key": "out3"
+                    },
+                    {
+                        "id": "045c976c8e0e3f78",
+                        "type": "Output",
+                        "key": "out4"
+                    },
+                    {
+                        "id": "1d08db7ad8745370",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "7c261f8277692536",
+                        "type": "Output",
+                        "key": "out2"
+                    }
+                ]
+            }
+        ],
+        "components": [
+            {
+                "id": "Komponente 1",
+                "flow": [
+                    {
+                        "id": "0adde205c19f0837",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 1,
+                        "next": {
+                            "true": "0298b0819337b202",
+                            "false": "abd8cc6e1efa7abd"
+                        }
+                    },
+                    {
+                        "id": "152a25e497d296cc",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "0adde205c19f0837"
+                    },
+                    {
+                        "id": "0298b0819337b202",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "abd8cc6e1efa7abd",
+                        "type": "Material",
+                        "material": "9ddcbe2f-0c95-4562-8dc9-3e9ab990a526",
+                        "quantity": 1,
+                        "next": {
+                            "true": "88518b5ec1de38a4",
+                            "false": "86cc99d2d37993e1"
+                        }
+                    },
+                    {
+                        "id": "88518b5ec1de38a4",
+                        "type": "Output",
+                        "key": "out2"
+                    },
+                    {
+                        "id": "86cc99d2d37993e1",
+                        "type": "Output",
+                        "key": "out3"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "info": {
+            "code": "2002",
+            "triage": "grün",
+            "sex": "weiblich",
+            "age": "42",
+            "address": "Neue Straße, 10101 Burgstadt",
+            "injury": "Gebrochene Hüfte",
+            "biometrics": "braune Haare, blaue Augen, 1.75m",
+            "mobility": "nicht gefähig",
+            "preexistingIllnesses": "keine",
+            "permanentMedication": "keine",
+            "currentCaseHistory": "keine",
+            "pretreatment": "keine"
+        },
+        "flow": [
+            {
+                "id": "9235871077f3ce09",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "412dd1fc78142fbe",
+                "type": "State",
+                "next": "1f266834c4e078a9"
+            },
+            {
+                "id": "7d4e43b64700be9f",
+                "type": "InitialState",
+                "next": "d93e8ecfc0b88ea5"
+            },
+            {
+                "id": "d93e8ecfc0b88ea5",
+                "type": "Transition",
+                "transition": "Transition 2",
+                "next": [
+                    {
+                        "key": "out3",
+                        "value": "9235871077f3ce09"
+                    },
+                    {
+                        "key": "out1",
+                        "value": "412dd1fc78142fbe"
+                    },
+                    {
+                        "key": "out2",
+                        "value": "5c3c456553b7cf86"
+                    }
+                ]
+            },
+            {
+                "id": "5c3c456553b7cf86",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "1f266834c4e078a9",
+                "type": "Transition",
+                "transition": "Transition 3",
+                "next": [
+                    {
+                        "key": "out3",
+                        "value": "cd4a4f829c6037bc"
+                    },
+                    {
+                        "key": "out4",
+                        "value": "2031b1363731f9da"
+                    },
+                    {
+                        "key": "out1",
+                        "value": "29006e62132eb202"
+                    },
+                    {
+                        "key": "out2",
+                        "value": "5c3c456553b7cf86"
+                    }
+                ]
+            },
+            {
+                "id": "cd4a4f829c6037bc",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "2031b1363731f9da",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "29006e62132eb202",
+                "type": "State",
+                "next": null
+            }
+        ],
+        "states": [
+            {
+                "id": "9235871077f3ce09",
+                "airway": "künstlicher Atemweg",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "412dd1fc78142fbe",
+                "airway": "künstlicher Atemweg",
+                "breathingRate": 2,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "7d4e43b64700be9f",
+                "airway": "Atemwegsverlegung",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "5c3c456553b7cf86",
+                "airway": "Atemwegsverlegung",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "2b36b14cf9710a19",
+                "airway": "freie Atemwege",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "cd4a4f829c6037bc",
+                "airway": "freie Atemwege",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "2031b1363731f9da",
+                "airway": "freie Atemwege",
+                "breathingRate": "2",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "29006e62132eb202",
+                "airway": "freie Atemwege",
+                "breathingRate": "3",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "b219bf5991a8a4d5",
+                "airway": "freie Atemwege",
+                "breathingRate": 1,
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            }
+        ],
+        "transitions": [
+            {
+                "id": "Transition 1",
+                "flow": [
+                    {
+                        "id": "86ebeaf375f35d3d",
+                        "type": "Action",
+                        "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                        "quantity": 1,
+                        "next": {
+                            "true": "84fceae523792447",
+                            "false": "0adde205c19f0837"
+                        }
+                    },
+                    {
+                        "id": "0adde205c19f0837",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 1,
+                        "next": {
+                            "true": "f2b7f0324522dc81",
+                            "false": "842ca6f7b14c432b"
+                        }
+                    },
+                    {
+                        "id": "84fceae523792447",
+                        "type": "Action",
+                        "action": "7613f009-cb28-411d-91a9-26fe438a3bc2",
+                        "quantity": 1,
+                        "next": {
+                            "true": "5974baa226eb4354",
+                            "false": "33f2b137f43306ff"
+                        }
+                    },
+                    {
+                        "id": "5974baa226eb4354",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 5,
+                        "next": {
+                            "true": "5823ab6451ec9363",
+                            "false": "14d78b7a5d148bbc"
+                        }
+                    },
+                    {
+                        "id": "97fbc62010d3c267",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "86ebeaf375f35d3d"
+                    },
+                    {
+                        "id": "5823ab6451ec9363",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "14d78b7a5d148bbc",
+                        "type": "Output",
+                        "key": "out2"
+                    },
+                    {
+                        "id": "33f2b137f43306ff",
+                        "type": "Output",
+                        "key": "out3"
+                    },
+                    {
+                        "id": "f2b7f0324522dc81",
+                        "type": "Output",
+                        "key": "out4"
+                    },
+                    {
+                        "id": "842ca6f7b14c432b",
+                        "type": "Output",
+                        "key": "out5"
+                    }
+                ]
+            },
+            {
+                "id": "Transition 2",
+                "flow": [
+                    {
+                        "id": "0adde205c19f0837",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 2,
+                        "next": {
+                            "true": "5974baa226eb4354",
+                            "false": "7cc3bb0b248b43bf"
+                        }
+                    },
+                    {
+                        "id": "5974baa226eb4354",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 2,
+                        "next": {
+                            "true": "51251de38cb58010",
+                            "false": "574af87e3ba62168"
+                        }
+                    },
+                    {
+                        "id": "7cc3bb0b248b43bf",
+                        "type": "Output",
+                        "key": "out3"
+                    },
+                    {
+                        "id": "da0c66e484e5dc8e",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "0adde205c19f0837"
+                    },
+                    {
+                        "id": "51251de38cb58010",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "574af87e3ba62168",
+                        "type": "Output",
+                        "key": "out2"
+                    }
+                ]
+            },
+            {
+                "id": "Transition 3",
+                "flow": [
+                    {
+                        "id": "e37412e35cf9b1b7",
+                        "type": "Component",
+                        "component": "Komponente 1",
+                        "next": [
+                            {
+                                "key": "out1",
+                                "value": "7dd7a6d5eac10ef8"
+                            },
+                            {
+                                "key": "out2",
+                                "value": "ed94b0d0430c7b0a"
+                            },
+                            {
+                                "key": "out3",
+                                "value": "045c976c8e0e3f78"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "9100c912d99d1c98",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "e37412e35cf9b1b7"
+                    },
+                    {
+                        "id": "7dd7a6d5eac10ef8",
+                        "type": "Action",
+                        "action": "9f442b68-736f-4117-9c0e-f1f0ec26a1c2",
+                        "quantity": 1,
+                        "next": {
+                            "true": "1d08db7ad8745370",
+                            "false": "7c261f8277692536"
+                        }
+                    },
+                    {
+                        "id": "ed94b0d0430c7b0a",
+                        "type": "Action",
+                        "action": "9f442b68-736f-4117-9c0e-f1f0ec26a1c2",
+                        "quantity": 1,
+                        "next": {
+                            "true": "10c45b790a50eeee",
+                            "false": "045c976c8e0e3f78"
+                        }
+                    },
+                    {
+                        "id": "10c45b790a50eeee",
+                        "type": "Output",
+                        "key": "out3"
+                    },
+                    {
+                        "id": "045c976c8e0e3f78",
+                        "type": "Output",
+                        "key": "out4"
+                    },
+                    {
+                        "id": "1d08db7ad8745370",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "7c261f8277692536",
+                        "type": "Output",
+                        "key": "out2"
+                    }
+                ]
+            }
+        ],
+        "components": [
+            {
+                "id": "Komponente 1",
+                "flow": [
+                    {
+                        "id": "0adde205c19f0837",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 1,
+                        "next": {
+                            "true": "0298b0819337b202",
+                            "false": "abd8cc6e1efa7abd"
+                        }
+                    },
+                    {
+                        "id": "152a25e497d296cc",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "0adde205c19f0837"
+                    },
+                    {
+                        "id": "0298b0819337b202",
+                        "type": "Output",
+                        "key": "out1"
+                    },
+                    {
+                        "id": "abd8cc6e1efa7abd",
+                        "type": "Material",
+                        "material": "9ddcbe2f-0c95-4562-8dc9-3e9ab990a526",
+                        "quantity": 1,
+                        "next": {
+                            "true": "88518b5ec1de38a4",
+                            "false": "86cc99d2d37993e1"
+                        }
+                    },
+                    {
+                        "id": "88518b5ec1de38a4",
+                        "type": "Output",
+                        "key": "out2"
+                    },
+                    {
+                        "id": "86cc99d2d37993e1",
+                        "type": "Output",
+                        "key": "out3"
+                    }
+                ]
+            }
+        ]
+    }
+]
