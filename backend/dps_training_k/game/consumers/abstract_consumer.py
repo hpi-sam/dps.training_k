@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from game.models import Exercise
 from game.serializers.exercise_serializer import ExerciseSerializer
-from template.models import Action, PatientInformation, Material
+from template.models import Action, Patient, Material
 from template.serializers import (
     MaterialSerializer,
     PatientInformationSerializer,
@@ -195,7 +195,8 @@ class AbstractConsumer(JsonWebsocketConsumer, ABC):
         )
 
     def send_available_patients(self):
-        patientsInformation = PatientInformation.objects.all().order_by("code")
+        patientsInformation = Patient.objects.all().order_by("info__code").values("info")
+        
         availablePatients = [
             PatientInformationSerializer(patient_information).data
             for patient_information in patientsInformation

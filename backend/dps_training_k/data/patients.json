@@ -96,6 +96,7 @@
         "states": [
             {
                 "id": "9235871077f3ce09",
+                "isDead": false,
                 "airway": "künstlicher Atemweg",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -128,6 +129,7 @@
             },
             {
                 "id": "412dd1fc78142fbe",
+                "isDead": false,
                 "airway": "künstlicher Atemweg",
                 "breathingRate": 2,
                 "oxygenSaturation": 1,
@@ -160,6 +162,7 @@
             },
             {
                 "id": "7d4e43b64700be9f",
+                "isDead": false,
                 "airway": "Atemwegsverlegung",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -192,6 +195,7 @@
             },
             {
                 "id": "5c3c456553b7cf86",
+                "isDead": false,
                 "airway": "Atemwegsverlegung",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -224,6 +228,7 @@
             },
             {
                 "id": "2b36b14cf9710a19",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -256,6 +261,7 @@
             },
             {
                 "id": "cd4a4f829c6037bc",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -288,6 +294,7 @@
             },
             {
                 "id": "2031b1363731f9da",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": "2",
                 "oxygenSaturation": 1,
@@ -320,6 +327,7 @@
             },
             {
                 "id": "29006e62132eb202",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": "3",
                 "oxygenSaturation": 1,
@@ -352,6 +360,7 @@
             },
             {
                 "id": "b219bf5991a8a4d5",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -723,6 +732,7 @@
         "states": [
             {
                 "id": "9235871077f3ce09",
+                "isDead": false,
                 "airway": "künstlicher Atemweg",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -755,6 +765,7 @@
             },
             {
                 "id": "412dd1fc78142fbe",
+                "isDead": false,
                 "airway": "künstlicher Atemweg",
                 "breathingRate": 2,
                 "oxygenSaturation": 1,
@@ -787,6 +798,7 @@
             },
             {
                 "id": "7d4e43b64700be9f",
+                "isDead": false,
                 "airway": "Atemwegsverlegung",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -819,6 +831,7 @@
             },
             {
                 "id": "5c3c456553b7cf86",
+                "isDead": false,
                 "airway": "Atemwegsverlegung",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -851,6 +864,7 @@
             },
             {
                 "id": "2b36b14cf9710a19",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -883,6 +897,7 @@
             },
             {
                 "id": "cd4a4f829c6037bc",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,
@@ -915,6 +930,7 @@
             },
             {
                 "id": "2031b1363731f9da",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": "2",
                 "oxygenSaturation": 1,
@@ -947,6 +963,7 @@
             },
             {
                 "id": "29006e62132eb202",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": "3",
                 "oxygenSaturation": 1,
@@ -979,6 +996,7 @@
             },
             {
                 "id": "b219bf5991a8a4d5",
+                "isDead": false,
                 "airway": "freie Atemwege",
                 "breathingRate": 1,
                 "oxygenSaturation": 1,

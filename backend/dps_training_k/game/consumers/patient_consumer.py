@@ -275,7 +275,7 @@ class PatientConsumer(AbstractConsumer):
 
     def state_change_event(self, event=None):
         serialized_state = StateSerializer(
-            self.get_patient_instance().patient_state
+            self.get_patient_instance().get_patient_state()
         ).data
         self.send_event(
             self.PatientOutgoingMessageTypes.STATE,
