@@ -139,7 +139,7 @@
 
 		<FormKit
 			id="skinFinding"
-			name="skinFining"
+			name="skinFinding"
 			type="select"
 			label="Befund der Haut"
 			placeholder="Wie ist der Befund der Haut?"

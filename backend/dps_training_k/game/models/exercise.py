@@ -54,8 +54,8 @@ class Exercise(NonEventable, models.Model):
             # we don't start all patients at once to balance out the work for our celery workers
             patient.schedule_state_change(time_offset)
         self.update_state(Exercise.StateTypes.RUNNING)
-        for patient in owned_patients:
-            patient.apply_pretreatments()
+        # for patient in owned_patients:
+        #     patient.apply_pretreatments()
 
     def save(self, *args, **kwargs):
         changes = kwargs.get("update_fields", None)

@@ -129,7 +129,7 @@ function exportData() {
       "consciousness": "wach, orientiert",
       "pupils": "mittelweit",
       "psyche": "unauffällig",
-      "skinFining": "trocken",
+      "skinFinding": "trocken",
       "skinDiscoloration": "rosig",
       "bgaOxy": 601,
       "bgaSbh": 652,

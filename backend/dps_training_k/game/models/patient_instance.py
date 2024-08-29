@@ -45,7 +45,14 @@ class PatientInstance(
         "template.Patient",
         on_delete=models.CASCADE,
     )
-    patient_state_id = models.IntegerField(default=0)
+    patient_state_id = models.CharField(
+        max_length=16,
+        help_text="State of the patient",
+    )
+    triage = models.CharField(
+        choices=Triage.choices,
+        default=Triage.UNDEFINED,
+    )
     user = models.OneToOneField(
         "User",
         on_delete=models.SET_NULL,  # PatientInstance is deleted when user is deleted
@@ -56,7 +63,7 @@ class PatientInstance(
 
     @property
     def code(self):
-        return self.static_information.code
+        return self.patient_template.info.get('code', 0)
 
     def save(self, *args, **kwargs):
         from . import User
@@ -80,9 +87,9 @@ class PatientInstance(
         changes = kwargs.get("update_fields", None)
 
         if (
-            not self.pk or (changes and "static_information" in changes)
-        ) and self.triage is not self.static_information.triage:
-            self.triage = self.static_information.triage
+            not self.pk or (changes and "patient_template" in changes)
+        ) and self.triage is not self.patient_template.info.get("triage", Triage.UNDEFINED):
+            self.triage = self.patient_template.info.get("triage", Triage.UNDEFINED)
             if changes:
                 changes.append("triage")
         PatientInstanceDispatcher.save_and_notify(
@@ -90,7 +97,7 @@ class PatientInstance(
         )
 
         if _state_adding and self.exercise.state == Exercise.StateTypes.RUNNING:
-            self.apply_pretreatments()
+            # self.apply_pretreatments()
             self.schedule_state_change()
 
     def delete(self, using=None, keep_parents=False):
@@ -105,7 +112,7 @@ class PatientInstance(
     def apply_pretreatments(self):
         from game.models import ActionInstance
 
-        for pretreatment, amount in self.static_information.get_pretreatments().items():
+        for pretreatment, amount in self.patient_template.info.get("pretreatment").items():
             for _ in range(amount):
                 kwargs = {}
                 needed_arguments = ActionInstance.needed_arguments_create(pretreatment)
@@ -122,9 +129,9 @@ class PatientInstance(
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
-        state_change_time = 600
+        state_change_time = 120 # change back to 600 seconds = 10 minutes
 
-        if self.patient_template.id_dead(self.patient_state_id):
+        if self.patient_template.is_dead(self.patient_state_id):
             return False
         if self.patient_template.is_final_state(self.patient_state_id):
             return False
@@ -136,7 +143,7 @@ class PatientInstance(
         )
 
     def execute_state_change(self):
-        if self.patient_template.is_dead(self.patient_state_id) or self.patient_template.is_final(self.patient_state_id):
+        if self.patient_template.is_dead(self.patient_state_id) or self.patient_template.is_final_state(self.patient_state_id):
             raise Exception(
                 f"Patient is dead or in final state, state change should have never been scheduled"
             )
@@ -212,7 +219,7 @@ class PatientInstance(
         return "Patient*in"
 
     def can_receive_actions(self):
-        return not (self.patient.is_dead(self.patient_state_id) or self.patient.is_final_state(self.patient_state_id))
+        return not (self.patient_template.is_dead(self.patient_state_id) or self.patient_template.is_final_state(self.patient_state_id))
 
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames

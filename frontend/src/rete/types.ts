@@ -79,7 +79,7 @@ export interface State {
     consciousness: string;
     pupils: string;
     psyche: string;
-    skinFining: string;
+    skinFinding: string;
     skinDiscoloration: string;
     bgaOxy: number;
     bgaSbh: number;
