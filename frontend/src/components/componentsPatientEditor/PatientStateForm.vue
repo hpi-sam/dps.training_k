@@ -21,6 +21,13 @@
 		type="form"
 	>
 		<FormKit
+			id="isDead"
+			name="isDead"
+			type="checkbox"
+			label="Patient ist verstorben"
+		/>
+
+		<FormKit
 			id="airway"
 			name="airway"
 			type="select"

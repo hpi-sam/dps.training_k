@@ -19,6 +19,15 @@
 		type="form"
 	>
 		<FormKit
+			id="code"
+			type="number"
+			name="code"
+			label="Code"
+			placeholder="Ein neuer Code zwischen 2001 und 9999"
+			validation="required|number|between:2001,9999"
+		/>
+
+		<FormKit
 			id="triage"
 			type="select"
 			name="triage"
