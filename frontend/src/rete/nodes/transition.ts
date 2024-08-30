@@ -23,7 +23,7 @@ export class TransitionNode
     updateUI: (nodeId: string) => void,
     initialSelection?: DropdownOption,
   ) {
-    super("Transition")
+    super("Übergang")
 
     this.addControl(
       "selection",
@@ -67,7 +67,7 @@ export class TransitionNode
       this.addOutput(key, new Classic.Output(socket, key, false))
     })
     this.height =
-      100 +
+      90 +
       35 * (Object.keys(this.inputs).length + Object.keys(this.outputs).length)
   }
 

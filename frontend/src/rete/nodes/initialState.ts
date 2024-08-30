@@ -9,13 +9,13 @@ export class InitialStateNode
   >
   implements DataflowNode
 {
-  width = 180
-  height = 100
+  width = 120
+  height = 120
 
   constructor() {
-    super("InitialState")
+    super("Start Zustand")
 
-    this.addOutput("next", new Classic.Output(socket, "next", false))
+    this.addOutput("next", new Classic.Output(socket, undefined, false))
   }
 
   data() {

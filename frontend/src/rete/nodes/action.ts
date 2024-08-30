@@ -21,7 +21,7 @@ export class ActionNode
     initialQuantity?: number,
     changeQuantity?: (value: number) => void
   ) {
-    super("Action")
+    super("Aktion")
 
     ActionIDs.sort((a, b) => a.name.localeCompare(b.name))
 

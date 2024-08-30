@@ -9,14 +9,14 @@ export class StateNode
   >
   implements DataflowNode
 {
-  width = 180
+  width = 120
   height = 120
 
   constructor() {
-    super("State")
+    super("Zustand")
 
-    this.addInput("in", new Classic.Input(socket, "in", true))
-    this.addOutput("next", new Classic.Output(socket, "next", false))
+    this.addInput("in", new Classic.Input(socket, undefined, true))
+    this.addOutput("next", new Classic.Output(socket, undefined, false))
   }
 
   data() {

@@ -206,7 +206,7 @@ export function exportEditor(context: Context) {
     if (n instanceof ActionNode) {
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'Action',
         action: n.selection().value,
         quantity: n.quantity(),
         next: {
@@ -219,7 +219,7 @@ export function exportEditor(context: Context) {
     if (n instanceof MaterialNode) {
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'Material',
         material: n.selection().value,
         quantity: n.quantity(),
         next: {
@@ -229,10 +229,18 @@ export function exportEditor(context: Context) {
       })
     }
 
-    if (n instanceof StateNode || n instanceof InitialStateNode) {
+    if (n instanceof StateNode) {
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'State',
+        next: connections.filter(c => c.source === n.id)[0]?.target || null,
+      })
+    }
+
+    if (n instanceof InitialStateNode) {
+      nodes.push({
+        id: n.id,
+        type: 'InitialState',
         next: connections.filter(c => c.source === n.id)[0]?.target || null,
       })
     }
@@ -249,7 +257,7 @@ export function exportEditor(context: Context) {
 
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'Transition',
         transition: n.controls.selection.selection.name,
         next: nextList
       })
@@ -267,7 +275,7 @@ export function exportEditor(context: Context) {
 
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'Component',
         component: n.controls.selection.selection.name,
         next: nextList
       })
@@ -276,7 +284,7 @@ export function exportEditor(context: Context) {
     if (n instanceof InputNode) {
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'Input',
         key: n.data().key,
         next: connections.filter(c => c.source === n.id)[0]?.target || null,
       })
@@ -285,7 +293,7 @@ export function exportEditor(context: Context) {
     if (n instanceof OutputNode) {
       nodes.push({
         id: n.id,
-        type: n.label,
+        type: 'Output',
         key: n.data().key,
       })
     }

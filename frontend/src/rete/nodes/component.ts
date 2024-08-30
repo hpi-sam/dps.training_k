@@ -23,7 +23,7 @@ export class ComponentNode
     updateUI: (nodeId: string) => void,
     initialSelection?: DropdownOption,
   ) {
-    super("Component")
+    super("Komponente")
 
     this.addControl(
       "selection",

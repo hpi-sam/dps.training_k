@@ -18,7 +18,8 @@ import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
 import data from './data/data.json'
-import { StateNode, InitialStateNode } from './nodes/index'
+import { StateNode, InitialStateNode, InputNode, OutputNode } from './nodes/index'
+import CircleNode from './customization/CircleNode.vue'
 
 export const editorMode = ref<string>("patient")
 
@@ -29,20 +30,22 @@ export async function createEditor(container: HTMLElement) {
   const vueRender = new VuePlugin<Schemes, AreaExtra>()
   const arrange = new AutoArrangePlugin<Schemes, AreaExtra>()
   
-  /*vueRender.addPreset(
+  vueRender.addPreset(
     VuePresets.classic.setup({
       customize: {
         node(context) {
-          if (context.payload.label === 'State') {
+          if (context.payload instanceof StateNode 
+            || context.payload instanceof InitialStateNode
+            || context.payload instanceof InputNode
+            || context.payload instanceof OutputNode
+          ) {
             return CircleNode
-            } else if (context.payload.label === 'Transition') {
-            return SquareNode
             }
-            return VuePresets.classic.Node
-            },
+          return VuePresets.classic.Node
+        },
       },
     })
-  )*/
+  )
 
   const contextMenu = new CustomContextMenu<Schemes>({
     items: ContextMenuPresets.classic.setup([

@@ -9,14 +9,14 @@ export class OutputNode
     { key: Classic.InputControl<"text"> }
   >
   implements DataflowNode {
-  width = 180
-  height = 140
+  width = 120
+  height = 120
 
   constructor(initial: string) {
-    super("Output")
+    super("Option")
 
     this.addControl("key", new Classic.InputControl("text", { initial }))
-    this.addInput("in", new Classic.Input(socket, "in", true))
+    this.addInput("in", new Classic.Input(socket, undefined, true))
   }
 
   data() {

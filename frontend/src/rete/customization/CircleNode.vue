@@ -22,6 +22,15 @@
 		<div class="title" data-testid="title">
 			{{ data.label }}
 		</div>
+		<!-- Controls-->
+		<Ref
+			v-for="[key, control] in controls()"
+			:key="'control' + key + seed"
+			class="control"
+			:emit="emit"
+			:data="{ type: 'control', payload: control }"
+			:data-testid="'control-' + key"
+		/>
 		<!-- Outputs-->
 		<div v-for="[key, output] in outputs()" :key="'output' + key + seed" class="output" :data-testid="'output-' + key">
 			<div class="output-title" data-testid="output-title">
