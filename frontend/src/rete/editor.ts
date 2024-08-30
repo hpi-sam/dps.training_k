@@ -20,7 +20,7 @@ import { DropdownControl } from './dropdown'
 import data from './data/data.json'
 import { StateNode, InitialStateNode } from './nodes/index'
 
-const editorMode = ref<string>("patient")
+export const editorMode = ref<string>("patient")
 
 export async function createEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>()
@@ -53,7 +53,6 @@ export async function createEditor(container: HTMLElement) {
   })
 
   watch(editorMode, (newMode) => {
-    console.log("editorMode", newMode)
     if (newMode === "patient") {
       contextMenu.updateItems(ContextMenuPresets.classic.setup([
         ['InitialState', () => createNode(context, "InitialState", {})],
@@ -281,6 +280,15 @@ export async function createEditor(container: HTMLElement) {
       context.componentModulesData = componentModulesData
     },
     openModule,
+    deleteModule: () => {
+      if (editorMode.value === 'transition') {
+        transitionModulesData = transitionModulesData.filter((module) => module.id !== currentModuleId)
+        context.transitionModulesData = transitionModulesData
+      } else if (editorMode.value === "component") {
+        componentModulesData = componentModulesData.filter((module) => module.id !== currentModuleId)
+        context.componentModulesData = componentModulesData
+      }
+    },
     layout: async () => {
       await arrange.layout()
       AreaExtensions.zoomAt(area, editor.getNodes())

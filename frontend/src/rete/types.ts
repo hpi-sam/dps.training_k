@@ -61,6 +61,7 @@ export interface Editor {
     newTransitionModule(id: string): void;
     newComponentModule(id: string): void;
     openModule(id: string, type: string): Promise<void>;
+    deleteModule(): void;
     layout(): Promise<void>;
     destroy(): void;
 }

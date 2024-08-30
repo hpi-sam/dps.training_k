@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref, onMounted, watch, computed } from 'vue'
-  import { createEditor as createPatientEditor } from '@/rete/editor'
+  import { createEditor as createPatientEditor, editorMode } from '@/rete/editor'
   import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
   import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
   import 'antd/dist/reset.css'
@@ -59,6 +59,10 @@ watch(editor, (newEditor) => {
 
 function openModule(id: string, type: string) {
   editor.value?.openModule(id, type).then(() => {
+    if (type != 'patient') {
+      patientInfoFormIsVisible.value = false
+      patientStateFormIsVisible.value = false
+    }
     editor.value?.layout()
   })
 }
@@ -81,6 +85,13 @@ function newComponentModule() {
   }
 }
 
+function deleteModule() {
+  editor.value.deleteModule()
+  transitionModules.value = editor.value.getModules().transitionModulesData
+  componentModules.value = editor.value.getModules().componentModulesData
+  openModule('', 'patient')
+}
+
 function exportData() {
   editor.value.saveModule()
   const data = {
@@ -99,16 +110,21 @@ function exportData() {
   a.click()
   URL.revokeObjectURL(url)
 }
+
+const reteWidth = computed(() => {
+  return patientInfoFormIsVisible.value || patientStateFormIsVisible.value ? 'calc(100% - 400px)' : '100%'
+})
 </script>
 
 <script lang="ts">
   const patientInfoFormIsVisible = ref(true)
+  const patientStateFormIsVisible = ref(false)
 
   export function openPatientState(stateId: string) {
     patientInfoFormIsVisible.value = false
+    patientStateFormIsVisible.value = true
     currentStateId.value = stateId
   }
-
   export const info = ref({} as any)
   export const states = ref([] as State[])
   export const currentStateId = ref('')
@@ -164,6 +180,9 @@ function exportData() {
 		>
 			{{ module.id }}
 		</button>
+		<button size="small" @click="newTransitionModule">
+			Neue Transition
+		</button>
 		<p>Komponenten</p>
 		<button
 			v-for="module in componentModules as any"
@@ -172,12 +191,15 @@ function exportData() {
 		>
 			{{ module.id }}
 		</button>
-		<p>Bearbeitung</p>
-		<button size="small" @click="newTransitionModule">
-			Neue Transition
-		</button>
 		<button size="small" @click="newComponentModule">
 			Neue Komponente
+		</button>
+		<p>Bearbeitung</p>
+		<button v-if="editorMode == 'transition'" @click="deleteModule()">
+			Diese Transition löschen
+		</button>
+		<button v-if="editorMode == 'component'" @click="deleteModule()">
+			Diese Komponente löschen
 		</button>
 		<button @click="editor?.layout()">
 			Auto Layout
@@ -186,11 +208,11 @@ function exportData() {
 			Export
 		</button>
 	</div>
-	<div ref="editorContainer" class="rete" />
+	<div ref="editorContainer" class="rete" :style="{ width: reteWidth }"/>
 	<div v-show="patientInfoFormIsVisible" class="right-sidebar overlay">
 		<PatientInfoForm />
 	</div>
-	<div class="right-sidebar">
+	<div v-show="patientStateFormIsVisible" class="right-sidebar">
 		<PatientStateForm />
 	</div>
 </template>
@@ -225,7 +247,6 @@ function exportData() {
   .rete {
     position: relative;
     height: 100%;
-    width: calc(100% - 400px);
     font-size: 1rem;
     background: white;
     text-align: left;
