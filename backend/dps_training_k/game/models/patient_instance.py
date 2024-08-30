@@ -19,6 +19,9 @@ from template.models import Patient, Action, Subcondition, Material
 # from game.models import Area, Lab  # moved into function to avoid circular imports
 # from game.models import ActionInstance, ActionInstanceStateNames  # moved into function to avoid circular imports
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 def validate_patient_frontend_id(value):
     if not re.fullmatch(r"^\d{6}$", value):
@@ -72,6 +75,7 @@ class PatientInstance(
         if (
             self._state.adding
         ):  # _state.adding is True if the instance does not exist in the database, so it is a new instance
+            logger.info(f"_state.adding is true -> Creating new patient {self.frontend_id}")
             self.user, _ = User.objects.get_or_create(
                 username=self.frontend_id, user_type=User.UserType.PATIENT
             )
@@ -99,6 +103,7 @@ class PatientInstance(
         if _state_adding and self.exercise.state == Exercise.StateTypes.RUNNING:
             # self.apply_pretreatments()
             self.schedule_state_change()
+            logger.info(f"Scheduled state change for patient {self.frontend_id}")
 
     def delete(self, using=None, keep_parents=False):
         """Is only called when the patient explicitly deleted and not in an e.g. batch or cascade delete"""
@@ -129,7 +134,7 @@ class PatientInstance(
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
-        state_change_time = 120 # change back to 600 seconds = 10 minutes
+        state_change_time = 600
 
         if self.patient_template.is_dead(self.patient_state_id):
             return False
@@ -148,14 +153,37 @@ class PatientInstance(
                 f"Patient is dead or in final state, state change should have never been scheduled"
             )
         
-        future_state_id = self.patient_template.get_next_state_id(self.patient_state_id)
+        logger.info(f"Executing state change for patient {self.frontend_id}")
+        future_state_id = self.patient_template.get_next_state_id(self.patient_state_id, self.check_action, self.check_material)
 
         if not future_state_id:
+            logger.error(f"Patient {self.frontend_id} is in state {self.patient_state_id}, but there is no next state")
             return False
         self.patient_state_id = future_state_id
         self.save(update_fields=["patient_state_id"])
         self.schedule_state_change()
         return True
+    
+    def check_action(self, action, quantity):
+        logger.info(f"Checking action {action} with quantity {quantity}")
+        from game.models import ActionInstanceState
+
+        # Fetch all action instances related to the patient
+        action_instances = self.actioninstance_set.select_related("template").all()
+
+        # Filter action instances to include only those in success states
+        success_action_instances = [
+            ai for ai in action_instances
+            if ai.current_state.name in ActionInstanceState.success_states()
+            and str(ai.template.uuid) == action
+        ]
+        logger.info(f"Success action instances: {success_action_instances}")
+        return len(success_action_instances) >= quantity
+    
+    def check_material(self, material, quantity):
+        materials = Material.objects.all()
+        num_of_materials_assigned = len(self.material_assigned(materials.get(uuid=material)))
+        return num_of_materials_assigned >= quantity
 
     def get_fulfilled_subconditions(self):
         from game.models import ActionInstanceState

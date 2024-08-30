@@ -414,10 +414,10 @@ class PatientInstanceDispatcher(ChannelNotifier):
     def dispatch_event(cls, patient_instance, changes, is_updated):
         changes_set = set(changes) if changes else set()
 
-        if changes and "patient_state" in changes:
+        if changes and "patient_state_id" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (changes and len(changes) == 1 and "patient_state" in changes):
+        if not (changes and len(changes) == 1 and "patient_state_id" in changes):
             cls._notify_exercise_update(cls.get_exercise(patient_instance))
 
         if changes and changes_set & cls.location_changes:

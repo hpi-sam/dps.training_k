@@ -1,8 +1,5 @@
-import csv
 import os
-import re
 import json
-from copy import deepcopy
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -13,7 +10,6 @@ class Command(BaseCommand):
     help = "Import patients from json file"
 
     def handle(self, *args, **options):
-        self.stdout.write("Importing patients")
         file_path = os.path.join(settings.DATA_ROOT, "patients.json")
         if not os.path.exists(file_path):
             self.stderr.write(f"File {file_path} does not exist")

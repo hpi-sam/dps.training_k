@@ -4,7 +4,7 @@
             "code": 2001,
             "triage": "1",
             "sex": "männlich",
-            "age": "21",
+            "age": "25",
             "address": "Neue Straße, 10101 Burgstadt",
             "injury": "Abgetrennter Arm",
             "biometrics": "rote Haare, blaue Augen, 1.85m",
@@ -16,38 +16,9 @@
         },
         "flow": [
             {
-                "id": "9235871077f3ce09",
-                "type": "State",
-                "next": null
-            },
-            {
-                "id": "412dd1fc78142fbe",
-                "type": "State",
-                "next": "1f266834c4e078a9"
-            },
-            {
                 "id": "7d4e43b64700be9f",
                 "type": "InitialState",
-                "next": "d93e8ecfc0b88ea5"
-            },
-            {
-                "id": "d93e8ecfc0b88ea5",
-                "type": "Transition",
-                "transition": "Transition 2",
-                "next": [
-                    {
-                        "key": "out3",
-                        "value": "9235871077f3ce09"
-                    },
-                    {
-                        "key": "out1",
-                        "value": "412dd1fc78142fbe"
-                    },
-                    {
-                        "key": "out2",
-                        "value": "5c3c456553b7cf86"
-                    }
-                ]
+                "next": "6b7b56b27f5dc410"
             },
             {
                 "id": "5c3c456553b7cf86",
@@ -55,42 +26,44 @@
                 "next": null
             },
             {
-                "id": "1f266834c4e078a9",
+                "id": "b4008343e498a637",
+                "type": "State",
+                "next": "4218644359f16436"
+            },
+            {
+                "id": "beeee18e34e4f0b9",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "6b7b56b27f5dc410",
                 "type": "Transition",
-                "transition": "Transition 3",
+                "transition": "Druckverband",
                 "next": [
                     {
-                        "key": "out3",
-                        "value": "cd4a4f829c6037bc"
-                    },
-                    {
-                        "key": "out4",
-                        "value": "2031b1363731f9da"
-                    },
-                    {
-                        "key": "out1",
-                        "value": "29006e62132eb202"
-                    },
-                    {
-                        "key": "out2",
+                        "key": "ja",
                         "value": "5c3c456553b7cf86"
+                    },
+                    {
+                        "key": "nein",
+                        "value": "b4008343e498a637"
                     }
                 ]
             },
             {
-                "id": "cd4a4f829c6037bc",
-                "type": "State",
-                "next": null
-            },
-            {
-                "id": "2031b1363731f9da",
-                "type": "State",
-                "next": null
-            },
-            {
-                "id": "29006e62132eb202",
-                "type": "State",
-                "next": null
+                "id": "4218644359f16436",
+                "type": "Transition",
+                "transition": "Druckverband",
+                "next": [
+                    {
+                        "key": "ja",
+                        "value": "5c3c456553b7cf86"
+                    },
+                    {
+                        "key": "nein",
+                        "value": "beeee18e34e4f0b9"
+                    }
+                ]
             }
         ],
         "states": [
@@ -109,7 +82,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -142,7 +115,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -175,7 +148,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -196,8 +169,8 @@
             {
                 "id": "5c3c456553b7cf86",
                 "isDead": false,
-                "airway": "Atemwegsverlegung",
-                "breathingRate": 1,
+                "airway": "freie Atemwege",
+                "breathingRate": "1000",
                 "oxygenSaturation": 1,
                 "breathing": "vertiefte Atmung",
                 "breathingSound": true,
@@ -208,7 +181,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFidning": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -241,7 +214,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -274,7 +247,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -307,7 +280,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -340,7 +313,7 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -373,7 +346,106 @@
                 "consciousness": "wach, orientiert",
                 "pupils": "mittelweit",
                 "psyche": "unauffällig",
-                "skinFinding": "trocken",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "b4008343e498a637",
+                "isDead": false,
+                "airway": "freie Atemwege",
+                "breathingRate": "20",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "beeee18e34e4f0b9",
+                "isDead": false,
+                "airway": "freie Atemwege",
+                "breathingRate": "300",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
+                "skinDiscoloration": "rosig",
+                "bgaOxy": 601,
+                "bgaSbh": 652,
+                "hb": 401,
+                "bz": 916,
+                "clotting": 100,
+                "liver": 111,
+                "kidney": 120,
+                "infarct": 134,
+                "lactate": 144,
+                "extremities": 523,
+                "thorax": 340,
+                "trauma": 108,
+                "ultraschall": 621,
+                "ekg": 746,
+                "zvd": 805
+            },
+            {
+                "id": "73fa2cc7695f324e",
+                "isDead": false,
+                "airway": "freie Atemwege",
+                "breathingRate": "3",
+                "oxygenSaturation": 1,
+                "breathing": "vertiefte Atmung",
+                "breathingSound": true,
+                "breathingLoudness": "sehr leises AG hörbar",
+                "heartRate": 1,
+                "pulsePalpable": "peripher tastbar",
+                "rivaRocci": "1/1",
+                "consciousness": "wach, orientiert",
+                "pupils": "mittelweit",
+                "psyche": "unauffällig",
+                "skinFining": "trocken",
                 "skinDiscoloration": "rosig",
                 "bgaOxy": 601,
                 "bgaSbh": 652,
@@ -582,6 +654,37 @@
                         "id": "7c261f8277692536",
                         "type": "Output",
                         "key": "out2"
+                    }
+                ]
+            },
+            {
+                "id": "Druckverband",
+                "flow": [
+                    {
+                        "id": "e7362789c61335ed",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "b6085c335562adbd"
+                    },
+                    {
+                        "id": "b6085c335562adbd",
+                        "type": "Action",
+                        "action": "cc8a5284-765d-4854-b634-6c9e5a85d916",
+                        "quantity": 1,
+                        "next": {
+                            "true": "6626d57c8f33df8c",
+                            "false": "36cc82eb8dfc1627"
+                        }
+                    },
+                    {
+                        "id": "6626d57c8f33df8c",
+                        "type": "Output",
+                        "key": "ja"
+                    },
+                    {
+                        "id": "36cc82eb8dfc1627",
+                        "type": "Output",
+                        "key": "nein"
                     }
                 ]
             }
