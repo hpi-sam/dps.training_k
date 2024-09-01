@@ -33,9 +33,17 @@ interface MessageData {
 
 interface Exercise {
 	exerciseId: string
-	status: string
+	status: ExerciseStatus
 	speed: number
 	areas: Area[]
+}
+
+enum ExerciseStatus {
+	RUNNING = "running",
+	PAUSED = "paused",
+	ENDED = "ended",
+	NOT_STARTED = "not-started",
+	UNKNOWN = "unknown",
 }
 
 interface Area {

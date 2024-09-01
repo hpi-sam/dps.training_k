@@ -8,13 +8,13 @@
 
 	const title = computed(() => {
 		switch (exerciseStore.status) {
-			case 'running':
+			case ExerciseStatus.RUNNING:
 				return patientStore.relocatingInfo
-			case 'not-started':
+			case ExerciseStatus.NOT_STARTED:
 				return 'Warte, bis die Übung beginnt'
-			case 'paused':
+			case ExerciseStatus.PAUSED:
 				return 'Übung pausiert'
-			case 'ended':
+			case ExerciseStatus.ENDED:
 				return 'Übung beendet'
 			default:
 				return 'Warte auf Übung'
@@ -22,15 +22,9 @@
 	})
 
 	const info = computed(() => {
-		switch (exerciseStore.status) {
-			case 'running':
-				return new Date(new Date(0).setSeconds(patientStore.timeUntilBack)).toISOString().substring(12, 19)
-			case 'not-started':
-			case 'paused':
-			case 'ended':
-			default:
-				return 'Bereich: '+ exerciseStore.getAreaName(patientStore.areaId)
-		}
+		if (exerciseStore.status == ExerciseStatus.RUNNING) {
+			return new Date(new Date(0).setSeconds(patientStore.timeUntilBack)).toISOString().substring(12, 19)
+		} else return 'Bereich: '+ exerciseStore.getAreaName(patientStore.areaId)
 	})
 </script>
 

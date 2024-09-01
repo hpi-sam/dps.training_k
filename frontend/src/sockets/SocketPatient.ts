@@ -80,21 +80,21 @@ class SocketPatient {
 					patientStore.initializePatientFromExercise()
 					break
 				case 'exercise-start':
-					exerciseStore.status = 'running'
+					exerciseStore.status = ExerciseStatus.RUNNING
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				case 'exercise-pause':
-					exerciseStore.status = 'paused'
+					exerciseStore.status = ExerciseStatus.PAUSED
 					setScreen(Screens.WAITING, ScreenPosition.FULL)
 					break
 				case 'exercise-resume':
-					exerciseStore.status = 'running'
+					exerciseStore.status = ExerciseStatus.RUNNING
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
 					break
 				case 'exercise-end':
-					exerciseStore.status = 'ended'
+					exerciseStore.status = ExerciseStatus.ENDED
 					setScreen(Screens.ENDED, ScreenPosition.FULL)
 					break
 				case 'delete':
