@@ -65,22 +65,22 @@ class SocketTrainer {
 					break
 				case 'exercise':
 					useExerciseStore().createFromJSON(data.exercise as Exercise)
-					if (exerciseStore.status == ExerciseStatus.UNKNOWN) {
-						exerciseStore.status = ExerciseStatus.NOT_STARTED
+					if (exerciseStore.status == '') {
+						exerciseStore.status = 'not-started'
 						setModule(Modules.TRAINER)
 					}
 					break
 				case 'exercise-start':
-					exerciseStore.status = ExerciseStatus.RUNNING
+					exerciseStore.status = 'running'
 					break
 				case 'exercise-pause':
-					exerciseStore.status = ExerciseStatus.PAUSED
+					exerciseStore.status = 'paused'
 					break
 				case 'exercise-resume':
-					exerciseStore.status = ExerciseStatus.RUNNING
+					exerciseStore.status = 'running'
 					break
 				case 'exercise-end':
-					exerciseStore.status = ExerciseStatus.ENDED
+					exerciseStore.status = 'ended'
 					break
 				case 'log-update':
 					useLogStore().addLogEntries(data.logEntries as LogEntry[])

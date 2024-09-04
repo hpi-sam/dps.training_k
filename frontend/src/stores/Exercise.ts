@@ -3,7 +3,7 @@ import {defineStore} from 'pinia'
 export const useExerciseStore = defineStore('exercise', {
 	state: (): Exercise => ({
 		exerciseId: "",
-		status: ExerciseStatus.RUNNING,
+		status: "",
 		speed: 1,
 		areas: [],
 	}),

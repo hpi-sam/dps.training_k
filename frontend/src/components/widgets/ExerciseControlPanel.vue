@@ -1,18 +1,18 @@
 <script setup lang="ts">
-	import {svg} from "@/assets/Svg"
-	import {computed, ref, watch} from "vue"
+	import { svg } from "@/assets/Svg"
+	import { ref, computed, watch } from "vue"
 	import socketTrainer from "@/sockets/SocketTrainer"
-	import {useExerciseStore} from "@/stores/Exercise"
+	import { useExerciseStore } from "@/stores/Exercise"
 	import ButtonPopup from "./ButtonPopup.vue"
 	import SpeedSelectorPopup from "./SpeedSelectorPopup.vue"
-	import {useAvailablesStore} from "@/stores/Availables"
-	import {useLogStore} from "@/stores/Log"
-	import {Modules, setModule} from "@/App.vue"
-	import {ListItem, ListItemLeft, ListItemName, ListItemRight} from "@/components/widgets/List"
+	import { useAvailablesStore } from "@/stores/Availables"
+	import { useLogStore } from "@/stores/Log"
+	import { Modules, setModule } from "@/App.vue"
+	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight, ListItemLeft} from "@/components/widgets/List"
 
 	const exerciseStore = useExerciseStore()
 
-	const status = ref(ExerciseStatus.UNKNOWN)
+	const status = ref('')
 	const speed = ref(1)
 
 	status.value = exerciseStore.status
@@ -28,13 +28,13 @@
 
 	const info = computed(() => {
 		switch (status.value) {
-			case ExerciseStatus.NOT_STARTED:
+			case "not-started":
 				return "Die Übung wurde noch nicht gestartet"
-			case ExerciseStatus.RUNNING:
+			case "running":
 				return "Die Übung läuft"
-			case ExerciseStatus.PAUSED:
+			case "paused":
 				return "Die Übung ist pausiert"
-			case ExerciseStatus.ENDED:
+			case "ended":
 				return "Die Übung ist beendet"
 			default:
 				return "Fehler"
