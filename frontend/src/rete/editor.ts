@@ -49,32 +49,32 @@ export async function createEditor(container: HTMLElement) {
 
   const contextMenu = new CustomContextMenu<Schemes>({
     items: ContextMenuPresets.classic.setup([
-      ['InitialState', () => createNode(context, "InitialState", {})],
-      ['State', () => createNode(context, "State", {})],
-      ["Transition", () => createNode(context, "Transition", {})]
+      ['Start Zustand', () => createNode(context, "InitialState", {})],
+      ['Zustand', () => createNode(context, "State", {})],
+      ["Übergang", () => createNode(context, "Transition", {})]
     ])
   })
 
   watch(editorMode, (newMode) => {
     if (newMode === "patient") {
       contextMenu.updateItems(ContextMenuPresets.classic.setup([
-        ['InitialState', () => createNode(context, "InitialState", {})],
-        ['State', () => createNode(context, "State", {})],
-        ["Transition", () => createNode(context, "Transition", {})]
+        ['Start Zustand', () => createNode(context, "InitialState", {})],
+        ['Zustand', () => createNode(context, "State", {})],
+        ["Übergang", () => createNode(context, "Transition", {})]
       ]))
     } else if (newMode === "transition") {
       contextMenu.updateItems(ContextMenuPresets.classic.setup([
-        ["Input", () => createNode(context, "Input", { key: "in" })],
-        ["Output", () => createNode(context, "Output", { key: "out" })],
-        ["Action", () => createNode(context, "Action", {})],
+        ["Start", () => createNode(context, "Input", { key: "in" })],
+        ["Option", () => createNode(context, "Output", { key: "out" })],
+        ["Aktion", () => createNode(context, "Action", {})],
         ["Material", () => createNode(context, "Material", {})],
-        ["Component", () => createNode(context, "Component", {})]
+        ["Komponente", () => createNode(context, "Component", {})]
       ]))
     } else if (newMode === "component") {
       contextMenu.updateItems(ContextMenuPresets.classic.setup([
-        ["Input", () => createNode(context, "Input", { key: "in" })],
-        ["Output", () => createNode(context, "Output", { key: "out" })],
-        ["Action", () => createNode(context, "Action", {})],
+        ["Start", () => createNode(context, "Input", { key: "in" })],
+        ["Option", () => createNode(context, "Output", { key: "out" })],
+        ["Aktion", () => createNode(context, "Action", {})],
         ["Material", () => createNode(context, "Material", {})]
       ]))
     }
