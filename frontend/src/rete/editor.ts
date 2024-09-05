@@ -9,21 +9,19 @@ import {
 } from 'rete-auto-arrange-plugin'
 import { CustomContextMenu, Presets as ContextMenuPresets } from './customization/CustomContextMenu'
 import { ClassicFlow, getSourceTarget } from 'rete-connection-plugin'
-import { openPatientState } from '@/components/ModulePatientEditor.vue'
+import { openPatientState } from '@/components/screensTrainer/ScreenPatientEditor.vue'
 import { Modules } from "./modules.js"
 import { clearEditor } from "./utils.js"
 import { createNode, exportEditor, importEditor } from "./import.js"
-
 import { Schemes, AreaExtra, Context, Connection } from './types'
 import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
-import data from './data/data.json'
 import { StateNode, InitialStateNode, InputNode, OutputNode } from './nodes/index'
 import CircleNode from './customization/CircleNode.vue'
 
 export const editorMode = ref<string>("patient")
 
-export async function createEditor(container: HTMLElement) {
+export async function createEditor(container: HTMLElement, data: any) {
   const editor = new NodeEditor<Schemes>()
   const area = new AreaPlugin<Schemes, AreaExtra>(container)
   const connection = new ConnectionPlugin<Schemes, AreaExtra>()

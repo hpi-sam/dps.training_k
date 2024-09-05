@@ -12,7 +12,7 @@ import {
 import { removeConnections } from "./utils"
 import { ActionIDs, MaterialIDs } from "./constants"
 import { DropdownOption } from "./dropdown"
-import { addState } from "@/components/ModulePatientEditor.vue"
+import { addState } from '@/components/screensTrainer/ScreenPatientEditor.vue'
 
 export async function createNode(
   { editor, area, transitionModulesData, transitionModules, componentModulesData, componentModules }: Context,

@@ -29,6 +29,7 @@ interface MessageData {
 	actionCheck?: ActionCheck
 	relocatingInfo: string
 	timeUntilBack: number
+	patientTemplate: {}
 }
 
 interface Exercise {

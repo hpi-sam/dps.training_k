@@ -111,7 +111,7 @@ class Command(BaseCommand):
                 transition_node = {
                     "id": transition_counter,
                     "type": "Transition",
-                    "transition": "Transition " + transition_counter,
+                    "transition": f"Transition {transition_counter}",
                     "next": next,
                 }
                 flow.append(transition_node)

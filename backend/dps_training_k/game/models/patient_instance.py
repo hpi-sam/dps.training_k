@@ -50,6 +50,8 @@ class PatientInstance(
     )
     patient_state_id = models.CharField(
         max_length=16,
+        null=True,
+        blank=True,
         help_text="State of the patient",
     )
     triage = models.CharField(

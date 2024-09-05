@@ -52,13 +52,11 @@
 	import ModuleLogin from "@/components/ModuleLogin.vue"
 	import ModuleTrainer from "@/components/ModuleTrainer.vue"
 	import ModulePatient from "@/components/ModulePatient.vue"
-	import ModulePatientEditor from '@/components/ModulePatientEditor.vue'
 
 	export enum Modules {
 		LOGIN = "ModuleLogin",
 		TRAINER = "ModuleTrainer",
 		PATIENT = "ModulePatient",
-		PATIENT_EDITOR = "ModulePatientEditor",
 	}
 
 	const currentModule = ref(Modules.LOGIN)
@@ -69,8 +67,6 @@
 				return ModuleTrainer
 			case Modules.PATIENT:
 				return ModulePatient
-			case Modules.PATIENT_EDITOR:
-				return ModulePatientEditor
 			case Modules.LOGIN:
 			default:
 				return ModuleLogin
@@ -121,9 +117,6 @@
 		</button>
 		<button id="patient-module-button" @click="currentModule=Modules.PATIENT">
 			Patient
-		</button>
-		<button id="patient-editor-module-button" @click="currentModule=Modules.PATIENT_EDITOR">
-			Patient Editor
 		</button>
 
 		<button v-if="connectionState" id="ps-test" @click="sendPasstroughTest()">

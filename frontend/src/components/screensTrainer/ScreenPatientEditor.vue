@@ -1,52 +1,58 @@
 <script setup lang="ts">
-  import { ref, onMounted, watch, computed } from 'vue'
-  import { createEditor as createPatientEditor, editorMode } from '@/rete/editor'
-  import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
-  import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
-  import 'antd/dist/reset.css'
-  import { Editor, State } from '@/rete/types'
-  import data from '@/rete/data/data.json'
+import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
+import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
+import { onMounted, watch } from 'vue'
+import { createEditor as createPatientEditor, editorMode } from '@/rete/editor'
+import 'antd/dist/reset.css'
+import { Editor } from '@/rete/types'
+import defaultData from '@/rete/data/data.json'
+import { Screens, ScreenPosition, setScreen } from '@/components/ModuleTrainer.vue'
 
-  const patientModule = ref("" as any)
-  const transitionModules = ref([] as any)
-  const componentModules = ref([] as any)
-  const editorContainer = ref(null)
-  const editor = ref(null as unknown as Editor)
+const patientModule = ref("" as any)
+const transitionModules = ref([] as any)
+const componentModules = ref([] as any)
+const editorContainer = ref(null)
+const editor = ref(null as unknown as Editor)
+const data = ref(defaultData)
 
-  onMounted(async () => {
-    editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement) as any as Editor
-    
-    await editor.value?.layout()
+onMounted(async () => {
+  await startEditor(data.value)
+})
 
-    if (editor.value) {
-      patientModule.value = editor.value.getModules().patientModuleData
-      transitionModules.value = editor.value.getModules().transitionModulesData
-      componentModules.value = editor.value.getModules().componentModulesData
-      editor.value.openModule('', 'patient')
-    }
-    
-    loadPatientInfo()
-    loadPatientStates()
+async function startEditor(data: any) {
+  editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement, data) as any as Editor
+  
+  await editor.value?.layout()
 
-    setTimeout(() => {
-      editor.value?.layout()
-    }, 100)
+  if (editor.value) {
+    patientModule.value = editor.value.getModules().patientModuleData
+    transitionModules.value = editor.value.getModules().transitionModulesData
+    componentModules.value = editor.value.getModules().componentModulesData
+    editor.value.openModule('', 'patient')
+  }
+  
+  loadPatientInfo(data)
+  loadPatientStates(data)
+
+  setTimeout(() => {
+    editor.value?.layout()
+  }, 100)
+}
+
+function loadPatientInfo(data: any) {
+  info.value = data.info
+}
+
+function loadPatientStates(data: any) {
+  states.value = data.states
+}
+
+function openPatient() {
+  editor.value?.openModule('', 'patient').then(() => {
+    editor.value?.layout()
   })
-
-  function loadPatientInfo() {
-    info.value = data.info
-  }
-
-  function loadPatientStates() {
-    states.value = data.states
-  }
-
-  function openPatient() {
-    editor.value?.openModule('', 'patient').then(() => {
-      editor.value?.layout()
-    })
-    patientInfoFormIsVisible.value = true
-  }
+  patientInfoFormIsVisible.value = true
+}
 
 watch(editor, (newEditor) => {
   if (newEditor) {
@@ -114,57 +120,89 @@ function exportData() {
 const reteWidth = computed(() => {
   return patientInfoFormIsVisible.value || patientStateFormIsVisible.value ? 'calc(100% - 400px)' : '100%'
 })
+
+function backToTrainer() {
+  setScreen(Screens.EXERCISE_CREATION, ScreenPosition.LEFT)
+  setScreen(Screens.RESOURCE_CREATION, ScreenPosition.RIGHT)    
+}
+
+defineExpose({
+  data,
+  startEditor,
+})
 </script>
-
 <script lang="ts">
-  const patientInfoFormIsVisible = ref(true)
-  const patientStateFormIsVisible = ref(false)
+import { getCurrentInstance, ref, computed } from 'vue'
+import { State } from '@/rete/types'
 
-  export function openPatientState(stateId: string) {
-    patientInfoFormIsVisible.value = false
-    patientStateFormIsVisible.value = true
-    currentStateId.value = stateId
-  }
-  export const info = ref({} as any)
-  export const states = ref([] as State[])
-  export const currentStateId = ref('')
-  export const currentState = ref(computed(() => states.value.find((state) => state.id === currentStateId.value)))
+const instance = getCurrentInstance()
+let proxy: any = null
 
-  export function addState(stateId: string) {
-    const state: State = {
-      "id": stateId,
-      "airway": "freie Atemwege",
-      "breathingRate": 1,
-      "oxygenSaturation": 1,
-      "breathing": "vertiefte Atmung",
-      "breathingSound": true,
-      "breathingLoudness": "sehr leises AG hörbar",
-      "heartRate": 1,
-      "pulsePalpable": "peripher tastbar",
-      "rivaRocci": "1/1",
-      "consciousness": "wach, orientiert",
-      "pupils": "mittelweit",
-      "psyche": "unauffällig",
-      "skinFinding": "trocken",
-      "skinDiscoloration": "rosig",
-      "bgaOxy": 601,
-      "bgaSbh": 652,
-      "hb": 401,
-      "bz": 916,
-      "clotting": 100,
-      "liver": 111,
-      "kidney": 120,
-      "infarct": 134,
-      "lactate": 144,
-      "extremities": 523,
-      "thorax": 340,
-      "trauma": 108,
-      "ultraschall": 621,
-      "ekg": 746,
-      "zvd": 805
+if (instance) {
+  proxy = instance.proxy
+}
+
+const patientInfoFormIsVisible = ref(true)
+const patientStateFormIsVisible = ref(false)
+
+export function changePatientData(newData: any) {
+  if (proxy) {
+    console.log('changePatientData', newData)
+    // Delete the existing editor
+    proxy.editor.value = null
+    // Create a new editor with the new data
+    proxy.startEditor(newData)
+    // Update the data reference
+    proxy.data.value = newData
   }
-    states.value.push(state)
+}
+
+export function openPatientState(stateId: string) {
+  patientInfoFormIsVisible.value = false
+  patientStateFormIsVisible.value = true
+  currentStateId.value = stateId
+}
+
+export const info = ref({} as any)
+export const states = ref([] as State[])
+export const currentStateId = ref('')
+export const currentState = ref(computed(() => states.value.find((state) => state.id === currentStateId.value)))
+
+export function addState(stateId: string) {
+  const state: State = {
+    id: stateId,
+    airway: "freie Atemwege",
+    breathingRate: 1,
+    oxygenSaturation: 1,
+    breathing: "vertiefte Atmung",
+    breathingSound: true,
+    breathingLoudness: "sehr leises AG hörbar",
+    heartRate: 1,
+    pulsePalpable: "peripher tastbar",
+    rivaRocci: "1/1",
+    consciousness: "wach, orientiert",
+    pupils: "mittelweit",
+    psyche: "unauffällig",
+    skinFinding: "trocken",
+    skinDiscoloration: "rosig",
+    bgaOxy: 601,
+    bgaSbh: 652,
+    hb: 401,
+    bz: 916,
+    clotting: 100,
+    liver: 111,
+    kidney: 120,
+    infarct: 134,
+    lactate: 144,
+    extremities: 523,
+    thorax: 340,
+    trauma: 108,
+    ultraschall: 621,
+    ekg: 746,
+    zvd: 805
   }
+  states.value.push(state)
+}
 </script>
 
 <template>
@@ -207,8 +245,11 @@ const reteWidth = computed(() => {
 		<button @click="exportData()">
 			Export
 		</button>
+		<button @click="backToTrainer()">
+			Zurück zum Trainer
+		</button>
 	</div>
-	<div ref="editorContainer" class="rete" :style="{ width: reteWidth }"/>
+	<div ref="editorContainer" class="rete" :style="{ width: reteWidth }" />
 	<div v-show="patientInfoFormIsVisible" class="right-sidebar overlay">
 		<PatientInfoForm />
 	</div>

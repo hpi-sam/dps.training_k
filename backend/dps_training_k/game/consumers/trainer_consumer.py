@@ -7,6 +7,7 @@ from template.models import Patient, Material
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
+from template.serializers import PatientSerializer
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -28,6 +29,7 @@ class TrainerConsumer(AbstractConsumer):
         PATIENT_DELETE = "patient-delete"
         PATIENT_RENAME = "patient-rename"
         PATIENT_UPDATE = "patient-update"
+        PATIENT_GET_TEMPLATE = "patient-get-template"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_RENAME = "personnel-rename"
@@ -35,6 +37,7 @@ class TrainerConsumer(AbstractConsumer):
     class TrainerOutgoingMessageTypes:
         LOG_UPDATE = "log-update"
         RESPONSE = "response"
+        PATIENT_TEMPLATE = "patient-template"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -97,6 +100,10 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_update_patient,
                 "patientId",
                 "code",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_GET_TEMPLATE: (
+                self.handle_get_patient_template,
+                "patientCode",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
@@ -322,6 +329,13 @@ class TrainerConsumer(AbstractConsumer):
         '''
         patient.patient_template = new_patient_template
         patient.save(update_fields=["patient_template"])
+        
+    def handle_get_patient_template(self, _, patient_code):
+        patient_template = Patient.objects.all().filter(info__code=patient_code).values()[0]
+        self.send_event(
+            self.TrainerOutgoingMessageTypes.PATIENT_TEMPLATE,
+            patientTemplate=PatientSerializer(patient_template).data,
+        )
 
     def handle_add_personnel(self, _, areaId, personnel_name):
         try:

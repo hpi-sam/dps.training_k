@@ -6,7 +6,7 @@
 	import {setArea} from "@/components/screensTrainer/ScreenResourceCreation.vue"
 	import DeleteItemPopup from '../widgets/DeleteItemPopup.vue'
 	import ExerciseControlPanel from '../widgets/ExerciseControlPanel.vue'
-	import {Screens, setRightScreen} from '../ModuleTrainer.vue'
+	import {Screens, setScreen} from '../ModuleTrainer.vue'
 	import {CustomList, ListItem, ListItemButton, ListItemName, ListItemAddButton, ListItemRight} from "@/components/widgets/List"
 	import IconButton from '@/components/widgets/IconButton.vue'
 	import {svg} from "@/assets/Svg"
@@ -20,7 +20,7 @@
 
 	function openArea(areaId: number) {
 		setArea(areaId)
-		setRightScreen(Screens.RESOURCE_CREATION)
+		setScreen(Screens.RESOURCE_CREATION, 'right')
 		currentArea.value = areaId
 	}
 
@@ -45,7 +45,7 @@
 	}
 
 	function openLog() {
-		setRightScreen(Screens.LOG)
+		setScreen(Screens.LOG, 'right')
 		currentArea.value = Number.NEGATIVE_INFINITY
 	}
 

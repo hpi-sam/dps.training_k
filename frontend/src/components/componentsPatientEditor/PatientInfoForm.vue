@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { getNode } from '@formkit/core'
-	import { info } from '@/components/ModulePatientEditor.vue'
+	import { info } from '@/components/screensTrainer/ScreenPatientEditor.vue'
 	import { watch } from 'vue'
 	
 	watch(
