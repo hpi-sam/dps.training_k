@@ -25,14 +25,14 @@ jobs:
       - name: Build and push frontend Docker images
         run: |
           cd ./frontend/
-          docker-compose --env-file .env.prod build
+          docker compose --env-file .env.prod build
           docker tag dps_training_k-frontend ghcr.io/hpi-sam/dps_training_k-frontend:latest
           docker push ghcr.io/hpi-sam/dps_training_k-frontend:latest
 
       - name: Build and push backend Docker images
         run: |
           cd ./backend/dps_training_k/
-          docker-compose --env-file .env.prod build
+          docker compose --env-file .env.prod build
           docker tag dps_training_k-django ghcr.io/hpi-sam/dps_training_k-django:latest
           docker push ghcr.io/hpi-sam/dps_training_k-django:latest
           docker tag dps_training_k-celeryworker ghcr.io/hpi-sam/dps_training_k-celeryworker:latest
