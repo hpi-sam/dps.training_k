@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
-import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
+import PatientInfoForm from '@/components/widgets/PatientInfoForm.vue'
+import PatientStateForm from '@/components/widgets/PatientStateForm.vue'
 import { ref, computed, watch, onMounted } from 'vue'
 import { createEditor as createPatientEditor, editorMode } from '@/rete/editor'
 import 'antd/dist/reset.css'

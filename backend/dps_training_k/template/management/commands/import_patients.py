@@ -8,6 +8,7 @@ from template.models import Patient
 from template.models import PatientInformation
 from template.models import PatientState
 from template.models import StateTransition
+from template.models import LogicNode
 
 class Command(BaseCommand):
     help = "Import patients from json file"
@@ -42,43 +43,40 @@ class Command(BaseCommand):
         return
     
     def import_from_patient_states_model(self):
-        patients_info = PatientInformation.objects.all().values()
-        patients_state = PatientState.objects.all().values()
-        state_transitions = StateTransition.objects.all().values()
+        patients_info = list(PatientInformation.objects.all())
         
         for patient_info in patients_info:
-            initial_state_id = patient_info.get("start_status")
+            initial_state_id = patient_info.start_status
             info = {
-                "code": patient_info.get("code"),
-                "triage": patient_info.get("triage"),
-                "sex": patient_info.get("biometrics"),
-                "age": patient_info.get("biometrics"),
-                "address": patient_info.get("personal_details"),
-                # "blood_type": patient_info.get("blood_type"),
-                "injury": patient_info.get("injury"),
-                "biometrics": patient_info.get("biometrics"),
-                "mobility": patient_info.get("mobility"),
-                "preexistingIllnesses": patient_info.get("preexisting_illnesses"),
-                "permanentMedication": patient_info.get("permanent_medication"),
-                "currentCaseHistory": patient_info.get("current_case_history"),
-                "pretreatment": patient_info.get("pretreatment"),
-                # "pretreatment_action_templates": patient_info.get("pretreatment_action_templates"),
-                # "start_status": patient_info.get("start_status"),
-                # "start_location": patient_info.get("start_location"),
-                # "op": patient_info.get("op"),
+                "code": patient_info.code,
+                "triage": patient_info.triage,
+                "sex": patient_info.biometrics,
+                "age": patient_info.biometrics,
+                "address": patient_info.personal_details,
+                # "blood_type": patient_info.blood_type,
+                "injury": patient_info.injury,
+                "biometrics": patient_info.biometrics,
+                "mobility": patient_info.mobility,
+                "preexistingIllnesses": patient_info.preexisting_illnesses,
+                "permanentMedication": patient_info.permanent_medication,
+                "currentCaseHistory": patient_info.current_case_history,
+                "pretreatment": patient_info.pretreatment,
+                # "pretreatment_action_templates": patient_info.pretreatment_action_templates,
+                # "start_status": patient_info.start_status,
+                # "start_location": patient_info.start_location,
+                # "op": patient_info.op,
             }
             
-            patient_states = PatientState.objects.filter(code=patient_info.get("code")).values()
-            initial_state = patient_states.filter(state_id=initial_state_id).values()[0]
+            patient_states = list(PatientState.objects.filter(code=patient_info.code))
             
             states = []
             for patient_state in patient_states:
                 state = {
-                    "id": patient_state.get("state_id"),
-                    "is_dead": patient_state.get("is_dead"),
-                    "vital_signs": patient_state.get("vital_signs"),
-                    "examination_codes": patient_state.get("examination_codes"),
-                    # "special_events": patient_state.get("special_events"),
+                    "id": "State-" + str(patient_state.state_id),
+                    "is_dead": patient_state.is_dead,
+                    "vital_signs": patient_state.vital_signs,
+                    "examination_codes": patient_state.examination_codes,
+                    # "special_events": patient_state.special_events,
                 }
                 states.append(state)
             
@@ -86,45 +84,77 @@ class Command(BaseCommand):
             flow = []
             for patient_state in patient_states:
                 state_node = {
-                    "id": patient_state.get("state_id"),
-                    "type": "InitialState" if patient_state.get("state_id") == initial_state else "State",
-                    "next": patient_state.get("transition"),
+                    "id": "State-" + str(patient_state.state_id),
+                    "type": "InitialState" if patient_state.state_id == initial_state_id else "State",
+                    "next": "Transition-" + str(patient_state.transition.id),
                 }
                 flow.append(state_node)
-                transitions_to_look_for.append(patient_state.get("transition"))
-            
-            for transition in transitions_to_look_for:
-                next = []
-                transition_counter = 0
-                key_counter = 0
                 
-                while transition is not None:
-                    key = key_counter
-                    value = transition.get("resulting_state")
+                if patient_state.transition and (patient_state.transition not in transitions_to_look_for):
+                    transitions_to_look_for.append(patient_state.transition)
+            
+            transitions = []
+            for transition in transitions_to_look_for:
+                resulting_state_id = transition.resulting_state.state_id if transition.resulting_state is not None else None
+                next_transition_id = transition.next_state_transition.id if transition.next_state_transition is not None else None
+                
+                next = []
+                output_nodes = []
+                key_counter = 1
+                while next_transition_id is not None:
                     next.append({
-                        key: key,
-                        value: value,
+                        'key': str(key_counter),
+                        'value': "State-" + str(resulting_state_id),
+                    })
+                    output_nodes.append({
+                        "id": "Transition-" + str(transition.id) + "-Out-" + str(key_counter),
+                        "type": "Output",
+                        "key": str(key_counter),
                     })
                     key_counter += 1
-                    transition = transition.get("next_state_transition")
+                    if StateTransition.objects.get(id=next_transition_id).resulting_state is not None:
+                        resulting_state_id = StateTransition.objects.get(id=next_transition_id).resulting_state.state_id
+                    else:
+                        resulting_state_id = None
+                    if StateTransition.objects.get(id=next_transition_id).next_state_transition is not None:
+                        next_transition_id = StateTransition.objects.get(id=next_transition_id).next_state_transition.id
+                    else:
+                        next_transition_id = None
                     
                 transition_node = {
-                    "id": transition_counter,
+                    "id": "Transition-" + str(transition.id),
                     "type": "Transition",
-                    "transition": f"Transition {transition_counter}",
+                    "transition": "Transition-" + str(transition.id),
                     "next": next,
                 }
                 flow.append(transition_node)
-                transition_counter += 1
+                
+                new_transition = self.import_transition(transition, output_nodes)
+                transitions.append(new_transition)
                 
             Patient.objects.update_or_create(
                 info=info,
                 flow=flow,
                 states=states,
-                transitions=[],
+                transitions=transitions,
                 components=[],
             )
             
         self.stdout.write(self.style.SUCCESS("Successfully imported old patients"))
         
         return
+    
+    def import_transition(self, transition, output_nodes):
+        transition_flow = []
+        transition_flow.append({
+            "id": "Transition-" + str(transition.id) + "-In",
+            "type": "Input",
+            "key": "in",
+            "next": "",
+        })
+        transition_flow.extend(output_nodes)
+        
+        return {
+            "id": "Transition-" + str(transition.id),
+            "flow": transition_flow,
+        }
