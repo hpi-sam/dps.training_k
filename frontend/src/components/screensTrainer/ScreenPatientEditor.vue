@@ -1,25 +1,26 @@
 <script setup lang="ts">
 import PatientInfoForm from '@/components/componentsPatientEditor/PatientInfoForm.vue'
 import PatientStateForm from '@/components/componentsPatientEditor/PatientStateForm.vue'
-import { onMounted, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { createEditor as createPatientEditor, editorMode } from '@/rete/editor'
 import 'antd/dist/reset.css'
 import { Editor } from '@/rete/types'
-import defaultData from '@/rete/data/data.json'
 import { Screens, ScreenPosition, setScreen } from '@/components/ModuleTrainer.vue'
+import { State } from '@/rete/types'
 
 const patientModule = ref("" as any)
 const transitionModules = ref([] as any)
 const componentModules = ref([] as any)
 const editorContainer = ref(null)
 const editor = ref(null as unknown as Editor)
-const data = ref(defaultData)
 
-onMounted(async () => {
-  await startEditor(data.value)
+onMounted(() => {
+  startEditor(data.value)
 })
 
 async function startEditor(data: any) {
+  console.log('startEditor with data: ', data)
+  editorMode.value = null as any
   editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement, data) as any as Editor
   
   await editor.value?.layout()
@@ -126,36 +127,21 @@ function backToTrainer() {
   setScreen(Screens.RESOURCE_CREATION, ScreenPosition.RIGHT)    
 }
 
-defineExpose({
-  data,
-  startEditor,
+watch(data, (newData) => {
+  startEditor(newData.value)
 })
 </script>
+
 <script lang="ts">
-import { getCurrentInstance, ref, computed } from 'vue'
-import { State } from '@/rete/types'
+const data = ref({} as any)
 
-const instance = getCurrentInstance()
-let proxy: any = null
-
-if (instance) {
-  proxy = instance.proxy
+export function changePatientData(newData: any) {
+  console.log('changePatientData', newData)
+  data.value = newData
 }
 
 const patientInfoFormIsVisible = ref(true)
 const patientStateFormIsVisible = ref(false)
-
-export function changePatientData(newData: any) {
-  if (proxy) {
-    console.log('changePatientData', newData)
-    // Delete the existing editor
-    proxy.editor.value = null
-    // Create a new editor with the new data
-    proxy.startEditor(newData)
-    // Update the data reference
-    proxy.data.value = newData
-  }
-}
 
 export function openPatientState(stateId: string) {
   patientInfoFormIsVisible.value = false
