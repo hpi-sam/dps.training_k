@@ -33,7 +33,7 @@ meaning it will expect the frontend to run on localhost.
 
 Build and run:
 ```bash
-docker compose --env-file .env.<prod/dev> up
+docker compose --env-file .env.<prod/dev> up --build
 ```
 
 Optionally, to access the database, create a superuser account: 

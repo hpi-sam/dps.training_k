@@ -17,7 +17,7 @@ jobs:
       - name: Build frontend Docker container
         run: |
           cd ./frontend/
-          docker-compose --env-file .env.dev up -d
+          docker compose --env-file .env.dev up --build -d
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -43,7 +43,7 @@ jobs:
       - name: Build backend Docker containers
         run: |
           cd ./backend/dps_training_k/
-          docker-compose --env-file .env.dev up -d
+          docker compose --env-file .env.dev up --build -d
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -88,7 +88,7 @@ jobs:
 
       - name: Run docker containers with deploy dev configuration
         run: |
-          docker-compose -f docker-compose.dev.yml up -d
+          docker compose -f docker-compose.dev.yml up -d
 
       - name: Run integration tests
         run: |
