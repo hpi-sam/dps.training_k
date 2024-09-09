@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { ClassicPreset as Classic, NodeEditor } from 'rete'
-import { AreaExtensions, AreaPlugin } from 'rete-area-plugin'
+import { AreaExtensions, AreaPlugin, Zoom } from 'rete-area-plugin'
 import { ConnectionPlugin } from 'rete-connection-plugin'
 import { VuePlugin, Presets as VuePresets } from 'rete-vue-plugin'
 import {
@@ -18,6 +18,7 @@ import CustomDropdown from './customization/CustomDropdown.vue'
 import { DropdownControl } from './dropdown'
 import { StateNode, InitialStateNode, InputNode, OutputNode } from './nodes/index'
 import CircleNode from './customization/CircleNode.vue'
+import { SmoothZoom } from './zoom'
 
 export const editorMode = ref<string>("patient")
 
@@ -83,7 +84,9 @@ export async function createEditor(container: HTMLElement, data: any) {
   area.use(connection)
   area.use(contextMenu)
 
-  area.area.setZoomHandler(null)
+  area.area.setZoomHandler(
+    new SmoothZoom(0.5, 200, "cubicBezier(.45,.91,.49,.98)", area)
+  )
 
   area.addPipe(context => {
     if (context.type === 'nodepicked') {
