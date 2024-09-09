@@ -16,7 +16,9 @@
 	<h1>Patient</h1>
 	<FormKit
 		id="patientInfoForm"
+		v-slot="{ disabled }"
 		type="form"
+		:actions="false"
 	>
 		<FormKit
 			id="code"
@@ -34,35 +36,32 @@
 			label="Start-Triage"
 			placeholder="Wähle die Start-Triage"
 			:options="['nicht triagiert', 'schwarz', 'rot', 'gelb', 'grün']"
-			validation="required"
 		/>
 
 		<FormKit
-			id="sex"
-			type="select"
-			name="sex"
-			label="Geschlecht"
-			placeholder="Wähle ein Geschlecht"
-			:options="['männlich', 'weiblich']"
-			validation="required"
-		/>
-
-		<FormKit
-			id="age"
-			type="number"
-			name="age"
-			label="Alter"
-			placeholder="Gib das Alter des Patienten ein"
-			validation="required"
-		/>
-
-		<FormKit
-			id="address"
+			id="personalDetails"
 			type="text"
-			name="address"
-			label="Adresse"
-			placeholder="Straße Hausnummer, PLZ Ort"
-			validation="required"
+			name="personalDetails"
+			label="Personalien"
+			placeholder="Name, Geburtsdatum, Adresse"
+		/>
+
+		<FormKit
+			id="bloodType"
+			type="select"
+			name="bloodType"
+			label="Blutgruppe"
+			placeholder="Wähle die Blutgruppe"
+			:options="[
+				{ value: 1, label: 'B Rh pos' },
+				{ value: 2, label: 'B Rh pos' },
+				{ value: 3, label: 'A rh neg' },
+				{ value: 4, label: '0 Rh pos' },
+				{ value: 5, label: 'B rh neg' },
+				{ value: 6, label: 'AB rh neg' },
+				{ value: 7, label: 'O rh neg' },
+				{ value: 8, label: 'AB Rh pos' }
+			]"
 		/>
 
 		<FormKit
@@ -71,7 +70,6 @@
 			name="injury"
 			label="Verletzung"
 			placeholder="Beschreibe die Verletzung des Patienten"
-			validation="required"
 		/>
 
 		<FormKit
@@ -79,8 +77,7 @@
 			type="textarea"
 			name="biometrics"
 			label="Biometrie"
-			placeholder="Haarfarbe, Augenfarbe, Größe, Brille?"
-			validation="required"
+			placeholder="Geschlecht, Alter, Haarfarbe, Augenfarbe, Größe, Brille?"
 		/>
 
 		<FormKit
@@ -90,7 +87,6 @@
 			label="Mobilität"
 			placeholder="Wähle die Mobilität"
 			:options="['initial gefähig', 'initial bedingt gefähig', 'initial nicht gefähig', 'initial bettlägerig']"
-			validation="required"
 		/>
 
 		<FormKit
@@ -99,7 +95,6 @@
 			name="preexistingIllnesses"
 			label="Vorerkrankungen"
 			placeholder="Welche Vorerkrankungen besitzt der Patient?"
-			validation="required"
 		/>
 
 		<FormKit
@@ -108,7 +103,6 @@
 			name="permanentMedication"
 			label="Dauer-Medikation"
 			placeholder="Gib die Dauer-Medikation des Patienten an"
-			validation="required"
 		/>
 
 		<FormKit
@@ -117,7 +111,6 @@
 			name="currentCaseHistory"
 			label="Aktuelle Anamnese / Rettungsdienst-Übergabe"
 			placeholder="Gib die Aktuelle Anamnese / Rettungsdienst-Übergabe des Patienten an"
-			validation="required"
 		/>
 
 		<FormKit
@@ -126,7 +119,14 @@
 			name="pretreatment"
 			label="Vorbehandlung"
 			placeholder="Wie wurde der Patient bereits behandelt?"
-			validation="required"
+		/>
+
+		<FormKit
+			id="op"
+			type="textarea"
+			name="op"
+			label="OP / Interventions-Verlauf"
+			placeholder="Wie verläuft die OP / Intervention?"
 		/>
 	</FormKit>
 </template>

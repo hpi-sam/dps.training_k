@@ -47,25 +47,7 @@ class Command(BaseCommand):
         
         for patient_info in patients_info:
             initial_state_id = patient_info.start_status
-            info = {
-                "code": patient_info.code,
-                "triage": patient_info.triage,
-                "sex": patient_info.biometrics,
-                "age": patient_info.biometrics,
-                "address": patient_info.personal_details,
-                # "blood_type": patient_info.blood_type,
-                "injury": patient_info.injury,
-                "biometrics": patient_info.biometrics,
-                "mobility": patient_info.mobility,
-                "preexistingIllnesses": patient_info.preexisting_illnesses,
-                "permanentMedication": patient_info.permanent_medication,
-                "currentCaseHistory": patient_info.current_case_history,
-                "pretreatment": patient_info.pretreatment,
-                # "pretreatment_action_templates": patient_info.pretreatment_action_templates,
-                # "start_status": patient_info.start_status,
-                # "start_location": patient_info.start_location,
-                # "op": patient_info.op,
-            }
+            info = self.import_patient_info(patient_info)
             
             patient_states = list(PatientState.objects.filter(code=patient_info.code))
             
@@ -141,8 +123,23 @@ class Command(BaseCommand):
             )
             
         self.stdout.write(self.style.SUCCESS("Successfully imported old patients"))
-        
         return
+    
+    def import_patient_info(self, patient_info):
+        return {
+                "code": patient_info.code,
+                "triage": patient_info.triage,
+                "bloodType": patient_info.blood_type,
+                "personalDetails": patient_info.personal_details,
+                "injury": patient_info.injury,
+                "biometrics": patient_info.biometrics,
+                "mobility": patient_info.mobility,
+                "preexistingIllnesses": patient_info.preexisting_illnesses,
+                "permanentMedication": patient_info.permanent_medication,
+                "currentCaseHistory": patient_info.current_case_history,
+                "pretreatment": patient_info.pretreatment,
+                "op": patient_info.op,
+        }
     
     def import_transition(self, transition, output_nodes):
         transition_flow = []
