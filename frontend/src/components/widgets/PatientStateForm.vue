@@ -15,10 +15,12 @@
 <template>
 	<!-- eslint-disable max-len -->
 	<!-- eslint-disable vue/max-len -->
-	<h1>Zustand {{ currentState?.id }}</h1>
+	<h1>{{ currentState?.id }}</h1>
 	<FormKit
 		id="patientStateForm"
+		v-slot="{ disabled }"
 		type="form"
+		:actions="false"
 	>
 		<FormKit
 			id="isDead"
@@ -26,7 +28,7 @@
 			type="checkbox"
 			label="Patient ist verstorben"
 		/>
-
+		<h1>Airway</h1>
 		<FormKit
 			id="airway"
 			name="airway"
@@ -41,7 +43,7 @@
 			id="breathingRate"
 			name="breathingRate"
 			type="number"
-			label="Atemfrequenz"
+			label="Atemfrequenz (/min)"
 			placeholder="Atemzüge pro Minute"
 			validation="required|min:0"
 		/>
@@ -50,11 +52,12 @@
 			id="oxygenSaturation"
 			name="oxygenSaturation"
 			type="number"
-			label="Sauerstoffsättigung"
+			label="Sauerstoffsättigung (%)"
 			placeholder="SpO2 in %"
 			validation="required|min:0"
 		/>
 
+		<h1>Breathing</h1>
 		<FormKit
 			id="breathing"
 			name="breathing"
@@ -80,11 +83,12 @@
 			:options="['normales AG hörbar', 'sehr leises AG hörbar', 'nur einseitiges AG hörbar', 'kein AG hörbar']"
 		/>
 
+		<h1>Circulation</h1>
 		<FormKit
 			id="heartRate"
 			name="heartRate"
 			type="number"
-			label="Herzfrequenz"
+			label="Herzfrequenz (/min)"
 			placeholder="Herzschläge pro Minute"
 			validation="required|min:0"
 		/>
@@ -107,6 +111,7 @@
 			validation="required"
 		/>
 
+		<h1>Weiteres</h1>
 		<FormKit
 			id="consciousness"
 			name="consciousness"
@@ -162,6 +167,7 @@
 			:options="['rosig', 'blass', 'grau', 'grau/marmoriert', 'marmoriert', 'sichtbare Zyanose', 'leichte Zyanose', 'schwere Zyanose']"
 		/>
 
+		<h1>Befunde</h1>
 		<FormKit
 			id="bgaOxy"
 			name="bgaOxy"
@@ -588,3 +594,10 @@
 		/>
 	</FormKit>
 </template>
+
+<style scoped>
+.highlight {
+  background-color: yellow;
+  transition: background-color 2s ease-out;
+}
+</style>

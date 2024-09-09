@@ -1,5 +1,6 @@
 import os
 import json
+import re
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -53,13 +54,7 @@ class Command(BaseCommand):
             
             states = []
             for patient_state in patient_states:
-                state = {
-                    "id": "State-" + str(patient_state.state_id),
-                    "is_dead": patient_state.is_dead,
-                    "vital_signs": patient_state.vital_signs,
-                    "examination_codes": patient_state.examination_codes,
-                    # "special_events": patient_state.special_events,
-                }
+                state = self.import_patient_state(patient_state)
                 states.append(state)
             
             transitions_to_look_for = []
@@ -139,6 +134,72 @@ class Command(BaseCommand):
                 "currentCaseHistory": patient_info.current_case_history,
                 "pretreatment": patient_info.pretreatment,
                 "op": patient_info.op,
+        }
+        
+    def import_patient_state(self, patient_state):
+        breathing_field = patient_state.vital_signs.get("Breathing")
+        breathingRate = 0
+        if breathing_field:
+            match = re.search(r"Atemfreq: (\d+) /min", breathing_field)
+            if match:
+                breathingRate = int(match.group(1))
+        oxygenSaturation = 0
+        if breathing_field:
+            match = re.search(r"SpO2: (\d+) %", breathing_field)
+            if match:
+                oxygenSaturation = int(match.group(1))
+        breathing_parts = breathing_field.split("\n")
+        breathing = breathing_parts[-2]
+        breathingSounds = breathing_parts[-1]
+        
+        circulation_field = patient_state.vital_signs.get("Circulation")
+        hearthRate = 0
+        if circulation_field:
+            match = re.search(r"Herzfreq: (\d+) /min", circulation_field)
+            if match:
+                hearthRate = int(match.group(1))
+        circulation_parts = circulation_field.split("\n") if circulation_field else []
+        pulsePalpable = circulation_parts[-2]
+        rivaRocci = circulation_parts[-1].split(": ")[1] if circulation_parts else ""
+        
+        skin_field = patient_state.vital_signs.get("Skin")
+        skin_parts = skin_field.split("\n") if skin_field else ['','']
+        skinFinding = skin_parts[-2:-1]
+        skinDiscoloration = skin_parts[-1:]
+        
+        return {
+            "id": "State-" + str(patient_state.state_id),
+            "isDead": patient_state.is_dead,
+            "airway": patient_state.vital_signs.get("Airway"),
+            "breathingRate": breathingRate,
+            "oxygenSaturation": oxygenSaturation,
+            "breathing": breathing,
+            "breathingSounds": breathingSounds,
+            "heartRate": hearthRate,
+            "pulsePalpable": pulsePalpable,
+            "rivaRocci": rivaRocci,
+            "consciousness": patient_state.vital_signs.get("Bewusstsein"),
+            "pupils": patient_state.vital_signs.get("Pupillen"),
+            "psyche": patient_state.vital_signs.get("Psyche"),
+            "skinFinding": skinFinding,
+            "skinDiscoloration": skinDiscoloration,
+            "examination_codes": patient_state.examination_codes,
+            "bgaOxy": patient_state.examination_codes.get("BGA-Oxy"),
+            "bgaSbh": patient_state.examination_codes.get("BGA-SBH"),
+            "hb": patient_state.examination_codes.get("Hb"),
+            "bz": patient_state.examination_codes.get("BZ"),
+            "clotting": patient_state.examination_codes.get("Gerinnung"),
+            "liver": patient_state.examination_codes.get("Leber"),
+            "kidney": patient_state.examination_codes.get("Niere"),
+            "infarct": patient_state.examination_codes.get("Infarkt"),
+            "lactate": patient_state.examination_codes.get("Lactat"),
+            "extremities": patient_state.examination_codes.get("Rö-Extremitäten"),
+            "thorax": patient_state.examination_codes.get("Rö-Thorax"),
+            "trauma": patient_state.examination_codes.get("Trauma-CT"),
+            "ultraschall": patient_state.examination_codes.get("Ultraschall"),
+            "ekg": patient_state.examination_codes.get("EKG"),
+            "zvd": patient_state.examination_codes.get("ZVD"),
+            # "special_events": patient_state.special_events, # not implemented
         }
     
     def import_transition(self, transition, output_nodes):
