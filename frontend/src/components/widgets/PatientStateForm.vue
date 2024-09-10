@@ -206,7 +206,7 @@
 			id="hb"
 			name="hb"
 			type="select"
-			label="Hämoglobin"
+			label="Hämoglobin (g/dL)"
 			placeholder="Wähle einen Wert"
 			:options="[
 				{ value: 426, label: '2' },
@@ -240,7 +240,7 @@
 			id="bz"
 			name="bz"
 			type="select"
-			label="Blutzucker"
+			label="Blutzucker (mg/dL)"
 			placeholder="Wähle einen Wert"
 			:options="[
 				{ value: 947, label: '15' },
@@ -548,7 +548,7 @@
 			id="zvd"
 			name="zvd"
 			type="select"
-			label="Zentraler Venendruck"
+			label="Zentraler Venendruck (cmH₂O)"
 			placeholder="Wähle ein Ergebnis"
 			:options="[
 				{ value: 816, label: '-15' },
