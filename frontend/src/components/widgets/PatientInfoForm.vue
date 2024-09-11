@@ -35,7 +35,13 @@
 			name="triage"
 			label="Start-Triage"
 			placeholder="Wähle die Start-Triage"
-			:options="['nicht triagiert', 'schwarz', 'rot', 'gelb', 'grün']"
+			:options="[
+				{ value: '-', label: 'nicht triagiert' },
+				{ value: '1', label: 'rot' },
+				{ value: '2', label: 'gelb' },
+				{ value: '3', label: 'grün' },
+				{ value: 'X', label: 'schwarz' }
+			]"
 		/>
 
 		<FormKit

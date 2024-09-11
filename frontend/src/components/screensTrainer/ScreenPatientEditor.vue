@@ -194,24 +194,40 @@ export function addState(stateId: string) {
 
 <template>
 	<div class="left-sidebar">
-		<button @click="openPatient">
+		<button style="background-color: #8ba0ff" @click="openPatient">
 			Patient
 		</button>
-		<p>Transitionen</p>
+		<button style="background-color: gray" @click="editor?.layout()">
+			Auto Layout
+		</button>
+		<button style="background-color: gray" @click="exportData()">
+			Export
+		</button>
+		<button style="background-color: gray" @click="backToTrainer()">
+			Zurück zum Trainer
+		</button>
+		<br>
+		<h3>Übergänge</h3>
 		<button
 			v-for="module in transitionModules as any"
 			:key="module.id"
+			style="background-color: #8ba0ff"
 			@click="openModule(module.id, 'transition')"
 		>
 			{{ module.id }}
 		</button>
 		<button size="small" @click="newTransitionModule">
-			Neue Transition
+			Neuer Übergang
 		</button>
-		<p>Komponenten</p>
+		<button v-if="editorMode == 'transition'" style="background-color: var(--red)" @click="deleteModule()">
+			Diesen Übergang löschen
+		</button>
+		<br>
+		<h3>Komponenten</h3>
 		<button
 			v-for="module in componentModules as any"
 			:key="module.id"
+			style="background-color: #8ba0ff"
 			@click="openModule(module.id, 'component')"
 		>
 			{{ module.id }}
@@ -219,21 +235,8 @@ export function addState(stateId: string) {
 		<button size="small" @click="newComponentModule">
 			Neue Komponente
 		</button>
-		<p>Bearbeitung</p>
-		<button v-if="editorMode == 'transition'" @click="deleteModule()">
-			Diese Transition löschen
-		</button>
-		<button v-if="editorMode == 'component'" @click="deleteModule()">
+		<button v-if="editorMode == 'component'" style="background-color: var(--red)" @click="deleteModule()">
 			Diese Komponente löschen
-		</button>
-		<button @click="editor?.layout()">
-			Auto Layout
-		</button>
-		<button @click="exportData()">
-			Export
-		</button>
-		<button @click="backToTrainer()">
-			Zurück zum Trainer
 		</button>
 	</div>
 	<div ref="editorContainer" class="rete" :style="{ width: reteWidth }" />
