@@ -1,0 +1,99 @@
+import re
+
+from django.db.models import Q
+from rest_framework import serializers
+
+from game.models import PatientInstance, Owner
+from template.models.continuous_variable import ContinuousVariable
+
+
+def _extract_spo2(breathing_text):
+    """Extracts the SpO2 value from a 'breathing' vital signs text."""
+    return re.search(r"SpO2:\s*(\d+)", breathing_text).group(1)
+
+
+def _check_subset(condition_items, completed_items):
+    """Generic method to check if all given condition items are fulfilled by being within the completed_items set."""
+    if not condition_items:
+        return True
+
+    for item_group in condition_items:
+        if isinstance(item_group, str):
+            item_group = [item_group]
+        if set(item_group).issubset(completed_items):
+            return True
+    return False
+
+
+class ContinuousVariableSerializer(serializers.ModelSerializer):
+    def __init__(self, patient_instance, **kwargs):
+        super().__init__(**kwargs)
+        if isinstance(patient_instance, PatientInstance):
+            self.patient_instance = patient_instance
+        else:
+            raise TypeError(
+                f"Expected 'patient_instance' to be of type PatientInstance. Got {type(patient_instance).__name__} instead."
+            )
+
+    @property
+    def data(self):
+        """Constructs the serialized data, including phase change time and continuous variables."""
+        time_until_phase_change = self._get_time_until_phase_change()
+        continuous_variables = self.continuous_variables()
+
+        return {
+            "timeUntilPhaseChange": time_until_phase_change,
+            "continuousVariables": continuous_variables if continuous_variables else [],
+        }
+
+    def _get_time_until_phase_change(self):
+        """Returns the time until the next phase change event, or 0 if none is scheduled."""
+        phase_change_event_owners = Owner.objects.filter(
+            Q(patient_owner=self.patient_instance)
+            & Q(event__method_name="execute_state_change")
+        )
+        if phase_change_event_owners.exists():
+            phase_change_event = (
+                phase_change_event_owners.order_by("event__end_date").last().event
+            )
+            return phase_change_event.get_time_until_completion(self.patient_instance)
+        return 0
+
+    def continuous_variables(self):
+        """Returns a list of continuous variable data for the patient."""
+        future_state = self.patient_instance.next_state()
+        if not future_state:
+            return []
+
+        spo2_current = _extract_spo2(
+            self.patient_instance.patient_state.vital_signs["Breathing"]
+        )
+        spo2_target = _extract_spo2(future_state.vital_signs["Breathing"])
+
+        variables = ContinuousVariable.objects.all()
+        return [
+            {
+                "name": variable.name,
+                "current": int(spo2_current),
+                "target": int(spo2_target),
+                "function": self._get_applicable_function(variable),
+            }
+            for variable in variables
+        ]
+
+    def _get_applicable_function(self, variable):
+        completed_action_uuids = {
+            str(action.uuid)
+            for action in self.patient_instance.get_completed_action_types()
+        }
+        completed_material_uuids = {
+            str(material.template.uuid)
+            for material in self.patient_instance.materialinstance_set.all()
+        }
+
+        for exception in variable.exceptions:
+            if _check_subset(
+                exception["actions"], completed_action_uuids
+            ) and _check_subset(exception["materials"], completed_material_uuids):
+                return exception["function"]
+        return variable.function
