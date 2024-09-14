@@ -1,8 +1,17 @@
 <script setup lang="ts">
 	import {usePatientStore} from '@/stores/Patient'
-	import {strings} from "../../strings"
+	import {useContinuousVariablesStore} from "@/stores/ContinuousVariables"
+	import {computed} from "vue"
+	import {strings} from "@/strings"
 
 	const patientStore = usePatientStore()
+	const continuousStateStore = useContinuousVariablesStore()
+
+	const breathing = computed(() => {
+		const spo2Val = continuousStateStore.getCurrentValueByName('SpO2')?.toFixed(0)
+		return patientStore.breathing.replace(/(SpO2: )\d+/, `$1${spo2Val}`)
+	})
+
 </script>
 
 <template>
@@ -22,7 +31,7 @@
 			<td>
 				<p class="key">
 					{{ strings.patientState.breathing }}
-				</p>{{ patientStore.breathing }}
+				</p>{{ breathing }}
 			</td>
 		</tr>
 		<tr>
