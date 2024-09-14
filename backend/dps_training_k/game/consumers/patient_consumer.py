@@ -16,6 +16,9 @@ from game.serializers.action_check_serializers import (
     LabActionCheckSerializer,
 )
 from template.models import Action
+from template.serializers.continuous_variable_serializer import (
+    ContinuousVariableSerializer,
+)
 from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import (
@@ -53,6 +56,7 @@ class PatientConsumer(AbstractConsumer):
         RESOURCE_ASSIGNMENTS = "resource-assignments"
         RESPONSE = "response"
         STATE = "state"
+        CONTINUOUS_VARIABLE = "continuous-variable"
         PATIENT_BACK = "patient-back"
         PATIENT_RELOCATING = "patient-relocating"
 
@@ -281,6 +285,19 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.STATE,
             state=serialized_state,
         )
+
+    def continuous_variable_event(self, event=None):
+        serialized_continuous_state = ContinuousVariableSerializer(
+            self.get_patient_instance()
+        ).data
+        self.send_event(
+            self.PatientOutgoingMessageTypes.CONTINUOUS_VARIABLE,
+            continuousState=serialized_continuous_state,
+        )
+
+    def exercise_start_event(self, event=None):
+        super().exercise_start_event(event)
+        self.continuous_variable_event()
 
     def action_check_changed_event(self, event=None):
         if self.currently_inspected_action:

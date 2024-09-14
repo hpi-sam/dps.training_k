@@ -17,6 +17,7 @@ interface MessageData {
 	materialName?: string
 	exercise?: Exercise
 	state?: State
+	continuousState?: ContinuousState
 	logEntries?: LogEntry[]
 	availablePatients: AvailablePatient[]
 	availableActions: AvailableAction[]
@@ -30,6 +31,30 @@ interface MessageData {
 	relocatingInfo: string
 	timeUntilBack: number
 }
+
+interface ContinuousState {
+	timeUntilPhaseChange: number
+	continuousVariables: ContinuousVariable[]
+}
+
+interface ContinuousVariable {
+	name: ContinuousVariableName
+	current: number
+	target: number
+	function: ContinuousFunctionName
+}
+
+enum ContinuousVariableName {
+	SPO2 = "SpO2",
+	HEART_RATE = "BPM"
+}
+
+enum ContinuousFunctionName {
+	LINEAR = "linear",
+	INCREMENT = "increment",
+	DECREMENT = "decrement",
+}
+
 
 interface Exercise {
 	exerciseId: string

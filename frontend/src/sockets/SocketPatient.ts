@@ -68,6 +68,9 @@ class SocketPatient {
 				case 'state':
 					patientStore.loadStatusFromJSON(data.state as State)
 					break
+				case 'continuous-variable':
+					console.log("w received state-continuous data: ", data.continuousState)
+					break
 				case 'available-patients':
 					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					patientStore.initializePatientFromAvailablePatients()
