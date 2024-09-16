@@ -67,6 +67,7 @@ class PatientConsumer(AbstractConsumer):
         ]
         self.patient_frontend_id = ""
         self.currently_inspected_action = None
+        self.continuous_variables_hashes = {}
 
         patient_request_map = {
             self.PatientIncomingMessageTypes.ACTION_ADD: (
@@ -290,10 +291,35 @@ class PatientConsumer(AbstractConsumer):
         serialized_continuous_state = ContinuousVariableSerializer(
             self.get_patient_instance()
         ).data
+
+        continuous_variables = serialized_continuous_state["continuousVariables"]
+        filtered_continuous_variables = [
+            variable
+            for variable in continuous_variables
+            if self.has_continuous_variable_hash_changed(variable)
+        ]
+        self.update_continuous_variable_hashes(filtered_continuous_variables)
+        serialized_continuous_state["continuousVariables"] = (
+            filtered_continuous_variables
+        )
+
         self.send_event(
             self.PatientOutgoingMessageTypes.CONTINUOUS_VARIABLE,
             continuousState=serialized_continuous_state,
         )
+
+    def has_continuous_variable_hash_changed(self, variable):
+        """Check if the hash of the variable has changed."""
+        var_name = variable["name"]
+        var_hash = variable["hash"]
+        if var_name not in self.continuous_variables_hashes:
+            return True
+        return self.continuous_variables_hashes[var_name] != var_hash
+
+    def update_continuous_variable_hashes(self, variables):
+        """Update the stored hashes with the new hashes."""
+        for variable in variables:
+            self.continuous_variables_hashes[variable["name"]] = variable["hash"]
 
     def exercise_start_event(self, event=None):
         super().exercise_start_event(event)

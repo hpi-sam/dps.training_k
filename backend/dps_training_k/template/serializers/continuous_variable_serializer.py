@@ -71,15 +71,21 @@ class ContinuousVariableSerializer(serializers.ModelSerializer):
         spo2_target = _extract_spo2(future_state.vital_signs["Breathing"])
 
         variables = ContinuousVariable.objects.all()
-        return [
-            {
-                "name": variable.name,
-                "current": int(spo2_current),
-                "target": int(spo2_target),
-                "function": self._get_applicable_function(variable),
-            }
-            for variable in variables
-        ]
+
+        result = []
+        for variable in variables:
+            function, var_hash = self._get_applicable_function(variable)
+            var_hash = hash((var_hash, spo2_current, spo2_target))
+            result.append(
+                {
+                    "name": variable.name,
+                    "current": 100,  # Placeholder value, adjust as needed
+                    "target": 0,  # Placeholder value, adjust as needed
+                    "function": function,
+                    "hash": var_hash,
+                }
+            )
+        return result
 
     def _get_applicable_function(self, variable):
         completed_action_uuids = {
@@ -92,8 +98,12 @@ class ContinuousVariableSerializer(serializers.ModelSerializer):
         }
 
         for exception in variable.exceptions:
-            if _check_subset(
-                exception["actions"], completed_action_uuids
-            ) and _check_subset(exception["materials"], completed_material_uuids):
-                return exception["function"]
-        return variable.function
+            function = exception["function"]
+            actions = tuple(exception["actions"])
+            materials = tuple(exception["materials"])
+
+            if _check_subset(actions, completed_action_uuids) and _check_subset(
+                materials, completed_material_uuids
+            ):
+                return function, hash((function, actions, materials))
+        return variable.function, hash(variable.function)
