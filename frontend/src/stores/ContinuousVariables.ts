@@ -7,7 +7,7 @@ import type {ContinuousState, ContinuousStateInternal, ContinuousVariableInterna
 let intervalId: number | null = null
 
 export const useContinuousVariablesStore = defineStore('patientContinuous', {
-	state: (): ContinuousState => ({
+	state: (): ContinuousStateInternal => ({
 		timeUntilPhaseChange: Number.NEGATIVE_INFINITY,
 		continuousVariables: [],
 	}),
@@ -15,7 +15,7 @@ export const useContinuousVariablesStore = defineStore('patientContinuous', {
 		getCurrentValueByName: (state) => {
 			return (variableName: string) => {
 				const variable = state.continuousVariables.find(v => v.name === variableName)
-				return variable ? variable.current : null
+				return variable ? variable.xCurrent : null
 			}
 		}
 	},
@@ -26,9 +26,20 @@ export const useContinuousVariablesStore = defineStore('patientContinuous', {
 			continuousState.continuousVariables.forEach(variable => {
 				const existingVariable = this.continuousVariables.find(v => v.name === variable.name)
 				if (existingVariable) {
-					existingVariable.target = variable.target
+					existingVariable.xCurrent = variable.current // ToDo: remove
+					existingVariable.xStart = existingVariable.xCurrent
+					existingVariable.xTarget = variable.target
+					existingVariable.tDelta = this.timeUntilPhaseChange
 					existingVariable.function = variable.function
-				} else this.continuousVariables.push(variable)
+					console.log("Continuous Variable overwritten " + existingVariable.name)
+				} else this.continuousVariables.push({
+					name: variable.name,
+					xStart: variable.current,
+					xCurrent: variable.current,
+					xTarget: variable.target,
+					tDelta: this.timeUntilPhaseChange,
+					function: variable.function,
+				})
 			})
 
 			if (useExerciseStore().status == "running") startContinuousLogic()
@@ -43,24 +54,25 @@ export const useContinuousVariablesStore = defineStore('patientContinuous', {
 					return
 				}
 				this.continuousVariables.forEach(variable => {
-					variable.current = this.calculateVariableIncrement(variable)
+					variable.xCurrent = this.calculateVariableIncrement(variable)
 				})
 
 				this.timeUntilPhaseChange--
 			}, 1000)
 		},
 
-		calculateVariableIncrement(variable: ContinuousVariable) {
+		calculateVariableIncrement(variable: ContinuousVariableInternal) {
+			console.log("Time until phase change: " + this.timeUntilPhaseChange)
 			switch (variable.function) {
-				case "linear":
-					return variable.current + ((variable.target - variable.current) / this.timeUntilPhaseChange)
-				case "increment":
-					return variable.current + 1
-				case "decrement":
-					return variable.current - 1
+				case ContinuousFunctionName.LINEAR:
+					return variable.xCurrent + linear(variable, this.timeUntilPhaseChange)
+				case ContinuousFunctionName.INCREMENT:
+					return variable.xCurrent + 1
+				case ContinuousFunctionName.DECREMENT:
+					return variable.xCurrent - 1
 				default:
 					console.error("Unrecognized function: " + variable.function)
-					return variable.current
+					return variable.xCurrent
 			}
 		},
 
@@ -89,4 +101,8 @@ export function startContinuousLogic() {
 		},
 		{immediate: true}
 	)
+}
+
+function linear(variable: ContinuousVariableInternal, timeUntilPhaseChange: number) {
+	return ((variable.xTarget - variable.xCurrent) / timeUntilPhaseChange)
 }

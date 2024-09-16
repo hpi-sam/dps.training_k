@@ -38,6 +38,11 @@ export interface ContinuousState {
 	continuousVariables: ContinuousVariable[]
 }
 
+export interface ContinuousStateInternal {
+	timeUntilPhaseChange: number
+	continuousVariables: ContinuousVariableInternal[]
+}
+
 export interface ContinuousVariable {
 	name: ContinuousVariableName
 	current: number
@@ -45,6 +50,13 @@ export interface ContinuousVariable {
 	function: ContinuousFunctionName
 }
 
+export interface ContinuousVariableInternal {
+	name: ContinuousVariableName
+	xStart: number
+	xCurrent: number
+	xTarget: number
+	tDelta: number
+	function: ContinuousFunctionName
 }
 
 
