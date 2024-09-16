@@ -42,6 +42,11 @@ def update_or_create_continuous_variables():
                     "materials": [str(MaterialIDs.EKG)],
                     "function": ContinuousVariable.Function.INCREMENT,
                 },
+                {
+                    "actions": [str(ActionIDs.IV_ZUGANG)],
+                    "materials": [],
+                    "function": ContinuousVariable.Function.SIGMOID,
+                },
             ],
         },
     )

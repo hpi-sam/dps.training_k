@@ -10,6 +10,8 @@ class ContinuousVariable(UUIDable, models.Model):
 
     class Function(models.TextChoices):
         LINEAR = "linear"
+        SIGMOID = ("sigmoid",)
+        SIGMOID_DELAYED = ("delayed sigmoid",)
         INCREMENT = "increment"
         DECREMENT = "decrement"
 

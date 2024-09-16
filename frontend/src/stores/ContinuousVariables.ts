@@ -66,6 +66,12 @@ export const useContinuousVariablesStore = defineStore('patientContinuous', {
 			switch (variable.function) {
 				case ContinuousFunctionName.LINEAR:
 					return variable.xCurrent + linear(variable, this.timeUntilPhaseChange)
+				case ContinuousFunctionName.SIGMOID:
+					// console.log("Calculate sigmoid: " + (variable.xCurrent + sigmoid(variable, this.timeUntilPhaseChange)) + "; Time until phase" +
+					// 	" change: " + this.timeUntilPhaseChange)
+					return variable.xCurrent + sigmoid(variable, this.timeUntilPhaseChange)
+				case ContinuousFunctionName.SIGMOID_DELAYED:
+					return variable.xCurrent + sigmoid_delayed(variable, this.timeUntilPhaseChange)
 				case ContinuousFunctionName.INCREMENT:
 					return variable.xCurrent + 1
 				case ContinuousFunctionName.DECREMENT:
@@ -105,4 +111,58 @@ export function startContinuousLogic() {
 
 function linear(variable: ContinuousVariableInternal, timeUntilPhaseChange: number) {
 	return ((variable.xTarget - variable.xCurrent) / timeUntilPhaseChange)
+}
+
+function sigmoid(variable: ContinuousVariableInternal, timeUntilPhaseChange: number): number {
+	// higher value = steeper; higher -> lower infinTargetCorrection
+	const steepness = 10
+	// magic value (try & error for steepness 10/20) needed for correction as the target height is only reached -> infin
+	const infinTargetCorrection = 3.5
+
+	const t = variable.tDelta - timeUntilPhaseChange
+	const tMid = variable.tDelta / 2
+
+	const tStretchFactor = 1 / ((Math.pow(variable.tDelta, 2)) / Math.pow(steepness, 2))
+	const tStretchCorrectorNormalizer = Math.atan(Math.sqrt(1) * variable.tDelta) / Math.sqrt(1)
+	const tStretchCorrector = (Math.atan(Math.sqrt(tStretchFactor) * variable.tDelta) / Math.sqrt(tStretchFactor)) / tStretchCorrectorNormalizer
+
+	// original height of atanDerivative fun, - infinTargetCorrection scaled with t_delta
+	const pi = Math.PI - (infinTargetCorrection / variable.tDelta)
+	const xDelta = variable.xTarget - variable.xStart
+	const xStretcher = xDelta / pi
+
+	const atanDerivative = (1 / (Math.pow(t - tMid, 2) * tStretchFactor + 1))
+
+	return atanDerivative * xStretcher / tStretchCorrector
+}
+
+function sigmoid_delayed(variable: ContinuousVariableInternal, timeUntilPhaseChange: number): number {
+	// higher value = steeper; higher -> lower infinTargetCorrection
+	const steepness = 10
+	// magic value (try & error for steepness 10/20) needed for correction as the target height is only reached -> infin
+	const infinTargetCorrection = 3.5
+
+	const t = variable.tDelta - timeUntilPhaseChange
+	const tMid = variable.tDelta / 2
+
+	const tShiftFrac = 3
+	const t0Shifted = variable.tDelta / tShiftFrac  // Time when sigmoid starts (shifted by one tShiftFrac)
+	const tDeltaShifted = variable.tDelta - t0Shifted
+	const tShiftedMid = tMid + (variable.tDelta - tMid) / tShiftFrac  // Shifted midpoint
+
+	const tStretchFactor = 1 / ((Math.pow(tDeltaShifted, 2)) / Math.pow(steepness, 2))
+	const tStretchCorrectorNormalizer = Math.atan(Math.sqrt(1) * variable.tDelta) / Math.sqrt(1)
+	const tStretchCorrector = (Math.atan(Math.sqrt(tStretchFactor) * variable.tDelta) / Math.sqrt(tStretchFactor)) / tStretchCorrectorNormalizer
+
+	// original height of atanDerivative fun, - infinTargetCorrection scaled with t_delta
+	const pi = Math.PI - (infinTargetCorrection / tDeltaShifted)
+	const xDelta = variable.xTarget - variable.xStart
+	const xStretcher = xDelta / pi
+
+	const atanDerivative = (1 / (Math.pow(t - tShiftedMid, 2) * tStretchFactor + 1))
+
+	if (t < t0Shifted) {
+		console.log("straight")
+		return 0
+	} else return atanDerivative * xStretcher / tStretchCorrector
 }
