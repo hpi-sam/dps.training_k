@@ -26,7 +26,6 @@ export const useContinuousVariablesStore = defineStore('patientContinuous', {
 			continuousState.continuousVariables.forEach(variable => {
 				const existingVariable = this.continuousVariables.find(v => v.name === variable.name)
 				if (existingVariable) {
-					existingVariable.xCurrent = variable.current // ToDo: remove
 					existingVariable.xStart = existingVariable.xCurrent
 					existingVariable.xTarget = variable.target
 					existingVariable.tDelta = this.timeUntilPhaseChange
@@ -67,11 +66,9 @@ export const useContinuousVariablesStore = defineStore('patientContinuous', {
 				case ContinuousFunctionName.LINEAR:
 					return variable.xCurrent + linear(variable, this.timeUntilPhaseChange)
 				case ContinuousFunctionName.SIGMOID:
-					// console.log("Calculate sigmoid: " + (variable.xCurrent + sigmoid(variable, this.timeUntilPhaseChange)) + "; Time until phase" +
-					// 	" change: " + this.timeUntilPhaseChange)
 					return variable.xCurrent + sigmoid(variable, this.timeUntilPhaseChange)
 				case ContinuousFunctionName.SIGMOID_DELAYED:
-					return variable.xCurrent + sigmoid_delayed(variable, this.timeUntilPhaseChange)
+					return variable.xCurrent + sigmoidDelayed(variable, this.timeUntilPhaseChange)
 				case ContinuousFunctionName.INCREMENT:
 					return variable.xCurrent + 1
 				case ContinuousFunctionName.DECREMENT:
@@ -136,7 +133,7 @@ function sigmoid(variable: ContinuousVariableInternal, timeUntilPhaseChange: num
 	return atanDerivative * xStretcher / tStretchCorrector
 }
 
-function sigmoid_delayed(variable: ContinuousVariableInternal, timeUntilPhaseChange: number): number {
+function sigmoidDelayed(variable: ContinuousVariableInternal, timeUntilPhaseChange: number): number {
 	// higher value = steeper; higher -> lower infinTargetCorrection
 	const steepness = 10
 	// magic value (try & error for steepness 10/20) needed for correction as the target height is only reached -> infin

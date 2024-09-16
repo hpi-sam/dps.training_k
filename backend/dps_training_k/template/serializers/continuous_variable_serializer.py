@@ -7,9 +7,14 @@ from game.models import PatientInstance, Owner
 from template.models.continuous_variable import ContinuousVariable
 
 
-def _extract_spo2(breathing_text):
-    """Extracts the SpO2 value from a 'breathing' vital signs text."""
-    return re.search(r"SpO2:\s*(\d+)", breathing_text).group(1)
+def _extract_spo2(vital_signs):
+    """Extracts the SpO2 value from a vital signs text."""
+    return int(re.search(r"SpO2:\s*(\d+)", vital_signs["Breathing"]).group(1))
+
+
+def _extract_bpm(vital_signs):
+    """Extracts the heart rate value from a vital signs text."""
+    return int(re.search(r"Herzfreq:\s*(\d+)", vital_signs["Circulation"]).group(1))
 
 
 def _check_subset(condition_items, completed_items):
@@ -65,27 +70,39 @@ class ContinuousVariableSerializer(serializers.ModelSerializer):
         if not future_state:
             return []
 
-        spo2_current = _extract_spo2(
-            self.patient_instance.patient_state.vital_signs["Breathing"]
-        )
-        spo2_target = _extract_spo2(future_state.vital_signs["Breathing"])
-
         variables = ContinuousVariable.objects.all()
 
         result = []
         for variable in variables:
+            current, target = self._get_values(variable.name, future_state)
             function, var_hash = self._get_applicable_function(variable)
-            var_hash = hash((var_hash, spo2_current, spo2_target))
+            var_hash = hash((var_hash, current, target))
+
             result.append(
                 {
                     "name": variable.name,
-                    "current": 100,  # Placeholder value, adjust as needed
-                    "target": 0,  # Placeholder value, adjust as needed
+                    "current": current,
+                    "target": target,
                     "function": function,
                     "hash": var_hash,
                 }
             )
         return result
+
+    def _get_values(self, variable_name, future_state):
+        match variable_name:
+            case ContinuousVariable.Variable.SPO2:
+                fun = _extract_spo2
+            case ContinuousVariable.Variable.HEART_RATE:
+                fun = _extract_bpm
+            case _:
+                raise TypeError(
+                    f"Did not find values for given continuous variable {variable_name}."
+                )
+
+        return fun(self.patient_instance.patient_state.vital_signs), fun(
+            future_state.vital_signs
+        )
 
     def _get_applicable_function(self, variable):
         completed_action_uuids = {
