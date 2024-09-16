@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import type {Action, ActionOverview} from "@/sockets/MessageData"
 
 export const useActionOverviewStore = defineStore('actionOverview', {
 	state: (): ActionOverview => ({

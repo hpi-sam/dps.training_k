@@ -11,6 +11,18 @@ import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
 import {commonMockEvents} from "./commonMockEvents"
 import {useActionCheckStore} from "@/stores/ActionCheck"
 import {startContinuousLogic, useContinuousVariablesStore} from "@/stores/ContinuousVariables"
+import type {
+	Action,
+	ActionCheck,
+	AvailableAction,
+	AvailablePatient,
+	ContinuousState,
+	Exercise,
+	Injury,
+	MessageData,
+	ResourceAssignment,
+	State
+} from "@/sockets/MessageData"
 
 
 class SocketPatient {

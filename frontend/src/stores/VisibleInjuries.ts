@@ -1,19 +1,20 @@
-import { addInjury } from '@/components/widgets/PatientModel.vue'
+import {addInjury} from '@/components/widgets/PatientModel.vue'
 import {defineStore} from 'pinia'
+import type {Injury, VisibleInjuries} from "@/sockets/MessageData"
 
 export const useVisibleInjuriesStore = defineStore('visibleInjuries', {
 	state: (): VisibleInjuries => ({
 		injuries: []
 	}),
-    actions: {
-        loadVisibleInjuries(json: Injury[]) {
-            this.injuries = json
-            this.showVisibleInjuries()
-        },
-        showVisibleInjuries() {
-            for (const injury of this.injuries) {
-                addInjury(injury.injuryType, injury.position)
-            }
-        }
-    }
+	actions: {
+		loadVisibleInjuries(json: Injury[]) {
+			this.injuries = json
+			this.showVisibleInjuries()
+		},
+		showVisibleInjuries() {
+			for (const injury of this.injuries) {
+				addInjury(injury.injuryType, injury.position)
+			}
+		}
+	}
 })

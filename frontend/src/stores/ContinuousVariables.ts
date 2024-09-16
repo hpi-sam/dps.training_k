@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia'
 import {useExerciseStore} from "@/stores/Exercise"
 import {watch} from "vue"
+import {ContinuousFunctionName} from "@/enums"
+import type {ContinuousState, ContinuousStateInternal, ContinuousVariableInternal} from "@/sockets/MessageData"
 
 let intervalId: number | null = null
 
