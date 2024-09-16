@@ -111,50 +111,36 @@ function linear(variable: ContinuousVariableInternal, timeUntilPhaseChange: numb
 }
 
 function sigmoid(variable: ContinuousVariableInternal, timeUntilPhaseChange: number): number {
-	// higher value = steeper; higher -> lower infinTargetCorrection
-	const steepness = 10
-	// magic value (try & error for steepness 10/20) needed for correction as the target height is only reached -> infin
-	const infinTargetCorrection = 3.5
+	const steepness = 8 // = the horizontal range that is taken from the original atan function (higher values = steeper)
 
 	const t = variable.tDelta - timeUntilPhaseChange
 	const tMid = variable.tDelta / 2
-
 	const tStretchFactor = 1 / ((Math.pow(variable.tDelta, 2)) / Math.pow(steepness, 2))
-	const tStretchCorrectorNormalizer = Math.atan(Math.sqrt(1) * variable.tDelta) / Math.sqrt(1)
-	const tStretchCorrector = (Math.atan(Math.sqrt(tStretchFactor) * variable.tDelta) / Math.sqrt(tStretchFactor)) / tStretchCorrectorNormalizer
+	const tStretchCorrector = variable.tDelta / steepness
 
-	// original height of atanDerivative fun, - infinTargetCorrection scaled with t_delta
-	const pi = Math.PI - (infinTargetCorrection / variable.tDelta)
 	const xDelta = variable.xTarget - variable.xStart
-	const xStretcher = xDelta / pi
+	const xStretcher = xDelta / (2 * Math.atan(steepness / 2))
 
 	const atanDerivative = (1 / (Math.pow(t - tMid, 2) * tStretchFactor + 1))
 
-	return atanDerivative * xStretcher / tStretchCorrector
+	return (atanDerivative * xStretcher / tStretchCorrector)
 }
 
 function sigmoidDelayed(variable: ContinuousVariableInternal, timeUntilPhaseChange: number): number {
-	// higher value = steeper; higher -> lower infinTargetCorrection
-	const steepness = 10
-	// magic value (try & error for steepness 10/20) needed for correction as the target height is only reached -> infin
-	const infinTargetCorrection = 3.5
+	const steepness = 8 // = the horizontal range that is taken from the original atan function (higher values = steeper)
 
 	const t = variable.tDelta - timeUntilPhaseChange
 	const tMid = variable.tDelta / 2
-
 	const tShiftFrac = 3
 	const t0Shifted = variable.tDelta / tShiftFrac  // Time when sigmoid starts (shifted by one tShiftFrac)
 	const tDeltaShifted = variable.tDelta - t0Shifted
 	const tShiftedMid = tMid + (variable.tDelta - tMid) / tShiftFrac  // Shifted midpoint
 
 	const tStretchFactor = 1 / ((Math.pow(tDeltaShifted, 2)) / Math.pow(steepness, 2))
-	const tStretchCorrectorNormalizer = Math.atan(Math.sqrt(1) * variable.tDelta) / Math.sqrt(1)
-	const tStretchCorrector = (Math.atan(Math.sqrt(tStretchFactor) * variable.tDelta) / Math.sqrt(tStretchFactor)) / tStretchCorrectorNormalizer
+	const tStretchCorrector = tDeltaShifted / steepness
 
-	// original height of atanDerivative fun, - infinTargetCorrection scaled with t_delta
-	const pi = Math.PI - (infinTargetCorrection / tDeltaShifted)
 	const xDelta = variable.xTarget - variable.xStart
-	const xStretcher = xDelta / pi
+	const xStretcher = xDelta / (2 * Math.atan(steepness / 2))
 
 	const atanDerivative = (1 / (Math.pow(t - tShiftedMid, 2) * tStretchFactor + 1))
 

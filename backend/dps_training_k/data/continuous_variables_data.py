@@ -54,7 +54,7 @@ def update_or_create_continuous_variables():
         uuid=ContinuousVariableIDs.HEART_RATE,
         defaults={
             "name": ContinuousVariable.Variable.HEART_RATE,
-            "function": ContinuousVariable.Function.LINEAR,
+            "function": ContinuousVariable.Function.SIGMOID_DELAYED,
             "exceptions": [],
         },
     )
