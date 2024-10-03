@@ -54,7 +54,7 @@ jobs:
           cp backend/dps_training_k/deployment/nginx/nginx_deploy_prod.conf deployment_files/nginx.conf
 
       - name: Archive deployment files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-files
           path: deployment_files/
