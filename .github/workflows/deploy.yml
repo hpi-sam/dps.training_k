@@ -50,8 +50,8 @@ jobs:
           mkdir deployment_files
           cp docker-compose.prod.yml deployment_files/docker-compose.prod.yml
           cp docker-compose.dev.yml deployment_files/docker-compose.dev.yml
-          cp ./.env.prod deployment_files/.env.prod
-          cp ./.env.dev deployment_files/.env.dev
+          cp .env.prod deployment_files/.env.prod
+          cp .env.dev deployment_files/.env.dev
           cp backend/dps_training_k/deployment/nginx/nginx_deploy_prod.conf deployment_files/nginx_prod.conf
           cp backend/dps_training_k/deployment/nginx/nginx_deploy_dev.conf deployment_files/nginx_dev.conf
 
@@ -60,3 +60,4 @@ jobs:
         with:
           name: deployment-files
           path: deployment_files/
+          include-hidden-files: true
