@@ -88,6 +88,7 @@ jobs:
 
       - name: Run docker containers with deploy dev configuration
         run: |
+          cp backend/dps_training_k/deployment/nginx/nginx_deploy_dev.conf ./nginx_dev.conf
           docker compose -f docker-compose.dev.yml up -d
 
       - name: Run integration tests
