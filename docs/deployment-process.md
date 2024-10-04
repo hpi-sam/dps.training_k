@@ -25,7 +25,7 @@ docker login ghcr.io -u <username> -p <token>
 ```
 8. Run following commands to run the containers:
 ```bash
-docker compose -f docker-compose.<dev/prod>.yml up --build
+docker compose -f docker-compose.<dev/prod>.yml up
 ```
 
 The application is now deployed and the website should be accessible via http (`dev`) or https (`prod`). The images will be automatically updated on each 
