@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -25,14 +25,14 @@ jobs:
       - name: Build and push frontend Docker images
         run: |
           cd ./frontend/
-          docker-compose --env-file .env.prod build
+          docker compose --env-file .env.prod build
           docker tag dps_training_k-frontend ghcr.io/hpi-sam/dps_training_k-frontend:latest
           docker push ghcr.io/hpi-sam/dps_training_k-frontend:latest
 
       - name: Build and push backend Docker images
         run: |
           cd ./backend/dps_training_k/
-          docker-compose --env-file .env.prod build
+          docker compose --env-file .env.prod build
           docker tag dps_training_k-django ghcr.io/hpi-sam/dps_training_k-django:latest
           docker push ghcr.io/hpi-sam/dps_training_k-django:latest
           docker tag dps_training_k-celeryworker ghcr.io/hpi-sam/dps_training_k-celeryworker:latest
@@ -48,13 +48,16 @@ jobs:
       - name: Prepare deployment files
         run: |
           mkdir deployment_files
-          cp docker-compose.prod.yml deployment_files/docker-compose.yml
-          cp ./.env.prod deployment_files/
-          cp ./.env.dev deployment_files/
-          cp backend/dps_training_k/deployment/nginx/nginx_deploy_prod.conf deployment_files/nginx.conf
+          cp docker-compose.prod.yml deployment_files/docker-compose.prod.yml
+          cp docker-compose.dev.yml deployment_files/docker-compose.dev.yml
+          cp .env.prod deployment_files/.env.prod
+          cp .env.dev deployment_files/.env.dev
+          cp backend/dps_training_k/deployment/nginx/nginx_deploy_prod.conf deployment_files/nginx_prod.conf
+          cp backend/dps_training_k/deployment/nginx/nginx_deploy_dev.conf deployment_files/nginx_dev.conf
 
       - name: Archive deployment files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-files
           path: deployment_files/
+          include-hidden-files: true

@@ -27,7 +27,7 @@ export default defineConfig({
     // (localhost would resolve to the container and not the host)
     hmr: {
       host: getHmrHost(),
-      port: 80
+      port: 3001
     }
   }
 })
