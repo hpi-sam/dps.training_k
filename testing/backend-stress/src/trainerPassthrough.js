@@ -22,7 +22,11 @@ async function simulateExercise(userIndex) {
 			socketTrainer.connect(token, response => resolve(response));
 		});
 
-		socketTrainer.testPassthrough((message) => {console.log(message)})
+		socketTrainer.testPassthrough((message) => {
+			console.log(message)
+			socketTrainer.close()
+			parentPort.close()
+		})
 
 		const endTime = now();
 
@@ -38,6 +42,7 @@ async function simulateExercise(userIndex) {
 			success: false,
 			error: error.message
 		});
+		parentPort.close()
 	}
 }
 

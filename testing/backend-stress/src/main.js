@@ -12,7 +12,7 @@ let workerCount = 0;
 
 function startWorker(userIndex) {
 	return new Promise((resolve, reject) => {
-		const worker = new Worker('./exercise.js', {
+		const worker = new Worker('./trainerPassthrough.js', {
 			workerData: { userIndex }
 		});
 
