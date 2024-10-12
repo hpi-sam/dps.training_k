@@ -74,8 +74,6 @@ Example given for creating the "patient_states.json" fixture containing all pati
 
 - clear database of the wanted models via e.g. `docker exec -it K-dPS-django python manage.py flush`
 - fill database with data you want to export as fixture: `docker exec -it K-dPS-django python manage.py import_patient_states`
-    - if updating a fixture that is used by a model that doesn't allow null fields, make them nullable, migrate and discard the migration file
-      afterwards.
 - create fixture:
     - `docker exec -it K-dPS-django bash`
     - `export PYTHONIOENCODING=utf8`
