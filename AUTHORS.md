@@ -5,8 +5,7 @@
 - [Toni Poredda](https://github.com/Toni000)
 
 # Other Contributors
-Parts of the [backend](backend) were partly based on the [dps.training_server repository](https://github.com/hpi-sam/dps.training_server) with 
-following contributors:
+The [backend](backend) was partly based on the [dps.training_server repository](https://github.com/hpi-sam/dps.training_server) with following contributors:
 - [Nils Cichy](https://github.com/inadicis)
 - [Chiara Schirmer](https://github.com/Schirmchens)
 - [Patricia Sowa](https://github.com/PatriciaSowa)
@@ -19,6 +18,8 @@ following contributors:
 - [Matthias Barkowsky](https://github.com/mbarkowsky)
 
 ## Data provider
+Individuals responsible for creating and auditing the data - see the respective [readme](backend/dps_training_k/data/README.md) and 
+[license](backend/dps_training_k/data/LICENSE)
 - Frank Sensen
 - Philipp Rocker
 - Wolfram Pohlheim
