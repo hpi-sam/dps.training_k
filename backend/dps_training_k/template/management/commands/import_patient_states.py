@@ -9,6 +9,8 @@ from django.core.management.base import BaseCommand
 from data.subconditions_data import update_or_create_subconditions
 from template.models import PatientState, Subcondition, LogicNode, StateTransition
 
+CUSTOM_MAXINT = 100000  # doesn't matter, people shouldn't be doing the same thing 100000 times anyway
+
 
 class Command(BaseCommand):
     help = "Populates the database with patient states. Takes about 10min to complete"
