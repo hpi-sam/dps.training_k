@@ -1,12 +1,15 @@
-import { parentPort, workerData } from "worker_threads";
+import {parentPort, workerData} from "worker_threads";
 import now from "performance-now";
 import {SocketTrainer} from "./sockets/SocketTrainer.js"
 import {SocketPatient} from "./sockets/SocketPatient.js";
 import {connectPatient, connectTrainer} from "./setupHelper.js";
 
+const actionName = "Turniquet"
+const actionTime = 15000 / 10
+
 const socketTrainer = new SocketTrainer('http://localhost/ws/trainer/?token=')
 const socketPatient = new SocketPatient('http://localhost/ws/patient/?token=')
-let exerciseId, areaId, patientId, materialId
+let exerciseId, areaId, patientId, personnelId
 
 async function simulate(userIndex) {
 	const trainerName = `testuser${crypto.randomUUID()}`
@@ -16,18 +19,21 @@ async function simulate(userIndex) {
 		await prepareExercise()
 		await connectPatient(socketPatient, exerciseId, patientId)
 
+		await new Promise(resolve => {
+			socketPatient.assignPersonnel(personnelId, () => resolve())
+		})
+
 		const startTime = now();
-		for (let i = 0; i < 100; i++) {
-			await assignMaterial()
-		}
+		await doAction()
 		const endTime = now();
+
 
 		socketPatient.close()
 		socketTrainer.close()
 
 		parentPort.postMessage({
 			userIndex,
-			responseTime: (endTime - startTime) / 200,
+			responseTime: (endTime - startTime) - actionTime, // subtract execution time of action
 			success: true
 		});
 		parentPort.close()
@@ -65,8 +71,8 @@ async function prepareExercise() {
 	})
 
 	await new Promise(resolve => {
-		socketTrainer.materialAdd(areaId, "BZ-Messgerät", exercise => {
-			materialId = exercise.areas[0].material[0].materialId
+		socketTrainer.personnelAdd(areaId, "", exercise => {
+			personnelId = exercise.areas[0].personnel[0].personnelId
 			resolve()
 		})
 	})
@@ -76,12 +82,11 @@ async function prepareExercise() {
 	})
 }
 
-async function assignMaterial() {
+async function doAction() {
 	await new Promise(resolve => {
-		socketPatient.assignMaterial(materialId, () => resolve())
-	})
-	await new Promise(resolve => {
-		socketPatient.releaseMaterial(materialId, () => resolve())
+		socketPatient.actionAdd(actionName, confirmed => {
+			if (!confirmed) throw Error("action declined")
+		}, () => resolve())
 	})
 }
 

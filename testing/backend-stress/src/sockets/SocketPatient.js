@@ -4,6 +4,8 @@ class EventCallbacks {
 	constructor() {
 		this.testPassthroughs = []
 		this.resourceAssignments = []
+		this.actionConfirmationsDeclinations = []
+		this.actionLists = []
 	}
 }
 
@@ -19,8 +21,10 @@ export class SocketPatient {
 		this.socket = new WebSocket(this.url + token);
 
 		this.socket.onopen = () => {
-			cb()
+			this.callbacks.actionLists.push(() => {})
+			this.callbacks.resourceAssignments.push(() => {})
 			this.connected = true;
+			cb()
 		};
 
 		this.socket.onclose = () => {
@@ -72,10 +76,10 @@ export class SocketPatient {
 				case 'information':
 					break;
 				case 'action-confirmation':
+					(this.callbacks.actionConfirmationsDeclinations.shift())(true)
 					break;
 				case 'action-declination':
-					break;
-				case 'action-result':
+					(this.callbacks.actionConfirmationsDeclinations.shift())(false)
 					break;
 				case 'resource-assignments':
 					try {
@@ -85,6 +89,11 @@ export class SocketPatient {
 					}
 					break;
 				case 'action-list':
+					try {
+						(this.callbacks.actionLists.shift())(data.actions)
+					} catch (e) {
+						console.error("PatientSocket action-list cb not created");
+					}
 					break;
 				case 'visible-injuries':
 					break;
@@ -112,7 +121,11 @@ export class SocketPatient {
 		}
 	}
 
-	actionAdd(actionName) {
+	actionAdd(actionName, cb_conf, cb_list) {
+		this.callbacks.actionConfirmationsDeclinations.push(cb_conf);
+		this.callbacks.actionLists.push(() => {}); // IP
+		this.callbacks.actionLists.push(() => {}); // IP #2???
+		this.callbacks.actionLists.push(cb_list); // FI
 		this.sendMessage(JSON.stringify({
 			'messageType': 'action-add',
 			'actionName': actionName,
@@ -138,7 +151,8 @@ export class SocketPatient {
 		}));
 	}
 
-	assignPersonnel(personnelId) {
+	assignPersonnel(personnelId, cb) {
+		this.callbacks.resourceAssignments.push(cb);
 		this.sendMessage(JSON.stringify({
 			'messageType': 'personnel-assign',
 			'personnelId': personnelId,

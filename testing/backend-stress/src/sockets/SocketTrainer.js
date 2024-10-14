@@ -60,7 +60,7 @@ export class SocketTrainer {
 					try {
 						(this.callbacks.exercises.shift())(data.exercise);
 					} catch (e) {
-						console.error("TrainerSocket exercise cb not created");
+						// console.error("TrainerSocket exercise cb not created");
 					}
 					break;
 				case 'exercise-start':
@@ -174,7 +174,8 @@ export class SocketTrainer {
 		}));
 	}
 
-	personnelAdd(areaId, personnelName) {
+	personnelAdd(areaId, personnelName, cb) {
+		this.callbacks.exercises.push(cb)
 		this.sendMessage(JSON.stringify({
 			'messageType': 'personnel-add',
 			'areaId': areaId,
