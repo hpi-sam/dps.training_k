@@ -1,8 +1,10 @@
-import { WebSocket } from 'ws'; // Use require for WebSocket
+import { WebSocket } from 'ws';
 
 class EventCallbacks {
 	constructor() {
 		this.testPassthroughs = []
+		this.exercises = []
+		this.exerciseStarts = []
 	}
 }
 
@@ -20,16 +22,14 @@ export class SocketTrainer {
 		this.socket.onopen = () => {
 			cb()
 			this.connected = true;
-			this.exerciseCreate();
 		};
 
 		this.socket.onclose = () => {
-			//console.log('Trainer WebSocket connection closed');
 			this.connected = false;
 		};
 
 		this.socket.onerror = (error) => {
-			//console.error('Trainer WebSocket error:', error);
+			console.error('Trainer WebSocket error:', error);
 		};
 
 		this.socket.onmessage = (message) => {
@@ -57,8 +57,14 @@ export class SocketTrainer {
 				case 'available-patients':
 					break;
 				case 'exercise':
+					try {
+						(this.callbacks.exercises.shift())(data.exercise);
+					} catch (e) {
+						console.error("TrainerSocket exercise cb not created");
+					}
 					break;
 				case 'exercise-start':
+					(this.callbacks.exerciseStarts.shift())();
 					break;
 				case 'exercise-pause':
 					break;
@@ -89,15 +95,17 @@ export class SocketTrainer {
 	}
 
 	testPassthrough(cb) {
-		this.sendMessage(JSON.stringify({ 'messageType': 'test-passthrough' }));
 		this.callbacks.testPassthroughs.push(cb);
+		this.sendMessage(JSON.stringify({ 'messageType': 'test-passthrough' }));
 	}
 
-	exerciseCreate() {
+	exerciseCreate(cb) {
+		this.callbacks.exercises.push(cb)
 		this.sendMessage(JSON.stringify({ 'messageType': 'exercise-create' }));
 	}
 
-	exerciseStart() {
+	exerciseStart(cb) {
+		this.callbacks.exerciseStarts.push(cb)
 		this.sendMessage(JSON.stringify({ 'messageType': 'exercise-start' }));
 	}
 
@@ -113,7 +121,8 @@ export class SocketTrainer {
 		this.sendMessage(JSON.stringify({ 'messageType': 'exercise-end' }));
 	}
 
-	areaAdd() {
+	areaAdd(cb) {
+		this.callbacks.exercises.push(cb)
 		this.sendMessage(JSON.stringify({ 'messageType': 'area-add' }));
 	}
 
@@ -132,7 +141,8 @@ export class SocketTrainer {
 		}));
 	}
 
-	patientAdd(areaId, patientName, code) {
+	patientAdd(areaId, patientName, code, cb) {
+		this.callbacks.exercises.push(cb)
 		this.sendMessage(JSON.stringify({
 			'messageType': 'patient-add',
 			'areaId': areaId,
@@ -187,7 +197,8 @@ export class SocketTrainer {
 		}));
 	}
 
-	materialAdd(areaId, materialName) {
+	materialAdd(areaId, materialName, cb) {
+		this.callbacks.exercises.push(cb)
 		this.sendMessage(JSON.stringify({
 			'messageType': 'material-add',
 			'areaId': areaId,

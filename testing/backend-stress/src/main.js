@@ -1,18 +1,13 @@
 import { Worker } from 'worker_threads';
-import now from 'performance-now';
 
-const TEST_DURATION = 1000; // in ms
-const NUM_EXERCISES = 2
-export const NUM_TRAINER_PER_EXERCISE = 5; // = NUM_AREAS
-export const NUM_PATIENTS_PER_AREA = 10
-export const NUM_PERSONNEL_PER_PATIENT = 5
+const NUM_EXERCISES = 100
 
 let results = [];
 let workerCount = 0;
 
 function startWorker(userIndex) {
 	return new Promise((resolve, reject) => {
-		const worker = new Worker('./trainerPassthrough.js', {
+		const worker = new Worker('./assignMaterial.js', {
 			workerData: { userIndex }
 		});
 
@@ -31,20 +26,18 @@ function startWorker(userIndex) {
 }
 
 async function runStressTest() {
-
-	const workerPromises = [];
 	for (let i = 0; i < NUM_EXERCISES; i++) {
-		workerPromises.push(startWorker());
+		console.log("Processing iteration " + i)
+		await startWorker(i);
 	}
-	await Promise.all(workerPromises);
 
-
-	// results
 	console.log(`Total workers executed: ${workerCount}`);
 	console.log('Performance results:', results);
 
 	const avgResponseTime = results.reduce((acc, curr) => acc + curr.responseTime, 0) / results.length;
-	console.log(`Average response time: ${avgResponseTime.toFixed(2)} ms`);
+	const variance = results.reduce((acc, curr) => acc + Math.pow(curr.responseTime - avgResponseTime, 2), 0) / results.length;
+	console.log(`Average response time: ${avgResponseTime.toFixed(4)} ms`);
+	console.log(`Variance: ${variance.toFixed(4)} ms^2`);
 }
 
 runStressTest();

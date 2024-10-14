@@ -1,23 +1,29 @@
-import { WebSocket } from 'ws'; // Use require for WebSocket
+import { WebSocket } from 'ws';
 
+class EventCallbacks {
+	constructor() {
+		this.testPassthroughs = []
+		this.resourceAssignments = []
+	}
+}
 
 export class SocketPatient {
 	constructor(url) {
 		this.url = url;
 		this.socket = null;
 		this.connected = false;
+		this.callbacks = new EventCallbacks()
 	}
 
-	connect(token) {
+	connect(token, cb) {
 		this.socket = new WebSocket(this.url + token);
 
 		this.socket.onopen = () => {
-			console.log('Patient WebSocket connection established');
+			cb()
 			this.connected = true;
 		};
 
 		this.socket.onclose = () => {
-			console.log('Patient WebSocket connection closed');
 			this.connected = false;
 		};
 
@@ -41,6 +47,7 @@ export class SocketPatient {
 				case 'warning':
 					break;
 				case 'test-passthrough':
+					(this.callbacks.testPassthroughs.shift())(data.message)
 					break;
 				case 'state':
 					break;
@@ -61,19 +68,21 @@ export class SocketPatient {
 				case 'exercise-end':
 					break;
 				case 'delete':
-					console.log('Patient WebSocket ToDo: handle delete event ', data);
 					break;
 				case 'information':
-					console.log('Patient WebSocket ToDo: handle information event ', data);
 					break;
 				case 'action-confirmation':
 					break;
 				case 'action-declination':
 					break;
 				case 'action-result':
-					console.log('Patient WebSocket ToDo: handle action-result event ', data);
 					break;
 				case 'resource-assignments':
+					try {
+						(this.callbacks.resourceAssignments.shift())(data.resourceAssignments)
+					} catch (e) {
+						console.error("PatientSocket resource-assignments cb not created");
+					}
 					break;
 				case 'action-list':
 					break;
@@ -110,7 +119,8 @@ export class SocketPatient {
 		}));
 	}
 
-	testPassthrough() {
+	testPassthrough(cb) {
+		this.callbacks.testPassthroughs.push(cb);
 		this.sendMessage(JSON.stringify({ 'messageType': 'test-passthrough' }));
 	}
 
@@ -135,14 +145,16 @@ export class SocketPatient {
 		}));
 	}
 
-	releaseMaterial(materialId) {
+	releaseMaterial(materialId, cb) {
+		this.callbacks.resourceAssignments.push(cb);
 		this.sendMessage(JSON.stringify({
 			'messageType': 'material-release',
 			'materialId': materialId,
 		}));
 	}
 
-	assignMaterial(materialId) {
+	assignMaterial(materialId, cb) {
+		this.callbacks.resourceAssignments.push(cb);
 		this.sendMessage(JSON.stringify({
 			'messageType': 'material-assign',
 			'materialId': materialId,
