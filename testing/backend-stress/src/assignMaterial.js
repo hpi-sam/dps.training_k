@@ -8,6 +8,8 @@ const socketTrainer = new SocketTrainer('http://localhost/ws/trainer/?token=')
 const socketPatient = new SocketPatient('http://localhost/ws/patient/?token=')
 let exerciseId, areaId, patientId, materialId
 
+const assignmentCycles = 50
+
 async function simulate(userIndex) {
 	const trainerName = `testuser${crypto.randomUUID()}`
 
@@ -16,25 +18,67 @@ async function simulate(userIndex) {
 		await prepareExercise()
 		await connectPatient(socketPatient, exerciseId, patientId)
 
-		const startTime = now();
-		for (let i = 0; i < 100; i++) {
-			await assignMaterial()
+		let responseTime_total = 0, responseTime_base = 0, responseTime_cv = 0
+
+		for (let i = 0; i < assignmentCycles; i++) {
+			let endTime_base, endTime_cv
+			let startTime = now();
+			const assignmentPromise1 = new Promise(resolve => {
+				socketPatient.assignMaterial(materialId, () => {
+					resolve()
+					endTime_base = now()
+				})
+			})
+			const continuousPromise1 = new Promise(resolve => {
+				socketPatient.addContinuousVariableCb(() => {
+					resolve()
+					endTime_cv = now()
+				})
+			})
+			await Promise.all([assignmentPromise1, continuousPromise1])
+			let endTime_total = now();
+			responseTime_total += (endTime_total - startTime)
+			responseTime_base += (endTime_base - startTime)
+			responseTime_cv += (endTime_cv - startTime)
+
+			startTime = now();
+			const assignmentPromise2 = new Promise(resolve => {
+				socketPatient.releaseMaterial(materialId, () => {
+					resolve()
+					endTime_base = now()
+				})
+			})
+			const continuousPromise2 = new Promise(resolve => {
+				socketPatient.addContinuousVariableCb(() => {
+					resolve()
+					endTime_cv = now()
+				})
+			})
+			await Promise.all([assignmentPromise2, continuousPromise2])
+			endTime_total = now();
+			responseTime_total += (endTime_total - startTime)
+			responseTime_base += (endTime_base - startTime)
+			responseTime_cv += (endTime_cv - startTime)
 		}
-		const endTime = now();
+
 
 		socketPatient.close()
 		socketTrainer.close()
 
 		parentPort.postMessage({
 			userIndex,
-			responseTime: (endTime - startTime) / 200,
+			responseTime_total: responseTime_total / (assignmentCycles*2),
+			responseTime_base: responseTime_base / (assignmentCycles*2),
+			responseTime_cv: responseTime_cv / (assignmentCycles*2),
 			success: true
 		});
 		parentPort.close()
 	} catch (error) {
 		parentPort.postMessage({
 			userIndex,
-			responseTime: 0,
+			responseTime_total: 0,
+			responseTime_base: 0,
+			responseTime_cv: 0,
 			success: false,
 			error: error.message
 		});
@@ -58,7 +102,7 @@ async function prepareExercise() {
 	})
 
 	await new Promise(resolve => {
-		socketTrainer.patientAdd(areaId, "", 1005, exercise => {
+		socketTrainer.patientAdd(areaId, "", 1001, exercise => {
 			patientId = exercise.areas[0].patients[0].patientId
 			resolve()
 		})
@@ -73,15 +117,6 @@ async function prepareExercise() {
 
 	await new Promise(resolve => {
 		socketTrainer.exerciseStart(() => resolve())
-	})
-}
-
-async function assignMaterial() {
-	await new Promise(resolve => {
-		socketPatient.assignMaterial(materialId, () => resolve())
-	})
-	await new Promise(resolve => {
-		socketPatient.releaseMaterial(materialId, () => resolve())
 	})
 }
 

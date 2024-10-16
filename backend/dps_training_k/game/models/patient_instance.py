@@ -132,7 +132,7 @@ class PatientInstance(
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
-        state_change_time = 30
+        state_change_time = 600
 
         if self.patient_state.is_dead:
             return False
