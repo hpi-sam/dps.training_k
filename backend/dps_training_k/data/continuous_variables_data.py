@@ -18,34 +18,55 @@ def update_or_create_continuous_variables():
         uuid=ContinuousVariableIDs.SPO2,
         defaults={
             "name": ContinuousVariable.Variable.SPO2,
-            "function": ContinuousVariable.Function.LINEAR,
+            "function": ContinuousVariable.Function.SIGMOID,
             "exceptions": [
                 {
-                    "actions": [str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN)],
+                    "actions": [
+                        str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
+                        str(ActionIDs.SAUERSTOFF_ANBRINGEN),
+                        [
+                            str(ActionIDs.ANALGETIKUM),
+                            str(ActionIDs.ANTIKOAGULANZ),
+                            str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN),
+                        ],
+                    ],
                     "materials": [
                         str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
                         str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                        [
+                            str(MaterialIDs.FRESH_FROZEN_PLASMA),
+                            str(MaterialIDs.LAB_GERAET_1),
+                            str(MaterialIDs.LAB_GERAET_2),
+                        ],
+                    ],
+                    "function": ContinuousVariable.Function.INCREMENT,
+                },
+                {
+                    "actions": [
+                        str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
+                        [
+                            str(ActionIDs.ANALGETIKUM),
+                            str(ActionIDs.ANTIKOAGULANZ),
+                        ],
+                    ],
+                    "materials": [
+                        str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                        [
+                            str(MaterialIDs.FRESH_FROZEN_PLASMA),
+                            str(MaterialIDs.LAB_GERAET_1),
+                        ],
                     ],
                     "function": ContinuousVariable.Function.LINEAR,
                 },
                 {
-                    "actions": [
-                        [str(ActionIDs.IV_ZUGANG), str(ActionIDs.DRUCKVERBAND)]
-                    ],
-                    "materials": [
-                        [str(MaterialIDs.EKG), str(MaterialIDs.BZ_MESSGERAET)]
-                    ],
-                    "function": ContinuousVariable.Function.DECREMENT,
-                },
-                {
-                    "actions": [str(ActionIDs.IV_ZUGANG)],
-                    "materials": [str(MaterialIDs.EKG)],
-                    "function": ContinuousVariable.Function.INCREMENT,
-                },
-                {
-                    "actions": [str(ActionIDs.IV_ZUGANG)],
+                    "actions": [str(ActionIDs.TURNIQUET)],
                     "materials": [],
-                    "function": ContinuousVariable.Function.SIGMOID,
+                    "function": ContinuousVariable.Function.SIGMOID_DELAYED,
+                },
+                {
+                    "actions": [],
+                    "materials": [str(MaterialIDs.BZ_MESSGERAET)],
+                    "function": ContinuousVariable.Function.SIGMOID_DELAYED,
                 },
             ],
         },
@@ -54,7 +75,56 @@ def update_or_create_continuous_variables():
         uuid=ContinuousVariableIDs.HEART_RATE,
         defaults={
             "name": ContinuousVariable.Variable.HEART_RATE,
-            "function": ContinuousVariable.Function.SIGMOID_DELAYED,
-            "exceptions": [],
+            "function": ContinuousVariable.Function.SIGMOID,
+            "exceptions": [
+                {
+                    "actions": [
+                        str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
+                        str(ActionIDs.SAUERSTOFF_ANBRINGEN),
+                        [
+                            str(ActionIDs.ANALGETIKUM),
+                            str(ActionIDs.ANTIKOAGULANZ),
+                            str(ActionIDs.ERYTHROZYTENKONZENTRATE_ANWENDEN),
+                        ],
+                    ],
+                    "materials": [
+                        str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                        str(MaterialIDs.BEATMUNGSGERAET_TRAGBAR),
+                        [
+                            str(MaterialIDs.FRESH_FROZEN_PLASMA),
+                            str(MaterialIDs.LAB_GERAET_1),
+                            str(MaterialIDs.LAB_GERAET_2),
+                        ],
+                    ],
+                    "function": ContinuousVariable.Function.INCREMENT,
+                },
+                {
+                    "actions": [
+                        str(ActionIDs.BEATMUNGSGERAET_ANBRINGEN),
+                        [
+                            str(ActionIDs.ANALGETIKUM),
+                            str(ActionIDs.ANTIKOAGULANZ),
+                        ],
+                    ],
+                    "materials": [
+                        str(MaterialIDs.BEATMUNGSGERAET_STATIONAER),
+                        [
+                            str(MaterialIDs.FRESH_FROZEN_PLASMA),
+                            str(MaterialIDs.LAB_GERAET_1),
+                        ],
+                    ],
+                    "function": ContinuousVariable.Function.LINEAR,
+                },
+                {
+                    "actions": [str(ActionIDs.TURNIQUET)],
+                    "materials": [],
+                    "function": ContinuousVariable.Function.SIGMOID_DELAYED,
+                },
+                {
+                    "actions": [],
+                    "materials": [str(MaterialIDs.BZ_MESSGERAET)],
+                    "function": ContinuousVariable.Function.SIGMOID_DELAYED,
+                },
+            ],
         },
     )
