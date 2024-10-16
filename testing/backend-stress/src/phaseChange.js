@@ -24,16 +24,27 @@ async function simulate(userIndex) {
 			})
 		})
 
-		let responseTime = 0
+		let responseTime_total = 0, responseTime_base = 0, responseTime_cv = 0
 		for (let i = 0; i < 5; i++) {
+			let endTime_base, endTime_cv
 			let startTime = now();
-			await new Promise(resolve => {
+			const statePromise = new Promise(resolve => {
 				socketPatient.addStateCb(() => {
 					resolve()
+					endTime_base = now()
 				})
 			})
-			let endTime = now();
-			responseTime += (endTime - startTime) - phaseLength
+			const continuousPromise = new Promise(resolve => {
+				socketPatient.addContinuousVariableCb(() => {
+					resolve()
+					endTime_cv = now()
+				})
+			})
+			await Promise.all([statePromise, continuousPromise])
+			let endTime_total = now();
+			responseTime_total += (endTime_total - startTime) - phaseLength
+			responseTime_base += (endTime_base - startTime) - phaseLength
+			responseTime_cv += (endTime_cv - startTime) - phaseLength
 		}
 
 		socketPatient.close()
@@ -41,14 +52,18 @@ async function simulate(userIndex) {
 
 		parentPort.postMessage({
 			userIndex,
-			responseTime: responseTime / 5,
+			responseTime_total: responseTime_total / 5,
+			responseTime_base: responseTime_base / 5,
+			responseTime_cv: responseTime_cv / 5,
 			success: true
 		});
 		parentPort.close()
 	} catch (error) {
 		parentPort.postMessage({
 			userIndex,
-			responseTime: 0,
+			responseTime_total: 0,
+			responseTime_base: 0,
+			responseTime_cv: 0,
 			success: false,
 			error: error.message
 		});
