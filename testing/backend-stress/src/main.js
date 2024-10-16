@@ -38,7 +38,8 @@ async function runStressTest() {
 				results.push({
 					i,
 					responseTime: 0,
-					success: false
+					success: false,
+					error: "manual timeout"
 				})
 			});
 	}
