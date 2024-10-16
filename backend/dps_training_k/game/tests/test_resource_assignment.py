@@ -45,18 +45,23 @@ class ResourceAssignmentTestCase(TestCase, TestUtilsMixin):
         """
         self.deactivate_live_updates()
         self.material_instance.try_moving_to(self.area)
+        # as the resource is already assigned to the area, no notification should be sent
         self.assertEqual(_notify_exercise_update.call_count, 0)
-        self.assertEqual(
-            _notify_group.call_count, 0
-        )  # as the resource is already assigned to the area, no notification should be sent
+        self.assertEqual(_notify_group.call_count, 0)
 
         self.material_instance.try_moving_to(self.lab)
-        self.assertEqual(_notify_exercise_update.call_count, 0)
-        self.assertEqual(_notify_group.call_count, 1)
+        self.assertEqual(
+            _notify_exercise_update.call_count, 1
+        )  # lab should be outside of area -> exercise update
+        self.assertEqual(_notify_group.call_count, 1)  # + assignment
 
         self.material_instance.try_moving_to(self.patient)
-        self.assertEqual(_notify_exercise_update.call_count, 0)
-        self.assertEqual(_notify_group.call_count, 2)
+        self.assertEqual(
+            _notify_exercise_update.call_count, 2
+        )  # patient should be inside of area again -> exercise update
+        self.assertEqual(
+            _notify_group.call_count, 3
+        )  # + assignment & + continuous_variable
         self.activate_live_updates()
 
     def test_resource_block_and_release(self):
