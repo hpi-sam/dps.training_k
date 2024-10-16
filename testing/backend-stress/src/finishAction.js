@@ -23,17 +23,34 @@ async function simulate(userIndex) {
 			socketPatient.assignPersonnel(personnelId, () => resolve())
 		})
 
+		let endTime_base, endTime_cv
 		const startTime = now();
-		await doAction()
-		const endTime = now();
+		const actionPromise = new Promise(resolve => {
+			socketPatient.actionAdd(actionName, confirmed => {
+				if (!confirmed) throw Error("action declined")
+			}, () => {
+				resolve()
+				endTime_base = now()
+			})
+		})
+		const continuousPromise = new Promise(resolve => {
+			socketPatient.addContinuousVariableCb(() => {
+				resolve()
+				endTime_cv = now()
+			})
+		})
 
+		await Promise.all([actionPromise, continuousPromise])
+		const endTime_total = now();
 
 		socketPatient.close()
 		socketTrainer.close()
 
 		parentPort.postMessage({
 			userIndex,
-			responseTime: (endTime - startTime) - actionTime, // subtract execution time of action
+			responseTime_total: (endTime_total - startTime) - actionTime, // subtract execution time of action
+			responseTime_base: (endTime_base - startTime) - actionTime, // subtract execution time of action
+			responseTime_cv: (endTime_cv - startTime) - actionTime, // subtract execution time of action
 			success: true
 		});
 		parentPort.close()
@@ -64,7 +81,7 @@ async function prepareExercise() {
 	})
 
 	await new Promise(resolve => {
-		socketTrainer.patientAdd(areaId, "", 1005, exercise => {
+		socketTrainer.patientAdd(areaId, "", 1001, exercise => {
 			patientId = exercise.areas[0].patients[0].patientId
 			resolve()
 		})
@@ -79,14 +96,6 @@ async function prepareExercise() {
 
 	await new Promise(resolve => {
 		socketTrainer.exerciseStart(() => resolve())
-	})
-}
-
-async function doAction() {
-	await new Promise(resolve => {
-		socketPatient.actionAdd(actionName, confirmed => {
-			if (!confirmed) throw Error("action declined")
-		}, () => resolve())
 	})
 }
 
