@@ -7,7 +7,7 @@ let workerCount = 0;
 
 function startWorker(userIndex) {
 	return new Promise((resolve, reject) => {
-		const worker = new Worker('./finishAction.js', {
+		const worker = new Worker('./phaseChange.js', {
 			workerData: { userIndex }
 		});
 

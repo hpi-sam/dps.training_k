@@ -6,6 +6,7 @@ class EventCallbacks {
 		this.resourceAssignments = []
 		this.actionConfirmationsDeclinations = []
 		this.actionLists = []
+		this.states = []
 	}
 }
 
@@ -21,6 +22,7 @@ export class SocketPatient {
 		this.socket = new WebSocket(this.url + token);
 
 		this.socket.onopen = () => {
+			this.callbacks.states.push(() => {})
 			this.callbacks.actionLists.push(() => {})
 			this.callbacks.resourceAssignments.push(() => {})
 			this.connected = true;
@@ -54,6 +56,7 @@ export class SocketPatient {
 					(this.callbacks.testPassthroughs.shift())(data.message)
 					break;
 				case 'state':
+					(this.callbacks.states.shift())(data.state)
 					break;
 				case 'continuous-variable':
 					break;
@@ -216,5 +219,9 @@ export class SocketPatient {
 		this.sendMessage(JSON.stringify({
 			'messageType': 'action-check-stop',
 		}));
+	}
+
+	addStateCb(cb) {
+		this.callbacks.states.push(cb);
 	}
 }
