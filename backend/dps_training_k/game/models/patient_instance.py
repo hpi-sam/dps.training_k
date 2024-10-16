@@ -4,15 +4,15 @@ from collections import defaultdict
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from configuration import settings
-from game.models import Exercise
 from game.channel_notifications import PatientInstanceDispatcher
+from game.models import Exercise
+from helpers.completed_actions import CompletedActionsMixin
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
-from helpers.completed_actions import CompletedActionsMixin
 from template.models import PatientState, Action, Subcondition, Material
+
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
 
@@ -132,7 +132,7 @@ class PatientInstance(
     def schedule_state_change(self, time_offset=0):
         from game.models import ScheduledEvent
 
-        state_change_time = 600
+        state_change_time = 30
 
         if self.patient_state.is_dead:
             return False
