@@ -8,6 +8,8 @@ const socketTrainer = new SocketTrainer('http://localhost/ws/trainer/?token=')
 const socketPatient = new SocketPatient('http://localhost/ws/patient/?token=')
 let exerciseId, areaId, patientId, materialId
 
+const assignmentCycles = 5
+
 async function simulate(userIndex) {
 	const trainerName = `testuser${crypto.randomUUID()}`
 
@@ -16,18 +18,30 @@ async function simulate(userIndex) {
 		await prepareExercise()
 		await connectPatient(socketPatient, exerciseId, patientId)
 
-		const startTime = now();
-		for (let i = 0; i < 100; i++) {
-			await assignMaterial()
+		let responseTime = 0
+
+		for (let i = 0; i < assignmentCycles; i++) {
+			let startTime = now();
+			await new Promise(resolve => {
+				socketPatient.assignMaterial(materialId, () => resolve())
+			})
+			let endTime = now();
+			responseTime += (endTime - startTime)
+
+			startTime = now();
+			await new Promise(resolve => {
+				socketPatient.releaseMaterial(materialId, () => resolve())
+			})
+			endTime = now();
+			responseTime += (endTime - startTime)
 		}
-		const endTime = now();
 
 		socketPatient.close()
 		socketTrainer.close()
 
 		parentPort.postMessage({
 			userIndex,
-			responseTime: (endTime - startTime) / 200,
+			responseTime: responseTime / (assignmentCycles*2),
 			success: true
 		});
 		parentPort.close()
@@ -58,7 +72,7 @@ async function prepareExercise() {
 	})
 
 	await new Promise(resolve => {
-		socketTrainer.patientAdd(areaId, "", 1005, exercise => {
+		socketTrainer.patientAdd(areaId, "", 1001, exercise => {
 			patientId = exercise.areas[0].patients[0].patientId
 			resolve()
 		})
@@ -73,15 +87,6 @@ async function prepareExercise() {
 
 	await new Promise(resolve => {
 		socketTrainer.exerciseStart(() => resolve())
-	})
-}
-
-async function assignMaterial() {
-	await new Promise(resolve => {
-		socketPatient.assignMaterial(materialId, () => resolve())
-	})
-	await new Promise(resolve => {
-		socketPatient.releaseMaterial(materialId, () => resolve())
 	})
 }
 
