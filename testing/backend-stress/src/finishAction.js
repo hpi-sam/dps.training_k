@@ -24,9 +24,12 @@ async function simulate(userIndex) {
 		})
 
 		const startTime = now();
-		await doAction()
+		await new Promise(resolve => {
+			socketPatient.actionAdd(actionName, confirmed => {
+				if (!confirmed) throw Error("action declined")
+			}, () => resolve())
+		})
 		const endTime = now();
-
 
 		socketPatient.close()
 		socketTrainer.close()
@@ -64,7 +67,7 @@ async function prepareExercise() {
 	})
 
 	await new Promise(resolve => {
-		socketTrainer.patientAdd(areaId, "", 1005, exercise => {
+		socketTrainer.patientAdd(areaId, "", 1001, exercise => {
 			patientId = exercise.areas[0].patients[0].patientId
 			resolve()
 		})
@@ -79,14 +82,6 @@ async function prepareExercise() {
 
 	await new Promise(resolve => {
 		socketTrainer.exerciseStart(() => resolve())
-	})
-}
-
-async function doAction() {
-	await new Promise(resolve => {
-		socketPatient.actionAdd(actionName, confirmed => {
-			if (!confirmed) throw Error("action declined")
-		}, () => resolve())
 	})
 }
 
