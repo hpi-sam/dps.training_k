@@ -7,6 +7,7 @@ class EventCallbacks {
 		this.actionConfirmationsDeclinations = []
 		this.actionLists = []
 		this.states = []
+		this.continuousVariables = []
 	}
 }
 
@@ -23,6 +24,7 @@ export class SocketPatient {
 
 		this.socket.onopen = () => {
 			this.callbacks.states.push(() => {})
+			this.callbacks.continuousVariables.push(() => {})
 			this.callbacks.actionLists.push(() => {})
 			this.callbacks.resourceAssignments.push(() => {})
 			this.connected = true;
@@ -59,6 +61,7 @@ export class SocketPatient {
 					(this.callbacks.states.shift())(data.state)
 					break;
 				case 'continuous-variable':
+					(this.callbacks.continuousVariables.shift())(data.continuousState)
 					break;
 				case 'available-patients':
 					break;
@@ -221,7 +224,11 @@ export class SocketPatient {
 		}));
 	}
 
-	addStateCb(cb) {
-		this.callbacks.states.push(cb);
+	addStateCb(cb_st) {
+		this.callbacks.states.push(cb_st);
+	}
+
+	addContinuousVariableCb(cb) {
+		this.callbacks.continuousVariables.push(cb);
 	}
 }
