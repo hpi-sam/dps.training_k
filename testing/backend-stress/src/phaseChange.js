@@ -48,7 +48,7 @@ async function simulate(userIndex) {
 	} catch (error) {
 		parentPort.postMessage({
 			userIndex,
-			responseTime: now() - startTime,
+			responseTime: 0,
 			success: false,
 			error: error.message
 		});

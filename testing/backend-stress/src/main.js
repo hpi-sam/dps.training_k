@@ -28,7 +28,21 @@ function startWorker(userIndex) {
 async function runStressTest() {
 	for (let i = 0; i < NUM_EXERCISES; i++) {
 		console.log("Processing iteration " + i)
-		await startWorker(i);
+		await Promise.race([
+			startWorker(i),
+			new Promise((_, reject) =>
+				setTimeout(() => reject(new Error('Timeout')), 60000)
+			)
+		])
+			.catch(() => {
+				results.push({
+					i,
+					responseTime_total: 0,
+					responseTime_base: 0,
+					responseTime_cv: 0,
+					success: false
+				})
+			});
 	}
 
 	console.log(`Total workers executed: ${workerCount}`);
@@ -54,6 +68,11 @@ async function runStressTest() {
 	console.log(`Average response time cv: ${avgResponseTime_cv.toFixed(4)} ms`);
 	console.log(`Variance cv: ${variance_cv.toFixed(4)} ms^2`);
 	console.log(`Standard deviation cv : ${stdDeviation_cv.toFixed(4)} ms`);
+
+	const failedJobs = results.reduce((acc, curr) => {
+		return acc + (curr.success === false ? 1 : 0);
+	}, 0);
+	console.log(`Failed jobs: ${failedJobs}`);
 }
 
 runStressTest();
