@@ -40,7 +40,8 @@ async function runStressTest() {
 					responseTime_total: 0,
 					responseTime_base: 0,
 					responseTime_cv: 0,
-					success: false
+					success: false,
+					error: "manual timeout"
 				})
 			});
 	}
