@@ -104,6 +104,12 @@ class ContinuousVariableSerializer(serializers.ModelSerializer):
             future_state.vital_signs
         )
 
+    def _flatten(self, lst):
+        """Helper function to recursively flatten a list"""
+        if isinstance(lst, list):
+            return tuple(item for sublist in lst for item in self._flatten(sublist))
+        return (lst,)
+
     def _get_applicable_function(self, variable):
         completed_action_uuids = {
             str(action.uuid)
@@ -116,8 +122,12 @@ class ContinuousVariableSerializer(serializers.ModelSerializer):
 
         for exception in variable.exceptions:
             function = exception["function"]
-            actions = tuple(exception["actions"])
-            materials = tuple(exception["materials"])
+            actions = (
+                self._flatten(exception["actions"]) if exception["actions"] else ()
+            )
+            materials = (
+                self._flatten(exception["materials"]) if exception["materials"] else ()
+            )
 
             if _check_subset(actions, completed_action_uuids) and _check_subset(
                 materials, completed_material_uuids
