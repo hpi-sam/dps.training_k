@@ -1,13 +1,18 @@
 import { Worker } from 'worker_threads';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const NUM_EXERCISES = 2
 
 let results = [];
 let workerCount = 0;
 
 function startWorker(userIndex) {
+	const workerPath = resolve(__dirname, 'assignMaterial.js');
+
 	return new Promise((resolve, reject) => {
-		const worker = new Worker('./finishAction.js', {
+		const worker = new Worker(workerPath, {
 			workerData: { userIndex }
 		});
 
@@ -31,10 +36,11 @@ async function runStressTest() {
 		await Promise.race([
 			startWorker(i),
 			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error('Timeout')), 60000)
+				setTimeout(() => reject(new Error('Timeout')), 90000)
 			)
 		])
-			.catch(() => {
+			.catch((e) => {
+				if (!e.message.includes('Timeout')) throw e;
 				results.push({
 					i,
 					responseTime: 0,
