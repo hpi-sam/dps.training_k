@@ -8,7 +8,7 @@ const socketTrainer = new SocketTrainer('http://localhost/ws/trainer/?token=')
 const socketPatient = new SocketPatient('http://localhost/ws/patient/?token=')
 let exerciseId, areaId, patientId, materialId
 
-const assignmentCycles = 5
+const assignmentCycles = 50
 
 async function simulate(userIndex) {
 	const trainerName = `testuser${crypto.randomUUID()}`
