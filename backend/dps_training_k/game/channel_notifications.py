@@ -135,12 +135,6 @@ class ActionInstanceDispatcher(ChannelNotifier):
                     channel,
                     applied_action,
                 )
-            if (
-                applied_action.state_name == models.ActionInstanceStateNames.FINISHED
-                and applied_action.patient_instance
-            ):
-                event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
-                cls._notify_group(channel, event)
             if applied_action.template.relocates:
                 if (
                     applied_action.state_name
@@ -164,6 +158,14 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
         # always send action list event
         cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
+
+        if (
+            "current_state" in changes
+            and applied_action.state_name == models.ActionInstanceStateNames.FINISHED
+            and applied_action.patient_instance
+        ):
+            event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
+            cls._notify_group(channel, event)
 
     @classmethod
     def _notify_action_event(cls, event_type, channel, applied_action=None):
@@ -489,13 +491,13 @@ class PatientInstanceDispatcher(ChannelNotifier):
     @classmethod
     def _notify_patient_state_change(cls, patient_instance):
         channel = cls.get_group_name(patient_instance)
-        event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
-        cls._notify_group(channel, event)
-
         event = {
             "type": ChannelEventTypes.STATE_CHANGE_EVENT,
             "patient_instance_pk": patient_instance.id,
         }
+        cls._notify_group(channel, event)
+
+        event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
         cls._notify_group(channel, event)
 
     @classmethod
