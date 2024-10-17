@@ -3,6 +3,7 @@ import re
 
 from django.core.management.base import BaseCommand
 
+from data.continuous_variables_data import update_or_create_continuous_variables
 from helpers.triage import Triage
 from template.constants import ActionIDs
 from template.models import PatientInformation
@@ -75,7 +76,7 @@ def import_patients(file_path):
                     "start_status": row["Start-Status"].strip(),
                     "start_location": row["Start-Ort"].strip(),
                     "op": row["OP / Interventions-Verlauf"].strip(),
-                }
+                },
             )
             pretreatments_list = [
                 pt.strip() for pt in patient_information.pretreatment.split(",")
@@ -102,8 +103,13 @@ def import_patients(file_path):
 
 
 class Command(BaseCommand):
-    help = "Imports patient data from a CSV file"
+    help = "Imports patient data from a CSV file and update continuous variables data"
 
     def handle(self, *args, **options):
         import_patients("./data/patient_information.csv")  # path to the csv file
-        self.stdout.write(self.style.SUCCESS("Successfully imported patient data"))
+        update_or_create_continuous_variables()
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Successfully imported patient data and updated continuous variables data"
+            )
+        )

@@ -16,6 +16,9 @@ from game.serializers.action_check_serializers import (
     LabActionCheckSerializer,
 )
 from template.models import Action
+from template.serializers.continuous_variable_serializer import (
+    ContinuousVariableSerializer,
+)
 from template.serializers.state_serialize import StateSerializer
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import (
@@ -53,6 +56,7 @@ class PatientConsumer(AbstractConsumer):
         RESOURCE_ASSIGNMENTS = "resource-assignments"
         RESPONSE = "response"
         STATE = "state"
+        CONTINUOUS_VARIABLE = "continuous-variable"
         PATIENT_BACK = "patient-back"
         PATIENT_RELOCATING = "patient-relocating"
 
@@ -63,6 +67,7 @@ class PatientConsumer(AbstractConsumer):
         ]
         self.patient_frontend_id = ""
         self.currently_inspected_action = None
+        self.continuous_variables_hashes = {}
 
         patient_request_map = {
             self.PatientIncomingMessageTypes.ACTION_ADD: (
@@ -281,6 +286,44 @@ class PatientConsumer(AbstractConsumer):
             self.PatientOutgoingMessageTypes.STATE,
             state=serialized_state,
         )
+
+    def continuous_variable_event(self, event=None):
+        serialized_continuous_state = ContinuousVariableSerializer(
+            self.get_patient_instance()
+        ).data
+
+        continuous_variables = serialized_continuous_state["continuousVariables"]
+        filtered_continuous_variables = [
+            variable
+            for variable in continuous_variables
+            if self.has_continuous_variable_hash_changed(variable)
+        ]
+        self.update_continuous_variable_hashes(filtered_continuous_variables)
+        serialized_continuous_state["continuousVariables"] = (
+            filtered_continuous_variables
+        )
+
+        self.send_event(
+            self.PatientOutgoingMessageTypes.CONTINUOUS_VARIABLE,
+            continuousState=serialized_continuous_state,
+        )
+
+    def has_continuous_variable_hash_changed(self, variable):
+        """Check if the hash of the variable has changed."""
+        var_name = variable["name"]
+        var_hash = variable["hash"]
+        if var_name not in self.continuous_variables_hashes:
+            return True
+        return self.continuous_variables_hashes[var_name] != var_hash
+
+    def update_continuous_variable_hashes(self, variables):
+        """Update the stored hashes with the new hashes."""
+        for variable in variables:
+            self.continuous_variables_hashes[variable["name"]] = variable["hash"]
+
+    def exercise_start_event(self, event=None):
+        super().exercise_start_event(event)
+        self.continuous_variable_event()
 
     def action_check_changed_event(self, event=None):
         if self.currently_inspected_action:

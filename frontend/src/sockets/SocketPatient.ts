@@ -10,6 +10,19 @@ import {useActionOverviewStore} from "@/stores/ActionOverview"
 import {useVisibleInjuriesStore} from "@/stores/VisibleInjuries"
 import {commonMockEvents} from "./commonMockEvents"
 import {useActionCheckStore} from "@/stores/ActionCheck"
+import {startContinuousLogic, useContinuousVariablesStore} from "@/stores/ContinuousVariables"
+import type {
+	Action,
+	ActionCheck,
+	AvailableAction,
+	AvailablePatient,
+	ContinuousState,
+	Exercise,
+	Injury,
+	MessageData,
+	ResourceAssignment,
+	State
+} from "@/sockets/MessageData"
 
 
 class SocketPatient {
@@ -23,6 +36,7 @@ class SocketPatient {
 	connect(): void {
 		const patientStore = usePatientStore()
 		const exerciseStore = useExerciseStore()
+		const patientContinuousStore = useContinuousVariablesStore()
 		const availablesStore = useAvailablesStore()
 		const resourceAssignmentsStore = useResourceAssignmentsStore()
 		const actionOverview = useActionOverviewStore()
@@ -68,6 +82,9 @@ class SocketPatient {
 				case 'state':
 					patientStore.loadStatusFromJSON(data.state as State)
 					break
+				case 'continuous-variable':
+					patientContinuousStore.loadContinuousVariablesFromJSON(data.continuousState as ContinuousState)
+					break
 				case 'available-patients':
 					availablesStore.loadAvailablePatients(data.availablePatients as AvailablePatient[])
 					patientStore.initializePatientFromAvailablePatients()
@@ -83,6 +100,7 @@ class SocketPatient {
 					exerciseStore.status = 'running'
 					setScreen(Screens.STATUS, ScreenPosition.LEFT)
 					setScreen(Screens.ACTIONS, ScreenPosition.RIGHT)
+					startContinuousLogic()
 					break
 				case 'exercise-pause':
 					exerciseStore.status = 'paused'
@@ -285,60 +303,60 @@ export const serverMockEvents = [
 		id: 'resource-assignments',
 		data: '{"messageType":"resource-assignments","resourceAssignments":[' +
 			'{"areaId":1,' +
-				'"personnel":[' +
-					'{"personnelId":1,"patientId":"145345"},' +
-					'{"personnelId":10,"patientId":null}' +
-				'],' +
-				'"material":[' +
-					'{"materialId":1,"patientId":"145345"},' +
-					'{"materialId":2,"patientId":"256443"}' +
-				']' +
+			'"personnel":[' +
+			'{"personnelId":1,"patientId":"145345"},' +
+			'{"personnelId":10,"patientId":null}' +
+			'],' +
+			'"material":[' +
+			'{"materialId":1,"patientId":"145345"},' +
+			'{"materialId":2,"patientId":"256443"}' +
+			']' +
 			'},' +
 			'{"areaId":2,' +
-				'"personnel":[' +
-					'{"personnelId":3,"patientId":"123456"},' +
-					'{"personnelId":8,"patientId":"123456"},' +
-					'{"personnelId":9,"patientId":null},' +
-					'{"personnelId":11,"patientId":null},' +
-					'{"personnelId":2,"patientId":null},' +
-					'{"personnelId":7,"patientId":null},' +
-					'{"personnelId":12,"patientId":"105626"},' +
-					'{"personnelId":13,"patientId":"963733"},' +
-					'{"personnelId":14,"patientId":"754262"},' +
-					'{"personnelId":15,"patientId":"754262"}' +
-				'],' +
-				'"material":[' +
-					'{"materialId":3,"patientId":"123456"},' +
-					'{"materialId":4,"patientId":"123456"},' +
-					'{"materialId":7,"patientId":null},' +
-					'{"materialId":8,"patientId":null},' +
-					'{"materialId":9,"patientId":"126541"},' +
-					'{"materialId":10,"patientId":null},' +
-					'{"materialId":11,"patientId":null},' +
-					'{"materialId":12,"patientId":null},' +
-					'{"materialId":13,"patientId":null},' +
-					'{"materialId":14,"patientId":null},' +
-					'{"materialId":15,"patientId":null},' +
-					'{"materialId":16,"patientId":null},' +
-					'{"materialId":17,"patientId":null},' +
-					'{"materialId":18,"patientId":null},' +
-					'{"materialId":19,"patientId":null},' +
-					'{"materialId":20,"patientId":null},' +
-					'{"materialId":21,"patientId":null},' +
-					'{"materialId":22,"patientId":null}' +
-				']' +
+			'"personnel":[' +
+			'{"personnelId":3,"patientId":"123456"},' +
+			'{"personnelId":8,"patientId":"123456"},' +
+			'{"personnelId":9,"patientId":null},' +
+			'{"personnelId":11,"patientId":null},' +
+			'{"personnelId":2,"patientId":null},' +
+			'{"personnelId":7,"patientId":null},' +
+			'{"personnelId":12,"patientId":"105626"},' +
+			'{"personnelId":13,"patientId":"963733"},' +
+			'{"personnelId":14,"patientId":"754262"},' +
+			'{"personnelId":15,"patientId":"754262"}' +
+			'],' +
+			'"material":[' +
+			'{"materialId":3,"patientId":"123456"},' +
+			'{"materialId":4,"patientId":"123456"},' +
+			'{"materialId":7,"patientId":null},' +
+			'{"materialId":8,"patientId":null},' +
+			'{"materialId":9,"patientId":"126541"},' +
+			'{"materialId":10,"patientId":null},' +
+			'{"materialId":11,"patientId":null},' +
+			'{"materialId":12,"patientId":null},' +
+			'{"materialId":13,"patientId":null},' +
+			'{"materialId":14,"patientId":null},' +
+			'{"materialId":15,"patientId":null},' +
+			'{"materialId":16,"patientId":null},' +
+			'{"materialId":17,"patientId":null},' +
+			'{"materialId":18,"patientId":null},' +
+			'{"materialId":19,"patientId":null},' +
+			'{"materialId":20,"patientId":null},' +
+			'{"materialId":21,"patientId":null},' +
+			'{"materialId":22,"patientId":null}' +
+			']' +
 			'},' +
 			'{"areaId":3,' +
-				'"personnel":[' +
-					'{"personnelId":5,"patientId":"126143"},' +
-					'{"personnelId":6,"patientId":"462455"}' +
-				'],' +
-				'"material":[' +
-					'{"materialId":5,"patientId":"126143"},' +
-					'{"materialId":6,"patientId":"462455"},' +
-					'{"materialId":5,"patientId":null},' +
-					'{"materialId":6,"patientId":null}' +
-				']' +
+			'"personnel":[' +
+			'{"personnelId":5,"patientId":"126143"},' +
+			'{"personnelId":6,"patientId":"462455"}' +
+			'],' +
+			'"material":[' +
+			'{"materialId":5,"patientId":"126143"},' +
+			'{"materialId":6,"patientId":"462455"},' +
+			'{"materialId":5,"patientId":null},' +
+			'{"materialId":6,"patientId":null}' +
+			']' +
 			'}]}'
 	},
 	{

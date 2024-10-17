@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-interface MessageData {
+import {type ContinuousFunctionName, ContinuousVariableName} from "@/enums"
+
+export interface MessageData {
 	messageType: string
 	message?: string
 	triage?: string
@@ -17,6 +18,7 @@ interface MessageData {
 	materialName?: string
 	exercise?: Exercise
 	state?: State
+	continuousState?: ContinuousState
 	logEntries?: LogEntry[]
 	availablePatients: AvailablePatient[]
 	availableActions: AvailableAction[]
@@ -31,14 +33,41 @@ interface MessageData {
 	timeUntilBack: number
 }
 
-interface Exercise {
+export interface ContinuousState {
+	timeUntilPhaseChange: number
+	continuousVariables: ContinuousVariable[]
+}
+
+export interface ContinuousStateInternal {
+	timeUntilPhaseChange: number
+	continuousVariables: ContinuousVariableInternal[]
+}
+
+export interface ContinuousVariable {
+	name: ContinuousVariableName
+	current: number
+	target: number
+	function: ContinuousFunctionName
+}
+
+export interface ContinuousVariableInternal {
+	name: ContinuousVariableName
+	xStart: number
+	xCurrent: number
+	xTarget: number
+	tDelta: number
+	function: ContinuousFunctionName
+}
+
+
+export interface Exercise {
 	exerciseId: string
 	status: string
 	speed: number
 	areas: Area[]
 }
 
-interface Area {
+export interface Area {
 	areaId: number
 	areaName: string
 	patients: Patient[]
@@ -46,25 +75,25 @@ interface Area {
 	material: Material[]
 }
 
-interface Patient {
+export interface Patient {
 	patientId: string
 	patientName: string
 	code: number
 	triage: string
 }
 
-interface Personnel {
+export interface Personnel {
 	personnelId: number
 	personnelName: string
 }
 
-interface Material {
+export interface Material {
 	materialId: number
 	materialName: string
 	materialType: string
 }
 
-interface State {
+export interface State {
 	phaseNumber: number
 	airway: string
 	breathing: string
@@ -75,18 +104,18 @@ interface State {
 	skin: string
 }
 
-interface Availables {
+export interface Availables {
 	actions: AvailableAction[],
 	patients: AvailablePatient[],
 	material: AvailableMaterial[],
 }
 
-interface AvailableAction {
+export interface AvailableAction {
 	actionName: string
 	actionCategory: string
 }
 
-interface AvailablePatient {
+export interface AvailablePatient {
 	code: number
 	personalDetails: string
 	injury: string
@@ -99,36 +128,36 @@ interface AvailablePatient {
 	pretreatment: string
 }
 
-interface AvailableMaterial {
+export interface AvailableMaterial {
 	materialName: string
 	materialType: string
 }
 
-interface ResourceAssignments {
+export interface ResourceAssignments {
 	resourceAssignments: ResourceAssignment[]
 }
 
-interface ResourceAssignment {
+export interface ResourceAssignment {
 	areaId: number
 	personnel: PersonnelAssignments[]
 	material: MaterialAssignments[]
 }
 
-interface PersonnelAssignments {
+export interface PersonnelAssignments {
 	personnelId: number
 	patientId: string
 }
 
-interface MaterialAssignments {
+export interface MaterialAssignments {
 	materialId: number
 	patientId: string
 }
 
-interface Log {
+export interface Log {
 	log: LogEntry[]
 }
 
-interface LogEntry {
+export interface LogEntry {
 	logId: number
 	logMessage: string
 	logTime: Date
@@ -138,12 +167,12 @@ interface LogEntry {
 	materialNames: string[]
 }
 
-interface ActionOverview {
+export interface ActionOverview {
 	actions: Action[]
 	timersRunning: boolean
 }
 
-interface Action {
+export interface Action {
 	actionId: number
 	orderId: number
 	actionName: string
@@ -152,17 +181,17 @@ interface Action {
 	actionResult: string
 }
 
-interface VisibleInjuries {
+export interface VisibleInjuries {
 	injuries: Injury[]
 }
 
-interface Injury {
+export interface Injury {
 	injuryId: string
 	injuryType: string
 	position: string
 }
 
-interface ActionCheck {
+export interface ActionCheck {
 	actionName: string
 	applicationDuration: number
 	effectDuration: number
@@ -173,31 +202,31 @@ interface ActionCheck {
 	prohibitiveActions: string[]
 }
 
-interface RequiredActions {
+export interface RequiredActions {
 	singleActions: string[]
 	actionGroups: ActionGroup[]
 }
 
-interface ActionGroup {
+export interface ActionGroup {
 	groupName: string
 	actions: string[]
 }
 
-interface CheckPersonnel {
+export interface CheckPersonnel {
 	name: string
 	available: number
 	assigned: number
 	needed: number
 }
 
-interface CheckMaterial {
+export interface CheckMaterial {
 	name: string
 	available: number
 	assigned: number
 	needed: number
 }
 
-interface CheckLabDevice {
+export interface CheckLabDevice {
 	name: string
 	available: number
 	needed: number

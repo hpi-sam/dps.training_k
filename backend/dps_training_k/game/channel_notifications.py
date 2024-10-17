@@ -16,6 +16,7 @@ Sending events is done by the celery worker.
 
 class ChannelEventTypes:
     STATE_CHANGE_EVENT = "state.change.event"
+    CONTINUOUS_VARIABLE_UPDATE = "continuous.variable.event"
     EXERCISE_UPDATE = "send.exercise.event"
     EXERCISE_START_EVENT = "exercise.start.event"
     EXERCISE_END_EVENT = "exercise.end.event"
@@ -157,6 +158,14 @@ class ActionInstanceDispatcher(ChannelNotifier):
 
         # always send action list event
         cls._notify_action_event(ChannelEventTypes.ACTION_LIST_EVENT, channel)
+
+        if (
+            "current_state" in changes
+            and applied_action.state_name == models.ActionInstanceStateNames.FINISHED
+            and applied_action.patient_instance
+        ):
+            event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
+            cls._notify_group(channel, event)
 
     @classmethod
     def _notify_action_event(cls, event_type, channel, applied_action=None):
@@ -333,6 +342,8 @@ class LogEntryDispatcher(ChannelNotifier):
 class MaterialInstanceDispatcher(ChannelNotifier):
     @classmethod
     def dispatch_event(cls, material, changes, is_updated):
+        from game.models import PatientInstance
+
         changes_set = set(changes) if changes else set()
         assignment_changes = {"patient_instance", "area", "lab"}
 
@@ -343,6 +354,18 @@ class MaterialInstanceDispatcher(ChannelNotifier):
             channel = cls.get_group_name(cls.get_exercise(material))
             event = {"type": ChannelEventTypes.RESOURCE_ASSIGNMENT_EVENT}
             cls._notify_group(channel, event)
+
+            # in case a necessary material was unassigned, leading to a different future state
+            if isinstance(material.moved_from, PatientInstance):
+                channel = cls.get_group_name(material.moved_from)
+                event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
+                cls._notify_group(channel, event)
+
+            # in case a necessary material was assigned, leading to a different future state
+            if material.patient_instance:
+                channel = cls.get_group_name(material.patient_instance)
+                event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
+                cls._notify_group(channel, event)
 
     @classmethod
     def create_trainer_log(cls, material, changes, is_updated):
@@ -472,6 +495,9 @@ class PatientInstanceDispatcher(ChannelNotifier):
             "type": ChannelEventTypes.STATE_CHANGE_EVENT,
             "patient_instance_pk": patient_instance.id,
         }
+        cls._notify_group(channel, event)
+
+        event = {"type": ChannelEventTypes.CONTINUOUS_VARIABLE_UPDATE}
         cls._notify_group(channel, event)
 
     @classmethod

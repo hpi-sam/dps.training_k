@@ -5,6 +5,7 @@ import {Modules, setModule, showErrorToast, showWarningToast} from "@/App.vue"
 import {useAvailablesStore} from "@/stores/Availables"
 import {useLogStore} from "@/stores/Log"
 import {commonMockEvents} from "./commonMockEvents"
+import type {AvailableAction, AvailableMaterial, AvailablePatient, Exercise, LogEntry, MessageData} from "@/sockets/MessageData"
 
 class SocketTrainer {
 	private readonly url: string
@@ -234,20 +235,20 @@ export default socketTrainer
 export const serverMockEvents = [
 	{
 		id: "available-material",
-		data: '{"messageType":"available-materials","availableMaterials":['+
-			'{"materialName":"Beatmungsgerät","materialType":"DE"},'+
-			'{"materialName":"Blutdruckmessgerät","materialType":"DE"},'+
-			'{"materialName":"Defibrillator","materialType":"DE"},'+
-			'{"materialName":"Endoskop","materialType":"DE"},'+
-			'{"materialName":"Herz-Lungen-Maschine","materialType":"DE"},'+
-			'{"materialName":"Blut 0 negativ","materialType":"BL"},'+
-			'{"materialName":"Blut 0 positiv","materialType":"BL"},'+
-			'{"materialName":"Blut A negativ","materialType":"BL"},'+
-			'{"materialName":"Blut A positiv","materialType":"BL"},'+
-			'{"materialName":"Blut B negativ","materialType":"BL"},'+
-			'{"materialName":"Blut B positiv","materialType":"BL"},'+
-			'{"materialName":"Blut AB negativ","materialType":"BL"},'+
-			'{"materialName":"Blut AB positiv","materialType":"BL"}'+
+		data: '{"messageType":"available-materials","availableMaterials":[' +
+			'{"materialName":"Beatmungsgerät","materialType":"DE"},' +
+			'{"materialName":"Blutdruckmessgerät","materialType":"DE"},' +
+			'{"materialName":"Defibrillator","materialType":"DE"},' +
+			'{"materialName":"Endoskop","materialType":"DE"},' +
+			'{"materialName":"Herz-Lungen-Maschine","materialType":"DE"},' +
+			'{"materialName":"Blut 0 negativ","materialType":"BL"},' +
+			'{"materialName":"Blut 0 positiv","materialType":"BL"},' +
+			'{"materialName":"Blut A negativ","materialType":"BL"},' +
+			'{"materialName":"Blut A positiv","materialType":"BL"},' +
+			'{"materialName":"Blut B negativ","materialType":"BL"},' +
+			'{"materialName":"Blut B positiv","materialType":"BL"},' +
+			'{"materialName":"Blut AB negativ","materialType":"BL"},' +
+			'{"materialName":"Blut AB positiv","materialType":"BL"}' +
 			']}'
 	},
 	{

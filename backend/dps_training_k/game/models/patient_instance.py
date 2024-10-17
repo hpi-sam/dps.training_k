@@ -4,15 +4,15 @@ from collections import defaultdict
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from configuration import settings
-from game.models import Exercise
 from game.channel_notifications import PatientInstanceDispatcher
+from game.models import Exercise
+from helpers.completed_actions import CompletedActionsMixin
 from helpers.eventable import Eventable
 from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
-from helpers.completed_actions import CompletedActionsMixin
 from template.models import PatientState, Action, Subcondition, Material
+
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
 
@@ -145,18 +145,21 @@ class PatientInstance(
             patient=self,
         )
 
-    def execute_state_change(self):
+    def next_state(self):
         if self.patient_state.is_dead or self.patient_state.is_final():
             raise Exception(
-                f"Patient is dead or in final state, state change should have never been scheduled"
+                f"Patient is dead or in final state, next state cannot be calculated"
             )
         fulfilled_subconditions = self.get_fulfilled_subconditions()
-        future_state = self.patient_state.transition.activate(fulfilled_subconditions)
+        return self.patient_state.transition.activate(fulfilled_subconditions)
+
+    def execute_state_change(self):
+        future_state = self.next_state()
         if not future_state:
             return False
         self.patient_state = future_state
-        self.save(update_fields=["patient_state"])
         self.schedule_state_change()
+        self.save(update_fields=["patient_state"])
         return True
 
     def get_fulfilled_subconditions(self):

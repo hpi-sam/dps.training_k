@@ -1,6 +1,7 @@
 import {defineStore} from "pinia"
 import {useExerciseStore} from "@/stores/Exercise"
 import {useAvailablesStore} from "./Availables"
+import type {State} from "@/sockets/MessageData"
 
 export const usePatientStore = defineStore('patient', {
 	state: () => ({

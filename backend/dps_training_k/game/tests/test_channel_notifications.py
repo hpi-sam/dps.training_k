@@ -1,13 +1,15 @@
+from unittest.mock import patch
+
 from django.test import TestCase
+
+import game.channel_notifications as cn
+from game.models import ActionInstanceStateNames
 from .factories import (
     ActionInstanceFactory,
     ActionInstanceStateFactory,
     PatientFactory,
 )
 from .mixin import TestUtilsMixin
-import game.channel_notifications as cn
-from game.models import ActionInstanceStateNames
-from unittest.mock import patch
 
 
 class ChannelNotifierTestCase(TestUtilsMixin, TestCase):
@@ -28,11 +30,16 @@ class ChannelNotifierTestCase(TestUtilsMixin, TestCase):
         previous_function_calls = notify_group_mock.call_count
         action_instance.save(update_fields=["current_state"])
 
-        self.assertEqual(notify_group_mock.call_count, previous_function_calls + 1)
+        self.assertEqual(
+            notify_group_mock.call_count, previous_function_calls + 2
+        )  # action list & continuous variables
 
     @patch.object(cn.ChannelNotifier, "_notify_group")
     def test_patient_dispatcher(self, notify_group_mock):
         patient_instance = PatientFactory()
         previous_function_calls = notify_group_mock.call_count
         patient_instance.save(update_fields=["patient_state"])
-        self.assertEqual(notify_group_mock.call_count, previous_function_calls + 1)
+
+        self.assertEqual(
+            notify_group_mock.call_count, previous_function_calls + 2
+        )  # state & continuous variables

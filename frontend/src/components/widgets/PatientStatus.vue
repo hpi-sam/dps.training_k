@@ -1,8 +1,23 @@
 <script setup lang="ts">
 	import {usePatientStore} from '@/stores/Patient'
-	import {strings} from "../../strings"
+	import {useContinuousVariablesStore} from "@/stores/ContinuousVariables"
+	import {computed} from "vue"
+	import {strings} from "@/strings"
+	import {ContinuousVariableName} from "@/enums"
 
 	const patientStore = usePatientStore()
+	const continuousStateStore = useContinuousVariablesStore()
+
+	const breathing = computed(() => {
+		const spo2Val = continuousStateStore.getCurrentValueByName(ContinuousVariableName.SPO2)?.toFixed(0)
+		return patientStore.breathing.replace(/(SpO2: )\d+/, `$1${spo2Val}`)
+	})
+
+	const circulation = computed(() => {
+		const heartRateVal = continuousStateStore.getCurrentValueByName(ContinuousVariableName.HEART_RATE)?.toFixed(0)
+		return patientStore.circulation.replace(/(Herzfreq: )\d+/, `$1${heartRateVal}`)
+	})
+
 </script>
 
 <template>
@@ -22,14 +37,14 @@
 			<td>
 				<p class="key">
 					{{ strings.patientState.breathing }}
-				</p>{{ patientStore.breathing }}
+				</p>{{ breathing }}
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<p class="key">
 					{{ strings.patientState.circulation }}
-				</p>{{ patientStore.circulation }}
+				</p>{{ circulation }}
 			</td>
 			<td>
 				<p class="key">

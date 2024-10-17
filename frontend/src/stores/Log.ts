@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import type {Log, LogEntry} from "@/sockets/MessageData"
 
 export const useLogStore = defineStore('log', {
 	state: (): Log => ({
@@ -21,7 +22,7 @@ export const useLogStore = defineStore('log', {
 				return new Date(b.logTime).getTime() - new Date(a.logTime).getTime()
 			})
 		},
-        addLogEntries(logEntries: LogEntry[]) {
+		addLogEntries(logEntries: LogEntry[]) {
 			this.log.push(...logEntries)
 			this.sortLogByLogTime()
 		}

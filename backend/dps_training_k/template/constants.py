@@ -147,3 +147,8 @@ class ActionResultIDs:
     HB430 = "4a76bb8d-ccd2-4f27-9e08-3131ed3c0178"
     BZ920 = "3ddade44-701a-43b9-9670-a8e346a45048"
     BZ930 = "c30d670e-c072-4263-9f6a-895d00ef7368"
+
+
+class ContinuousVariableIDs:
+    SPO2 = "cb39ff83-6f6a-4dba-9ae1-b2028dbddb35"
+    HEART_RATE = "862cca82-555e-4f05-bd38-9a6dc9f01f60"
