@@ -21,6 +21,7 @@ class ScheduledEvent(models.Model):
     end_date = models.DateTimeField()
     kwargs = models.TextField(blank=True, null=True)
     method_name = models.CharField(max_length=100)
+    locked_by = models.CharField(null=True, blank=True, default=None)
 
     @classmethod
     def create_event(
