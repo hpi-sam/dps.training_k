@@ -40,6 +40,9 @@
 		currentPatientCode.value = patientCode
 	}
 
+	function openInPatientEditor(patientCode: number) {
+		socketTrainer.patientGetTemplate(patientCode)
+	}
 </script>
 
 <template>
@@ -49,6 +52,14 @@
 			<div id="left-side">
 				<div class="flex-container">
 					<PatientCodeList @change-patient="changePatientCode" />
+					<div id="button-row">
+						<button
+							id="patient-editor-button"
+							@click="openInPatientEditor(currentPatient?.code || Number.NEGATIVE_INFINITY)"
+						>
+							In Patienten Editor öffnen
+						</button>
+					</div>
 				</div>
 			</div>
 			<div id="right-side">
@@ -107,7 +118,7 @@
 		display: flex;
 	}
 
-	#delete-button, #save-button {
+	#delete-button, #save-button, #patient-editor-button {
 		position: relative;
 		color: white;
 		border: 1px solid rgb(209, 213, 219);
@@ -123,7 +134,7 @@
 		background-color: var(--red);
 	}
 
-	#save-button {
+	#save-button, #patient-editor-button {
 		background-color: var(--green);
 		margin-left: 10px;
 	}

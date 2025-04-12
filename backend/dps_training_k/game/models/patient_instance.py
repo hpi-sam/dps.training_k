@@ -12,13 +12,16 @@ from helpers.moveable import Moveable
 from helpers.moveable_to import MoveableTo
 from helpers.triage import Triage
 from helpers.completed_actions import CompletedActionsMixin
-from template.models import PatientState, Action, Subcondition, Material
+from template.models import Patient, Action, Subcondition, Material
 
 # from game.models import ActionInstanceStateNames moved into function to avoid circular imports
 
 # from game.models import Area, Lab  # moved into function to avoid circular imports
 # from game.models import ActionInstance, ActionInstanceStateNames  # moved into function to avoid circular imports
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 def validate_patient_frontend_id(value):
     if not re.fullmatch(r"^\d{6}$", value):
@@ -41,17 +44,16 @@ class PatientInstance(
         help_text="patient_frontend_id used to log into patient - see validator for format",
         validators=[validate_patient_frontend_id],
     )
-    patient_state = models.ForeignKey(
-        "template.PatientState",
-        on_delete=models.SET_NULL,
-        null=True,  # for debugging purposes
-        default=None,  # for debugging purposes
-    )
-    static_information = models.ForeignKey(
-        "template.PatientInformation",
+    patient_template = models.ForeignKey(
+        "template.Patient",
         on_delete=models.CASCADE,
-        null=True,  # for migration purposes
-    )  # via Sensen ID
+    )
+    patient_state_id = models.CharField(
+        max_length=16,
+        null=True,
+        blank=True,
+        help_text="State of the patient",
+    )
     triage = models.CharField(
         choices=Triage.choices,
         default=Triage.UNDEFINED,
@@ -66,7 +68,7 @@ class PatientInstance(
 
     @property
     def code(self):
-        return self.static_information.code
+        return self.patient_template.info.get('code', 0)
 
     def save(self, *args, **kwargs):
         from . import User
@@ -75,6 +77,7 @@ class PatientInstance(
         if (
             self._state.adding
         ):  # _state.adding is True if the instance does not exist in the database, so it is a new instance
+            logger.info(f"_state.adding is true -> Creating new patient {self.frontend_id}")
             self.user, _ = User.objects.get_or_create(
                 username=self.frontend_id, user_type=User.UserType.PATIENT
             )
@@ -83,19 +86,16 @@ class PatientInstance(
             )  # Properly hash the password
             self.user.save()
 
-            if not self.patient_state:
-                self.patient_state = PatientState.objects.get(
-                    code=self.static_information.code,
-                    state_id=self.static_information.start_status,
-                )
+            if not self.patient_state_id:
+                self.patient_state_id = self.patient_template.get_initial_state_id()
             _state_adding = True
 
         changes = kwargs.get("update_fields", None)
 
         if (
-            not self.pk or (changes and "static_information" in changes)
-        ) and self.triage is not self.static_information.triage:
-            self.triage = self.static_information.triage
+            not self.pk or (changes and "patient_template" in changes)
+        ) and self.triage is not self.patient_template.info.get("triage", Triage.UNDEFINED):
+            self.triage = self.patient_template.info.get("triage", Triage.UNDEFINED)
             if changes:
                 changes.append("triage")
         PatientInstanceDispatcher.save_and_notify(
@@ -103,19 +103,23 @@ class PatientInstance(
         )
 
         if _state_adding and self.exercise.state == Exercise.StateTypes.RUNNING:
-            self.apply_pretreatments()
+            # self.apply_pretreatments()
             self.schedule_state_change()
+            logger.info(f"Scheduled state change for patient {self.frontend_id}")
 
     def delete(self, using=None, keep_parents=False):
         """Is only called when the patient explicitly deleted and not in an e.g. batch or cascade delete"""
         if self.user:
             self.user.delete()
         PatientInstanceDispatcher.delete_and_notify(self)
+        
+    def get_patient_state(self):
+        return self.patient_template.get_state(self.patient_state_id)
 
     def apply_pretreatments(self):
         from game.models import ActionInstance
 
-        for pretreatment, amount in self.static_information.get_pretreatments().items():
+        for pretreatment, amount in self.patient_template.info.get("pretreatment").items():
             for _ in range(amount):
                 kwargs = {}
                 needed_arguments = ActionInstance.needed_arguments_create(pretreatment)
@@ -134,9 +138,9 @@ class PatientInstance(
 
         state_change_time = 600
 
-        if self.patient_state.is_dead:
+        if self.patient_template.is_dead(self.patient_state_id):
             return False
-        if self.patient_state.is_final():
+        if self.patient_template.is_final_state(self.patient_state_id):
             return False
         ScheduledEvent.create_event(
             exercise=self.exercise,
@@ -146,18 +150,42 @@ class PatientInstance(
         )
 
     def execute_state_change(self):
-        if self.patient_state.is_dead or self.patient_state.is_final():
+        if self.patient_template.is_dead(self.patient_state_id) or self.patient_template.is_final_state(self.patient_state_id):
             raise Exception(
                 f"Patient is dead or in final state, state change should have never been scheduled"
             )
-        fulfilled_subconditions = self.get_fulfilled_subconditions()
-        future_state = self.patient_state.transition.activate(fulfilled_subconditions)
-        if not future_state:
+        
+        logger.info(f"Executing state change for patient {self.frontend_id}")
+        future_state_id = self.patient_template.get_next_state_id(self.patient_state_id, self.check_action, self.check_material)
+
+        if not future_state_id:
+            logger.error(f"Patient {self.frontend_id} is in state {self.patient_state_id}, but there is no next state")
             return False
-        self.patient_state = future_state
-        self.save(update_fields=["patient_state"])
+        self.patient_state_id = future_state_id
+        self.save(update_fields=["patient_state_id"])
         self.schedule_state_change()
         return True
+    
+    def check_action(self, action, quantity):
+        logger.info(f"Checking action {action} with quantity {quantity}")
+        from game.models import ActionInstanceState
+
+        # Fetch all action instances related to the patient
+        action_instances = self.actioninstance_set.select_related("template").all()
+
+        # Filter action instances to include only those in success states
+        success_action_instances = [
+            ai for ai in action_instances
+            if ai.current_state.name in ActionInstanceState.success_states()
+            and str(ai.template.uuid) == action
+        ]
+        logger.info(f"Success action instances: {success_action_instances}")
+        return len(success_action_instances) >= quantity
+    
+    def check_material(self, material, quantity):
+        materials = Material.objects.all()
+        num_of_materials_assigned = len(self.material_assigned(materials.get(uuid=material)))
+        return num_of_materials_assigned >= quantity
 
     def get_fulfilled_subconditions(self):
         from game.models import ActionInstanceState
@@ -221,7 +249,7 @@ class PatientInstance(
         return "Patient*in"
 
     def can_receive_actions(self):
-        return not (self.patient_state.is_dead or self.patient_state.is_final())
+        return not (self.patient_template.is_dead(self.patient_state_id) or self.patient_template.is_final_state(self.patient_state_id))
 
     def is_blocked(self):
         from game.models import ActionInstance, ActionInstanceStateNames

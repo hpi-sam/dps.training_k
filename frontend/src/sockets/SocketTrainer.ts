@@ -5,6 +5,8 @@ import {Modules, setModule, showErrorToast, showWarningToast} from "@/App.vue"
 import {useAvailablesStore} from "@/stores/Availables"
 import {useLogStore} from "@/stores/Log"
 import {commonMockEvents} from "./commonMockEvents"
+import {ScreenPosition, Screens, setScreen} from "@/components/ModuleTrainer.vue"
+import { changePatientData } from "@/components/screensTrainer/ScreenPatientEditor.vue"
 
 class SocketTrainer {
 	private readonly url: string
@@ -87,6 +89,11 @@ class SocketTrainer {
 					break
 				case 'set-speed':
 					useExerciseStore().speed = data.speed
+					break
+				case 'patient-template':
+					console.log('Received patient template:', data.patientTemplate)
+					changePatientData(data.patientTemplate)
+					setScreen(Screens.PATIENT_EDITOR, ScreenPosition.FULL)
 					break
 				default:
 					showErrorToast('Unbekannten Nachrichtentypen erhalten: ' + data.messageType)
@@ -179,6 +186,13 @@ class SocketTrainer {
 			'messageType': 'patient-rename',
 			'patientId': patientId,
 			'patientName': patientName
+		}))
+	}
+
+	patientGetTemplate(patientCode: number) {
+		this.#sendMessage(JSON.stringify({
+			'messageType': 'patient-get-template',
+			'patientCode': patientCode
 		}))
 	}
 

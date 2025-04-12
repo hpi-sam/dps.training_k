@@ -1,0 +1,3230 @@
+[
+    {
+        "info": {
+            "op": "Eingriff beginnt|Eingriff ist fertig",
+            "code": 2002,
+            "injury": "Prellmarke Schulter re.; keine offene Wunde; Beweglichkeit schmerzhaft eingeschränkt",
+            "triage": "-",
+            "mobility": "initial gehfähig",
+            "bloodType": "1",
+            "biometrics": "weiblich; ca. 82; weißhaarig, blaue Augen, Brille, 171 cm",
+            "pretreatment": "keine keine",
+            "personalDetails": "Karoline Klausmüller 05.05.1934 Am Förderturm 33a, 46049 Oberhausen",
+            "currentCaseHistory": "Pat. hat sich selbst gerettet und ist selbstständig zu Fuß ins KrHs gekommen; Schulterschmerzen rechts; DMS oB",
+            "permanentMedication": "Diuretikum, Baldrian, Benzodiazepin z.N., Insulin;",
+            "preexistingIllnesses": "Gallensteine; Diab. mell."
+        },
+        "flow": [],
+        "states": [],
+        "transitions": [],
+        "components": [
+            {
+                "id": "Vollelektrolyt",
+                "flow": [
+                    {
+                        "id": "cb3505b7f5be3c26",
+                        "key": "in",
+                        "next": "6bcba457573ef457",
+                        "type": "Input"
+                    },
+                    {
+                        "id": "6bcba457573ef457",
+                        "next": {
+                            "true": "084dc7347e5d2c3f",
+                            "false": "1c64088ccc700fad"
+                        },
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "084dc7347e5d2c3f",
+                        "next": {
+                            "true": "40e6b0cc17cb3b51",
+                            "false": "4886d5a4d64e1dca"
+                        },
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 2
+                    },
+                    {
+                        "id": "40e6b0cc17cb3b51",
+                        "next": {
+                            "true": "7456927706dcdda1",
+                            "false": "fbddbb22344a6ee6"
+                        },
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 3
+                    },
+                    {
+                        "id": "7456927706dcdda1",
+                        "next": {
+                            "true": "4a4456eada595008",
+                            "false": "92f0a2f7197dd12a"
+                        },
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 4
+                    },
+                    {
+                        "id": "4a4456eada595008",
+                        "key": "2L+",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "92f0a2f7197dd12a",
+                        "key": "1,5L",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "fbddbb22344a6ee6",
+                        "key": "1L",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "4886d5a4d64e1dca",
+                        "key": "0,5L",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "1c64088ccc700fad",
+                        "key": "0L",
+                        "type": "Output"
+                    }
+                ]
+            },
+            {
+                "id": "freie Atemwege",
+                "flow": [
+                    {
+                        "id": "3bee18fd3db245c8",
+                        "key": "in",
+                        "next": "12a69d8bcde45e68",
+                        "type": "Input"
+                    },
+                    {
+                        "id": "12a69d8bcde45e68",
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "81f60c9c6600ea10"
+                        },
+                        "type": "Action",
+                        "action": "aaf04c59-6c34-4a60-9d67-1a007f015c30",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "81f60c9c6600ea10",
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "b9b37e3dac3d01fa"
+                        },
+                        "type": "Action",
+                        "action": "8c3870ce-8cf6-47a7-add0-734fefaed093",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "12e811327a0cb1a8",
+                        "key": "ja",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "b9b37e3dac3d01fa",
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "e43719debad94eaa"
+                        },
+                        "type": "Action",
+                        "action": "59edf7ba-7f05-4669-bed7-c17c9ffaccd0",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "e43719debad94eaa",
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "7c3acd8f6720083e"
+                        },
+                        "type": "Action",
+                        "action": "25fba4ad-b2fe-4761-87e7-5d5401ac359b",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "7c3acd8f6720083e",
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "6f425d0994cc3292"
+                        },
+                        "type": "Action",
+                        "action": "9883a5c0-300f-4e71-ad7d-fc64d46274f0",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "6f425d0994cc3292",
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "5891e45df5162915"
+                        },
+                        "type": "Action",
+                        "action": "234d0237-ffa0-4e27-b269-99b39f6bfd9f",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "5891e45df5162915",
+                        "key": "nein",
+                        "type": "Output"
+                    }
+                ]
+            },
+            {
+                "id": "O2 Inhalation",
+                "flow": [
+                    {
+                        "id": "c2c0e1af5082c5f2",
+                        "key": "in",
+                        "next": "281fb609c037dbdb",
+                        "type": "Input"
+                    },
+                    {
+                        "id": "281fb609c037dbdb",
+                        "next": {
+                            "true": "5d8b182966946ddd",
+                            "false": "f8696c110c8234dd"
+                        },
+                        "type": "Action",
+                        "action": "7b4861b2-e775-4d2a-9cd5-26bab7cc76a0",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "f8696c110c8234dd",
+                        "next": {
+                            "true": "5d8b182966946ddd",
+                            "false": "7bcdc1fea5a4f7d6"
+                        },
+                        "type": "Action",
+                        "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "5d8b182966946ddd",
+                        "key": "ja",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "7bcdc1fea5a4f7d6",
+                        "key": "nein",
+                        "type": "Output"
+                    }
+                ]
+            },
+            {
+                "id": "beatmet",
+                "flow": [
+                    {
+                        "id": "ad7cc22c38c03720",
+                        "key": "in",
+                        "next": "7864258c5392baab",
+                        "type": "Input"
+                    },
+                    {
+                        "id": "7864258c5392baab",
+                        "next": {
+                            "true": "64f22a3de314e016",
+                            "false": "464b50e8f09d8e44"
+                        },
+                        "type": "Action",
+                        "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "64f22a3de314e016",
+                        "next": {
+                            "true": "5ecf8c74541d973b",
+                            "false": "66d731db21909a27"
+                        },
+                        "type": "Material",
+                        "material": "0067d4f1-d53d-4ec5-9627-792687dc7510",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "66d731db21909a27",
+                        "next": {
+                            "true": "5ecf8c74541d973b",
+                            "false": "464b50e8f09d8e44"
+                        },
+                        "type": "Material",
+                        "material": "2752e40f-4b86-43ab-9ebd-95c094a101ab",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "5ecf8c74541d973b",
+                        "key": "ja",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "464b50e8f09d8e44",
+                        "key": "nein",
+                        "type": "Output"
+                    }
+                ]
+            },
+            {
+                "id": "Regional-/Vollnarkose",
+                "flow": [
+                    {
+                        "id": "6b878411d9510d95",
+                        "key": "in",
+                        "next": "00edfa83de75217f",
+                        "type": "Input"
+                    },
+                    {
+                        "id": "00edfa83de75217f",
+                        "next": {
+                            "true": "649b7cb3deadca80",
+                            "false": "3e7ebc3669636124"
+                        },
+                        "type": "Action",
+                        "action": "d4971ae5-117b-49b8-b5c9-4e4220ff971c",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "3e7ebc3669636124",
+                        "next": {
+                            "true": "649b7cb3deadca80",
+                            "false": "f221ca6b1fb20dc3"
+                        },
+                        "type": "Action",
+                        "action": "6b826d26-aa0a-4317-96f5-6565d7ee1e5f",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "f221ca6b1fb20dc3",
+                        "next": {
+                            "true": "649b7cb3deadca80",
+                            "false": "002bcc2e3166cbc7"
+                        },
+                        "type": "Action",
+                        "action": "2de49d83-11be-410c-ac7a-68c458baf620",
+                        "quantity": 1
+                    },
+                    {
+                        "id": "649b7cb3deadca80",
+                        "key": "ja",
+                        "type": "Output"
+                    },
+                    {
+                        "id": "002bcc2e3166cbc7",
+                        "key": "nein",
+                        "type": "Output"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "info": {
+            "op": "Eingriff beginnt|Eingriff ist fertig",
+            "code": 2003,
+            "injury": "Prellmarke Schulter re.; keine offene Wunde; Beweglichkeit schmerzhaft eingeschränkt",
+            "triage": "-",
+            "mobility": "initial gehfähig",
+            "bloodType": "1",
+            "biometrics": "weiblich; ca. 82; weißhaarig, blaue Augen, Brille, 171 cm",
+            "pretreatment": "keine keine",
+            "personalDetails": "Karoline Klausmüller 05.05.1934 Am Förderturm 33a, 46049 Oberhausen",
+            "currentCaseHistory": "Pat. hat sich selbst gerettet und ist selbstständig zu Fuß ins KrHs gekommen; Schulterschmerzen rechts; DMS oB",
+            "permanentMedication": "Diuretikum, Baldrian, Benzodiazepin z.N., Insulin;",
+            "preexistingIllnesses": "Gallensteine; Diab. mell."
+        },
+        "flow": [
+            {
+                "id": "State-101",
+                "type": "InitialState",
+                "next": "Transition-301"
+            },
+            {
+                "id": "State-102",
+                "type": "State",
+                "next": "781819f9df8f3d62"
+            },
+            {
+                "id": "State-103",
+                "type": "State",
+                "next": "Transition-295"
+            },
+            {
+                "id": "State-233",
+                "type": "State",
+                "next": "Transition-290"
+            },
+            {
+                "id": "State-234",
+                "type": "State",
+                "next": "Transition-285"
+            },
+            {
+                "id": "State-235",
+                "type": "State",
+                "next": "Transition-280"
+            },
+            {
+                "id": "State-236",
+                "type": "State",
+                "next": "Transition-275"
+            },
+            {
+                "id": "State-237",
+                "type": "State",
+                "next": "Transition-270"
+            },
+            {
+                "id": "State-238",
+                "type": "State",
+                "next": "Transition-265"
+            },
+            {
+                "id": "State-239",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "State-279",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "State-319",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "State-359",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "State-719",
+                "type": "State",
+                "next": null
+            },
+            {
+                "id": "State-278",
+                "type": "State",
+                "next": "Transition-265"
+            },
+            {
+                "id": "State-318",
+                "type": "State",
+                "next": "Transition-265"
+            },
+            {
+                "id": "State-358",
+                "type": "State",
+                "next": "Transition-265"
+            },
+            {
+                "id": "State-718",
+                "type": "State",
+                "next": "Transition-265"
+            },
+            {
+                "id": "State-277",
+                "type": "State",
+                "next": "Transition-270"
+            },
+            {
+                "id": "State-317",
+                "type": "State",
+                "next": "Transition-270"
+            },
+            {
+                "id": "State-357",
+                "type": "State",
+                "next": "Transition-270"
+            },
+            {
+                "id": "State-717",
+                "type": "State",
+                "next": "Transition-270"
+            },
+            {
+                "id": "State-276",
+                "type": "State",
+                "next": "Transition-275"
+            },
+            {
+                "id": "State-316",
+                "type": "State",
+                "next": "Transition-275"
+            },
+            {
+                "id": "State-356",
+                "type": "State",
+                "next": "Transition-275"
+            },
+            {
+                "id": "State-716",
+                "type": "State",
+                "next": "Transition-275"
+            },
+            {
+                "id": "State-275",
+                "type": "State",
+                "next": "Transition-280"
+            },
+            {
+                "id": "State-315",
+                "type": "State",
+                "next": "Transition-280"
+            },
+            {
+                "id": "State-355",
+                "type": "State",
+                "next": "Transition-280"
+            },
+            {
+                "id": "State-715",
+                "type": "State",
+                "next": "Transition-280"
+            },
+            {
+                "id": "State-274",
+                "type": "State",
+                "next": "Transition-285"
+            },
+            {
+                "id": "State-314",
+                "type": "State",
+                "next": "Transition-285"
+            },
+            {
+                "id": "State-354",
+                "type": "State",
+                "next": "Transition-285"
+            },
+            {
+                "id": "State-714",
+                "type": "State",
+                "next": "Transition-285"
+            },
+            {
+                "id": "State-273",
+                "type": "State",
+                "next": "Transition-290"
+            },
+            {
+                "id": "State-313",
+                "type": "State",
+                "next": "Transition-290"
+            },
+            {
+                "id": "State-353",
+                "type": "State",
+                "next": "Transition-290"
+            },
+            {
+                "id": "State-713",
+                "type": "State",
+                "next": "Transition-290"
+            },
+            {
+                "id": "Transition-301",
+                "type": "Transition",
+                "transition": "Übergang 1",
+                "next": [
+                    {
+                        "key": "out",
+                        "value": "State-102"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-295",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-233"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-273"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-313"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-353"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-713"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-290",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-234"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-274"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-714"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-314"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-354"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-285",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-235"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-275"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-315"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-715"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-355"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-280",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-236"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-716"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-276"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-316"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-356"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-275",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-237"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-717"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-277"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-317"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-357"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-270",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-238"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-718"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-278"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-318"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-358"
+                    }
+                ]
+            },
+            {
+                "id": "Transition-265",
+                "type": "Transition",
+                "transition": "Übergang 2",
+                "next": [
+                    {
+                        "key": "1",
+                        "value": "State-239"
+                    },
+                    {
+                        "key": "2",
+                        "value": "State-279"
+                    },
+                    {
+                        "key": "beatmet",
+                        "value": "State-719"
+                    },
+                    {
+                        "key": "3",
+                        "value": "State-319"
+                    },
+                    {
+                        "key": "4",
+                        "value": "State-359"
+                    }
+                ]
+            },
+            {
+                "id": "781819f9df8f3d62",
+                "type": "Transition",
+                "transition": "Übergang 1",
+                "next": [
+                    {
+                        "key": "out",
+                        "value": "State-103"
+                    }
+                ]
+            }
+        ],
+        "states": [
+            {
+                "bz": 906,
+                "hb": 423,
+                "id": "State-101",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 98 %",
+                "heartRate": 72,
+                "rivaRocci": "125/063",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 13,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 98,
+                "examination_codes": {
+                    "BZ": 906,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-102",
+                "ekg": 722,
+                "zvd": 820,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 99 %",
+                "heartRate": 76,
+                "rivaRocci": "131/067",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 99,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 820,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 906,
+                "hb": 423,
+                "id": "State-103",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "sehr aufgeregt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 99 %",
+                "heartRate": 84,
+                "rivaRocci": "147/076",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 25,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 99,
+                "examination_codes": {
+                    "BZ": 906,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-233",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 72,
+                "rivaRocci": "130/062",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 14,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-234",
+                "ekg": 722,
+                "zvd": 820,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 77,
+                "rivaRocci": "134/063",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 820,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-235",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "verlangsamt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 75,
+                "rivaRocci": "127/057",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 13,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-236",
+                "ekg": 722,
+                "zvd": 820,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "verlangsamt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 81,
+                "rivaRocci": "131/058",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 14,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 820,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-237",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "teilnahmslos",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 79,
+                "rivaRocci": "124/052",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 12,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 919,
+                "hb": 423,
+                "id": "State-238",
+                "ekg": 722,
+                "zvd": 801,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "teilnahmslos",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 85,
+                "rivaRocci": "128/053",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 14,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 919,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 801,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-239",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "teilnahmslos",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "flache Atmung",
+                "heartRate": 83,
+                "rivaRocci": "121/047",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 11,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-279",
+                "ekg": 722,
+                "zvd": 836,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 97 %",
+                "heartRate": 70,
+                "rivaRocci": "167/099",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 27,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 97,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 836,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-319",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "teilnahmslos",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 84,
+                "rivaRocci": "122/052",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 12,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-359",
+                "ekg": 722,
+                "zvd": 836,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 608,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 92 %",
+                "heartRate": 71,
+                "rivaRocci": "168/104",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 28,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 92,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 836,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 608,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-719",
+                "ekg": 722,
+                "zvd": 801,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 71,
+                "rivaRocci": "130/068",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 801,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 919,
+                "hb": 423,
+                "id": "State-278",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 99 %",
+                "heartRate": 76,
+                "rivaRocci": "170/099",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 28,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 99,
+                "examination_codes": {
+                    "BZ": 919,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 919,
+                "hb": 423,
+                "id": "State-318",
+                "ekg": 722,
+                "zvd": 801,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "teilnahmslos",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 86,
+                "rivaRocci": "129/058",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 919,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 801,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 919,
+                "hb": 423,
+                "id": "State-358",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 94 %",
+                "heartRate": 77,
+                "rivaRocci": "171/104",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 29,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 94,
+                "examination_codes": {
+                    "BZ": 919,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 919,
+                "hb": 423,
+                "id": "State-718",
+                "ekg": 722,
+                "zvd": 803,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 75,
+                "rivaRocci": "135/071",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 919,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 803,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-277",
+                "ekg": 722,
+                "zvd": 836,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 99 %",
+                "heartRate": 73,
+                "rivaRocci": "162/092",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 26,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 99,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 836,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-317",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "teilnahmslos",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 80,
+                "rivaRocci": "125/057",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 13,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-357",
+                "ekg": 722,
+                "zvd": 836,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 94 %",
+                "heartRate": 74,
+                "rivaRocci": "163/097",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 27,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 94,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 836,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-717",
+                "ekg": 722,
+                "zvd": 801,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 71,
+                "rivaRocci": "129/067",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 801,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-276",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 79,
+                "rivaRocci": "165/092",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 28,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-316",
+                "ekg": 722,
+                "zvd": 820,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "verlangsamt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 82,
+                "rivaRocci": "132/063",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 820,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-356",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 96 %",
+                "heartRate": 80,
+                "rivaRocci": "166/097",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 29,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 96,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-716",
+                "ekg": 722,
+                "zvd": 803,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 75,
+                "rivaRocci": "134/070",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 803,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-275",
+                "ekg": 722,
+                "zvd": 833,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 77,
+                "rivaRocci": "157/085",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 25,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 833,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-315",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "verlangsamt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 76,
+                "rivaRocci": "128/062",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 14,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-355",
+                "ekg": 722,
+                "zvd": 833,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "hysterisch",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 96 %",
+                "heartRate": 78,
+                "rivaRocci": "158/090",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 26,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 96,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 833,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-715",
+                "ekg": 722,
+                "zvd": 801,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 71,
+                "rivaRocci": "128/066",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 801,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-274",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "sehr aufgeregt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 83,
+                "rivaRocci": "160/085",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 27,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-314",
+                "ekg": 722,
+                "zvd": 820,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 78,
+                "rivaRocci": "135/068",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 16,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 820,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-354",
+                "ekg": 722,
+                "zvd": 824,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "sehr aufgeregt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 98 %",
+                "heartRate": 84,
+                "rivaRocci": "161/090",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 28,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 98,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 824,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 926,
+                "hb": 423,
+                "id": "State-714",
+                "ekg": 722,
+                "zvd": 803,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 75,
+                "rivaRocci": "133/069",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 926,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 803,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-273",
+                "ekg": 722,
+                "zvd": 833,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "sehr aufgeregt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 100 %",
+                "heartRate": 81,
+                "rivaRocci": "152/078",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 24,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 833,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-313",
+                "ekg": 722,
+                "zvd": 812,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 99 %",
+                "heartRate": 73,
+                "rivaRocci": "131/067",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 99,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 812,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-353",
+                "ekg": 722,
+                "zvd": 833,
+                "liver": 117,
+                "airway": "freie Atemwege",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "sehr aufgeregt",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "SpO2: 98 %",
+                "heartRate": 82,
+                "rivaRocci": "153/083",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 25,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher kräftig tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 98,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 833,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 912,
+                "hb": 423,
+                "id": "State-713",
+                "ekg": 722,
+                "zvd": 801,
+                "liver": 117,
+                "airway": "künstlicher Atemweg",
+                "bgaOxy": 612,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 126,
+                "psyche": "",
+                "pupils": "mittelweit",
+                "thorax": 418,
+                "trauma": 242,
+                "infarct": 135,
+                "lactate": 345,
+                "clotting": 104,
+                "breathing": "Beatmung",
+                "heartRate": 71,
+                "rivaRocci": "127/065",
+                "extremities": 617,
+                "skinFinding": [
+                    ""
+                ],
+                "ultraschall": 615,
+                "breathingRate": 15,
+                "consciousness": "narkotisiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSounds": "normales AG hörbar",
+                "oxygenSaturation": 100,
+                "examination_codes": {
+                    "BZ": 912,
+                    "Hb": 423,
+                    "EKG": 722,
+                    "ZVD": 801,
+                    "Leber": 117,
+                    "Niere": 126,
+                    "Lactat": 345,
+                    "BGA-Oxy": 612,
+                    "BGA-SBH": 656,
+                    "Infarkt": 135,
+                    "Gerinnung": 104,
+                    "Trauma-CT": 242,
+                    "Rö-Thorax": 418,
+                    "Ultraschall": 615,
+                    "Rö-Extremitäten": 617
+                },
+                "skinDiscoloration": [
+                    ""
+                ]
+            },
+            {
+                "bz": 934,
+                "hb": 421,
+                "id": "d6966d37d98aac13",
+                "ekg": 722,
+                "zvd": 836,
+                "liver": 110,
+                "airway": "freie Atemwege",
+                "bgaOxy": 602,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 122,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 306,
+                "trauma": 281,
+                "infarct": 131,
+                "lactate": 140,
+                "clotting": 104,
+                "breathing": "normale Atmung",
+                "heartRate": 80,
+                "rivaRocci": "120/80",
+                "extremities": 520,
+                "skinFinding": "trocken",
+                "ultraschall": 647,
+                "breathingRate": 16,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSound": false,
+                "oxygenSaturation": 100,
+                "breathingLoudness": "normales AG hörbar",
+                "skinDiscoloration": "rosig"
+            },
+            {
+                "bz": 934,
+                "hb": 421,
+                "id": "2f7fefe1ae733383",
+                "ekg": 722,
+                "zvd": 836,
+                "liver": 110,
+                "airway": "freie Atemwege",
+                "bgaOxy": 602,
+                "bgaSbh": 656,
+                "isDead": false,
+                "kidney": 122,
+                "psyche": "unauffällig",
+                "pupils": "mittelweit",
+                "thorax": 306,
+                "trauma": 281,
+                "infarct": 131,
+                "lactate": 140,
+                "clotting": 104,
+                "breathing": "normale Atmung",
+                "heartRate": 80,
+                "rivaRocci": "120/80",
+                "extremities": 520,
+                "skinFinding": "trocken",
+                "ultraschall": 647,
+                "breathingRate": 16,
+                "consciousness": "wach, orientiert",
+                "pulsePalpable": "peripher tastbar",
+                "breathingSound": false,
+                "oxygenSaturation": 100,
+                "breathingLoudness": "normales AG hörbar",
+                "skinDiscoloration": "rosig"
+            }
+        ],
+        "transitions": [
+            {
+                "id": "Übergang 1",
+                "flow": [
+                    {
+                        "id": "1b847678ed8dc452",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "e61218105cd3fc84"
+                    },
+                    {
+                        "id": "e61218105cd3fc84",
+                        "type": "Output",
+                        "key": "out"
+                    }
+                ]
+            },
+            {
+                "id": "Übergang 2",
+                "flow": [
+                    {
+                        "id": "d5152e3a07256576",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "8907c5cc56f14132"
+                    },
+                    {
+                        "id": "8907c5cc56f14132",
+                        "type": "Component",
+                        "component": "beatmet",
+                        "next": [
+                            {
+                                "key": "ja",
+                                "value": "8574e91b6d0f4934"
+                            },
+                            {
+                                "key": "nein",
+                                "value": "9693e85d6da29de4"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "9693e85d6da29de4",
+                        "type": "Component",
+                        "component": "O2 Inhalation",
+                        "next": [
+                            {
+                                "key": "ja",
+                                "value": "28b7564feebc24d8"
+                            },
+                            {
+                                "key": "nein",
+                                "value": "972eb4cfd0051f3d"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "28b7564feebc24d8",
+                        "type": "Action",
+                        "action": "2aef024b-b013-490b-87d5-95d9fe10ed72",
+                        "quantity": 1,
+                        "next": {
+                            "true": "55119705546e6b1a",
+                            "false": "877a7fce23e148a2"
+                        }
+                    },
+                    {
+                        "id": "8574e91b6d0f4934",
+                        "type": "Output",
+                        "key": "beatmet"
+                    },
+                    {
+                        "id": "972eb4cfd0051f3d",
+                        "type": "Action",
+                        "action": "2aef024b-b013-490b-87d5-95d9fe10ed72",
+                        "quantity": 1,
+                        "next": {
+                            "true": "3b31bad8184db0f0",
+                            "false": "bee9152f36117a3a"
+                        }
+                    },
+                    {
+                        "id": "55119705546e6b1a",
+                        "type": "Output",
+                        "key": "1"
+                    },
+                    {
+                        "id": "877a7fce23e148a2",
+                        "type": "Output",
+                        "key": "2"
+                    },
+                    {
+                        "id": "3b31bad8184db0f0",
+                        "type": "Output",
+                        "key": "3"
+                    },
+                    {
+                        "id": "bee9152f36117a3a",
+                        "type": "Output",
+                        "key": "4"
+                    }
+                ]
+            }
+        ],
+        "components": [
+            {
+                "id": "Vollelektrolyt",
+                "flow": [
+                    {
+                        "id": "cb3505b7f5be3c26",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "6bcba457573ef457"
+                    },
+                    {
+                        "id": "6bcba457573ef457",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 1,
+                        "next": {
+                            "true": "084dc7347e5d2c3f",
+                            "false": "1c64088ccc700fad"
+                        }
+                    },
+                    {
+                        "id": "084dc7347e5d2c3f",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 2,
+                        "next": {
+                            "true": "40e6b0cc17cb3b51",
+                            "false": "4886d5a4d64e1dca"
+                        }
+                    },
+                    {
+                        "id": "40e6b0cc17cb3b51",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 3,
+                        "next": {
+                            "true": "7456927706dcdda1",
+                            "false": "fbddbb22344a6ee6"
+                        }
+                    },
+                    {
+                        "id": "7456927706dcdda1",
+                        "type": "Action",
+                        "action": "9ed9b301-d4f8-4e81-8e33-f26bbdc24104",
+                        "quantity": 4,
+                        "next": {
+                            "true": "4a4456eada595008",
+                            "false": "92f0a2f7197dd12a"
+                        }
+                    },
+                    {
+                        "id": "4a4456eada595008",
+                        "type": "Output",
+                        "key": "2L+"
+                    },
+                    {
+                        "id": "92f0a2f7197dd12a",
+                        "type": "Output",
+                        "key": "1,5L"
+                    },
+                    {
+                        "id": "fbddbb22344a6ee6",
+                        "type": "Output",
+                        "key": "1L"
+                    },
+                    {
+                        "id": "4886d5a4d64e1dca",
+                        "type": "Output",
+                        "key": "0,5L"
+                    },
+                    {
+                        "id": "1c64088ccc700fad",
+                        "type": "Output",
+                        "key": "0L"
+                    }
+                ]
+            },
+            {
+                "id": "freie Atemwege",
+                "flow": [
+                    {
+                        "id": "3bee18fd3db245c8",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "12a69d8bcde45e68"
+                    },
+                    {
+                        "id": "12a69d8bcde45e68",
+                        "type": "Action",
+                        "action": "aaf04c59-6c34-4a60-9d67-1a007f015c30",
+                        "quantity": 1,
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "81f60c9c6600ea10"
+                        }
+                    },
+                    {
+                        "id": "81f60c9c6600ea10",
+                        "type": "Action",
+                        "action": "8c3870ce-8cf6-47a7-add0-734fefaed093",
+                        "quantity": 1,
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "b9b37e3dac3d01fa"
+                        }
+                    },
+                    {
+                        "id": "12e811327a0cb1a8",
+                        "type": "Output",
+                        "key": "ja"
+                    },
+                    {
+                        "id": "b9b37e3dac3d01fa",
+                        "type": "Action",
+                        "action": "59edf7ba-7f05-4669-bed7-c17c9ffaccd0",
+                        "quantity": 1,
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "e43719debad94eaa"
+                        }
+                    },
+                    {
+                        "id": "e43719debad94eaa",
+                        "type": "Action",
+                        "action": "25fba4ad-b2fe-4761-87e7-5d5401ac359b",
+                        "quantity": 1,
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "7c3acd8f6720083e"
+                        }
+                    },
+                    {
+                        "id": "7c3acd8f6720083e",
+                        "type": "Action",
+                        "action": "9883a5c0-300f-4e71-ad7d-fc64d46274f0",
+                        "quantity": 1,
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "6f425d0994cc3292"
+                        }
+                    },
+                    {
+                        "id": "6f425d0994cc3292",
+                        "type": "Action",
+                        "action": "234d0237-ffa0-4e27-b269-99b39f6bfd9f",
+                        "quantity": 1,
+                        "next": {
+                            "true": "12e811327a0cb1a8",
+                            "false": "5891e45df5162915"
+                        }
+                    },
+                    {
+                        "id": "5891e45df5162915",
+                        "type": "Output",
+                        "key": "nein"
+                    }
+                ]
+            },
+            {
+                "id": "O2 Inhalation",
+                "flow": [
+                    {
+                        "id": "c2c0e1af5082c5f2",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "281fb609c037dbdb"
+                    },
+                    {
+                        "id": "281fb609c037dbdb",
+                        "type": "Action",
+                        "action": "7b4861b2-e775-4d2a-9cd5-26bab7cc76a0",
+                        "quantity": 1,
+                        "next": {
+                            "true": "5d8b182966946ddd",
+                            "false": "f8696c110c8234dd"
+                        }
+                    },
+                    {
+                        "id": "f8696c110c8234dd",
+                        "type": "Action",
+                        "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                        "quantity": 1,
+                        "next": {
+                            "true": "5d8b182966946ddd",
+                            "false": "7bcdc1fea5a4f7d6"
+                        }
+                    },
+                    {
+                        "id": "5d8b182966946ddd",
+                        "type": "Output",
+                        "key": "ja"
+                    },
+                    {
+                        "id": "7bcdc1fea5a4f7d6",
+                        "type": "Output",
+                        "key": "nein"
+                    }
+                ]
+            },
+            {
+                "id": "beatmet",
+                "flow": [
+                    {
+                        "id": "ad7cc22c38c03720",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "7864258c5392baab"
+                    },
+                    {
+                        "id": "7864258c5392baab",
+                        "type": "Action",
+                        "action": "72d6f3ad-b9a5-4b16-b289-815766b27c4f",
+                        "quantity": 1,
+                        "next": {
+                            "true": "64f22a3de314e016",
+                            "false": "464b50e8f09d8e44"
+                        }
+                    },
+                    {
+                        "id": "64f22a3de314e016",
+                        "type": "Material",
+                        "material": "0067d4f1-d53d-4ec5-9627-792687dc7510",
+                        "quantity": 1,
+                        "next": {
+                            "true": "5ecf8c74541d973b",
+                            "false": "66d731db21909a27"
+                        }
+                    },
+                    {
+                        "id": "66d731db21909a27",
+                        "type": "Material",
+                        "material": "2752e40f-4b86-43ab-9ebd-95c094a101ab",
+                        "quantity": 1,
+                        "next": {
+                            "true": "5ecf8c74541d973b",
+                            "false": "464b50e8f09d8e44"
+                        }
+                    },
+                    {
+                        "id": "5ecf8c74541d973b",
+                        "type": "Output",
+                        "key": "ja"
+                    },
+                    {
+                        "id": "464b50e8f09d8e44",
+                        "type": "Output",
+                        "key": "nein"
+                    }
+                ]
+            },
+            {
+                "id": "Regional-/Vollnarkose",
+                "flow": [
+                    {
+                        "id": "6b878411d9510d95",
+                        "type": "Input",
+                        "key": "in",
+                        "next": "00edfa83de75217f"
+                    },
+                    {
+                        "id": "00edfa83de75217f",
+                        "type": "Action",
+                        "action": "d4971ae5-117b-49b8-b5c9-4e4220ff971c",
+                        "quantity": 1,
+                        "next": {
+                            "true": "649b7cb3deadca80",
+                            "false": "3e7ebc3669636124"
+                        }
+                    },
+                    {
+                        "id": "3e7ebc3669636124",
+                        "type": "Action",
+                        "action": "6b826d26-aa0a-4317-96f5-6565d7ee1e5f",
+                        "quantity": 1,
+                        "next": {
+                            "true": "649b7cb3deadca80",
+                            "false": "f221ca6b1fb20dc3"
+                        }
+                    },
+                    {
+                        "id": "f221ca6b1fb20dc3",
+                        "type": "Action",
+                        "action": "2de49d83-11be-410c-ac7a-68c458baf620",
+                        "quantity": 1,
+                        "next": {
+                            "true": "649b7cb3deadca80",
+                            "false": "002bcc2e3166cbc7"
+                        }
+                    },
+                    {
+                        "id": "649b7cb3deadca80",
+                        "type": "Output",
+                        "key": "ja"
+                    },
+                    {
+                        "id": "002bcc2e3166cbc7",
+                        "type": "Output",
+                        "key": "nein"
+                    }
+                ]
+            }
+        ]
+    }
+]

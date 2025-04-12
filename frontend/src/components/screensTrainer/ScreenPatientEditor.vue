@@ -1,0 +1,301 @@
+<script setup lang="ts">
+import PatientInfoForm from '@/components/widgets/PatientInfoForm.vue'
+import PatientStateForm from '@/components/widgets/PatientStateForm.vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { createEditor as createPatientEditor, editorMode } from '@/rete/editor'
+import 'antd/dist/reset.css'
+import { Editor } from '@/rete/types'
+import { Screens, ScreenPosition, setScreen } from '@/components/ModuleTrainer.vue'
+import { State } from '@/rete/types'
+
+const patientModule = ref("" as any)
+const transitionModules = ref([] as any)
+const componentModules = ref([] as any)
+const editorContainer = ref(null)
+const editor = ref(null as unknown as Editor)
+
+onMounted(() => {
+  startEditor(data.value)
+})
+
+async function startEditor(data: any) {
+  console.log('startEditor with data: ', data)
+  editorMode.value = null as any
+  editor.value = await createPatientEditor(editorContainer.value as unknown as HTMLElement, data) as any as Editor
+  
+  await editor.value?.layout()
+
+  if (editor.value) {
+    patientModule.value = editor.value.getModules().patientModuleData
+    transitionModules.value = editor.value.getModules().transitionModulesData
+    componentModules.value = editor.value.getModules().componentModulesData
+    editor.value.openModule('', 'patient')
+  }
+  
+  loadPatientInfo(data)
+  loadPatientStates(data)
+
+  setTimeout(() => {
+    editor.value?.layout()
+  }, 100)
+}
+
+function loadPatientInfo(data: any) {
+  info.value = data.info
+}
+
+function loadPatientStates(data: any) {
+  states.value = data.states
+}
+
+function openPatient() {
+  editor.value?.openModule('', 'patient').then(() => {
+    editor.value?.layout()
+  })
+  patientInfoFormIsVisible.value = true
+}
+
+watch(editor, (newEditor) => {
+  if (newEditor) {
+    patientModule.value = newEditor.getModules().patientModuleData
+    transitionModules.value = newEditor.getModules().transitionModulesData
+    componentModules.value = newEditor.getModules().componentModulesData
+    newEditor.openModule('', 'patient')
+  }
+})
+
+function openModule(id: string, type: string) {
+  editor.value?.openModule(id, type).then(() => {
+    if (type != 'patient') {
+      patientInfoFormIsVisible.value = false
+      patientStateFormIsVisible.value = false
+    }
+    editor.value?.layout()
+  })
+}
+
+function newTransitionModule() {
+  const id = prompt('Transition Id')
+  if (id) {
+    editor.value?.newTransitionModule(id)
+    transitionModules.value = editor.value.getModules().transitionModulesData
+    openModule(id, 'transition')
+  }
+}
+
+function newComponentModule() {
+  const id = prompt('Komponenten Id')
+  if (id) {
+    editor.value?.newComponentModule(id)
+    componentModules.value = editor.value.getModules().componentModulesData
+    openModule(id, 'component')
+  }
+}
+
+function deleteModule() {
+  editor.value.deleteModule()
+  transitionModules.value = editor.value.getModules().transitionModulesData
+  componentModules.value = editor.value.getModules().componentModulesData
+  openModule('', 'patient')
+}
+
+function exportData() {
+  editor.value.saveModule()
+  const data = {
+    info: info.value,
+    flow: editor.value?.getModules().patientModuleData,
+    states: states.value,
+    transitions: editor.value?.getModules().transitionModulesData,
+    components: editor.value?.getModules().componentModulesData
+  }
+  const json = JSON.stringify(data)
+  const blob = new Blob([json], { type: 'text/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'patient.json'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+const reteWidth = computed(() => {
+  return patientInfoFormIsVisible.value || patientStateFormIsVisible.value ? 'calc(100% - 400px)' : '100%'
+})
+
+function backToTrainer() {
+  setScreen(Screens.EXERCISE_CREATION, ScreenPosition.LEFT)
+  setScreen(Screens.RESOURCE_CREATION, ScreenPosition.RIGHT)    
+}
+
+watch(data, (newData) => {
+  startEditor(newData.value)
+})
+</script>
+
+<script lang="ts">
+const data = ref({} as any)
+
+export function changePatientData(newData: any) {
+  console.log('changePatientData', newData)
+  data.value = newData
+}
+
+const patientInfoFormIsVisible = ref(true)
+const patientStateFormIsVisible = ref(false)
+
+export function openPatientState(stateId: string) {
+  patientInfoFormIsVisible.value = false
+  patientStateFormIsVisible.value = true
+  currentStateId.value = stateId
+}
+
+export const info = ref({} as any)
+export const states = ref([] as State[])
+export const currentStateId = ref('')
+export const currentState = ref(computed(() => states.value.find((state) => state.id === currentStateId.value)))
+
+export function addState(stateId: string) {
+  const state: State = {
+    id: stateId,
+    isDead: false,
+    airway: "freie Atemwege",
+    breathingRate: 16,
+    oxygenSaturation: 100,
+    breathing: "normale Atmung",
+    breathingSound: false,
+    breathingLoudness: "normales AG hörbar",
+    heartRate: 80,
+    pulsePalpable: "peripher tastbar",
+    rivaRocci: "120/80",
+    consciousness: "wach, orientiert",
+    pupils: "mittelweit",
+    psyche: "unauffällig",
+    skinFinding: "trocken",
+    skinDiscoloration: "rosig",
+    bgaOxy: 602,
+    bgaSbh: 656,
+    hb: 421,
+    bz: 934,
+    clotting: 104,
+    liver: 110,
+    kidney: 122,
+    infarct: 131,
+    lactate: 140,
+    extremities: 520,
+    thorax: 306,
+    trauma: 281,
+    ultraschall: 647,
+    ekg: 722,
+    zvd: 836
+  }
+  states.value.push(state)
+}
+</script>
+
+<template>
+	<div class="left-sidebar">
+		<button style="background-color: #8ba0ff" @click="openPatient">
+			Patient
+		</button>
+		<button style="background-color: gray" @click="editor?.layout()">
+			Auto Layout
+		</button>
+		<button style="background-color: gray" @click="exportData()">
+			Export
+		</button>
+		<button style="background-color: gray" @click="backToTrainer()">
+			Zurück zum Trainer
+		</button>
+		<br>
+		<h3>Übergänge</h3>
+		<button
+			v-for="module in transitionModules as any"
+			:key="module.id"
+			style="background-color: #8ba0ff"
+			@click="openModule(module.id, 'transition')"
+		>
+			{{ module.id }}
+		</button>
+		<button size="small" @click="newTransitionModule">
+			Neuer Übergang
+		</button>
+		<button v-if="editorMode == 'transition'" style="background-color: var(--red)" @click="deleteModule()">
+			Diesen Übergang löschen
+		</button>
+		<br>
+		<h3>Komponenten</h3>
+		<button
+			v-for="module in componentModules as any"
+			:key="module.id"
+			style="background-color: #8ba0ff"
+			@click="openModule(module.id, 'component')"
+		>
+			{{ module.id }}
+		</button>
+		<button size="small" @click="newComponentModule">
+			Neue Komponente
+		</button>
+		<button v-if="editorMode == 'component'" style="background-color: var(--red)" @click="deleteModule()">
+			Diese Komponente löschen
+		</button>
+	</div>
+	<div ref="editorContainer" class="rete" :style="{ width: reteWidth }" />
+	<div v-show="patientInfoFormIsVisible" class="right-sidebar overlay">
+		<PatientInfoForm />
+	</div>
+	<div v-show="patientStateFormIsVisible" class="right-sidebar">
+		<PatientStateForm />
+	</div>
+</template>
+
+<style scoped>
+  .left-sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    padding: 20px;
+    overflow: auto;
+    z-index: 1;
+  }
+
+  .left-sidebar button {
+    margin-bottom: 10px;
+    width: fit-content;
+    padding: 10px;
+
+    height: 40px;
+    border: none;
+    border-radius: .5rem;
+    font-size: 1.25rem;
+    line-height: 1.25rem;
+    background-color: var(--green);
+    color: white;
+  }
+
+  .rete {
+    position: relative;
+    height: 100%;
+    font-size: 1rem;
+    background: white;
+    text-align: left;
+    line-height: 1;
+  }
+
+  .right-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 400px;
+    background: #f0f0f0;
+    padding: 20px;
+    overflow: auto;
+  }
+
+  .overlay {
+    z-index: 1;
+  }
+</style>

@@ -5,3 +5,4 @@ from .state_transition import StateTransition
 from .subcondition import Subcondition
 from .logic_node import LogicNode
 from .material import Material
+from .patient import Patient

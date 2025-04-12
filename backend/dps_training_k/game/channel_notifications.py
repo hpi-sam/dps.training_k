@@ -414,10 +414,10 @@ class PatientInstanceDispatcher(ChannelNotifier):
     def dispatch_event(cls, patient_instance, changes, is_updated):
         changes_set = set(changes) if changes else set()
 
-        if changes and "patient_state" in changes:
+        if changes and "patient_state_id" in changes:
             cls._notify_patient_state_change(patient_instance)
 
-        if not (changes and len(changes) == 1 and "patient_state" in changes):
+        if not (changes and len(changes) == 1 and "patient_state_id" in changes):
             cls._notify_exercise_update(cls.get_exercise(patient_instance))
 
         if changes and changes_set & cls.location_changes:
@@ -431,10 +431,10 @@ class PatientInstanceDispatcher(ChannelNotifier):
         if not is_updated:
             message = f"Patient*in {patient_instance.name}({patient_instance.code}) wurde eingeliefert."
             if (
-                patient_instance.static_information
-                and patient_instance.static_information.injury
+                patient_instance.patient_template.info
+                and patient_instance.patient_template.info.get("injury")
             ):
-                message += f" Patient*in hat folgende Verletzungen: {patient_instance.static_information.injury}"
+                message += f" Patient*in hat folgende Verletzungen: {patient_instance.patient_template.info.get("injury")}"
         elif changes and "triage" in changes:
             # get_triage_display gets the long version of a ChoiceField
             message = f"Patient*in {patient_instance.name} wurde triagiert auf {patient_instance.get_triage_display()}"

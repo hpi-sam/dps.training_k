@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from configuration import settings
 from game.consumers import TrainerConsumer
 from game.models import Exercise, PatientInstance, Area, Personnel, User
-from template.models import PatientInformation, PatientState
+from template.models import Patient
 
 
 class Command(BaseCommand):
@@ -30,15 +30,11 @@ class Command(BaseCommand):
         self.area = Area.create_area(
             name="Bereich", exercise=self.exercise, isPaused=False
         )
-        self.patient_information = PatientInformation.objects.get(code=1004)
-        patient_state = PatientState.objects.get(
-            code=self.patient_information.code,
-            state_id=self.patient_information.start_status,
-        )
+        self.patient_template = Patient.objects.get(info__code=2001)
 
         self.patient, _ = PatientInstance.objects.update_or_create(
             frontend_id=123456,
-            patient_state=patient_state,
+            patient_template=self.patient_template,
             defaults={
                 "name": "Max Mustermann",
                 "static_information": self.patient_information,

@@ -1,14 +1,13 @@
 from urllib.parse import parse_qs
 
 from configuration import settings
-from game.models import Area
-from game.models import Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry
-from game.models import Lab
+from game.models import Area, Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry, Lab
 from template.constants import MaterialIDs
-from template.models import PatientInformation, Material
+from template.models import Patient, Material
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
+from template.serializers import PatientSerializer
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -30,6 +29,7 @@ class TrainerConsumer(AbstractConsumer):
         PATIENT_DELETE = "patient-delete"
         PATIENT_RENAME = "patient-rename"
         PATIENT_UPDATE = "patient-update"
+        PATIENT_GET_TEMPLATE = "patient-get-template"
         PERSONNEL_ADD = "personnel-add"
         PERSONNEL_DELETE = "personnel-delete"
         PERSONNEL_RENAME = "personnel-rename"
@@ -37,6 +37,7 @@ class TrainerConsumer(AbstractConsumer):
     class TrainerOutgoingMessageTypes:
         LOG_UPDATE = "log-update"
         RESPONSE = "response"
+        PATIENT_TEMPLATE = "patient-template"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,6 +100,10 @@ class TrainerConsumer(AbstractConsumer):
                 self.handle_update_patient,
                 "patientId",
                 "code",
+            ),
+            self.TrainerIncomingMessageTypes.PATIENT_GET_TEMPLATE: (
+                self.handle_get_patient_template,
+                "patientCode",
             ),
             self.TrainerIncomingMessageTypes.PERSONNEL_ADD: (
                 self.handle_add_personnel,
@@ -206,8 +211,10 @@ class TrainerConsumer(AbstractConsumer):
     def handle_add_patient(self, _, areaId, patientName, code):
         try:
             area = Area.objects.get(id=areaId)
-            patient_information = PatientInformation.objects.get(code=code)
+            patient_template = Patient.objects.get(info__code=code)
+            
             # a patient in state 551 starts "beatmet" and therefore needs a "Beatmungsgerät"
+            '''
             if patient_information.start_status == 551:
                 try:
                     material_instances = MaterialInstance.objects.filter(
@@ -243,13 +250,15 @@ class TrainerConsumer(AbstractConsumer):
                         message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                     )
             else:
-                PatientInstance.objects.create(
-                    name=patientName,
-                    static_information=patient_information,
-                    exercise=area.exercise,
-                    area=area,
-                    frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
-                )
+            '''
+            PatientInstance.objects.create(
+                name=patientName,
+                patient_template=patient_template,
+                patient_state_id=patient_template.get_initial_state_id(),
+                exercise=area.exercise,
+                area=area,
+                frontend_id=settings.ID_GENERATOR.get_patient_frontend_id(),
+            )
 
         except Area.DoesNotExist:
             self.send_failure(
@@ -281,7 +290,8 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_update_patient(self, _, patient_frontend_id, code):
         patient = PatientInstance.objects.get(frontend_id=patient_frontend_id)
-        new_patient_information = PatientInformation.objects.get(code=code)
+        new_patient_template = Patient.objects.get(info__code=code)
+        '''
         if patient.static_information.start_status == 551:
             self._unassign_beatmungsgeraet(patient)
 
@@ -316,8 +326,16 @@ class TrainerConsumer(AbstractConsumer):
                     message="Dieser Patient benötigt bereits zu Beginn ein Beatmungsgerät."
                 )
         else:
-            patient.static_information = new_patient_information
-            patient.save(update_fields=["static_information"])
+        '''
+        patient.patient_template = new_patient_template
+        patient.save(update_fields=["patient_template"])
+        
+    def handle_get_patient_template(self, _, patient_code):
+        patient_template = Patient.objects.all().filter(info__code=patient_code).values()[0]
+        self.send_event(
+            self.TrainerOutgoingMessageTypes.PATIENT_TEMPLATE,
+            patientTemplate=PatientSerializer(patient_template).data,
+        )
 
     def handle_add_personnel(self, _, areaId, personnel_name):
         try:

@@ -2,3 +2,4 @@ from .state_serialize import StateSerializer
 from .material_serializer import MaterialSerializer
 from .patient_information_serializer import PatientInformationSerializer
 from .action_serializer import ActionSerializer
+from .patient_serializer import PatientSerializer

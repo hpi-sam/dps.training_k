@@ -29,6 +29,7 @@ interface MessageData {
 	actionCheck?: ActionCheck
 	relocatingInfo: string
 	timeUntilBack: number
+	patientTemplate: {}
 }
 
 interface Exercise {
@@ -201,4 +202,80 @@ interface CheckLabDevice {
 	name: string
 	available: number
 	needed: number
+}
+
+interface PatientEditor {
+	code: number
+	firstState: number
+	patientName: string
+	triage: string
+	personalDetails: string
+	injury: string
+	biometrics: string
+	mobility: string
+	preexistingIllnesses: string
+	permanentMedication: string
+	currentCaseHistory: string
+	pretreatment: string
+}
+
+interface PatientStates {
+	patientStates: PatientState[]
+}
+
+interface PatientState {
+	id: number
+	nodeId: string
+	nextTransition: number | null
+	airway: string
+	breathingRate: number
+	oxygenSaturation: number
+	breathing: string
+	breathingSound: true,
+	breathingLoudness: string
+	heartRate: number,
+	pulsePalpable:string
+	rivaRocci: string
+	consciousness: string
+	pupils: string
+	psyche: string
+	skinFinding: string
+	skinDiscoloration: string
+	bgaOxy: number
+	bgaSbh: number
+	hb: number
+	bz: number
+	clotting: number
+	liver: number
+	kidney: number
+	infarct: number
+	lactate: number
+	extremities: number
+	thorax: number
+	trauma: number
+	ultraschall: number
+	ekg: number
+	zvd: number
+}
+
+interface Transitions {
+	transitions: Transition[]
+}
+
+interface Transition {
+	id: number
+	nodeId: string
+	firstCondition: number
+	nextStates: number[]
+}
+
+interface PatientStateStore {
+	patientStates: PatientState[]
+	getPatientStateById: (id: number) => PatientState
+}
+
+interface TransitionStore {
+	transitions: Transition[]
+	getTransitionById: (id: number) => Transition
+	getTransitionByNodeId: (nodeId: string) => Transition
 }
