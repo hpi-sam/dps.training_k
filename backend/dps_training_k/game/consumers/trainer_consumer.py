@@ -9,6 +9,7 @@ from template.models import PatientInformation, Material
 from .abstract_consumer import AbstractConsumer
 from ..channel_notifications import ChannelNotifier, LogEntryDispatcher
 from ..serializers import LogEntrySerializer
+from threading import Timer
 
 
 class TrainerConsumer(AbstractConsumer):
@@ -36,6 +37,7 @@ class TrainerConsumer(AbstractConsumer):
 
     class TrainerOutgoingMessageTypes:
         LOG_UPDATE = "log-update"
+        EXERCISE_END_TIMEOUT = "exercise-end-timeout"
         RESPONSE = "response"
 
     def __init__(self, *args, **kwargs):
@@ -173,6 +175,26 @@ class TrainerConsumer(AbstractConsumer):
 
     def handle_start_exercise(self, exercise):
         exercise.start_exercise()
+
+        def end_exercise_after_timeout():
+            exercise = Exercise.objects.get(frontend_id=self.exercise_frontend_id)
+            if exercise and exercise.is_running():
+                timeout_str = ", ".join(
+                    f"{value} {name}"
+                    for value, name in zip(
+                        [exercise.timeout.days, exercise.timeout.seconds // 3600],
+                        ["days", "hours"],
+                    )
+                    if value > 0
+                )
+                self.send_event(
+                    self.OutgoingMessageTypes.WARNING,
+                    message=f"Übung automatisch nach {timeout_str} beendet",
+                )
+                self.handle_end_exercise(exercise)
+
+        # Schedule handle_end_exercise to be called after 24 hours (86400 seconds)
+        Timer(5, end_exercise_after_timeout).start()
 
     def handle_add_material(self, _, areaId, materialName):
         try:

@@ -1,5 +1,4 @@
 from django.db import models
-
 from helpers.name_generator import NameGenerator
 from .exercise import Exercise
 from ..serializers.exercise_serializer import ExerciseSerializer
