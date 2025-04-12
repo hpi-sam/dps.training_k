@@ -43,6 +43,16 @@ The following list describes where to find the documentation for the different p
 - Tips regarding the project configuration: [docs file](./docs/configuration-tips.md).
 - MoSCoW and future plans: [docs file](./docs/moscow.md).
 
+## Project Licensing
+The majority of this project is licensed under the MIT License, as found in the [LICENSE](./LICENSE) file at the root of this project. However, 
+some components are licensed differently:
+
+- **data**: The code and content within `backend/dps_training_k/data` are licensed under the CC BY-NC license, as detailed in the 
+  [backend/dps_training_k/data/LICENSE](./backend/dps_training_k/data/LICENSE) file. This license prohibits the use of the data for commercial use.
+  Consequently, the data needs to be removed or replaced or licensing addendums have to be negotiated if the project should be used commercially. For 
+  more details, see the [backend/dps_training_k/data/README.md](./backend/dps_training_k/data/README.md) file.
+
+
 ## Thank you
 First and foremost, we would like to thank the [Hasso Plattner Institute](https://hpi.de/) for giving us the opportunity to work on this project as well as our 
 supervisors Christian Schäffer and Matthias Barkowsky for their guidance and organization of the project.
@@ -61,6 +71,6 @@ And last but not least, we would like to thank our supporters:
 Special thanks to the following people for being directly available to us and providing us with valuable insights and feedback: Frank Sensen 
 (ZaNowi), Philipp Rocker (Johanniter) and Daniel Schmitz (Evangelisches Krankenhaus Hubertus).
 
-![](docs/hpi_logo.png)
+![](./docs/hpi_logo.png)
 ![](./docs/johanniter_logo.png)
 ![](./docs/zanowi_logo.png)

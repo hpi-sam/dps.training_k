@@ -16,7 +16,9 @@ class PatientState(models.Model):
     )
     transition = models.ForeignKey(
         "StateTransition",
+        help_text="Should never be null except for during creation",
         on_delete=models.CASCADE,
+        null=True,
     )
     vital_signs = models.JSONField(help_text="data for patient in current phase")
     examination_codes = models.JSONField(
