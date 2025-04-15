@@ -179,17 +179,9 @@ class TrainerConsumer(AbstractConsumer):
         def end_exercise_after_timeout():
             exercise = Exercise.objects.get(frontend_id=self.exercise_frontend_id)
             if exercise and exercise.is_running():
-                timeout_str = ", ".join(
-                    f"{value} {name}"
-                    for value, name in zip(
-                        [exercise.timeout.days, exercise.timeout.seconds // 3600],
-                        ["days", "hours"],
-                    )
-                    if value > 0
-                )
                 self.send_event(
                     self.OutgoingMessageTypes.WARNING,
-                    message=f"Übung automatisch nach {timeout_str} beendet",
+                    message=f"Übung automatisch nach {exercise.timeout} Stunden beendet",
                 )
                 self.handle_end_exercise(exercise)
 
