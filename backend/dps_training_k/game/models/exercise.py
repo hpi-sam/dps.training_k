@@ -89,6 +89,9 @@ class Exercise(NonEventable, models.Model):
     def is_running(self):
         return self.is_running_state(self.state)
 
+    def is_finished(self):
+        return self.state == self.StateTypes.FINISHED
+
     @classmethod
     def is_running_state(cls, state):
         return state == cls.StateTypes.RUNNING

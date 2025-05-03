@@ -4,6 +4,7 @@ from configuration import settings
 from game.models import Area
 from game.models import Exercise, Personnel, PatientInstance, MaterialInstance, LogEntry
 from game.models import Lab
+from helpers.seconds_conversions import seconds_to_partitioned_time_scales
 from template.constants import MaterialIDs
 from template.models import PatientInformation, Material
 from .abstract_consumer import AbstractConsumer
@@ -178,15 +179,39 @@ class TrainerConsumer(AbstractConsumer):
 
         def end_exercise_after_timeout():
             exercise = Exercise.objects.get(frontend_id=self.exercise_frontend_id)
-            if exercise and exercise.is_running():
+            if not exercise or exercise.is_finished():
+                return
+
+            timeout_string = ""
+            for name, amount in seconds_to_partitioned_time_scales(
+                int(exercise.timeout.total_seconds())
+            ).items():
+                time_scale_translations = {
+                    "days": "Tage",
+                    "hours": "Stunden",
+                    "minutes": "Minuten",
+                    "seconds": "Sekunden",
+                }
+                print(f"{name}: {amount}")
+                if amount > 0:
+                    translated_name = time_scale_translations[name]
+                    if amount == 1:
+                        translated_name = translated_name[:-1]
+                    timeout_string += f"{amount} {translated_name}, "
+            if timeout_string == "":
                 self.send_event(
                     self.OutgoingMessageTypes.WARNING,
-                    message=f"Übung automatisch nach {exercise.timeout} Stunden beendet",
+                    message="Timeoutfehler: Timeout ist 0",
                 )
-                self.handle_end_exercise(exercise)
+                return
+            timeout_string = timeout_string[:-2]
+            self.send_event(
+                self.OutgoingMessageTypes.WARNING,
+                message=f"Übung automatisch nach {timeout_string} beendet",
+            )
+            self.handle_end_exercise(exercise)
 
-        # Schedule handle_end_exercise to be called after 24 hours (86400 seconds)
-        Timer(5, end_exercise_after_timeout).start()
+        Timer(exercise.timeout.total_seconds(), end_exercise_after_timeout).start()
 
     def handle_add_material(self, _, areaId, materialName):
         try:
