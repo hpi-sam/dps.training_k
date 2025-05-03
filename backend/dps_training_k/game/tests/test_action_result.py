@@ -1,12 +1,12 @@
-import asyncio
 import datetime
 from unittest.mock import patch
 
-from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
+from django.test.utils import override_settings
+
 
 from game.models import ActionInstanceStateNames, MaterialInstance
 from game.tasks import check_for_updates
@@ -26,7 +26,6 @@ from template.tests.factories import (
 )
 from .mixin import TestUtilsMixin
 
-
 class ActionResultTestCase(TestUtilsMixin, TestCase):
     def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
@@ -42,6 +41,7 @@ class ActionResultTestCase(TestUtilsMixin, TestCase):
         self.activate_notifications()
         self.activate_condition_checking()
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True, CELERY_TASK_EAGER_PROPAGATES=True)
     def test_action_examination_result(self):
         """
         an action of category examination has a result that is set by translating the result codes in its results field.
@@ -96,6 +96,7 @@ class ActionResultIntegrationTestCase(TestUtilsMixin, TransactionTestCase):
     def timezone_from_timestamp(self, timestamp):
         return timezone.make_aware(datetime.datetime.fromtimestamp(timestamp))
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True, CELERY_TASK_EAGER_PROPAGATES=True)
     def test_action_production_lifecycle(self):
         """
         Integration Test: If production action is finished, material instances are created according to the results.produced_material field.
