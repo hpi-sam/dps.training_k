@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.conf import settings
 from django.db import models
 
@@ -35,6 +36,7 @@ class Exercise(NonEventable, models.Model):
         blank=True,
         null=True,
     )
+    timeout = models.DurationField(default=timedelta(days=1))
 
     @classmethod
     def createExercise(cls, trainer):
@@ -62,6 +64,11 @@ class Exercise(NonEventable, models.Model):
         ExerciseDispatcher.save_and_notify(self, changes, super(), *args, **kwargs)
 
     def update_state(self, state):
+        if self.state == self.StateTypes.FINISHED:
+            if state != self.StateTypes.FINISHED:
+                raise ValueError("Cannot change state of finished exercise")
+            return
+
         old_state = self.state
         self.state = state
         self.save(update_fields=["state"])
@@ -81,6 +88,9 @@ class Exercise(NonEventable, models.Model):
 
     def is_running(self):
         return self.is_running_state(self.state)
+
+    def is_finished(self):
+        return self.state == self.StateTypes.FINISHED
 
     @classmethod
     def is_running_state(cls, state):
