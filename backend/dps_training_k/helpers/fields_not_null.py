@@ -10,7 +10,7 @@ def one_or_more_field_not_null(fields, suffix):
         check_condition |= check
 
     return CheckConstraint(
-        check=check_condition,
+        condition=check_condition,
         name=f"one_or_more_field_not_null_{suffix}",
     )
 
@@ -35,5 +35,5 @@ def exactly_one_field_not_null(fields, suffix):
         check_condition |= check
 
     return CheckConstraint(
-        check=check_condition, name=f"exactly_one_field_not_null_{suffix}"
+        condition=check_condition, name=f"exactly_one_field_not_null_{suffix}"
     )

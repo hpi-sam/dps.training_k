@@ -1,4 +1,4 @@
-import pytz
+from datetime import UTC
 from rest_framework import serializers
 
 import game.models.log_entry as le
@@ -34,7 +34,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
 
     def get_logTime(self, obj):
         # Ensure the timestamp is timezone aware
-        timestamp = obj.timestamp.replace(tzinfo=pytz.UTC)
+        timestamp = obj.timestamp.replace(tzinfo=UTC)
         return int(timestamp.timestamp() * 1000)
 
     def get_areaId(self, obj):

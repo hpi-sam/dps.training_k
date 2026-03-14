@@ -3,3 +3,5 @@ __pycache__/
 *.py[cod]
 *$py.class
 .idea
+dps_training_k/celerybeat-schedule
+dps_training_k/celerybeat-schedule.*

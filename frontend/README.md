@@ -19,16 +19,25 @@ For more information on the difference between `prod` and `dev`, see the [docs f
 
 ### run locally without docker
 Note that only the dev version supports e.g. hot-reloading.
-Node needs to be v.20.5.0 or later. If your node package is too old, you can update the version with e.g. the n package for npm
+Use Node `^20.19.0` or `>=22.12.0`. The current frontend dependency set is tested with Node 22.
 
 Install dependencies:
 ```bash
 npm install
 ```
 
-Compile and start:
+The checked-in `.env.dev` targets the shared CI/deploy-dev setup, where the app is served through nginx on `http://localhost`.
+If you run the source backend locally from `backend/dps_training_k`, that backend nginx is exposed on `http://localhost:8080` instead.
+
+Compile and start against the local source backend:
 ```bash
-npm run <prod/dev>
+VITE_SERVER_URL_HTTP=http://localhost:8080 VITE_SERVER_URL_WS=ws://localhost:8080 npm run dev
+```
+
+To use the checked-in dev configuration instead:
+
+```bash
+npm run dev
 ```
 
 ### run with docker
@@ -37,6 +46,12 @@ Note that neither version supports hot-reloading.
 
 ```bash
 docker compose --env-file .env.<prod/dev> up --build
+```
+
+Or with Podman:
+
+```bash
+podman compose --env-file .env.<prod/dev> up --build
 ```
 
 ## Project structure

@@ -19,7 +19,7 @@ services:
     env_file:
       - .env.prod
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data:/var/lib/postgresql:Z
       - local_postgres_data_backups:/backups:z
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]

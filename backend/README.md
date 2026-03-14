@@ -9,7 +9,7 @@ For general information on the project like e.g. licensing information or future
 ### Install Python
 
 - install from official [python website](https://www.python.org/downloads/)
-- version should be at least 3.12
+- version should be at least 3.13
 
 ### Install requirements
 
@@ -37,11 +37,23 @@ For more information on the difference between `prod` and `dev`, see the [docs f
 Note that the `prod` env file here still assumes this is running locally -
 meaning it will expect the frontend to run on localhost.
 
+The containerized backend is currently tested with:
+- Python 3.13
+- PostgreSQL 18
+
 Build and run:
 
 ```bash
 docker compose --env-file .env.<prod/dev> up --build
 ```
+
+The same setup also works with Podman:
+
+```bash
+podman compose --env-file .env.<prod/dev> up --build
+```
+
+For local development under rootless Podman, nginx is published on port `8080` instead of `80`.
 
 Optionally, to access the database, create a superuser account:
 
@@ -49,7 +61,7 @@ Optionally, to access the database, create a superuser account:
 docker exec -it K-dPS-django python manage.py createsuperuser
 ```
 
-Afterwards, you can log into the admin interface at e.g. `http://localhost:80/admin/`<br/>
+Afterwards, you can log into the admin interface at `http://localhost:8080/admin/`<br/>
 Note: this is only available if DEBUG = true, which is the case in the dev environment.
 
 ## Development
@@ -67,6 +79,8 @@ When changing models, you need to create migrations in order to update existing 
 - start docker container with docker compose(see Running the project using Docker)
 - wait until Application Startup is Completed
 - run: `docker exec -it K-dPS-django python manage.py test`
+
+If you are using Podman instead of Docker, replace `docker exec` with `podman exec` in the commands above.
 
 ### Working with Fixtures
 
