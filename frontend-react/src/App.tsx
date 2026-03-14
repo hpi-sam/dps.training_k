@@ -1,24 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div className="landing-container">
+        <h1 className="title">Klinik-dPS</h1>
+        <p className="subtitle">Digitales Patientensimulationssystem</p>
+        <button 
+          className="simulation-button"
+          onClick={() => window.location.href = 'http://localhost:5173'}
         >
-          Learn React
-        </a>
-      </header>
+          Go to Simulation
+        </button>
+      </div>
     </div>
   );
 }
