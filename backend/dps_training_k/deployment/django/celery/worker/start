@@ -3,5 +3,12 @@
 set -o errexit
 set -o nounset
 
+# 4x CPU cores for I/O-bound tasks, capped at 32 to stay within PostgreSQL's
+# default max_connections (100) with headroom for Django and CeleryBeat.
+CPU_COUNT=$(nproc)
+CONCURRENCY=$(( CPU_COUNT * 4 ))
+if [ "$CONCURRENCY" -gt 32 ]; then
+    CONCURRENCY=32
+fi
 
-watchgod celery.__main__.main --args -A configuration.celery_app worker -l INFO
+watchgod celery.__main__.main --args -A configuration.celery_app worker -l INFO -c $CONCURRENCY
