@@ -27,6 +27,10 @@
 	const setPage = (newPage: Pages) => {
 		currentPage.value = newPage
 	}
+
+	const handleSetPage = (page: Pages) => {
+		setPage(page)
+	}
 </script>
 <script lang="ts">
 	export enum Pages {
@@ -43,7 +47,7 @@
 			:is="currentPageComponent"
 			@add-action="setPage(Pages.ACTION_SELECTION)"
 			@close-action-selection="setPage(Pages.ACTION_OVERVIEW)"
-			@set-page="(page) => setPage(page as Pages)"
+			@set-page="handleSetPage"
 			@close-action="setPage(Pages.ACTION_OVERVIEW)"
 		/>
 	</div>

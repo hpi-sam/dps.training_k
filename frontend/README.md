@@ -19,7 +19,7 @@ For more information on the difference between `prod` and `dev`, see the [docs f
 
 ### run locally without docker
 Note that only the dev version supports e.g. hot-reloading.
-Node needs to be v.20.5.0 or later. If your node package is too old, you can update the version with e.g. the n package for npm
+Use Node `^20.19.0` or `>=22.12.0`. The current frontend dependency set is tested with Node 22.
 
 Install dependencies:
 ```bash
@@ -37,6 +37,12 @@ Note that neither version supports hot-reloading.
 
 ```bash
 docker compose --env-file .env.<prod/dev> up --build
+```
+
+Or with Podman:
+
+```bash
+podman compose --env-file .env.<prod/dev> up --build
 ```
 
 ## Project structure

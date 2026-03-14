@@ -220,7 +220,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='materialinstance',
-            constraint=models.CheckConstraint(check=models.Q(('lab__isnull', False), ('patient_instance__isnull', False), ('area__isnull', False), _connector='OR'), name='one_or_more_field_not_null_material'),
+            constraint=models.CheckConstraint(condition=models.Q(('lab__isnull', False), ('patient_instance__isnull', False), ('area__isnull', False), _connector='OR'), name='one_or_more_field_not_null_material'),
         ),
         migrations.AddConstraint(
             model_name='actioninstance',
@@ -228,7 +228,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='actioninstance',
-            constraint=models.CheckConstraint(check=models.Q(('lab__isnull', False), ('patient_instance__isnull', False), _connector='OR'), name='one_or_more_field_not_null_action'),
+            constraint=models.CheckConstraint(condition=models.Q(('lab__isnull', False), ('patient_instance__isnull', False), _connector='OR'), name='one_or_more_field_not_null_action'),
         ),
         migrations.AddConstraint(
             model_name='logentry',
@@ -236,6 +236,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='owner',
-            constraint=models.CheckConstraint(check=models.Q(('action_instance_owner__isnull', False), ('patient_owner__isnull', False), ('exercise_owner__isnull', False), ('area_owner__isnull', False), _connector='OR'), name='one_or_more_field_not_null_owner'),
+            constraint=models.CheckConstraint(condition=models.Q(('action_instance_owner__isnull', False), ('patient_owner__isnull', False), ('exercise_owner__isnull', False), ('area_owner__isnull', False), _connector='OR'), name='one_or_more_field_not_null_owner'),
         ),
     ]

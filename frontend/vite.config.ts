@@ -19,9 +19,6 @@ export default defineConfig({
   },
   envDir: './',
   envPrefix: 'VITE_',
-  define: { // in order for env variables to be reliably available in the docker container
-    'process.env': process.env
-  },
   server: {
     // in order for hot module replacement to not throw an error inside the docker container
     // (localhost would resolve to the container and not the host)
