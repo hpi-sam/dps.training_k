@@ -26,9 +26,18 @@ Install dependencies:
 npm install
 ```
 
-Compile and start:
+The checked-in `.env.dev` targets the shared CI/deploy-dev setup, where the app is served through nginx on `http://localhost`.
+If you run the source backend locally from `backend/dps_training_k`, that backend nginx is exposed on `http://localhost:8080` instead.
+
+Compile and start against the local source backend:
 ```bash
-npm run <prod/dev>
+VITE_SERVER_URL_HTTP=http://localhost:8080 VITE_SERVER_URL_WS=ws://localhost:8080 npm run dev
+```
+
+To use the checked-in dev configuration instead:
+
+```bash
+npm run dev
 ```
 
 ### run with docker
