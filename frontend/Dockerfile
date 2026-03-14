@@ -15,4 +15,4 @@ ENV IS_DOCKER=TRUE
 ENV PORT=5173
 EXPOSE 5173
 RUN if [ "$VITE_RUN_CONFIG" = "prod" ]; then npm run build-only; fi
-CMD if [ "$VITE_RUN_CONFIG" = "prod" ]; then npx serve -s dist -l 5173; else npm run dev; fi
+CMD if [ "$VITE_RUN_CONFIG" = "prod" ]; then npx serve -s dist -l 5173; else npm run dev -- --host 0.0.0.0; fi
