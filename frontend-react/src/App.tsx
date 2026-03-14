@@ -99,41 +99,6 @@ function App() {
           </div>
         </section>
 
-        <section className="updates-section">
-          <div className="content-container">
-            <h2>Neuste Updates</h2>
-            <p className="updates-text">
-              Die digitale Klink-dPS wurde im Rahmen eines Bachelorprojekts entwickelt, unter Open-Source-Lizenz veröffentlicht und wird seit dem gelegentlich ehrenamtlich weiterentwickelt.
-            </p>
-            <div className="changelog-container">
-              {updates.slice(0, showAllUpdates ? updates.length : 1).map((update) => (
-                <div key={update.id} className="changelog-item">
-                  <div className="changelog-header">
-                    <h3 className="changelog-title">{update.title}</h3>
-                    <div className="changelog-version">{update.version}</div>
-                  </div>
-                  <div className="changelog-content">
-                    <p className="changelog-description">{update.description}</p>
-                    <div className="changelog-date">{new Date(update.date).toLocaleDateString('de-DE', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}</div>
-                  </div>
-                </div>
-              ))}
-              {updates.length > 1 && (
-                <button 
-                  className="expand-button"
-                  onClick={() => setShowAllUpdates(!showAllUpdates)}
-                >
-                  {showAllUpdates ? 'Weniger anzeigen' : `${updates.length - 1} weitere Updates anzeigen`}
-                </button>
-              )}
-            </div>
-          </div>
-        </section>
-
         <section className="solution-section">
           <div className="content-container">
             <h2>Unsere Lösung</h2>
@@ -169,6 +134,41 @@ function App() {
                   <p>Alle Aktionen und Veränderungen werden protokolliert.</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="updates-section">
+          <div className="content-container">
+            <h2>Neuste Updates</h2>
+            <p className="updates-text">
+              Die digitale Klink-dPS wurde im Rahmen eines Bachelorprojekts entwickelt, unter Open-Source-Lizenz veröffentlicht und wird seit dem gelegentlich ehrenamtlich weiterentwickelt.
+            </p>
+            <div className="changelog-container">
+              {updates.slice(0, showAllUpdates ? updates.length : 1).map((update) => (
+                <div key={update.id} className="changelog-item">
+                  <div className="changelog-header">
+                    <h3 className="changelog-title">{update.title}</h3>
+                    <div className="changelog-version">{update.version}</div>
+                  </div>
+                  <div className="changelog-content">
+                    <p className="changelog-description">{update.description}</p>
+                    <div className="changelog-date">{new Date(update.date).toLocaleDateString('de-DE', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}</div>
+                  </div>
+                </div>
+              ))}
+              {updates.length > 1 && (
+                <button 
+                  className="expand-button"
+                  onClick={() => setShowAllUpdates(!showAllUpdates)}
+                >
+                  {showAllUpdates ? 'Weniger anzeigen' : `${updates.length - 1} weitere Updates anzeigen`}
+                </button>
+              )}
             </div>
           </div>
         </section>

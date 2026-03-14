@@ -248,7 +248,7 @@ section {
 }
 
 .changelog-item {
-  background: var(--light-bg);
+  background: var(--white);
   border-radius: 12px;
   padding: 1rem;
   border-left: 3px solid var(--primary-color);
