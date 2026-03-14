@@ -1,7 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import changelogData from './changelog.json';
+
+interface Update {
+  id: number;
+  date: string;
+  title: string;
+  description: string;
+  type: string;
+  version: string;
+}
 
 function App() {
+  const [updates, setUpdates] = useState<Update[]>([]);
+  const [showAllUpdates, setShowAllUpdates] = useState(false);
+
+  useEffect(() => {
+    setUpdates(changelogData.updates as Update[]);
+  }, []);
+
+  const getTypeIcon = (type: string) => {
+    switch(type) {
+      case 'feature': return '✨';
+      case 'improvement': return '🚀';
+      case 'bugfix': return '🐛';
+      case 'performance': return '⚡';
+      case 'security': return '🔒';
+      default: return '📝';
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch(type) {
+      case 'feature': return '#FA6C1A';
+      case 'improvement': return '#1A67FA';
+      case 'bugfix': return '#E74C3C';
+      case 'performance': return '#27AE60';
+      case 'security': return '#8E44AD';
+      default: return '#666666';
+    }
+  };
+
   return (
     <div className="App">
       <header className="header">
@@ -56,6 +95,41 @@ function App() {
                   <p>Personal und Ressourcen führen zu hohen Kosten bei Vollübungen</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="updates-section">
+          <div className="content-container">
+            <h2>Neuste Updates</h2>
+            <p className="updates-text">
+              Die digitale Klink-dPS wurde im Rahmen eines Bachelorprojekts entwickelt, unter Open-Source-Lizenz veröffentlicht und wird seit dem gelegentlich ehrenamtlich weiterentwickelt.
+            </p>
+            <div className="changelog-container">
+              {updates.slice(0, showAllUpdates ? updates.length : 1).map((update) => (
+                <div key={update.id} className="changelog-item">
+                  <div className="changelog-header">
+                    <h3 className="changelog-title">{update.title}</h3>
+                    <div className="changelog-version">{update.version}</div>
+                  </div>
+                  <div className="changelog-content">
+                    <p className="changelog-description">{update.description}</p>
+                    <div className="changelog-date">{new Date(update.date).toLocaleDateString('de-DE', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}</div>
+                  </div>
+                </div>
+              ))}
+              {updates.length > 1 && (
+                <button 
+                  className="expand-button"
+                  onClick={() => setShowAllUpdates(!showAllUpdates)}
+                >
+                  {showAllUpdates ? 'Weniger anzeigen' : `${updates.length - 1} weitere Updates anzeigen`}
+                </button>
+              )}
             </div>
           </div>
         </section>
