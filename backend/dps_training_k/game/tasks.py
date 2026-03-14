@@ -1,9 +1,10 @@
+import logging
+
 from celery import shared_task
 from django.conf import settings
-from game.models.scheduled_event import ScheduledEvent
-import logging
-import uuid
 from django.db import transaction
+
+from game.models.scheduled_event import ScheduledEvent
 
 # When any of these methods is changed, the docker container needs to be rebuilt, because the
 # Celery-worker doesn't get the update with our docker configuration
@@ -21,19 +22,16 @@ def run_event(self, event_id):
 
 @shared_task
 def check_for_updates():
-    worker_id = str(uuid.uuid4())
-    with transaction.atomic(): # atomic db operation
+    with transaction.atomic():
         claimed = (
-            ScheduledEvent.objects.only('id').select_for_update(skip_locked=True) # locks selected rows, skips already locked ones
+            ScheduledEvent.objects.only('id').select_for_update(skip_locked=True)
             .filter(
                 end_date__lte=settings.CURRENT_TIME(),
-                locked_by__isnull=True
+                enqueued=False
             )
         )
         event_ids = list(claimed.values_list('id', flat=True))
-        ScheduledEvent.objects.filter(id__in=event_ids).update(
-            locked_by=worker_id
-        ) # mark events as claimed by worker
+        ScheduledEvent.objects.filter(id__in=event_ids).update(enqueued=True)
 
     for event_id in event_ids:
         try:
