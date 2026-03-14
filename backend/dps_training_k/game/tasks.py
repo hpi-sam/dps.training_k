@@ -6,6 +6,7 @@ from django.db import transaction
 
 from game.models.scheduled_event import ScheduledEvent
 
+
 # When any of these methods is changed, the docker container needs to be rebuilt, because the
 # Celery-worker doesn't get the update with our docker configuration
 
@@ -17,6 +18,10 @@ def run_event(self, event_id):
     except ScheduledEvent.DoesNotExist:
         logging.warning(f"ScheduledEvent {event_id} already deleted.")
     except Exception as e:
+        if self.request.retries >= self.max_retries:
+            logging.error(f"ScheduledEvent {event_id} failed permanently after {self.max_retries} retries: {e}")
+            ScheduledEvent.objects.filter(id=event_id).delete()
+            return
         logging.error(f"Failed to execute event {event_id}: {e}")
         self.retry(exc=e)
 
