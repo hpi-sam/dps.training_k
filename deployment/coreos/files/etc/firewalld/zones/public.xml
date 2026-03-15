@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>public</short>
+  <description>Expose SSH and the HTTP/HTTPS entrypoint only.</description>
+  <service name="ssh"/>
+  <service name="http"/>
+  <service name="https"/>
+</zone>

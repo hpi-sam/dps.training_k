@@ -1,0 +1,9 @@
+[Unit]
+Description=Weekly Let's Encrypt renewal check for K-dPS
+
+[Timer]
+OnCalendar=Sat *-*-* 03:00:00 Europe/Berlin
+Persistent=true
+
+[Install]
+WantedBy=timers.target

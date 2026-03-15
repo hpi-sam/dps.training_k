@@ -1,0 +1,22 @@
+[Unit]
+Description=K-dPS Nginx
+Requires=kdps-bootstrap-cert.service kdps-django.service kdps-frontend.service
+After=kdps-bootstrap-cert.service kdps-django.service kdps-frontend.service
+
+[Container]
+Image=ghcr.io/hpi-sam/dps_training_k-nginx:latest
+ContainerName=kdps-nginx
+AutoUpdate=registry
+Network=kdps.network
+PublishPort=80:80
+PublishPort=443:443
+Volume=/var/lib/kdps/staticfiles:/app/staticfiles:Z
+Volume=/etc/letsencrypt:/etc/letsencrypt:ro
+Volume=/etc/kdps/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

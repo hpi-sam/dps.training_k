@@ -1,0 +1,22 @@
+[Unit]
+Description=K-dPS Django
+Requires=kdps-postgres.service kdps-redis.service
+After=kdps-postgres.service kdps-redis.service
+
+[Container]
+Image=ghcr.io/hpi-sam/dps_training_k-django:latest
+ContainerName=kdps-django
+AutoUpdate=registry
+Network=kdps.network
+PodmanArgs=--network-alias=kdps-django
+EnvironmentFile=/etc/kdps/.env.prod
+Environment=RUN_MIGRATIONS=1
+Volume=/var/lib/kdps/staticfiles:/app/staticfiles:Z
+Exec=uvicorn configuration.asgi:application --host 0.0.0.0
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

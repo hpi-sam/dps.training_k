@@ -34,7 +34,6 @@ DEBUG = env.bool("DEBUG")
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOWED_ORIGINS = [
     "https://klinik-dps.de",
-    "https://www.klinik-dps.de",
     "http://localhost",
 ]
 RUN_CONFIG = env.str("RUN_CONFIG", default="dev")
@@ -189,6 +188,6 @@ CELERY_BEAT_SCHEDULE = {
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 
 # Redis connection settings
-REDIS_HOST = "K-dPS-redis"
+REDIS_HOST = "kdps-redis"
 REDIS_PORT = 6379
 REDIS_DB = 0

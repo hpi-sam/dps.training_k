@@ -46,7 +46,7 @@ docker compose --env-file .env.<prod/dev> up --build
 Optionally, to access the database, create a superuser account:
 
 ```bash
-docker exec -it K-dPS-django python manage.py createsuperuser
+docker exec -it kdps-django python manage.py createsuperuser
 ```
 
 Afterwards, you can log into the admin interface at e.g. `http://localhost:80/admin/`<br/>
@@ -58,25 +58,25 @@ Note: this is only available if DEBUG = true, which is the case in the dev envir
 
 When changing models, you need to create migrations in order to update existing databases.
 
-- Create new migrations: `docker exec -it K-dPS-django python manage.py makemigrations`
-- Optionally, if you have conflicting migrations: `docker exec -it K-dPS-django python manage.py migrate --merge`
-- Execute these migrations to update the database: `docker exec -it K-dPS-django python manage.py migrate`
+- Create new migrations: `docker exec -it kdps-django python manage.py makemigrations`
+- Optionally, if you have conflicting migrations: `docker exec -it kdps-django python manage.py migrate --merge`
+- Execute these migrations to update the database: `docker exec -it kdps-django python manage.py migrate`
 
 ### Running Tests
 
 - start docker container with docker compose(see Running the project using Docker)
 - wait until Application Startup is Completed
-- run: `docker exec -it K-dPS-django python manage.py test`
+- run: `docker exec -it kdps-django python manage.py test`
 
 ### Working with Fixtures
 
 Example given for creating the "patient_states.json" fixture containing all patientstates, statetransitions, subconditions and logicnodes.
 
-- clear database of the wanted models via e.g. `docker exec -it K-dPS-django python manage.py flush`
-- fill database with data you want to export as fixture: `docker exec -it K-dPS-django python manage.py import_patient_states`
+- clear database of the wanted models via e.g. `docker exec -it kdps-django python manage.py flush`
+- fill database with data you want to export as fixture: `docker exec -it kdps-django python manage.py import_patient_states`
 - create fixture:
-    - `docker exec -it K-dPS-django bash`
+    - `docker exec -it kdps-django bash`
     - `export PYTHONIOENCODING=utf8`
     - `python manage.py dumpdata template.patientstate template.statetransition template.subcondition template.logicnode > 
     data/fixtures/patient_states.json`
-- now you can load it: `docker exec -it K-dPS-django python manage.py loaddata patient_states.json`
+- now you can load it: `docker exec -it kdps-django python manage.py loaddata patient_states.json`

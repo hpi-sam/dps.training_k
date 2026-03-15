@@ -1,0 +1,135 @@
+variant: fcos
+version: 1.6.0
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-ed25519 ReplaceThisWithARealPublicKey core@kdps
+
+storage:
+  directories:
+    - path: /etc/kdps
+      mode: 0750
+    - path: /etc/letsencrypt
+      mode: 0755
+    - path: /root/.docker
+      mode: 0700
+    - path: /var/lib/kdps
+      mode: 0755
+    - path: /var/lib/kdps/postgres
+      mode: 0700
+    - path: /var/lib/kdps/postgres-backups
+      mode: 0750
+    - path: /var/lib/kdps/staticfiles
+      mode: 0755
+    - path: /var/lib/letsencrypt
+      mode: 0755
+
+  files:
+    - path: /etc/kdps/.env.prod
+      mode: 0600
+      contents:
+        local: .env.prod
+
+    - path: /root/.docker/config.json
+      mode: 0600
+      contents:
+        local: deployment/coreos/secrets/ghcr-config.json
+
+    - path: /etc/zincati/config.d/55-updates-strategy.toml
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/zincati/config.d/55-updates-strategy.toml
+
+    - path: /etc/kdps/nginx.conf
+      mode: 0644
+      contents:
+        local: backend/dps_training_k/deployment/nginx/nginx_deploy_prod.conf
+
+    - path: /etc/systemd/journald.conf.d/10-kdps.conf
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/systemd/journald.conf.d/10-kdps.conf
+
+    - path: /etc/ssh/sshd_config.d/20-kdps-hardening.conf
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/ssh/sshd_config.d/20-kdps-hardening.conf
+
+    - path: /etc/firewalld/zones/public.xml
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/firewalld/zones/public.xml
+
+    - path: /usr/local/bin/kdps-bootstrap-cert.sh
+      mode: 0755
+      contents:
+        local: deployment/coreos/files/usr/local/bin/kdps-bootstrap-cert.sh
+
+    - path: /usr/local/bin/kdps-renew-certificates.sh
+      mode: 0755
+      contents:
+        local: deployment/coreos/files/usr/local/bin/kdps-renew-certificates.sh
+
+    - path: /etc/containers/systemd/kdps.network
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps.network
+
+    - path: /etc/containers/systemd/kdps-postgres.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-postgres.container
+
+    - path: /etc/containers/systemd/kdps-redis.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-redis.container
+
+    - path: /etc/containers/systemd/kdps-django.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-django.container
+
+    - path: /etc/containers/systemd/kdps-celeryworker.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-celeryworker.container
+
+    - path: /etc/containers/systemd/kdps-celerybeat.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-celerybeat.container
+
+    - path: /etc/containers/systemd/kdps-frontend.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-frontend.container
+
+    - path: /etc/containers/systemd/kdps-nginx.container
+      mode: 0644
+      contents:
+        local: deployment/coreos/files/etc/containers/systemd/kdps-nginx.container
+
+systemd:
+  units:
+    - name: systemd-time-wait-sync.service
+      enabled: true
+
+    - name: firewalld.service
+      enabled: true
+
+    - name: podman-auto-update.timer
+      enabled: true
+
+    - name: kdps-bootstrap-cert.service
+      enabled: true
+      contents_local: deployment/coreos/files/etc/systemd/system/kdps-bootstrap-cert.service
+
+    - name: kdps-cert-renew.service
+      contents_local: deployment/coreos/files/etc/systemd/system/kdps-cert-renew.service
+
+    - name: kdps-cert-renew.timer
+      enabled: true
+      contents_local: deployment/coreos/files/etc/systemd/system/kdps-cert-renew.timer

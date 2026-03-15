@@ -1,0 +1,8 @@
+[Unit]
+Description=Renew Let's Encrypt certificates for K-dPS
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kdps-renew-certificates.sh

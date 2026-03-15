@@ -1,0 +1,21 @@
+[Unit]
+Description=K-dPS Postgres
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=ghcr.io/hpi-sam/dps_training_k-postgres:latest
+ContainerName=kdps-postgres
+AutoUpdate=registry
+Network=kdps.network
+PodmanArgs=--network-alias=kdps-postgres
+EnvironmentFile=/etc/kdps/.env.prod
+Volume=/var/lib/kdps/postgres:/var/lib/postgresql:Z
+Volume=/var/lib/kdps/postgres-backups:/backups:Z
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

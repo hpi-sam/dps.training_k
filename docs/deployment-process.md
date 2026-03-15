@@ -38,7 +38,7 @@ To achieve that, the Frontend instances each need to be manually built and deplo
 
 1. ssh into the server, e.g. `ssh manager@139.162.170.6 -i .ssh/bp_server`
 2. free up port 80 by stopping website: `sudo docker-compose -f docker-compose.yml down`
-3. run certbot: ` sudo certbot certonly --nginx -d klinik-dps.de -d www.klinik-dps.de`
+3. run certbot: ` sudo certbot certonly --nginx -d klinik-dps.de`
 4. kill nginx: `sudo pkill nginx` (yeah it's in a weird state at this point and needs to be killed that way, don't ask me why)
 5. restart website: `sudo docker-compose -f docker-compose.yml up`
 
@@ -51,7 +51,7 @@ If you run into problems:
 ```
 server {
     listen 80;
-    server_name klinik-dps.de www.klinik-dps.de;
+    server_name klinik-dps.de;
 
     root /usr/share/nginx/html;  # Base directory for web content
     index index.html;
