@@ -29,6 +29,13 @@ jobs:
           docker tag dps_training_k-frontend ghcr.io/hpi-sam/dps_training_k-frontend:latest
           docker push ghcr.io/hpi-sam/dps_training_k-frontend:latest
 
+      - name: Build and push frontend React Docker image
+        run: |
+          cd ./frontend-react/
+          docker compose --env-file .env.prod build
+          docker tag frontend-react ghcr.io/hpi-sam/dps_training_k-frontend-react:latest
+          docker push ghcr.io/hpi-sam/dps_training_k-frontend-react:latest
+
       - name: Build and push backend Docker images
         run: |
           cd ./backend/dps_training_k/

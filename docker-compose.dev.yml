@@ -96,6 +96,20 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
+  # Frontend React service (Landing page)
+  frontend-react:
+    build:
+      context: ./frontend-react
+      dockerfile: Dockerfile
+    container_name: K-dPS-frontend-react
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - REACT_APP_RUN_CONFIG=dev
+      - REACT_APP_VUE_URL=http://localhost:5173
+    ports:
+      - "3000:3000"
+
 volumes:
   local_postgres_data: { }
   local_postgres_data_backups: { }
