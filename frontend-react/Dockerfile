@@ -1,31 +1,33 @@
-# Build stage
-FROM node:18-alpine AS build
-
+FROM node:latest
+LABEL authors="Wolkenfarmer, Joshua Riewesell"
 WORKDIR /app
+
+# set env vars to persist them in the image
+ARG REACT_APP_RUN_CONFIG=dev
+ARG REACT_APP_VUE_URL=http://localhost:5173
+
+# Install global packages
+RUN npm install -g serve
 
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install
 
 # Copy source code
 COPY . .
 
-# Build the React app
-RUN npm run build
+# Set environment variables
+ENV REACT_APP_RUN_CONFIG=${REACT_APP_RUN_CONFIG}
+ENV REACT_APP_VUE_URL=${REACT_APP_VUE_URL}
+ENV IS_DOCKER=TRUE
+ENV PORT=3000
 
-# Production stage
-FROM nginx:alpine
-
-# Copy built app to nginx
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 3000
 EXPOSE 3000
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Build for production if needed
+RUN if [ "$REACT_APP_RUN_CONFIG" = "prod" ]; then npm run build; fi
+
+# Run based on configuration
+CMD if [ "$REACT_APP_RUN_CONFIG" = "prod" ]; then serve -s build -l 3000; else npm run dev; fi

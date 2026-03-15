@@ -24,7 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "set PORT=3001 && react-scripts start",
+    "dev": "REACT_APP_RUN_CONFIG=dev PORT=3000 react-scripts start",
     "prod": "npm run build && npx serve -s build -l 3002"
   },
   "eslintConfig": {
