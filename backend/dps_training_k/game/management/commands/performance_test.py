@@ -149,24 +149,19 @@ class Command(BaseCommand):
 
         while True:
             time.sleep(poll_interval)
-            # Only count events that were part of the initial batch (enqueued or not yet claimed).
+            # On main: events are deleted after processing, so remaining due events = unprocessed.
             # New events from execute_state_change will have end_date far in the future,
-            # so they won't be enqueued and won't interfere.
-            enqueued = ScheduledEvent.objects.filter(
-                **state_change_filter, enqueued=True
+            # so they won't show up as due and won't interfere.
+            remaining = ScheduledEvent.objects.filter(
+                **state_change_filter, end_date__lte=timezone.now()
             ).count()
-            due_not_enqueued = ScheduledEvent.objects.filter(
-                **state_change_filter, enqueued=False, end_date__lte=timezone.now()
-            ).count()
-            in_flight = enqueued + due_not_enqueued
-            processed = initial_events - in_flight
+            processed = initial_events - remaining
             elapsed = time.perf_counter() - process_start
 
             self.stdout.write(
                 f"  [{elapsed:6.2f}s] "
                 f"processed: {processed}/{initial_events}  "
-                f"enqueued: {enqueued}  "
-                f"due (unclaimed): {due_not_enqueued}"
+                f"remaining: {remaining}"
             )
 
             if first_processed_time is None and processed > 0:
@@ -176,7 +171,7 @@ class Command(BaseCommand):
                 break
 
             # Safety: abort if no progress for 30s
-            if in_flight == last_total:
+            if remaining == last_total:
                 if stall_start is None:
                     stall_start = time.perf_counter()
                 elif time.perf_counter() - stall_start > 30:
@@ -186,7 +181,7 @@ class Command(BaseCommand):
                     break
             else:
                 stall_start = None
-                last_total = in_flight
+                last_total = remaining
 
             if elapsed > 300:
                 self.stderr.write(
