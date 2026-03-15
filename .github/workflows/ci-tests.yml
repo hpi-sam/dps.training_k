@@ -67,7 +67,7 @@ jobs:
           # Skip redis as it is just the public Docker Hub image anyway and therefore should be directly pulled from there
 
       - name: Run backend tests
-        run: docker exec K-dPS-django python3 manage.py test
+        run: docker exec kdps-django python3 manage.py test
 
   test-integration:
     needs: [build-and-test-frontend, build-and-test-backend]

@@ -11,9 +11,9 @@ services:
     command: --interval 60 --label-enable
 
   # Database service
-  postgres:
+  kdps-postgres:
     image: ghcr.io/hpi-sam/dps_training_k-postgres:latest
-    container_name: K-dPS-postgres
+    container_name: kdps-postgres
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     env_file:
@@ -28,20 +28,20 @@ services:
       retries: 5
 
   # Caching service
-  redis:
+  kdps-redis:
     image: redis:7.2.5
-    container_name: K-dPS-redis
+    container_name: kdps-redis
 
   # Backend service
-  django:
+  kdps-django:
     image: ghcr.io/hpi-sam/dps_training_k-django:latest
-    container_name: K-dPS-django
+    container_name: kdps-django
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
     depends_on:
-      - postgres
-      - redis
+      - kdps-postgres
+      - kdps-redis
     env_file:
       - .env.prod
     environment:
@@ -51,37 +51,37 @@ services:
     command: uvicorn configuration.asgi:application --host 0.0.0.0 --reload
 
   # Celery worker service (e.g. scheduled tasks)
-  celeryworker:
+  kdps-celeryworker:
     image: ghcr.io/hpi-sam/dps_training_k-celeryworker:latest
-    container_name: K-dPS-celeryworker
+    container_name: kdps-celeryworker
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - django
+      - kdps-django
     env_file:
       - .env.prod
     command: /start-celeryworker
 
   # Celery beat service (e.g. scheduled tasks)
-  celerybeat:
+  kdps-celerybeat:
     image: ghcr.io/hpi-sam/dps_training_k-celerybeat:latest
-    container_name: K-dPS-celerybeat
+    container_name: kdps-celerybeat
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - django
+      - kdps-django
     env_file:
       - .env.prod
     command: /start-celerybeat
 
   # Nginx service (reverse proxy for Backend)
-  nginx:
+  kdps-nginx:
     image: ghcr.io/hpi-sam/dps_training_k-nginx:latest
-    container_name: K-dPS-nginx
+    container_name: kdps-nginx
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - django
+      - kdps-django
     volumes:
       - static_volume:/app/staticfiles
       - /etc/letsencrypt/live/klinik-dps.de/fullchain.pem:/etc/letsencrypt/live/klinik-dps.de/fullchain.pem:ro
@@ -92,9 +92,9 @@ services:
       - "443:443"
 
   # Frontend service
-  frontend:
+  kdps-frontend:
     image: ghcr.io/hpi-sam/dps_training_k-frontend:latest
-    container_name: K-dPS-frontend
+    container_name: kdps-frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
