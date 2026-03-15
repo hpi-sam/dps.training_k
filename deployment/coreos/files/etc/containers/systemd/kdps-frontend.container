@@ -1,0 +1,16 @@
+[Unit]
+Description=K-dPS Frontend
+
+[Container]
+Image=ghcr.io/hpi-sam/dps_training_k-frontend:latest
+ContainerName=kdps-frontend
+AutoUpdate=registry
+Network=kdps.network
+PodmanArgs=--network-alias=kdps-frontend
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

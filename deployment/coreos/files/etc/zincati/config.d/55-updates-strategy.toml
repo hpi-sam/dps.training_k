@@ -1,0 +1,10 @@
+[updates]
+strategy = "periodic"
+
+[updates.periodic]
+time_zone = "Europe/Berlin"
+
+[[updates.periodic.window]]
+days = [ "Sun" ]
+start_time = "04:00"
+length_minutes = 120

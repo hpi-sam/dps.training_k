@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
   # Database service
-  postgres:
+  kdps-postgres:
     build:
       context: .
       dockerfile: ./deployment/postgres/Dockerfile
     image: dps_training_k-postgres
-    container_name: K-dPS-postgres
+    container_name: kdps-postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -20,21 +20,21 @@ services:
       retries: 5
 
   # Caching service
-  redis:
+  kdps-redis:
     image: redis:latest
-    container_name: K-dPS-redis
+    container_name: kdps-redis
 
   # Backend service
-  django:
+  kdps-django:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
     image: dps_training_k-django
-    container_name: K-dPS-django
+    container_name: kdps-django
     restart: unless-stopped
     depends_on:
-      - postgres
-      - redis
+      - kdps-postgres
+      - kdps-redis
     env_file:
       - .env.${RUN_CONFIG}
     environment:
@@ -49,44 +49,44 @@ services:
     tty: true
 
   # Celery worker service (e.g. scheduled tasks)
-  celeryworker:
+  kdps-celeryworker:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
     image: dps_training_k-celeryworker
-    container_name: K-dPS-celeryworker
+    container_name: kdps-celeryworker
     env_file:
       - .env.${RUN_CONFIG}
     command: /start-celeryworker
     depends_on:
-      - django
+      - kdps-django
 
   # Celery beat service (e.g. scheduled tasks)
-  celerybeat:
+  kdps-celerybeat:
     build:
       context: .
       dockerfile: ./deployment/django/Dockerfile
     image: dps_training_k-celerybeat
-    container_name: K-dPS-celerybeat
+    container_name: kdps-celerybeat
     env_file:
       - .env.${RUN_CONFIG}
     command: /start-celerybeat
     depends_on:
-      - django
+      - kdps-django
 
   # Nginx service (reverse proxy for Backend)
-  nginx:
+  kdps-nginx:
     build:
       context: deployment/nginx
     image: dps_training_k-nginx
-    container_name: K-dPS-nginx
+    container_name: kdps-nginx
     volumes:
       - static_volume:/app/staticfiles
       - ./deployment/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
       - "80:80"
     depends_on:
-      - django
+      - kdps-django
 
 volumes:
   local_postgres_data: { }

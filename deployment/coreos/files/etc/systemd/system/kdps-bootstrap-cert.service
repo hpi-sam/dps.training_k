@@ -1,0 +1,12 @@
+[Unit]
+Description=Bootstrap Let's Encrypt certificate for K-dPS
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=!/etc/letsencrypt/live/klinik-dps.de/fullchain.pem
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kdps-bootstrap-cert.sh
+
+[Install]
+WantedBy=multi-user.target

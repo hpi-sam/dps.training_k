@@ -1,0 +1,19 @@
+[Unit]
+Description=K-dPS Celery Beat
+Requires=kdps-django.service
+After=kdps-django.service
+
+[Container]
+Image=ghcr.io/hpi-sam/dps_training_k-celerybeat:latest
+ContainerName=kdps-celerybeat
+AutoUpdate=registry
+Network=kdps.network
+EnvironmentFile=/etc/kdps/.env.prod
+Exec=/start-celerybeat
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=K-dPS Redis
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/library/redis:latest
+ContainerName=kdps-redis
+AutoUpdate=registry
+Network=kdps.network
+PodmanArgs=--network-alias=kdps-redis
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
