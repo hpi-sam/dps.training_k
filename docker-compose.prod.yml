@@ -91,10 +91,17 @@ services:
       - "80:80"
       - "443:443"
 
-  # Frontend service
+  # Frontend service (Vue)
   frontend:
     image: ghcr.io/hpi-sam/dps_training_k-frontend:latest
     container_name: K-dPS-frontend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Frontend React service (Landing page)
+  frontend-react:
+    image: ghcr.io/hpi-sam/dps_training_k-frontend-react:latest
+    container_name: K-dPS-frontend-react
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 

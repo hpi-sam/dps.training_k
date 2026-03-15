@@ -1,20 +1,23 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import TrainerPage from './pages/TrainerPage';
+import PatientPage from './pages/PatientPage';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <div className="landing-container">
-        <h1 className="title">Klinik-dPS</h1>
-        <p className="subtitle">Digitale Patientensimulation</p>
-        <button 
-          className="simulation-button"
-          onClick={() => window.location.href = process.env.REACT_APP_VUE_URL || 'http://localhost:5173'}
-        >
-          Go to Simulation
-        </button>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/trainer" element={<TrainerPage />} />
+          <Route path="/patient" element={<PatientPage />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
 
