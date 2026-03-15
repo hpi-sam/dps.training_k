@@ -26,6 +26,25 @@
   color: var(--text-dark);
 }
 
+/* Page Container Styles */
+.page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.page-container h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.page-container p {
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
 /* Header Styles */
 .header {
   position: fixed;
