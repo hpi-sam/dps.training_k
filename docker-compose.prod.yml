@@ -97,6 +97,8 @@ services:
     container_name: K-dPS-frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+    expose:
+      - "5173"
 
   # Frontend React service (Landing page)
   frontend-react:
@@ -104,6 +106,8 @@ services:
     container_name: K-dPS-frontend-react
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+    expose:
+      - "3000"
 
 volumes:
   local_postgres_data: { }
