@@ -7,7 +7,7 @@ services:
       args:
         - REACT_APP_RUN_CONFIG=${REACT_APP_RUN_CONFIG:-dev}
         - REACT_APP_VUE_URL=${REACT_APP_VUE_URL:-http://localhost:5173}
-    image: frontend-react
+    image: dps_training_k-frontend-react
     container_name: K-dPS-frontend-react
     env_file:
       - .env.${REACT_APP_RUN_CONFIG:-dev}
