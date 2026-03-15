@@ -1,0 +1,36 @@
+{
+  "updates": [
+    {
+      "id": 1,
+      "date": "2024-10-14",
+      "title": "Erste Open-Source-Version",
+      "description": "Erste öffentliche Version der Klinik-dPS! Die Software ist jetzt frei verfügbar und kann von jedem genutzt werden. Wichtige Verbesserungen: bessere Lizenzierung, präzisere Medikamentendosierung, intelligentere Überprüfung von Behandlungsschritten, verbesserte Sicherheit und bessere Dokumentation.",
+      "type": "release",
+      "version": "v1.2.0"
+    },
+    {
+      "id": 2,
+      "date": "2024-06-17",
+      "title": "Bereit für den Einsatz",
+      "description": "Version für den praktischen Einsatz. Erste öffentlich zugängliche Installation, automatische Updates, kleine Verbesserungen im Hintergrund und korrigierte Patientendaten für realistischere Simulationen.",
+      "type": "release",
+      "version": "v1.1.1"
+    },
+    {
+      "id": 3,
+      "date": "2024-06-10",
+      "title": "Fehlerbehebung und Bedienung",
+      "description": "Wichtige Fehlerbehebungen und einfachere Bedienung. Übungsleiter können sich jetzt einloggen, Patienten und Personal bekommen realistische Namen, alles ist einfacher zu bedienen.",
+      "type": "release",
+      "version": "v1.1.0"
+    },
+    {
+      "id": 4,
+      "date": "2024-06-05",
+      "title": "Vollständige Grundfunktionen",
+      "description": "Alle wichtigen Funktionen sind jetzt verfügbar: Patienten zeigen verschiedene Zustände, Übungsleiter haben volle Kontrolle, Material und Personal können zugewiesen werden, Patienten können verlegt werden, Labore und Bildgebung funktionieren, bessere Tablet-Bedienung.",
+      "type": "release",
+      "version": "v1.0.0"
+    }
+  ]
+}

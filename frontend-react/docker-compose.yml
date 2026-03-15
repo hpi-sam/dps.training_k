@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend-react:
+    build:
+      context: .
+      args:
+        - REACT_APP_RUN_CONFIG=${REACT_APP_RUN_CONFIG:-dev}
+        - REACT_APP_VUE_URL=${REACT_APP_VUE_URL:-http://localhost:5173}
+    image: dps_training_k-frontend-react
+    container_name: K-dPS-frontend-react
+    env_file:
+      - .env.${REACT_APP_RUN_CONFIG:-dev}
+    ports:
+      - "3002:3000"
+    extra_hosts: # is used to ensure host.docker.internal resolves correctly on Linux systems
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

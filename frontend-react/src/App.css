@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for custom colors that Tailwind config references */
+:root {
+  --primary-color: #FA6C1A;
+  --secondary-color: #1A67FA;
+  --primary-dark: #E55A15;
+  --secondary-dark: #1555D8;
+  --text-dark: #1a1a1a;
+  --text-light: #666666;
+  --white: #ffffff;
+  --light-bg: #f8f9fa;
+  --section-bg: #ffffff;
+  --accent-bg: #fafbfc;
+}

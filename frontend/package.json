@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode dev",
-    "prod": "npm run build-only && npx serve -s dist -l 5173",
+    "prod": "npm run build-only && npx serve -s dist -l 5173 --single",
     "build": "run-p type-check \"build-only {@}\" --",
     "build-only": "vite build --mode prod",
     "preview": "vite preview",
