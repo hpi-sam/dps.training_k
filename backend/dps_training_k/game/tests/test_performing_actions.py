@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils import timezone
 
 from game.models import (
@@ -113,6 +114,7 @@ class ActionInstanceScheduledTestCase(TestUtilsMixin, TestCase):
 
         settings.CURRENT_TIME = self.variable_backup
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True, CELERY_TASK_EAGER_PROPAGATES=True)
     def test_action_scheduling(self):
         """
         Iff running, an action has a corresponding scheduled event.

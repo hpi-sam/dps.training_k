@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.conf import settings
 from game.tests.factories import PatientFactory
 from game.models import ScheduledEvent
@@ -24,6 +25,7 @@ class EventPatientTestCase(TestCase):
             patient=self.patient_instance,
         )
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True, CELERY_TASK_EAGER_PROPAGATES=True)
     @patch("game.models.PatientInstance.execute_state_change")
     def test_scheduler_is_triggered(self, execute_state_change):
         """
@@ -41,6 +43,7 @@ class EventPatientTestCase(TestCase):
         check_for_updates()
         self.assertEqual(ScheduledEvent.objects.count(), 0)
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True, CELERY_TASK_EAGER_PROPAGATES=True)
     @patch("game.models.PatientInstance.execute_state_change")
     def test_event_is_triggered(self, execute_state_change):
         """

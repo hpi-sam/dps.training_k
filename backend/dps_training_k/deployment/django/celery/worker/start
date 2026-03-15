@@ -3,5 +3,16 @@
 set -o errexit
 set -o nounset
 
+# Use override if set, otherwise default to nproc (1 worker per core), capped at 32
+# to stay within PostgreSQL's default max_connections (100) with headroom for Django and CeleryBeat.
+if [ -z "${CELERY_WORKER_CONCURRENCY:-}" ]; then
+    CONCURRENCY=$(nproc)
+    if [ "$CONCURRENCY" -gt 32 ]; then
+        CONCURRENCY=32
+    fi
+else
+    CONCURRENCY=$CELERY_WORKER_CONCURRENCY
+fi
 
-watchgod celery.__main__.main --args -A configuration.celery_app worker -l INFO
+export CELERY_WORKER_CONCURRENCY=$CONCURRENCY
+watchgod celery.__main__.main --args -A configuration.celery_app worker -l INFO -c $CONCURRENCY

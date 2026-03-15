@@ -1,28 +1,51 @@
-from celery import shared_task
-from django.conf import settings
-from game.models.scheduled_event import ScheduledEvent
-from redis import Redis
-from redis.exceptions import LockError
 import logging
 
-redis_client = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
+from celery import shared_task
+from django.conf import settings
+from django.db import transaction
 
-# When this method is changed, the docker container needs to be rebuilt, because the
-# Celery-worker doesn't get the update based on our docker configuration
+from game.models.scheduled_event import ScheduledEvent
+
+
+# When any of these methods is changed, the docker container needs to be rebuilt, because the
+# Celery-worker doesn't get the update with our docker configuration
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=5)
+def run_event(self, event_id):
+    try:
+        event = ScheduledEvent.objects.get(id=event_id)
+        event.action()
+    except ScheduledEvent.DoesNotExist:
+        logging.warning(f"ScheduledEvent {event_id} already deleted.")
+    except Exception as e:
+        if self.request.retries >= self.max_retries:
+            logging.error(f"ScheduledEvent {event_id} failed permanently after {self.max_retries} retries: {e}")
+            ScheduledEvent.objects.filter(id=event_id).delete()
+            return
+        logging.error(f"Failed to execute event {event_id}: {e}")
+        self.retry(exc=e)
+
 @shared_task
 def check_for_updates():
-    lock_id = 'check_for_updates_lock'
-    lock = redis_client.lock(lock_id)
+    with transaction.atomic():
+        claimed = (
+            ScheduledEvent.objects.only('id').select_for_update(skip_locked=True)
+            .filter(
+                end_date__lte=settings.CURRENT_TIME(),
+                enqueued=False
+            )
+        )
+        event_ids = list(claimed.values_list('id', flat=True))
+        ScheduledEvent.objects.filter(id__in=event_ids).update(enqueued=True)
 
-    try:
-        if lock.acquire(blocking=False):
+    if getattr(settings, 'CELERY_WORKER_CONCURRENCY', 0) == 1:
+        # Single worker — execute inline to avoid async dispatch overhead
+        for event_id in event_ids:
+            run_event.apply(args=[event_id])
+    else:
+        # Multiple workers — dispatch for parallel processing
+        for event_id in event_ids:
             try:
-                events = ScheduledEvent.objects.filter(end_date__lte=settings.CURRENT_TIME())
-                for event in events:
-                    event.action()
-            finally:
-                lock.release()
-        else:
-            logging.info("Task is already running")
-    except LockError as e:
-        logging.warning(f"Could not acquire lock: {e}")
+                run_event.apply_async(args=[event_id])
+            except Exception as e:
+                logging.error(f"failed to enqueue event {event_id}: {e}")
