@@ -184,6 +184,7 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 1.0,
     },
 }
+CELERY_WORKER_CONCURRENCY = env.int("CELERY_WORKER_CONCURRENCY", default=1)
 
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 

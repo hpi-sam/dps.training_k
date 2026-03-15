@@ -38,8 +38,14 @@ def check_for_updates():
         event_ids = list(claimed.values_list('id', flat=True))
         ScheduledEvent.objects.filter(id__in=event_ids).update(enqueued=True)
 
-    for event_id in event_ids:
-        try:
-            run_event.apply_async(args=[event_id]) # add event to celery queue for a worker to pick up
-        except Exception as e:
-            logging.error(f"failed to enqueue event {event_id}: {e}")
+    if getattr(settings, 'CELERY_WORKER_CONCURRENCY', 0) == 1:
+        # Single worker — execute inline to avoid async dispatch overhead
+        for event_id in event_ids:
+            run_event.apply(args=[event_id])
+    else:
+        # Multiple workers — dispatch for parallel processing
+        for event_id in event_ids:
+            try:
+                run_event.apply_async(args=[event_id])
+            except Exception as e:
+                logging.error(f"failed to enqueue event {event_id}: {e}")
